@@ -1,5 +1,5 @@
 # import public libraries
-import os, psycopg2
+import os, psycopg2, json
 from enum import Enum
 from flask import Flask, request, abort
 from flask.logging import create_logger
@@ -10,7 +10,16 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage
+    FollowEvent,
+    MessageEvent,
+    TextMessage, 
+    TextSendMessage,
+    ImageMessage,
+    RichMenu,
+    RichMenuSize,
+    RichMenuArea,
+    RichMenuBounds,
+    URIAction
 )
 
 # import original module
@@ -32,6 +41,12 @@ class Mode(Enum):
     INPUT = 'input'
 MODE = Mode.WAIT
 
+class METHOD(Enum):
+    EXIT = 'exit'
+    INPUT = 'input'
+    MODE = 'mode'
+    HELP = 'help'
+
 # server root
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -44,58 +59,93 @@ def callback():
     return 'OK'
 
 # routing by message type
-@handler.add(MessageEvent, message=TextMessage)
-def handle_text_message(event):
-    # json = request.get_json()
-    # result = ''
-    # if len(json['events']) >= 1:
-    #     result = control(json['events'][0])
-    print(event)
-    print(event.message.text)
-    logger.info('recieve text message')
+# follow
+@handler.add(FollowEvent)
+def handle_follow(event):
+    reply = 'フォローありがとう'
+    user_id = event.source.user_id
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=event.message.text))
+        TextSendMessage(text=reply))
+    rich_menu_id = create_start_menu()
+    line_bot_api.link_rich_menu_to_user(user_id, rich_menu_id)
+        
+@handler.add(MessageEvent, message=TextMessage)
+def handle_text_message(event):
+    print(MODE)
+    reply = routing_by_text(event)
+    user_id = event.source.user_id
+    logger.info('recieve text message')
+    if not type(reply) == str:
+        return
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply))
+    rich_menu_id = create_start_menu()
+    line_bot_api.link_rich_menu_to_user(user_id, rich_menu_id)
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
+    reply = 'not support image message'
     logger.info('recieve image message')
-    return
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply))
 
-
-def routing_by_type(message):
-    m_type = message['type']
-    if m_type == 'text':
-        text = message['text']
-        return routing_by_text(text)
-    elif m_type == 'image':
-        return 'image'
-    else:
-        return 'other'
-
-def routing_by_text(text):
+# route/text
+def routing_by_text(event):
+    global MODE
+    text = event.message.text
     prefix = text[0]
-    if prefix == '@':
-        return change_mode(text)
-    else:
-        return text
+    if (prefix == '@') & (text[1:] in [e.name for e in METHOD]):
+        return routing_by_method(text[1:])
 
-def change_mode(text):
-    MODE = Mode[text[1:]]
-    return f'set mode:{MODE.value}'    
-
-def control(event):
-    userId = event['source']['userId']
-    message = event['message']
-    if MODE == Mode.WAIT:
-        return routing_by_type(message)
-    elif MODE == Mode.INPUT:
+    if MODE == Mode.INPUT:
         return 'input mode now'
 
+    return text
 
-@app.route("/")
-def hello_world():
-    return "hello world!"
+# route/text.method
+def routing_by_method(method):
+    if method == 'INPUT':
+        return change_mode('INPUT')
+    elif method == 'MODE':
+        return get_mode()
+    elif method == 'EXIT':
+        return change_mode('WAIT')
+
+# services/mode
+def change_mode(mode):
+    global MODE
+    if not mode in [e.name for e in Mode]:
+        return '@HELPで使い方を参照できます'
+    MODE = Mode[mode]
+    return f'set mode:{MODE.value}'
+
+def get_mode():
+    global MODE
+    return MODE.value
+
+# services/rich_menu
+def create_start_menu():
+    rich_menu_to_create = RichMenu(
+        size=RichMenuSize(width=2500, height=843),
+        selected=False,
+        name="Nice richmenu",
+        chat_bar_text="Tap here",
+        areas=[
+            RichMenuArea(
+                    bounds=RichMenuBounds(x=0, y=0, width=2500, height=843),
+                    action=URIAction(label='Go to line.me', uri='https://line.me')
+                )
+            ]
+        ) 
+    rich_menu_id = line_bot_api.create_rich_menu(rich_menu=rich_menu_to_create)
+    file_path = './images/rich/2020093002.jpg'
+    content_type = 'Image/jpeg'
+    with open(file_path, 'rb') as f:
+        line_bot_api.set_rich_menu_image(rich_menu_id, content_type, f)
+    return rich_menu_id
 
 # def get_connection():
 #     return psycopg2.connect(DATABASE_URL, sslmode='require')
