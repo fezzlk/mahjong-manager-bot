@@ -20,7 +20,9 @@ from linebot.models import (
     RichMenuSize,
     RichMenuArea,
     RichMenuBounds,
-    URIAction
+    URIAction,
+    PostbackEvent,
+    PostbackTemplateAction
 )
 
 # import original module
@@ -55,6 +57,7 @@ class METHOD(Enum):
     RESET = 'reset'
     RESULTS = 'result'
     DELETE = 'delete'
+    FINISH = 'finish'
 
 MODE = Mode.WAIT
 POINTS = {}
@@ -95,8 +98,8 @@ def handle_follow(event):
     line_bot_api.reply_message(
         event.reply_token,
         messages)
-    # rich_menu_id = create_start_menu()
-    # line_bot_api.link_rich_menu_to_user(user_id, rich_menu_id)
+    rich_menu_id = create_start_menu()
+    line_bot_api.link_rich_menu_to_user(user_id, rich_menu_id)
         
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -122,6 +125,13 @@ def handle_image_message(event):
         event.reply_token,
         TextSendMessage(text=reply))
 
+@handler.add(PostbackEvent)
+def on_postback(event):
+    reply_token = event.reply_token
+    user_id = event.source.user_id
+    postback_msg = event.postback.data
+    print(postback_msg)
+
 # route/text
 def routing_by_text(event):
     global MODE
@@ -140,7 +150,7 @@ def routing_by_text(event):
             add_reply('数字で指定してください。')
             return
         i = int(text)
-        if 0 < i & count_results <= i:
+        if 0 < i & count_results() <= i:
             drop_result(i-1)
             add_reply(f'{i}回目の結果を削除しました。')
             return
@@ -175,6 +185,8 @@ def routing_by_method(method):
         reply_results()
     elif method == 'DELETE':
         change_mode('DELETE')
+    elif method == 'FINISH':
+        reply_sum_results()
 
 # services/reply
 def add_reply(text):
@@ -267,6 +279,10 @@ def reply_settings():
     s = [f'{key}: {value}' for key, value in SETTINGS.items()]
     add_reply('[設定]\n' + '\n'.join(s))
 
+def get_rate():
+    global SETTINGS
+    return int(SETTINGS['レート'][1:]) * 10
+
 # services/result
 def add_result(result):
     global RESULTS
@@ -280,7 +296,7 @@ def drop_result(i):
 def reply_current_result():
     add_reply(f'一半荘お疲れ様でした。結果を表示します。')
     reply_result(count_results()-1)
-    add_reply('今回の結果に一喜一憂せず次の戦いに望んでください。')
+    add_reply('今回の結果に一喜一憂せず次の戦いに望んでください。(これまでの結果を確認したい場合は @RESULTS と送ってください。)')
 
 def reply_result(i):
     global RESULTS
@@ -299,10 +315,32 @@ def reset_results():
     add_reply('結果を全て削除しました。')
 
 def reply_results():
-    add_reply('これまでの対戦結果です。')
-    for i in range(count_results()):
+    count = count_results()
+    if count == 0:
+        add_reply('まだ結果がありません。@INPUT と送って結果を追加してください。')
+        return
+    add_reply('これまでの対戦結果です。(結果を取り消したい場合は @DELETE, 全削除したい場合は @RESET)')
+    for i in range(count):
         reply_result(i)
     
+def reply_sum_results():
+    count = count_results()
+    if count == 0:
+        add_reply('まだ結果がありません。@INPUT と送って結果を追加してください。')
+        return
+    sum_result = get_sum_results()
+    add_reply('今回の総計を表示します。')
+    add_reply('\n'.join([f'{user}: {point}' for user, point in sum_result.items()]))
+    add_reply('\n'.join([f'{user}: {point * get_rate()}円' for user, point in sum_result.items()]))
+
+def get_sum_results():
+    global RESULTS
+    sum_result = {}
+    for res in RESULTS:
+        for name, point in res.items():
+            sum_result[name] += point
+    return sum_result
+
 # services/mode
 def change_mode(mode):
     global MODE
@@ -320,7 +358,7 @@ def change_mode(mode):
         add_reply('会話に参加しないようにします。私を使いたい時は @ON と送信してください。')
         return
     elif MODE == Mode.DELETE:
-        add_reply('削除したい結果を数字で指定してください。')
+        add_reply('削除したい結果を数字で指定してください。(終了したい場合は @EXIT)')
         reply_results()
         return
 
@@ -335,19 +373,57 @@ def reply_mode():
 # services/rich_menu
 def create_start_menu():
     rich_menu_to_create = RichMenu(
-        size=RichMenuSize(width=2500, height=843),
+        size=RichMenuSize(width=2500, height=1100),
         selected=False,
         name="start menu",
         chat_bar_text="メニュー",
         areas=[
             RichMenuArea(
-                    bounds=RichMenuBounds(x=0, y=0, width=2500, height=843),
-                    action=reply_mode()
+                bounds=RichMenuBounds(x=0, y=0, width=833, height=550),
+                action=PostbackTemplateAction(
+                    label='OFF',
+                    data='hoge'
                 )
-            ]
-        ) 
+            ),
+            RichMenuArea(
+                bounds=RichMenuBounds(x=833, y=0, width=834, height=550),
+                action=PostbackTemplateAction(
+                    label='OFF',
+                    data='fuga'
+                )
+            ),
+            RichMenuArea(
+                bounds=RichMenuBounds(x=1667, y=0, width=833, height=550),
+                action=PostbackTemplateAction(
+                    label='OFF',
+                    data='foo'
+                )
+            ),
+                        RichMenuArea(
+                bounds=RichMenuBounds(x=0, y=550, width=833, height=550),
+                action=PostbackTemplateAction(
+                    label='OFF',
+                    data='1'
+                )
+            ),
+            RichMenuArea(
+                bounds=RichMenuBounds(x=833, y=550, width=834, height=550),
+                action=PostbackTemplateAction(
+                    label='OFF',
+                    data='2'
+                )
+            ),
+            RichMenuArea(
+                bounds=RichMenuBounds(x=1667, y=550, width=833, height=550),
+                action=PostbackTemplateAction(
+                    label='OFF',
+                    data='3'
+                )
+            )
+        ]
+    ) 
     rich_menu_id = line_bot_api.create_rich_menu(rich_menu=rich_menu_to_create)
-    file_path = './images/rich/input.png'
+    file_path = './images/rich/home.png'
     content_type = 'Image/png'
     with open(file_path, 'rb') as f:
         line_bot_api.set_rich_menu_image(rich_menu_id, content_type, f)
