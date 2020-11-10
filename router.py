@@ -47,10 +47,12 @@ def follow(event):
 
 def textMessage(event):
     reply_service.reset()
+    app_service.req_user_id = event.source.user_id
     routing_by_text(event)
     reply_service.reply(event)
 
 def imageMessage(event):
+    app_service.req_user_id = event.source.user_id
     reply_service.reset()
     reply_service.add('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
     reply_service.reply(event)

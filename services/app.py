@@ -1,6 +1,7 @@
 import os
 import re
 import random
+import datetime
 from linebot import LineBotApi
 
 YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
@@ -16,6 +17,7 @@ class AppService:
         self.req_user_id = None
 
     def get_random_hai(self):
-        random.seed(int(re.sub("\\D", "", self.req_user_id)))
+        now = datetime.datetime.now()
+        random.seed(int(now.year+now.month+now.day)+int(re.sub("\\D", "", self.req_user_id)))
 
         return random.choice(HAI)

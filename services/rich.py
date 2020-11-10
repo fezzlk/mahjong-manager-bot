@@ -21,7 +21,6 @@ class RichMenuService:
 
         self.line_bot_api.link_rich_menu_to_user(self.app_service.req_user_id, rich_menu_id)
 
-
     def create_personal_menu(self):
         rich_menu_to_create = RichMenu(
             size=RichMenuSize(width=2500, height=1100),
