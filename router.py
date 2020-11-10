@@ -89,30 +89,42 @@ def routing_by_text(event):
 
 # routes/text.method
 def routing_by_method(method):
+    # input
     if method == Methods.INPUT.name:
         points_service.reset()
         mode_service.update(mode_service.modes.INPUT)
+    # calculate
     elif method == Methods.CALC.name:
         calculate_service.calculate()
+    # mode
     elif method == Methods.MODE.name:
         mode_service.reply()
+    # exit
     elif method == Methods.EXIT.name:
         mode_service.update(mode_service.modes.WAIT)
+    # help
     elif method == Methods.HELP.name:
         reply_service.add('まだ使い方書いてないからもうちょい待ってて')
         reply_service.add('\n'.join(['@' + e.name for e in Methods]))
+    # setting
     elif method == Methods.SETTING.name:
         config_service.reply()
+    # off
     elif method == Methods.OFF.name:
         mode_service.update(mode_service.modes.OFF)
+    # on
     elif method == Methods.ON.name:
         mode_service.update(mode_service.modes.WAIT)
+    # reset
     elif method == Methods.RESET.name:
         results_service.reset()
+    # results
     elif method == Methods.RESULTS.name:
         results_service.reply()
+    # delete
     elif method == Methods.DELETE.name:
         mode_service.update(mode_service.modes.DELETE)
+    # finish
     elif method == Methods.FINISH.name:
         results_service.reply_sum_and_money()
 
