@@ -34,16 +34,16 @@ points_service = PointsService(app_service, reply_service, config_service)
 calculate_service = CalculateService(reply_service, points_service, config_service)
 results_service = ResultsService(reply_service, points_service, config_service)
 mode_service = ModeService(app_service, reply_service, results_service, points_service)
-rich_menu_service = RichMenuService(line_bot_api)
+rich_menu_service = RichMenuService(app_service)
 
 ### routes/event
 def follow(event):
     reply_service.reset()
-    app_service.user_id = event.source.user_id
-    profile = line_bot_api.get_profile(app_service.user_id)
+    app_service.req_user_id = event.source.user_id
+    profile = line_bot_api.get_profile(app_service.req_user_id)
     reply_service.add(f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は{profile.display_name}さんの快適な麻雀生活をサポートします。')
     reply_service.reply(event)
-    rich_menu_service.create_and_link('personal', app_service.user_id)
+    rich_menu_service.create_and_link('personal')
 
 def textMessage(event):
     reply_service.reset()
@@ -56,7 +56,7 @@ def imageMessage(event):
     reply_service.reply(event)
 
 def postback(event):
-    app_service.user_id = event.source.user_id
+    app_service.req_user_id = event.source.user_id
     reply_token = event.reply_token
     postback_msg = event.postback.data
     print(postback_msg)

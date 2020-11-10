@@ -15,7 +15,7 @@ class PointsService:
         self.reply_service.add("\n".join(result))
 
     def add_by_text(self, text):
-        profile = self.line_bot_api.get_profile(self.app_service.user_id)
+        profile = self.line_bot_api.get_profile(self.app_service.req_user_id)
         target_user = profile.display_name
         if text[0] == '@':
             point, target_user = self.get_point_with_target_user(text[1:])
