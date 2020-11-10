@@ -35,7 +35,9 @@ results_service = ResultsService(reply_service, points_service, config_service)
 mode_service = ModeService(reply_service, results_service, points_service)
 rich_menu_service = RichMenuService(line_bot_api)
 
+### routes/event
 def follow(event):
+    reply_service.reset()
     user_id = event.source.user_id
     profile = line_bot_api.get_profile(user_id)
     reply_service.add(f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は{profile.display_name}さんの快適な麻雀生活をサポートします。')
@@ -43,19 +45,23 @@ def follow(event):
     rich_menu_service.create_and_link('personal', user_id)
 
 def textMessage(event):
+    reply_service.reset()
     routing_by_text(event)
     reply_service.reply(event)
 
 def imageMessage(event):
+    reply_service.reset()
     reply_service.add('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
     reply_service.reply(event)
 
 def postback(event):
+    user_id = event.source.user_id
     reply_token = event.reply_token
     user_id = event.source.user_id
     postback_msg = event.postback.data
     print(postback_msg)
 
+### routes/text
 def routing_by_text(event):
     text = event.message.text
     prefix = text[0]
@@ -81,7 +87,7 @@ def routing_by_text(event):
 
     reply_service.add('雑談してる暇があったら麻雀の勉強をしましょう')
 
-# route/text.method
+# routes/text.method
 def routing_by_method(method):
     if method == Methods.INPUT.name:
         points_service.reset()

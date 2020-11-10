@@ -15,3 +15,6 @@ class ReplyService:
         self.line_bot_api.reply_message(
             event.reply_token,
             [TextSendMessage(text=reply) for reply in self.replies])
+
+    def reset(self):
+        self.replies = []
