@@ -1,6 +1,7 @@
 class PointsService:
 
-    def __init__(self, reply_service, config_service):
+    def __init__(self, app_service, reply_service, config_service):
+        self.app_service = app_service
         self.reply_service = reply_service
         self.config_service = config_service
         self.line_bot_api = self.reply_service.line_bot_api
@@ -13,25 +14,27 @@ class PointsService:
         result = [f'{user}: {point}' for user, point in self.points.items()]
         self.reply_service.add("\n".join(result))
 
-    def add_by_text(self, text, user_id):
-        profile = self.line_bot_api.get_profile(user_id)
+    def add_by_text(self, text):
+        profile = self.line_bot_api.get_profile(self.app_service.user_id)
         target_user = profile.display_name
         if text[0] == '@':
             point, target_user = self.get_point_with_target_user(text[1:])
+            point = point.replace(',', '')
             if point == 'delete':
                 self.drop(target_user)
                 self.reply()
                 return
         else:
-            point = text
+            point = text.replace(',', '')
         isMinus = False
         if point[0] == '-':
             point = point[1:]
             isMinus = True
 
-        if point.isnumeric() == False:
+        if point.isdigit() == False:
             self.reply_service.add('点数は整数で入力してください。全員分の点数入力を終えた場合は @CALC と送信してください。（中断したい場合は @EXIT)')
-        
+            return
+
         if isMinus == True:
             point = '-' + point
         
