@@ -38,7 +38,9 @@ class PointsService:
         self.add(target_user, int(point))
         self.reply()
         if len(self.points) == 4:
-            self.services.calculate_service.calculate()
+            self.services.calculate_service.calculate(self.points)
+        elif len(self.points) > 4:
+            self.services.reply_service.add('5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
 
     def get_point_with_target_user(self, text):
         s = text.split()

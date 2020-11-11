@@ -13,6 +13,7 @@ class Methods(Enum):
     results = 'results'
     delete = 'delete'
     finish = 'finish'
+    github = 'github'
 
 from services import Services
 services = Services()
@@ -107,10 +108,12 @@ def routing_by_method(method):
         services.results_service.reset()
     # results
     elif method == Methods.results.name:
-        services.results_service.reply()
+        services.results_service.reply_all()
     # delete
     elif method == Methods.delete.name:
         services.mode_service.update(services.mode_service.modes.delete)
     # finish
     elif method == Methods.finish.name:
         services.results_service.reply_sum_and_money()
+    elif method == Methods.github.name:
+        services.reply_service.add('https://github.com/bbladr/mahjong-manager-bot')

@@ -2,21 +2,20 @@ class CalculateService:
 
     def __init__(self, services):
         self.services = services
-        self.points = {}
 
-    def calculate(self):
-        if len(self.points) != 4:
+    def calculate(self, points):
+        if len(points) != 4:
             self.services.reply_service.add('四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
             return
-        if int(sum(self.points.values())/1000) != 100:
-            self.services.reply_service.add(f'点数の合計が{sum(self.points.values())}点です。合計100000点+αになるように修正してください。')
+        if int(sum(points.values())/1000) != 100:
+            self.services.reply_service.add(f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
             return
-        calc_result = self.run_calculate()
+        calc_result = self.run_calculate(points)
         self.services.results_service.add(calc_result)
         self.services.results_service.reply_current_result()
 
-    def run_calculate(self):
-        sorted_points = sorted(self.points.items(), key=lambda x:x[1])
+    def run_calculate(self, points):
+        sorted_points = sorted(points.items(), key=lambda x:x[1])
         result = {}
         for t in sorted_points[:-1]:
             result[t[0]] = int(t[1]/1000) - 30
