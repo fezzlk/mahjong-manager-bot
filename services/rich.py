@@ -8,10 +8,10 @@ from linebot.models import (
     
 class RichMenuService:
 
-    def __init__(self, app_service):
+    def __init__(self, services):
         self.menu = None
-        self.app_service = app_service
-        self.line_bot_api = self.app_service.line_bot_api
+        self.services = services
+        self.line_bot_api = self.services.app_service.line_bot_api
 
     def create_and_link(self, kind):
         if kind == 'personal':
@@ -19,7 +19,7 @@ class RichMenuService:
         else:
             rich_menu_id = self.create_personal_menu()
 
-        self.line_bot_api.link_rich_menu_to_user(self.app_service.req_user_id, rich_menu_id)
+        self.line_bot_api.link_rich_menu_to_user(self.services.app_service.req_user_id, rich_menu_id)
 
     def create_personal_menu(self):
         rich_menu_to_create = RichMenu(

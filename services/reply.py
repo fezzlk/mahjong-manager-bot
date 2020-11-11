@@ -4,15 +4,15 @@ from linebot.models import (
 
 class ReplyService:
 
-    def __init__(self, line_bot_api):
-        self.line_bot_api = line_bot_api
+    def __init__(self, services):
+        self.services = services
         self.replies = []
 
     def add(self, text):
         self.replies.append(text)
 
     def reply(self, event):
-        self.line_bot_api.reply_message(
+        self.services.app_service.line_bot_api.reply_message(
             event.reply_token,
             [TextSendMessage(text=reply) for reply in self.replies])
 

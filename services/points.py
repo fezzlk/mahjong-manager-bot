@@ -1,21 +1,18 @@
 class PointsService:
 
-    def __init__(self, app_service, reply_service, config_service):
-        self.app_service = app_service
-        self.reply_service = reply_service
-        self.config_service = config_service
-        self.line_bot_api = self.reply_service.line_bot_api
+    def __init__(self, services):
+        self.services = services
         self.points = {}
 
     def reply(self):
         if len(self.points) == 0:
-            self.reply_service.add('点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
+            self.services.reply_service.add('点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
             return
         result = [f'{user}: {point}' for user, point in self.points.items()]
-        self.reply_service.add("\n".join(result))
+        self.services.reply_service.add("\n".join(result))
 
     def add_by_text(self, text):
-        profile = self.line_bot_api.get_profile(self.app_service.req_user_id)
+        profile = self.services.app_service.line_bot_api.get_profile(self.services.app_service.req_user_id)
         target_user = profile.display_name
         if text[0] == '@':
             point, target_user = self.get_point_with_target_user(text[1:])
@@ -32,7 +29,7 @@ class PointsService:
             isMinus = True
 
         if point.isdigit() == False:
-            self.reply_service.add('点数は整数で入力してください。全員分の点数入力を終えた場合は _calc と送信してください。（中断したい場合は _exit)')
+            self.services.reply_service.add('点数は整数で入力してください。全員分の点数入力を終えた場合は _calc と送信してください。（中断したい場合は _exit)')
             return
 
         if isMinus == True:
@@ -40,6 +37,8 @@ class PointsService:
         
         self.add(target_user, int(point))
         self.reply()
+        if len(self.points) == 4:
+            self.services.calculate_service.calculate()
 
     def get_point_with_target_user(self, text):
         s = text.split()

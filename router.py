@@ -1,68 +1,49 @@
 from enum import Enum
 
 class Methods(Enum):
-    EXIT = 'exit'
-    INPUT = 'input'
-    MODE = 'mode'
-    HELP = 'help'
-    CALC = 'calculator'
-    SETTING = 'settings'
-    OFF = 'off'
-    ON = 'on'
-    RESET = 'reset'
-    RESULTS = 'result'
-    DELETE = 'delete'
-    FINISH = 'finish'
+    exit = 'exit'
+    input = 'input'
+    mode = 'mode'
+    help = 'help'
+    calc = 'calculator'
+    setting = 'settings'
+    off = 'off'
+    on = 'on'
+    reset = 'reset'
+    results = 'results'
+    delete = 'delete'
+    finish = 'finish'
 
-from services import (
-    AppService,
-    CalculateService,
-    ConfigService,
-    ModeService,
-    PointsService,
-    ReplyService,
-    ResultsService,
-    RichMenuService,
-)
-
-app_service = AppService()
-line_bot_api = app_service.line_bot_api
-
-reply_service = ReplyService(line_bot_api)
-config_service = ConfigService(reply_service)
-points_service = PointsService(app_service, reply_service, config_service)
-results_service = ResultsService(reply_service, points_service, config_service)
-calculate_service = CalculateService(reply_service, results_service, config_service)
-mode_service = ModeService(app_service, reply_service, results_service, points_service)
-rich_menu_service = RichMenuService(app_service)
+from services import Services
+services = Services()
 
 ### routes/event
 def follow(event):
-    reply_service.reset()
-    app_service.req_user_id = event.source.user_id
-    profile = line_bot_api.get_profile(app_service.req_user_id)
-    reply_service.add(f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は{profile.display_name}さんの快適な麻雀生活をサポートします。')
-    reply_service.reply(event)
-    rich_menu_service.create_and_link('personal')
+    services.reply_service.reset()
+    services.app_service.req_user_id = event.source.user_id
+    profile = services.app_service.line_bot_api.get_profile(services.app_service.req_user_id)
+    services.reply_service.add(f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は{profile.display_name}さんの快適な麻雀生活をサポートします。')
+    services.reply_service.reply(event)
+    services.rich_menu_service.create_and_link('personal')
 
 def textMessage(event):
-    reply_service.reset()
-    app_service.req_user_id = event.source.user_id
+    services.reply_service.reset()
+    services.app_service.req_user_id = event.source.user_id
     routing_by_text(event)
-    reply_service.reply(event)
+    services.reply_service.reply(event)
 
 def imageMessage(event):
-    app_service.req_user_id = event.source.user_id
-    reply_service.reset()
-    reply_service.add('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
-    reply_service.reply(event)
+    services.app_service.req_user_id = event.source.user_id
+    services.reply_service.reset()
+    services.reply_service.add('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
+    services.reply_service.reply(event)
 
 def postback(event):
-    app_service.req_user_id = event.source.user_id
+    services.app_service.req_user_id = event.source.user_id
     method = event.postback.data[1:]
     print(method)
     routing_by_method(method)
-    reply_service.reply(event)
+    services.reply_service.reply(event)
 
 ### routes/text
 def routing_by_text(event):
@@ -72,64 +53,64 @@ def routing_by_text(event):
         routing_by_method(text[1:])
         return
 
-    if mode_service.mode == mode_service.modes.INPUT:
-        points_service.add_by_text(text)
+    if services.mode_service.mode == services.mode_service.modes.input:
+        services.points_service.add_by_text(text)
         return
     
-    if mode_service.mode == mode_service.modes.DELETE:
+    if services.mode_service.mode == services.mode_service.modes.delete:
         if text.isdigit() == False:
-            reply_service.add('数字で指定してください。')
+            services.reply_service.add('数字で指定してください。')
             return
         i = int(text)
-        if 0 < i & results_service.count() <= i:
-            results_service.drop(i-1)
-            reply_service.add(f'{i}回目の結果を削除しました。')
+        if 0 < i & services.results_service.count() <= i:
+            services.results_service.drop(i-1)
+            services.reply_service.add(f'{i}回目の結果を削除しました。')
             return
-        reply_service.add('指定された結果が存在しません。')
+        services.reply_service.add('指定された結果が存在しません。')
         return
 
     if prefix == '_':
-        reply_service.add('使い方がわからない場合はメニューの中の「使い方」を押してください。')
+        services.reply_service.add('使い方がわからない場合はメニューの中の「使い方」を押してください。')
         return
-    reply_service.add('雑談してる暇があったら麻雀の勉強をしましょう')
+    services.reply_service.add('雑談してる暇があったら麻雀の勉強をしましょう')
 
 # routes/text.method
 def routing_by_method(method):
     # input
-    if method == Methods.INPUT.name:
-        points_service.reset()
-        mode_service.update(mode_service.modes.INPUT)
+    if method == Methods.input.name:
+        services.points_service.reset()
+        services.mode_service.update(services.mode_service.modes.input)
     # calculate
-    elif method == Methods.CALC.name:
-        calculate_service.calculate()
+    elif method == Methods.calc.name:
+        services.calculate_service.calculate()
     # mode
-    elif method == Methods.MODE.name:
-        mode_service.reply()
+    elif method == Methods.mode.name:
+        services.mode_service.reply()
     # exit
-    elif method == Methods.EXIT.name:
-        mode_service.update(mode_service.modes.WAIT)
+    elif method == Methods.exit.name:
+        services.mode_service.update(services.mode_service.modes.wait)
     # help
-    elif method == Methods.HELP.name:
-        reply_service.add('使い方は明日書きます。')
-        reply_service.add('\n'.join(['_' + e.name for e in Methods]))
+    elif method == Methods.help.name:
+        services.reply_service.add('使い方は明日書きます。')
+        services.reply_service.add('\n'.join(['_' + e.name for e in Methods]))
     # setting
-    elif method == Methods.SETTING.name:
-        config_service.reply()
+    elif method == Methods.setting.name:
+        services.config_service.reply()
     # off
-    elif method == Methods.OFF.name:
-        mode_service.update(mode_service.modes.OFF)
+    elif method == Methods.off.name:
+        services.mode_service.update(services.mode_service.modes.off)
     # on
-    elif method == Methods.ON.name:
-        mode_service.update(mode_service.modes.WAIT)
+    elif method == Methods.on.name:
+        services.mode_service.update(services.mode_service.modes.wait)
     # reset
-    elif method == Methods.RESET.name:
-        results_service.reset()
+    elif method == Methods.reset.name:
+        services.results_service.reset()
     # results
-    elif method == Methods.RESULTS.name:
-        results_service.reply()
+    elif method == Methods.results.name:
+        services.results_service.reply()
     # delete
-    elif method == Methods.DELETE.name:
-        mode_service.update(mode_service.modes.DELETE)
+    elif method == Methods.delete.name:
+        services.mode_service.update(services.mode_service.modes.delete)
     # finish
-    elif method == Methods.FINISH.name:
-        results_service.reply_sum_and_money()
+    elif method == Methods.finish.name:
+        services.results_service.reply_sum_and_money()
