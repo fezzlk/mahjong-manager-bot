@@ -31,8 +31,8 @@ line_bot_api = app_service.line_bot_api
 reply_service = ReplyService(line_bot_api)
 config_service = ConfigService(reply_service)
 points_service = PointsService(app_service, reply_service, config_service)
-calculate_service = CalculateService(reply_service, points_service, config_service)
 results_service = ResultsService(reply_service, points_service, config_service)
+calculate_service = CalculateService(reply_service, results_service, config_service)
 mode_service = ModeService(app_service, reply_service, results_service, points_service)
 rich_menu_service = RichMenuService(app_service)
 
@@ -59,15 +59,16 @@ def imageMessage(event):
 
 def postback(event):
     app_service.req_user_id = event.source.user_id
-    reply_token = event.reply_token
-    postback_msg = event.postback.data
-    print(postback_msg)
+    method = event.postback.data[1:]
+    print(method)
+    routing_by_method(method)
+    reply_service.reply(event)
 
 ### routes/text
 def routing_by_text(event):
     text = event.message.text
     prefix = text[0]
-    if (prefix == '@') & (text[1:] in [e.name for e in Methods]):
+    if (prefix == '_') & (text[1:] in [e.name for e in Methods]):
         routing_by_method(text[1:])
         return
 
@@ -87,6 +88,9 @@ def routing_by_text(event):
         reply_service.add('指定された結果が存在しません。')
         return
 
+    if prefix == '_':
+        reply_service.add('使い方がわからない場合はメニューの中の「使い方」を押してください。')
+        return
     reply_service.add('雑談してる暇があったら麻雀の勉強をしましょう')
 
 # routes/text.method
@@ -106,8 +110,8 @@ def routing_by_method(method):
         mode_service.update(mode_service.modes.WAIT)
     # help
     elif method == Methods.HELP.name:
-        reply_service.add('まだ使い方書いてないからもうちょい待ってて')
-        reply_service.add('\n'.join(['@' + e.name for e in Methods]))
+        reply_service.add('使い方は明日書きます。')
+        reply_service.add('\n'.join(['_' + e.name for e in Methods]))
     # setting
     elif method == Methods.SETTING.name:
         config_service.reply()
@@ -129,4 +133,3 @@ def routing_by_method(method):
     # finish
     elif method == Methods.FINISH.name:
         results_service.reply_sum_and_money()
-

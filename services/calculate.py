@@ -1,8 +1,8 @@
 class CalculateService:
 
-    def __init__(self, reply_service, result_service, config_service):
+    def __init__(self, reply_service, results_service, config_service):
         self.reply_service = reply_service
-        self.result_service = result_service
+        self.results_service = results_service
         self.config_service = config_service
         self.points = {}
 
@@ -14,8 +14,8 @@ class CalculateService:
             self.reply_service.add(f'点数の合計が{sum(self.points.values())}点です。合計100000点+αになるように修正してください。')
             return
         calc_result = self.run_calculate()
-        self.result_service.add_result(calc_result)
-        self.result_service.reply_current_result()
+        self.results_service.add(calc_result)
+        self.results_service.reply_current_result()
 
     def run_calculate(self):
         sorted_points = sorted(self.points.items(), key=lambda x:x[1])
