@@ -20,7 +20,6 @@ services = Services()
 
 ### routes/event
 def follow(event):
-    services.reply_service.reset()
     services.app_service.req_user_id = event.source.user_id
     profile = services.app_service.line_bot_api.get_profile(services.app_service.req_user_id)
     services.reply_service.add(f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は{profile.display_name}さんの快適な麻雀生活をサポートします。')
@@ -28,7 +27,6 @@ def follow(event):
     services.rich_menu_service.create_and_link('personal')
 
 def textMessage(event):
-    services.reply_service.reset()
     services.app_service.req_user_id = event.source.user_id
     routing_by_text(event)
     services.reply_service.reply(event)
@@ -83,7 +81,7 @@ def routing_by_method(method):
         services.mode_service.update(services.mode_service.modes.input)
     # calculate
     elif method == Methods.calc.name:
-        services.calculate_service.calculate()
+        services.calculate_service.calculate(services.points_service.points)
     # mode
     elif method == Methods.mode.name:
         services.mode_service.reply()
@@ -115,5 +113,6 @@ def routing_by_method(method):
     # finish
     elif method == Methods.finish.name:
         services.results_service.reply_sum_and_money()
+    # github
     elif method == Methods.github.name:
         services.reply_service.add('https://github.com/bbladr/mahjong-manager-bot')
