@@ -33,14 +33,12 @@ def textMessage(event):
 
 def imageMessage(event):
     services.app_service.req_user_id = event.source.user_id
-    services.reply_service.reset()
     services.reply_service.add('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
     services.reply_service.reply(event)
 
 def postback(event):
     services.app_service.req_user_id = event.source.user_id
     method = event.postback.data[1:]
-    print(method)
     routing_by_method(method)
     services.reply_service.reply(event)
 
