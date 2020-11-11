@@ -32,7 +32,7 @@ class PointsService:
             isMinus = True
 
         if point.isdigit() == False:
-            self.reply_service.add('点数は整数で入力してください。全員分の点数入力を終えた場合は @CALC と送信してください。（中断したい場合は @EXIT)')
+            self.reply_service.add('点数は整数で入力してください。全員分の点数入力を終えた場合は _calc と送信してください。（中断したい場合は _exit)')
             return
 
         if isMinus == True:

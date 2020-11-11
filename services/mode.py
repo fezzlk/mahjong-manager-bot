@@ -18,20 +18,20 @@ class ModeService:
 
     def update(self, mode):
         if not mode in self.modes:
-            self.reply_service.add('@HELPで使い方を参照できます')
+            self.reply_service.add('warning: 予期しないモード変更を行おうとしています。')
             return
         self.mode = mode
         if self.mode == self.modes.INPUT:
-            self.reply_service.add(f'第{self.results_service.count()+1}回戦お疲れ様です。各自点数を入力してください。（同点の場合は上家が高くなるように数点追加してください）全員分の点数入力を終えた場合は @CALC と送信してください。（中断したい場合は @EXIT)')
+            self.reply_service.add(f'第{self.results_service.count()+1}回戦お疲れ様です。各自点数を入力してください。（同点の場合は上家が高くなるように数点追加してください）')
             return
         elif self.mode == self.modes.WAIT:
             self.reply_service.add(f'こんにちは。快適な麻雀生活の提供に努めます。今日のラッキー牌は「{self.app_service.get_random_hai()}」です。')
             return
         elif self.mode == self.modes.OFF:
-            self.reply_service.add('会話に参加しないようにします。私を使いたい時は @ON と送信してください。')
+            self.reply_service.add('会話に参加しないようにします。私を使いたい時は _on と送信してください。')
             return
         elif self.mode == self.modes.DELETE:
-            self.reply_service.add('削除したい結果を数字で指定してください。(終了したい場合は @EXIT)')
+            self.reply_service.add('削除したい結果を数字で指定してください。(終了したい場合は _exit)')
             self.points_service.reply_results()
             return
 

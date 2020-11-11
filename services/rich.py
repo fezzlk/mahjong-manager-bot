@@ -31,43 +31,43 @@ class RichMenuService:
                 RichMenuArea(
                     bounds=RichMenuBounds(x=0, y=0, width=833, height=550),
                     action=PostbackTemplateAction(
-                        label='OFF',
-                        data='hoge'
+                        label='input',
+                        data='_input'
                     )
                 ),
                 RichMenuArea(
                     bounds=RichMenuBounds(x=833, y=0, width=834, height=550),
                     action=PostbackTemplateAction(
-                        label='OFF',
-                        data='fuga'
+                        label='results',
+                        data='_results'
                     )
                 ),
                 RichMenuArea(
                     bounds=RichMenuBounds(x=1667, y=0, width=833, height=550),
                     action=PostbackTemplateAction(
-                        label='OFF',
-                        data='foo'
+                        label='finish',
+                        data='_finish'
                     )
                 ),
                             RichMenuArea(
                     bounds=RichMenuBounds(x=0, y=550, width=833, height=550),
                     action=PostbackTemplateAction(
-                        label='OFF',
-                        data='1'
+                        label='history',
+                        data='_history'
                     )
                 ),
                 RichMenuArea(
                     bounds=RichMenuBounds(x=833, y=550, width=834, height=550),
                     action=PostbackTemplateAction(
-                        label='OFF',
-                        data='2'
+                        label='help',
+                        data='_help'
                     )
                 ),
                 RichMenuArea(
                     bounds=RichMenuBounds(x=1667, y=550, width=833, height=550),
                     action=PostbackTemplateAction(
-                        label='OFF',
-                        data='3'
+                        label='config',
+                        data='_setting'
                     )
                 )
             ]

@@ -16,7 +16,7 @@ class ResultsService:
     def reply_current_result(self):
         self.reply_service.add(f'一半荘お疲れ様でした。結果を表示します。')
         self.points_service.reply(self.count()-1)
-        self.reply_service.add('今回の結果に一喜一憂せず次の戦いに望んでください。(これまでの結果を確認したい場合は @RESULTS と送ってください。)')
+        self.reply_service.add('今回の結果に一喜一憂せず次の戦いに望んでください。')
 
     def count(self):
         return len(self.results)
@@ -28,16 +28,16 @@ class ResultsService:
     def reply(self):
         count = self.count()
         if count == 0:
-            self.reply_service.add('まだ結果がありません。@INPUT と送って結果を追加してください。')
+            self.reply_service.add('まだ結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
-        self.reply_service.add('これまでの対戦結果です。(結果を取り消したい場合は @DELETE, 全削除したい場合は @RESET)')
+        self.reply_service.add('これまでの対戦結果です。(結果を指定して取り消したい場合は _delete, 全削除したい場合は _reset)')
         for i in range(count):
             self.reply_service.add(f'第{i+1}回\n' + '\n'.join(self.results[i]))
         
     def reply_sum_and_money(self):
         count = self.count()
         if count == 0:
-            self.reply_service.add('まだ結果がありません。@INPUT と送って結果を追加してください。')
+            self.reply_service.add('まだ結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
         sum_result = self.get_sum_results()
         self.reply_service.add('今回の総計を表示します。')
