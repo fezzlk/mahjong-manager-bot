@@ -20,6 +20,8 @@ class PointsService:
             if point == 'delete':
                 self.drop(target_user)
                 self.reply()
+                if len(self.points) == 4:
+                    self.services.calculate_service.calculate(self.points)
                 return
         else:
             point = text.replace(',', '')
