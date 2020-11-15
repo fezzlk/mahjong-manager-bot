@@ -21,6 +21,13 @@ logger = logging.create_logger(app)
 
 import router
 
+### for test
+@app.route("/")
+def hello():
+    logger.info('hello world')
+    print('hello world')
+    return 'hello world'
+
 ### server root
 @app.route("/callback", methods=['POST'])
 def callback():
