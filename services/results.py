@@ -8,7 +8,7 @@ class ResultsService:
         self.results.append(result)
 
     def drop(self, i):
-        if len(self.results) > i:
+        if self.count() > i:
             self.results.pop(i)
 
     def reply_current_result(self):
@@ -31,22 +31,30 @@ class ResultsService:
         self.services.reply_service.add('これまでの対戦結果です。(結果を指定して取り消したい場合は _delete, 全削除したい場合は _reset)')
         for i in range(count):
             self.services.reply_service.add(f'第{i+1}回\n' + '\n'.join([f'{user}: {point}' for user, point in self.results[i].items()]))
-        sum_result = self.get_sum_results()
-        self.services.reply_service.add('総計\n' + '\n'.join([f'{user}: {point}' for user, point in sum_result.items()]))
+        sum = self.get_sum()
+        self.services.reply_service.add('総計\n' + '\n'.join([f'{user}: {point}' for user, point in sum.items()]))
         
-    def reply_sum_and_money(self):
+    def finish(self):
         count = self.count()
         if count == 0:
             self.services.reply_service.add('まだ結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
-        sum_result = self.get_sum_results()
+        self.services.matches_service.add(self.results)
         self.services.reply_service.add('今回の総計を表示します。')
-        self.services.reply_service.add('\n'.join([f'{user}: {point}' for user, point in sum_result.items()]))
-        self.services.reply_service.add('\n'.join([f'{user}: {point * self.services.config_service.get_rate()}円' for user, point in sum_result.items()]))
+        self.reply_sum_and_money()
 
-    def get_sum_results(self):
+    def reply_sum_and_money(self, results=None):
+        if results == None:
+            results = self.results
+        sum = self.get_sum(results)
+        self.services.reply_service.add('\n'.join([f'{user}: {point}' for user, point in sum.items()]))
+        self.services.reply_service.add('\n'.join([f'{user}: {point * self.services.config_service.get_rate()}円' for user, point in sum.items()]))
+
+    def get_sum(self, results=None):
+        if results == None:
+            results = self.results
         sum_result = {}
-        for res in self.results:
+        for res in results:
             for name, point in res.items():
                 sum_result[name] += point
         return sum_result
