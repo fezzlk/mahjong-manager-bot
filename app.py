@@ -46,6 +46,12 @@ def handle_follow(event):
     logger.info('follow')
     router.follow(event)
 
+# join
+@handler.add(JoinEvent)
+def handle_join(event):
+    logger.info('join')
+    router.join(event)
+    
 # receive message
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):

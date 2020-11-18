@@ -26,6 +26,11 @@ def follow(event):
     services.reply_service.reply(event)
     services.rich_menu_service.create_and_link('personal')
 
+def join(event):
+    services.reply_service.add(f'こんにちは、今日は麻雀日和ですね。\n参加メンバーを登録をします。(編集したい場合は_members)')
+    # services.members_service.init(event)
+    services.reply_service.reply(event)
+
 def textMessage(event):
     services.app_service.req_user_id = event.source.user_id
     routing_by_text(event)
@@ -110,7 +115,7 @@ def routing_by_method(method):
         services.mode_service.update(services.mode_service.modes.delete)
     # finish
     elif method == Methods.finish.name:
-        services.results_service.reply_sum_and_money()
+        services.results_service.finish()
     # github
     elif method == Methods.github.name:
         services.reply_service.add('https://github.com/bbladr/mahjong-manager-bot')
