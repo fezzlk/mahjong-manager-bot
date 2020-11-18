@@ -3,6 +3,7 @@ from flask import Flask, request, abort, logging
 from linebot import LineBotApi, WebhookHandler, exceptions
 from linebot.models import (
     FollowEvent,
+    JoinEvent,
     MessageEvent,
     TextMessage, 
     ImageMessage,
