@@ -6,10 +6,10 @@ class PointsService:
 
     def reply(self):
         if len(self.points) == 0:
-            self.services.reply_service.add('点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
+            self.services.reply_service.add_text('点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
             return
         result = [f'{user}: {point}' for user, point in self.points.items()]
-        self.services.reply_service.add("\n".join(result))
+        self.services.reply_service.add_text("\n".join(result))
 
     def add_by_text(self, text):
         profile = self.services.app_service.line_bot_api.get_profile(self.services.app_service.req_user_id)
@@ -31,7 +31,7 @@ class PointsService:
             isMinus = True
 
         if point.isdigit() == False:
-            self.services.reply_service.add('点数は整数で入力してください。全員分の点数入力を終えた場合は _calc と送信してください。（中断したい場合は _exit)')
+            self.services.reply_service.add_text('点数は整数で入力してください。全員分の点数入力を終えた場合は _calc と送信してください。（中断したい場合は _exit)')
             return
 
         if isMinus == True:
@@ -42,7 +42,7 @@ class PointsService:
         if len(self.points) == 4:
             self.services.calculate_service.calculate(self.points)
         elif len(self.points) > 4:
-            self.services.reply_service.add('5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
+            self.services.reply_service.add_text('5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
 
     def get_point_with_target_user(self, text):
         s = text.split()

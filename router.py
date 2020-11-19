@@ -22,12 +22,12 @@ services = Services()
 def follow(event):
     services.app_service.req_user_id = event.source.user_id
     profile = services.app_service.line_bot_api.get_profile(services.app_service.req_user_id)
-    services.reply_service.add(f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は{profile.display_name}さんの快適な麻雀生活をサポートします。')
+    services.reply_service.add_text(f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は{profile.display_name}さんの快適な麻雀生活をサポートします。')
     services.reply_service.reply(event)
     services.rich_menu_service.create_and_link('personal')
 
 def join(event):
-    services.reply_service.add(f'こんにちは、今日は麻雀日和ですね。\n参加メンバーを登録をします。(編集したい場合は_members)')
+    services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。\n参加メンバーを登録をします。(編集したい場合は_members)')
     # services.members_service.init(event)
     services.reply_service.reply(event)
 
@@ -38,7 +38,7 @@ def textMessage(event):
 
 def imageMessage(event):
     services.app_service.req_user_id = event.source.user_id
-    services.reply_service.add('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
+    services.reply_service.add_text('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
     services.reply_service.reply(event)
 
 def postback(event):
@@ -61,20 +61,20 @@ def routing_by_text(event):
     
     if services.mode_service.mode == services.mode_service.modes.delete:
         if text.isdigit() == False:
-            services.reply_service.add('数字で指定してください。')
+            services.reply_service.add_text('数字で指定してください。')
             return
         i = int(text)
         if 0 < i & services.results_service.count() <= i:
             services.results_service.drop(i-1)
-            services.reply_service.add(f'{i}回目の結果を削除しました。')
+            services.reply_service.add_text(f'{i}回目の結果を削除しました。')
             return
-        services.reply_service.add('指定された結果が存在しません。')
+        services.reply_service.add_text('指定された結果が存在しません。')
         return
 
     if prefix == '_':
-        services.reply_service.add('使い方がわからない場合はメニューの中の「使い方」を押してください。')
+        services.reply_service.add_text('使い方がわからない場合はメニューの中の「使い方」を押してください。')
         return
-    services.reply_service.add('雑談してる暇があったら麻雀の勉強をしましょう')
+    services.reply_service.add_text('雑談してる暇があったら麻雀の勉強をしましょう')
 
 # routes/text.method
 def routing_by_method(method):
@@ -93,8 +93,8 @@ def routing_by_method(method):
         services.mode_service.update(services.mode_service.modes.wait)
     # help
     elif method == Methods.help.name:
-        services.reply_service.add('使い方は明日書きます。')
-        services.reply_service.add('\n'.join(['_' + e.name for e in Methods]))
+        services.reply_service.add_text('使い方は明日書きます。')
+        services.reply_service.add_text('\n'.join(['_' + e.name for e in Methods]))
     # setting
     elif method == Methods.setting.name:
         services.config_service.reply()
@@ -118,4 +118,4 @@ def routing_by_method(method):
         services.results_service.finish()
     # github
     elif method == Methods.github.name:
-        services.reply_service.add('https://github.com/bbladr/mahjong-manager-bot')
+        services.reply_service.add_text('https://github.com/bbladr/mahjong-manager-bot')

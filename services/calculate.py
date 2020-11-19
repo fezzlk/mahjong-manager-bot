@@ -5,10 +5,10 @@ class CalculateService:
 
     def calculate(self, points):
         if len(points) != 4:
-            self.services.reply_service.add('四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
+            self.services.reply_service.add_text('四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
             return
         if int(sum(points.values())/1000) != 100:
-            self.services.reply_service.add(f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
+            self.services.reply_service.add_text(f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
             return
         calc_result = self.run_calculate(points)
         self.services.results_service.add(calc_result)

@@ -7,7 +7,7 @@ class ConfigService:
 
     def reply(self):
         s = [f'{key}: {value}' for key, value in self.configs.items()]
-        self.services.reply_service.add('[設定]\n' + '\n'.join(s))
+        self.services.reply_service.add_text('[設定]\n' + '\n'.join(s))
 
     def get_rate(self):
         return int(self.configs['レート'][1:]) * 10
