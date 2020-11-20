@@ -15,6 +15,7 @@ class AppService:
     def __init__(self):
         self.line_bot_api = line_bot_api
         self.req_user_id = None
+        self.req_room_id = None
 
     def get_random_hai(self):
         now = datetime.datetime.now()

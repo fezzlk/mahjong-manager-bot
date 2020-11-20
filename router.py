@@ -1,6 +1,7 @@
 from enum import Enum
 
 class Methods(Enum):
+    start = 'start'
     exit = 'exit'
     input = 'input'
     mode = 'mode'
@@ -20,32 +21,38 @@ services = Services()
 
 ### routes/event
 def follow(event):
-    services.app_service.req_user_id = event.source.user_id
+    set_req_info(event)
     profile = services.app_service.line_bot_api.get_profile(services.app_service.req_user_id)
     services.reply_service.add_text(f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は{profile.display_name}さんの快適な麻雀生活をサポートします。')
     services.reply_service.reply(event)
     services.rich_menu_service.create_and_link('personal')
 
 def join(event):
-    services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。\n参加メンバーを登録をします。(編集したい場合は_members)')
-    # services.members_service.init(event)
+    set_req_info(event)
+    services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。')
+    services.room_service.register()
     services.reply_service.reply(event)
 
 def textMessage(event):
-    services.app_service.req_user_id = event.source.user_id
+    set_req_info(event)
     routing_by_text(event)
     services.reply_service.reply(event)
 
 def imageMessage(event):
-    services.app_service.req_user_id = event.source.user_id
+    set_req_info(event)
     services.reply_service.add_text('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
     services.reply_service.reply(event)
 
 def postback(event):
-    services.app_service.req_user_id = event.source.user_id
+    set_req_info(event)
     method = event.postback.data[1:]
     routing_by_method(method)
     services.reply_service.reply(event)
+
+def set_req_info(event):
+    services.app_service.req_user_id = event.source.user_id
+    if event.source.type == 'room':
+        services.app_service.req_room_id = event.source.room_id
 
 ### routes/text
 def routing_by_text(event):
@@ -55,11 +62,11 @@ def routing_by_text(event):
         routing_by_method(text[1:])
         return
 
-    if services.mode_service.mode == services.mode_service.modes.input:
+    if services.room_service.get_mode() == services.room_service.modes.input:
         services.points_service.add_by_text(text)
         return
     
-    if services.mode_service.mode == services.mode_service.modes.delete:
+    if services.room_service.get_mode() == services.room_service.modes.delete:
         if text.isdigit() == False:
             services.reply_service.add_text('数字で指定してください。')
             return
@@ -78,19 +85,22 @@ def routing_by_text(event):
 
 # routes/text.method
 def routing_by_method(method):
+    # start
+    if method == Methods.start.name:
+        services.reply_service.add_start_menu()
     # input
     if method == Methods.input.name:
         services.points_service.reset()
-        services.mode_service.update(services.mode_service.modes.input)
+        services.room_service.chmod(services.room_service.modes.input)
     # calculate
     elif method == Methods.calc.name:
         services.calculate_service.calculate(services.points_service.points)
     # mode
     elif method == Methods.mode.name:
-        services.mode_service.reply()
+        services.room_service.reply_mode()
     # exit
     elif method == Methods.exit.name:
-        services.mode_service.update(services.mode_service.modes.wait)
+        services.room_service.chmod(services.room_service.modes.wait)
     # help
     elif method == Methods.help.name:
         services.reply_service.add_text('使い方は明日書きます。')
@@ -100,10 +110,10 @@ def routing_by_method(method):
         services.config_service.reply()
     # off
     elif method == Methods.off.name:
-        services.mode_service.update(services.mode_service.modes.off)
+        services.room_service.chmod(services.room_service.modes.off)
     # on
     elif method == Methods.on.name:
-        services.mode_service.update(services.mode_service.modes.wait)
+        services.room_service.chmod(services.room_service.modes.wait)
     # reset
     elif method == Methods.reset.name:
         services.results_service.reset()
@@ -112,7 +122,7 @@ def routing_by_method(method):
         services.results_service.reply_all()
     # delete
     elif method == Methods.delete.name:
-        services.mode_service.update(services.mode_service.modes.delete)
+        services.room_service.chmod(services.room_service.modes.delete)
     # finish
     elif method == Methods.finish.name:
         services.results_service.finish()
