@@ -2,59 +2,88 @@ class ResultsService:
 
     def __init__(self, services):
         self.services = services
-        self.results = []
 
     def add(self, result):
-        self.results.append(result)
+        room_id = self.services.app_service.req_room_id
+        results = self.services.room_service.rooms[room_id]['results']
+        results.append(result)
 
     def drop(self, i):
+        room_id = self.services.app_service.req_room_id
+        results = self.services.room_service.rooms[room_id]['results']
         if self.count() > i:
-            self.results.pop(i)
+            results.pop(i)
 
     def reply_current_result(self):
+        room_id = self.services.app_service.req_room_id
+        results = self.services.room_service.rooms[room_id]['results']
         self.services.reply_service.add_text(f'一半荘お疲れ様でした。結果を表示します。')
-        self.services.reply_service.add_text('\n'.join([f'{user}: {point}' for user, point in self.results[-1].items()]))
+        self.services.reply_service.add_text('\n'.join([f'{user}: {point}' for user, point in results[-1].items()]))
         self.services.reply_service.add_text('今回の結果に一喜一憂せず次の戦いに望んでください。')
 
     def count(self):
-        return len(self.results)
+        room_id = self.services.app_service.req_room_id
+        results = self.services.room_service.rooms[room_id]['results']
+        return len(results)
 
     def reset(self):
-        self.results = []
-        self.services.reply_service.add_text('結果を全て削除しました。')
+        room_id = self.services.app_service.req_room_id
+        self.services.room_service.rooms[room_id]['results'] = []
+        self.services.reply_service.add_text('今回の対戦結果を全て削除しました。')
 
     def reply_all(self):
+        room_id = self.services.app_service.req_room_id
+        results = self.services.room_service.rooms[room_id]['results']
         count = self.count()
         if count == 0:
             self.services.reply_service.add_text('まだ結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
         self.services.reply_service.add_text('これまでの対戦結果です。(結果を指定して取り消したい場合は _delete, 全削除したい場合は _reset)')
         for i in range(count):
-            self.services.reply_service.add_text(f'第{i+1}回\n' + '\n'.join([f'{user}: {point}' for user, point in self.results[i].items()]))
+            self.services.reply_service.add_text(f'第{i+1}回\n' + '\n'.join([f'{user}: {point}' for user, point in results[i].items()]))
         sum = self.get_sum()
         self.services.reply_service.add_text('総計\n' + '\n'.join([f'{user}: {point}' for user, point in sum.items()]))
         
     def finish(self):
+        room_id = self.services.app_service.req_room_id
+        results = self.services.room_service.rooms[room_id]['results']
         count = self.count()
         if count == 0:
             self.services.reply_service.add_text('まだ結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
-        self.services.matches_service.add(self.results)
+        self.services.matches_service.add(results)
         self.services.reply_service.add_text('今回の総計を表示します。')
         self.reply_sum_and_money()
 
     def reply_sum_and_money(self, results=None):
         if results == None:
-            results = self.results
+            room_id = self.services.app_service.req_room_id
+            results = self.services.room_service.rooms[room_id]['results']
+            results = results
         sum = self.get_sum(results)
         self.services.reply_service.add_text('\n'.join([f'{user}: {point}' for user, point in sum.items()]))
         self.services.reply_service.add_text('\n'.join([f'{user}: {point * self.services.config_service.get_rate()}円' for user, point in sum.items()]))
 
     def get_sum(self, results=None):
         if results == None:
-            results = self.results
+            room_id = self.services.app_service.req_room_id
+            results = self.services.room_service.rooms[room_id]['results']
+            results = results
         sum_result = {}
         for res in results:
             for name, point in res.items():
+                if not name in sum_result.keys():
+                    sum_result[name] = 0    
                 sum_result[name] += point
         return sum_result
+
+    def delete_by_text(self, text):
+        if text.isdigit() == False:
+            self.services.reply_service.add_text('数字で指定してください。')
+            return
+        i = int(text)
+        if 0 < i & self.services.results_service.count() <= i:
+            self.services.results_service.drop(i-1)
+            self.services.reply_service.add_text(f'{i}回目の結果を削除しました。')
+            return
+        self.services.reply_service.add_text('指定された結果が存在しません。')

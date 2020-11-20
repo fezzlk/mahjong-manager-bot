@@ -3,16 +3,20 @@ class CalculateService:
     def __init__(self, services):
         self.services = services
 
-    def calculate(self, points):
+    def calculate(self, points=None):
+        if points == None:
+            room_id = self.services.app_service.req_room_id
+            points = self.services.room_service.rooms[room_id]['points']
         if len(points) != 4:
             self.services.reply_service.add_text('四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
             return
-        if int(sum(points.values())/1000) != 100:
+        if int(sum(points.values())/100) != 1000:
             self.services.reply_service.add_text(f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
             return
         calc_result = self.run_calculate(points)
         self.services.results_service.add(calc_result)
         self.services.results_service.reply_current_result()
+        self.services.points_service.reset()
 
     def run_calculate(self, points):
         sorted_points = sorted(points.items(), key=lambda x:x[1])

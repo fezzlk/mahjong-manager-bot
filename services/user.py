@@ -13,5 +13,5 @@ class UserService:
     def register(self):
         user_id = self.services.app_service.req_user_id
         self.users[user_id] = {}
-        self.users[user_id].mode = self.modes.wait
-        self.users[user_id].history = []
+        self.users[user_id]['mode'] = self.modes.wait
+        self.users[user_id]['history'] = []

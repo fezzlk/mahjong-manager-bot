@@ -15,6 +15,7 @@ class Methods(Enum):
     delete = 'delete'
     finish = 'finish'
     github = 'github'
+    register = 'register'
 
 from services import Services
 services = Services()
@@ -62,22 +63,22 @@ def routing_by_text(event):
         routing_by_method(text[1:])
         return
 
+    # routing by mode
+    # inpuy mode
     if services.room_service.get_mode() == services.room_service.modes.input:
         services.points_service.add_by_text(text)
         return
     
+    # delete mode
     if services.room_service.get_mode() == services.room_service.modes.delete:
-        if text.isdigit() == False:
-            services.reply_service.add_text('数字で指定してください。')
-            return
-        i = int(text)
-        if 0 < i & services.results_service.count() <= i:
-            services.results_service.drop(i-1)
-            services.reply_service.add_text(f'{i}回目の結果を削除しました。')
-            return
-        services.reply_service.add_text('指定された結果が存在しません。')
+        services.results_service.delete_by_text(text)
         return
 
+    # off mode
+    if services.room_service.get_mode() == services.room_service.modes.input:
+        return
+
+    # wait mode
     if prefix == '_':
         services.reply_service.add_text('使い方がわからない場合はメニューの中の「使い方」を押してください。')
         return
@@ -88,13 +89,16 @@ def routing_by_method(method):
     # start
     if method == Methods.start.name:
         services.reply_service.add_start_menu()
+    # register
+    if method == Methods.register.name:
+        services.room_service.register()
     # input
     if method == Methods.input.name:
         services.points_service.reset()
         services.room_service.chmod(services.room_service.modes.input)
     # calculate
     elif method == Methods.calc.name:
-        services.calculate_service.calculate(services.points_service.points)
+        services.calculate_service.calculate()
     # mode
     elif method == Methods.mode.name:
         services.room_service.reply_mode()

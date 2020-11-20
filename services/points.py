@@ -2,16 +2,19 @@ class PointsService:
 
     def __init__(self, services):
         self.services = services
-        self.points = {}
 
     def reply(self):
-        if len(self.points) == 0:
+        room_id = self.services.app_service.req_room_id
+        points = self.services.room_service.rooms[room_id]['points']
+        if len(points) == 0:
             self.services.reply_service.add_text('点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
             return
-        result = [f'{user}: {point}' for user, point in self.points.items()]
+        result = [f'{user}: {point}' for user, point in points.items()]
         self.services.reply_service.add_text("\n".join(result))
 
     def add_by_text(self, text):
+        room_id = self.services.app_service.req_room_id
+        points = self.services.room_service.rooms[room_id]['points']
         profile = self.services.app_service.line_bot_api.get_profile(self.services.app_service.req_user_id)
         target_user = profile.display_name
         if text[0] == '@':
@@ -20,8 +23,8 @@ class PointsService:
             if point == 'delete':
                 self.drop(target_user)
                 self.reply()
-                if len(self.points) == 4:
-                    self.services.calculate_service.calculate(self.points)
+                if len(points) == 4:
+                    self.services.calculate_service.calculate(points)
                 return
         else:
             point = text.replace(',', '')
@@ -39,9 +42,9 @@ class PointsService:
         
         self.add(target_user, int(point))
         self.reply()
-        if len(self.points) == 4:
-            self.services.calculate_service.calculate(self.points)
-        elif len(self.points) > 4:
+        if len(points) == 4:
+            self.services.calculate_service.calculate(points)
+        elif len(points) > 4:
             self.services.reply_service.add_text('5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
 
     def get_point_with_target_user(self, text):
@@ -52,11 +55,16 @@ class PointsService:
             return 'delete', s[0]
 
     def add(self, name, point):
-        self.points[name] = point
+        room_id = self.services.app_service.req_room_id
+        points = self.services.room_service.rooms[room_id]['points']
+        points[name] = point
 
     def drop(self, name):
-        if name in self.points.keys():
-            self.points.pop(name)
+        room_id = self.services.app_service.req_room_id
+        points = self.services.room_service.rooms[room_id]['points']
+        if name in points.keys():
+            points.pop(name)
 
     def reset(self):
-        self.points = {}
+        room_id = self.services.app_service.req_room_id
+        points = self.services.room_service.rooms[room_id]['points'] = {}
