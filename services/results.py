@@ -1,9 +1,15 @@
+"""results"""
+
+
 class ResultsService:
+    """Result service"""
 
     def __init__(self, services):
         self.services = services
 
     def add(self, result):
+        """add"""
+
         room_id = self.services.app_service.req_room_id
         results = self.services.room_service.rooms[room_id]['results']
         results.append(result)
@@ -44,7 +50,8 @@ class ResultsService:
             'これまでの対戦結果です。(結果を指定して取り消したい場合は _delete, 全削除したい場合は _reset)')
         for i in range(count):
             self.services.reply_service.add_text(
-                f'第{i+1}回\n' + '\n'.join([f'{user}: {point}' for user, point in results[i].items()]))
+                f'第{i+1}回\n'
+                + '\n'.join([f'{user}: {point}' for user, point in results[i].items()]))
         sum = self.get_sum()
         self.services.reply_service.add_text(
             '総計\n' + '\n'.join([f'{user}: {point}' for user, point in sum.items()]))
@@ -70,7 +77,8 @@ class ResultsService:
         self.services.reply_service.add_text(
             '\n'.join([f'{user}: {point}' for user, point in sum.items()]))
         self.services.reply_service.add_text('\n'.join(
-            [f'{user}: {point * self.services.config_service.get_rate()}円' for user, point in sum.items()]))
+            [f'{user}: {point * self.services.config_service.get_rate()}円'
+                for user, point in sum.items()]))
 
     def get_sum(self, results=None):
         if results == None:

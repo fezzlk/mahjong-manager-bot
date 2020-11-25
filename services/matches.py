@@ -1,10 +1,15 @@
+"""matches"""
+
+
 class MatchesService:
+    """matches service"""
 
     def __init__(self, services):
         self.services = services
         self.matches = []
 
     def add(self, results):
+        """add"""
         self.matches.append(results)
 
     def drop(self, i):

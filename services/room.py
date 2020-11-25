@@ -1,7 +1,11 @@
+"""room"""
+
 from enum import Enum
 
 
 class Modes(Enum):
+    """mode"""
+
     wait = 'wait'
     input = 'input'
     off = 'off'
@@ -9,6 +13,7 @@ class Modes(Enum):
 
 
 class RoomService:
+    """room service"""
 
     def __init__(self, services):
         self.services = services
@@ -16,6 +21,8 @@ class RoomService:
         self.rooms = {}
 
     def register(self):
+        """register"""
+
         room_id = self.services.app_service.req_room_id
         if room_id:
             self.rooms[room_id] = {}
@@ -32,7 +39,8 @@ class RoomService:
         self.rooms[room_id]['mode'] = mode
         if self.rooms[room_id]['mode'] == self.modes.input:
             self.services.reply_service.add_text(
-                f'第{self.services.results_service.count()+1}回戦お疲れ様です。各自点数を入力してください。（同点の場合は上家が高くなるように数点追加してください）')
+                f'第{self.services.results_service.count()+1}回戦お疲れ様です。各自点数を入力してください。\
+                （同点の場合は上家が高くなるように数点追加してください）')
             return
         elif self.rooms[room_id]['mode'] == self.modes.wait:
             self.services.reply_service.add_text(

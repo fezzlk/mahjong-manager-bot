@@ -1,3 +1,5 @@
+"""app"""
+
 import os
 import re
 import random
@@ -13,6 +15,7 @@ HAI = [k+'萬' for k in KANSUJI] + [k+'筒' for k in KANSUJI] + \
 
 
 class AppService:
+    """app service"""
 
     def __init__(self):
         self.line_bot_api = line_bot_api

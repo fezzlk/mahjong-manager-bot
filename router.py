@@ -1,8 +1,12 @@
+"""router"""
+
 from services import Services
 from enum import Enum
 
 
 class Methods(Enum):
+    """Methods"""
+
     start = 'start'
     exit = 'exit'
     input = 'input'
@@ -22,10 +26,10 @@ class Methods(Enum):
 
 services = Services()
 
-# routes/event
-
 
 def follow(event):
+    """follow event"""
+
     set_req_info(event)
     profile = services.app_service.line_bot_api.get_profile(
         services.app_service.req_user_id)
@@ -36,6 +40,8 @@ def follow(event):
 
 
 def join(event):
+    """join event"""
+
     set_req_info(event)
     services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。')
     services.room_service.register()
@@ -43,18 +49,24 @@ def join(event):
 
 
 def textMessage(event):
+    """receive text message event"""
+
     set_req_info(event)
     routing_by_text(event)
     services.reply_service.reply(event)
 
 
 def imageMessage(event):
+    """receive image message event"""
+
     set_req_info(event)
     services.reply_service.add_text('画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
     services.reply_service.reply(event)
 
 
 def postback(event):
+    """postback event"""
+
     set_req_info(event)
     method = event.postback.data[1:]
     routing_by_method(method)
@@ -62,14 +74,16 @@ def postback(event):
 
 
 def set_req_info(event):
+    """set request info"""
+
     services.app_service.req_user_id = event.source.user_id
     if event.source.type == 'room':
         services.app_service.req_room_id = event.source.room_id
 
-# routes/text
-
 
 def routing_by_text(event):
+    """routing by text"""
+
     text = event.message.text
     prefix = text[0]
     if (prefix == '_') & (text[1:] in [e.name for e in Methods]):
@@ -97,10 +111,10 @@ def routing_by_text(event):
         return
     services.reply_service.add_text('雑談してる暇があったら麻雀の勉強をしましょう')
 
-# routes/text.method
-
 
 def routing_by_method(method):
+    """routing by method"""
+
     # start
     if method == Methods.start.name:
         services.reply_service.add_start_menu()

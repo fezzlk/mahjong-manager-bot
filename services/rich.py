@@ -1,3 +1,5 @@
+"""rich mecu"""
+
 from linebot.models import (
     RichMenu,
     RichMenuSize,
@@ -8,6 +10,7 @@ from linebot.models import (
 
 
 class RichMenuService:
+    """rich menu service"""
 
     def __init__(self, services):
         self.menu = None

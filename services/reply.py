@@ -1,3 +1,5 @@
+"""reply"""
+
 from linebot.models import (
     TextSendMessage,
     TemplateSendMessage,
@@ -9,6 +11,7 @@ from linebot.models import (
 
 
 class ReplyService:
+    """reply service"""
 
     def __init__(self, services):
         self.services = services
@@ -16,6 +19,8 @@ class ReplyService:
         self.buttons = []
 
     def add_text(self, text):
+        """add"""
+
         self.texts.append(text)
 
     def reply(self, event):

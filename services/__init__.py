@@ -1,3 +1,4 @@
+"""services"""
 from .app import AppService
 from .calculate import CalculateService
 from .config import ConfigService
@@ -11,6 +12,7 @@ from .user import UserService
 
 
 class Services:
+    """services"""
 
     def __init__(self):
         self.app_service = AppService()

@@ -1,4 +1,8 @@
+"""config"""
+
+
 class ConfigService:
+    """config service"""
 
     def __init__(self, services):
         self.services = services

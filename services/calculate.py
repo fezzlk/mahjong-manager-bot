@@ -1,10 +1,15 @@
+"""calculate"""
+
+
 class CalculateService:
+    """calculate service"""
 
     def __init__(self, services):
         self.services = services
 
     def calculate(self, points=None):
-        if points == None:
+        """calculate"""
+        if points is None:
             room_id = self.services.app_service.req_room_id
             points = self.services.room_service.rooms[room_id]['points']
         if len(points) != 4:
