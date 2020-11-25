@@ -2,7 +2,7 @@ from enum import Enum
 
 class Modes(Enum):
     wait = 'wait'
-    
+
 class UserService:
 
     def __init__(self, services):
