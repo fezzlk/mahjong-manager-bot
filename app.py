@@ -1,3 +1,9 @@
+"""root"""
+
+import set_local_env
+from setting import Engine
+from models import BaseModel, UserModel
+
 import router
 import os
 from flask import Flask, request, abort, logging, g
@@ -11,10 +17,41 @@ from linebot.models import (
     PostbackEvent,
 )
 from flask_sqlalchemy import SQLAlchemy
+import psycopg2
+import psycopg2.extras
 
-# import original module
-import local_env
-local_env.set_env()
+from sqlalchemy import Column, String, Integer, create_engine, MetaData, DECIMAL, DATETIME
+from sqlalchemy.ext.declarative import declarative_base
+
+DATABASE_URI = os.environ["DATABASE_URL"]
+# Base = declarative_base()
+# engine = create_engine(DATABASE_URI,
+#                        encoding="utf-8", echo=False)
+# metadata = MetaData(engine)
+# # create table
+# Base.metadata.create_all(engine)
+
+
+# class User(Base):
+#     __tablename__ = "user"
+#     __table_args__ = {"mysql_engine": "InnoDB"}
+#     id = Column("id", Integer, primary_key=True, autoincrement=True)
+#     name = Column("name", String(255))
+#     created = Column("created", DATETIME, default=datetime.now, nullable=False)
+#     modified = Column("modified", DATETIME,
+#                       default=datetime.now, nullable=False)
+
+#     def __init__(self, name):
+#         self.name = name
+#         now = datetime.now()
+#         self.created = now
+#         self.modified = now
+
+# テーブルの作成
+BaseModel.metadata.create_all(bind=Engine)
+
+# # テーブルの削除
+# BaseModel.metadata.drop_all(Engine)
 
 YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
@@ -22,25 +59,74 @@ handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 app = Flask(__name__)
 logger = logging.create_logger(app)
 
+# DB_NAME = os.environ['DB_NAME']
+# DB_USER = os.environ['DB_USER']
+# DB_PASSWORD = os.environ['DB_PASSWORD']
+# DB_PORT = os.environ['DB_PORT']
+# DB_HOST = os.environ['DB_HOST']
+# DATABASE_URI = os.environ["DATABASE_URL"]
 
-db_uri = "sqlite:///" + os.path.join(app.root_path, 'flasknote.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 db = SQLAlchemy(app)
 
 
-class Entry(db.Model):
-    __tablename__ = "entries"
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(), nullable=False)
-    body = db.Column(db.String(), nullable=False)
+# # モデル作成
+# class User(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(80), unique=True)
+#     email = db.Column(db.String(80), unique=True)
 
-# server root
+#     def __init__(self, username, email):
+#         self.username = username
+#         self.email = email
+
+#     def __repr__(self):
+#         return '<User %r>' % self.username
+
+
+# def get_connection():
+#     return psycopg2.connect(
+#         dbname=DB_NAME,
+#         user=DB_USER,
+#         password=DB_PASSWORD,
+#         port=DB_PORT,
+#         host=DB_HOST
+#     )
+
+
+# def get_cursor():
+#     with get_connection() as conn:
+#         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+#             return cur
+
+
+# def create_user_table():
+#     with get_cursor() as cur:
+#         query = "CREATE TABLE user \
+#             (id char(4) not null, \
+#             name text not null, \
+#             food text not null, \
+#             PRIMARY KEY(id));"
+#         cur.execute(query)
+
+# def create_user_table():
+#     with get_connection() as conn:
+#         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+#             query = "CREATE TABLE USER(\
+#                 id char(4) not null,\
+#                 name text not null,\
+#                 food text not null,\
+#                 PRIMARY KEY(id)\
+#                 );"
+#             cur.execute(query)
 
 
 @app.route('/')
 def hello_world():
-    entries = Entry.query.all()
-    print(entries)
+    # print(create_user_table())
+    user = UserModel(name='name')
+    db.session.add(user)
+    db.session.commit()
     return "hello world."
 
 
