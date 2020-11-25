@@ -67,4 +67,4 @@ class PointsService:
 
     def reset(self):
         room_id = self.services.app_service.req_room_id
-        points = self.services.room_service.rooms[room_id]['points'] = {}
+        self.services.room_service.rooms[room_id]['points'] = {}
