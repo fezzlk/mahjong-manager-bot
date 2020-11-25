@@ -1,7 +1,9 @@
 from enum import Enum
 
+
 class Modes(Enum):
     wait = 'wait'
+
 
 class UserService:
 
