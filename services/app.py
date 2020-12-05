@@ -21,6 +21,10 @@ class AppService:
         self.line_bot_api = line_bot_api
         self.req_user_id = None
         self.req_room_id = None
+        self.db = None
+
+    def set_db(self, db):
+        self.db = db
 
     def get_random_hai(self):
         now = datetime.datetime.now()

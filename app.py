@@ -1,11 +1,10 @@
-"""root"""
+"""application root"""
 
-import set_local_env
+import set_local_env  # for dev
 
-from setting import Engine
-from models import BaseModel, UserModel
+from db_setting import Engine
+from models import Base, Users
 
-import router
 import os
 from flask import Flask, request, abort, logging, g
 from linebot import LineBotApi, WebhookHandler, exceptions
@@ -18,29 +17,40 @@ from linebot.models import (
     PostbackEvent,
 )
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import *
+# from migrate import *
+from router import Router
+from services import Services
 
 # テーブルの作成
-BaseModel.metadata.create_all(bind=Engine)
+# Base.metadata.drop_all(bind=Engine)
+Base.metadata.create_all(bind=Engine)
 
 YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
 app = Flask(__name__)
 logger = logging.create_logger(app)
-
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 db = SQLAlchemy(app)
+
+services = Services()
+services.app_service.set_db(db)
+router = Router(services)
 
 
 @app.route('/')
 def hello_world():
-    # print(create_user_table())
-    user = UserModel(name='name')
-    db.session.add(user)
-    db.session.commit()
-    users = db.session.query(UserModel).all()
-    for user in users:
-        print(user.name)
+    # meta = MetaData(bind=Engine)
+    # mytable = Table('users', meta, autoload=True)
+    # Column('display_name', VARCHAR(255)).create(mytable)
+    # users = db.session.query(Users).all()
+    # for user in users:
+    #     print(user.name)
+    # target = db.session.query(Users).get(1)
+    # db.session.delete(target)
+    # # db.session.query(Users).delete()
+    # db.session.commit()
     return "hello world."
 
 

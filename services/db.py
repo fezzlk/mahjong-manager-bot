@@ -13,3 +13,9 @@
 # DATABASE_URL = os.environ['DATABASE_URL']
 # import psycopg2
 #
+# user = Users(name='name')
+# db.session.add(user)
+# db.session.commit()
+# users = db.session.query(UserModel).all()
+# for user in users:
+#     print(user.name)
