@@ -3,8 +3,17 @@
 from enum import Enum
 
 
-class Commands(Enum):
-    """Commands"""
+class UCommands(Enum):
+    """UCommands"""
+
+    exit = 'exit'
+    mode = 'mode'
+    help = 'help'
+    github = 'github'
+
+
+class RCommands(Enum):
+    """RCommands"""
 
     start = 'start'
     exit = 'exit'
@@ -13,14 +22,11 @@ class Commands(Enum):
     help = 'help'
     calc = 'calculator'
     setting = 'settings'
-    off = 'off'
-    on = 'on'
     reset = 'reset'
     results = 'results'
     delete = 'delete'
     finish = 'finish'
     github = 'github'
-    register = 'register'
 
 
 class Router:
@@ -32,8 +38,7 @@ class Router:
     def follow(self, event):
         """follow event"""
 
-        self.set_req_info(event)
-        self.services.app_service.req_user_id = event.source.user_id
+        self.services.app_service.set_req_info(event)
         profile = self.services.app_service.line_bot_api.get_profile(
             self.services.app_service.req_user_id)
         self.services.user_service.register(profile)
@@ -44,25 +49,34 @@ class Router:
         self.services.reply_service.reply(event)
         self.services.rich_menu_service.create_and_link('personal')
 
+    def unfollow(self, event):
+        """unfollow event"""
+        self.services.app_service.set_req_info(event)
+        self.services.user_service.delete(
+            self.services.app_service.req_user_id
+        )
+
     def join(self, event):
         """join event"""
 
-        self.set_req_info(event)
+        self.services.app_service.set_req_info(event)
         self.services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。')
         self.services.room_service.register()
         self.services.reply_service.reply(event)
 
     def textMessage(self, event):
         """receive text message event"""
-
-        set_req_info(event)
-        routing_by_text(event)
+        self.services.app_service.set_req_info(event)
+        if self.services.app_service.req_room_id != None:
+            self.routing_in_room_by_text(event)
+        else:
+            self.routing_by_text(event)
         self.services.reply_service.reply(event)
 
     def imageMessage(self, event):
         """receive image message event"""
 
-        set_req_info(event)
+        self.services.app_service.set_req_info(event)
         self.services.reply_service.add_text(
             '画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
         self.services.reply_service.reply(event)
@@ -70,40 +84,71 @@ class Router:
     def postback(self, event):
         """postback event"""
 
-        set_req_info(event)
+        self.services.app_service.set_req_info(event)
         method = event.postback.data[1:]
-        routing_by_method(method)
+        self.routing_by_method(method)
         self.services.reply_service.reply(event)
 
-    def set_req_info(self, event):
-        """set request info"""
-
-        self.services.app_service.req_user_id = event.source.user_id
-        if event.source.type == 'room':
-            services.app_service.req_room_id = event.source.room_id
-
     def routing_by_text(self, event):
-        """routing by text"""
+        """routing by text for personal chat"""
 
         text = event.message.text
         prefix = text[0]
-        if (prefix == '_') & (text[1:] in [e.name for e in Commands]):
-            routing_by_method(text[1:])
+        if (prefix == '_') & (text[1:] in [e.name for e in UCommands]):
+            self.routing_by_method(text[1:])
             return
 
         # routing by mode
-        # inpuy mode
-        if self.services.room_service.get_mode() == self.services.room_service.modes.input:
+        # wait mode
+        if prefix == '_':
+            self.services.reply_service.add_text(
+                '使い方がわからない場合はメニューの中の「使い方」を押してください。')
+            return
+        # the other
+        self.services.reply_service.add_text('雑談してる暇があったら麻雀の勉強をしましょう')
+
+    def routing_by_method(self, method):
+        """routing by method for personal chat"""
+
+        # mode
+        if method == UCommands.mode.name:
+            mode = self.services.user_service.get_mode()
+            self.services.reply_service.add_text(mode)
+        # exit
+        elif method == UCommands.exit.name:
+            self.services.user_service.chmod(
+                self.services.user_service.modes.wait
+            )
+        # help
+        elif method == UCommands.help.name:
+            self.services.reply_service.add_text('使い方は明日書きます。')
+            self.services.reply_service.add_text(
+                '\n'.join(['_' + e.name for e in UCommands]))
+        # github
+        elif method == UCommands.github.name:
+            self.services.reply_service.add_text(
+                'https://github.com/bbladr/mahjong-manager-bot')
+
+    def routing_in_room_by_text(self, event):
+        """routing by text"""
+        self.services.room_service.register()
+
+        text = event.message.text
+        prefix = text[0]
+        if (prefix == '_') & (text[1:] in [e.name for e in RCommands]):
+            self.routing_in_room_by_method(text[1:])
+            return
+
+        current_mode = self.services.room_service.get_mode()
+        # routing by mode
+        # input mode
+        if current_mode == self.services.room_service.modes.input.value:
             self.services.points_service.add_by_text(text)
             return
 
         # delete mode
-        if self.services.room_service.get_mode() == self.services.room_service.modes.delete:
+        if current_mode == self.services.room_service.modes.delete.value:
             self.services.results_service.delete_by_text(text)
-            return
-
-        # off mode
-        if self.services.room_service.get_mode() == self.services.room_service.modes.input:
             return
 
         # wait mode
@@ -111,58 +156,53 @@ class Router:
             self.services.reply_service.add_text(
                 '使い方がわからない場合はメニューの中の「使い方」を押してください。')
             return
-        self.services.reply_service.add_text('雑談してる暇があったら麻雀の勉強をしましょう')
 
-    def routing_by_method(self, method):
+    def routing_in_room_by_method(self, method):
         """routing by method"""
 
         # start
-        if method == Commands.start.name:
+        if method == RCommands.start.name:
             self.services.reply_service.add_start_menu()
-        # register
-        if method == Commands.register.name:
-            self.services.room_service.register()
         # input
-        if method == Commands.input.name:
-            self.services.points_service.reset()
-            self.services.room_service.chmod(services.room_service.modes.input)
+        elif method == RCommands.input.name:
+            self.services.results_service.add()
+            self.services.room_service.chmod(
+                self.services.room_service.modes.input
+            )
         # calculate
-        elif method == Commands.calc.name:
+        elif method == RCommands.calc.name:
             self.services.calculate_service.calculate()
         # mode
-        elif method == Commands.mode.name:
-            self.services.room_service.reply_mode()
+        elif method == RCommands.mode.name:
+            mode = self.services.room_service.get_mode()
+            self.services.reply_service.add_text(mode)
         # exit
-        elif method == Commands.exit.name:
-            self.services.room_service.chmod(services.room_service.modes.wait)
+        elif method == RCommands.exit.name:
+            self.services.room_service.chmod(
+                self.services.room_service.modes.wait
+            )
         # help
-        elif method == Commands.help.name:
+        elif method == RCommands.help.name:
             self.services.reply_service.add_text('使い方は明日書きます。')
             self.services.reply_service.add_text(
-                '\n'.join(['_' + e.name for e in Commands]))
+                '\n'.join(['_' + e.name for e in RCommands]))
         # setting
-        elif method == Commands.setting.name:
+        elif method == RCommands.setting.name:
             self.services.config_service.reply()
-        # off
-        elif method == Commands.off.name:
-            self.services.room_service.chmod(services.room_service.modes.off)
-        # on
-        elif method == Commands.on.name:
-            self.services.room_service.chmod(services.room_service.modes.wait)
         # reset
-        elif method == Commands.reset.name:
+        elif method == RCommands.reset.name:
             self.services.results_service.reset()
         # results
-        elif method == Commands.results.name:
+        elif method == RCommands.results.name:
             self.services.results_service.reply_all()
         # delete
-        elif method == Commands.delete.name:
+        elif method == RCommands.delete.name:
             self.services.room_service.chmod(
                 services.room_service.modes.delete)
         # finish
-        elif method == Commands.finish.name:
+        elif method == RCommands.finish.name:
             self.services.results_service.finish()
         # github
-        elif method == Commands.github.name:
+        elif method == RCommands.github.name:
             self.services.reply_service.add_text(
                 'https://github.com/bbladr/mahjong-manager-bot')

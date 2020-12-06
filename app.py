@@ -10,6 +10,7 @@ from flask import Flask, request, abort, logging, g
 from linebot import LineBotApi, WebhookHandler, exceptions
 from linebot.models import (
     FollowEvent,
+    UnfollowEvent,
     JoinEvent,
     MessageEvent,
     TextMessage,
@@ -71,6 +72,12 @@ def callback():
 def handle_follow(event):
     logger.info('follow')
     router.follow(event)
+
+
+@handler.add(UnfollowEvent)
+def handle_unfollow(event):
+    logger.info('unfollow')
+    router.unfollow(event)
 
 
 @handler.add(JoinEvent)

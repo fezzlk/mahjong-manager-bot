@@ -16,7 +16,6 @@ class UserService:
     def __init__(self, services):
         self.services = services
         self.modes = Modes
-        self.users = {}
 
     def register(self, profile):
         """register"""
@@ -31,7 +30,43 @@ class UserService:
         self.services.app_service.db.session.add(user)
         self.services.app_service.db.session.commit()
 
-        # user_id = self.services.app_service.req_user_id
-        # self.users[user_id] = {}
-        # self.users[user_id]['mode'] = self.modes.wait
-        # self.users[user_id]['history'] = []
+    def delete(self, user_id):
+        """delete"""
+        self.services.app_service.db.session.query(Users).\
+            filter(Users.user_id == user_id).\
+            delete()
+        self.services.app_service.db.session.commit()
+
+    def update(self, profile):
+        target = self.services.app_service.db.session\
+            .query(Users).filter(Users.user_id == profile.user_id).first()
+        if target == None:
+            return
+        target.name = profile.display_name
+        self.services.app_service.db.session.commit()
+
+    def chmod(self, mode):
+        user_id = self.services.app_service.req_user_id
+        if not mode in self.modes:
+            self.services.reply_service.add_text(
+                'error: 予期しないモード変更リクエストを受け取りました。')
+            return
+
+        target = self.services.app_service.db.session\
+            .query(Users).filter(Users.user_id == user_id).first()
+        if target == None:
+            return
+        target.mode = mode.value
+        self.services.app_service.db.session.commit()
+
+        if mode == self.modes.wait:
+            self.services.reply_service.add_text(
+                f'こんにちは。快適な麻雀生活の提供に努めます。今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+
+    def get_mode(self):
+        user_id = self.services.app_service.req_user_id
+        target = self.services.app_service.db.session\
+            .query(Users).filter(Users.user_id == user_id).first()
+        if target == None:
+            return
+        return target.mode

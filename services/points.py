@@ -1,5 +1,7 @@
 """point"""
 
+import json
+
 
 class PointsService:
     """point service"""
@@ -7,23 +9,25 @@ class PointsService:
     def __init__(self, services):
         self.services = services
 
-    def reply(self):
+    def reply(self, result=None):
         """reply"""
 
-        room_id = self.services.app_service.req_room_id
-        points = self.services.room_service.rooms[room_id]['points']
+        if result is None:
+            result = self.services.results_service.get_current()
+        points = json.loads(result.points)
         if len(points) == 0:
             self.services.reply_service.add_text(
                 '点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
             return
-        result = [f'{user}: {point}' for user, point in points.items()]
-        self.services.reply_service.add_text("\n".join(result))
+        res = [f'{user}: {point}' for user, point in points.items()]
+        self.services.reply_service.add_text("\n".join(res))
 
     def add_by_text(self, text):
-        room_id = self.services.app_service.req_room_id
-        points = self.services.room_service.rooms[room_id]['points']
+        result = self.services.results_service.get_current()
+        points = json.loads(result.points)
         profile = self.services.app_service.line_bot_api.get_profile(
-            self.services.app_service.req_user_id)
+            self.services.app_service.req_user_id
+        )
         target_user = profile.display_name
         if text[0] == '@':
             point, target_user = self.get_point_with_target_user(text[1:])
@@ -49,8 +53,12 @@ class PointsService:
         if isMinus == True:
             point = '-' + point
 
-        self.add(target_user, int(point))
-        self.reply()
+        result = self.services.results_service.add_point(
+            target_user,
+            int(point),
+        )
+        self.reply(result)
+
         if len(points) == 4:
             self.services.calculate_service.calculate(points)
         elif len(points) > 4:
@@ -63,11 +71,6 @@ class PointsService:
             return s[-1], ' '.join(s[:-1])
         elif len(s) == 1:
             return 'delete', s[0]
-
-    def add(self, name, point):
-        room_id = self.services.app_service.req_room_id
-        points = self.services.room_service.rooms[room_id]['points']
-        points[name] = point
 
     def drop(self, name):
         room_id = self.services.app_service.req_room_id

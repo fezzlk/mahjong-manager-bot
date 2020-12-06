@@ -1,5 +1,9 @@
 """results"""
 
+import json
+from models import Results
+from sqlalchemy import and_
+
 
 class ResultsService:
     """Result service"""
@@ -7,12 +11,23 @@ class ResultsService:
     def __init__(self, services):
         self.services = services
 
-    def add(self, result):
+    def add(self):
         """add"""
 
         room_id = self.services.app_service.req_room_id
-        results = self.services.room_service.rooms[room_id]['results']
-        results.append(result)
+        current_match = self.services.matches_service.get_or_add_current(
+            room_id
+        )
+        result = Results(
+            room_id=room_id,
+            match_id=current_match.id,
+        )
+        self.services.app_service.db.session.add(result)
+        self.services.app_service.db.session.commit()
+
+    def update(self, result):
+        self.services.app_service.db.session.add(result)
+        self.services.app_service.db.session.commit()
 
     def drop(self, i):
         room_id = self.services.app_service.req_room_id
@@ -103,3 +118,19 @@ class ResultsService:
             self.services.reply_service.add_text(f'{i}回目の結果を削除しました。')
             return
         self.services.reply_service.add_text('指定された結果が存在しません。')
+
+    def get_current(self):
+        room_id = self.services.app_service.req_room_id
+        return self.services.app_service.db.session\
+            .query(Results).filter(and_(
+                Results.room_id == room_id,
+                Results.status == 1,
+            )).first()
+
+    def add_point(self, name, point):
+        result = self.services.results_service.get_current()
+        points = json.loads(result.points)
+        points[name] = point
+        result.points = json.dumps(points)
+        self.services.app_service.db.session.commit()
+        return result

@@ -26,6 +26,13 @@ class AppService:
     def set_db(self, db):
         self.db = db
 
+    def set_req_info(self, event):
+        """set request info"""
+
+        self.req_user_id = event.source.user_id
+        if event.source.type == 'room':
+            self.req_room_id = event.source.room_id
+
     def get_random_hai(self):
         now = datetime.datetime.now()
         random.seed(int(now.year+now.month+now.day) +

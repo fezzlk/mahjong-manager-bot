@@ -3,6 +3,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from db_setting import Base
+import json
 
 association_table_user_match = Table(
     'user_match', Base.metadata,
@@ -61,9 +62,8 @@ class Rooms(Base):
         back_populates="rooms"
     )
 
-    def __init__(self, name, user_id, mode):
-        self.name = name
-        self.user_id = user_id
+    def __init__(self, room_id, mode):
+        self.room_id = room_id
         self.mode = mode
 
 
@@ -78,11 +78,17 @@ class Results(Base):
     room_id = Column(String(255), nullable=False)
     points = Column(String(255), nullable=True)
     match_id = Column(Integer, ForeignKey("matches.id"))
+    # status:
+    # 0: disabled
+    # 1: active
+    # 2: archive
+    status = Column(Integer, nullable=False)
 
     def __init__(self, room_id, match_id):
         self.room_id = room_id
-        self.points = "{}"
+        self.points = json.dumps({})
         self.match_id = match_id
+        self.status = 1
 
 
 class Matches(Base):
@@ -93,12 +99,23 @@ class Matches(Base):
     __tablename__ = 'matches'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    room_id = Column(String(255), nullable=False)
+    result_ids = Column(String(255))
+    # status:
+    # 0: disabled
+    # 1: active
+    # 2: archive
+    status = Column(Integer, nullable=False)
     users = relationship(
         "Users",
         secondary=association_table_user_match,
         back_populates="matches"
     )
-    results = relationship("Results")
+
+    def __init__(self, room_id):
+        self.room_id = room_id
+        self.result_ids = ','.join([])
+        self.status = 1
 
 
 class Configs(Base):
@@ -108,9 +125,12 @@ class Configs(Base):
 
     __tablename__ = 'configs'
 
-    key = Column(String(255), nullable=False, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    target_id = Column(Integer, nullable=False)
+    key = Column(String(255), nullable=False)
     value = Column(String(255), nullable=False)
 
-    def __init__(self, key, value):
+    def __init__(self, target_id, key, value):
+        self.target_id = target_id
         self.key = key
         self.value = value
