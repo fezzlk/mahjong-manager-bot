@@ -27,6 +27,7 @@ class RCommands(Enum):
     delete = 'delete'
     finish = 'finish'
     github = 'github'
+    recommend = 'recommend'
 
 
 class Router:
@@ -78,7 +79,7 @@ class Router:
 
         self.services.app_service.set_req_info(event)
         self.services.reply_service.add_text(
-            '画像への返信はまだサポートされていません。開発者に寄付をすれば対応を急ぎます。')
+            '画像への返信はまだサポートされていません。開発者にお金を寄付すれば対応を急ぎます。')
         self.services.reply_service.reply(event)
 
     def postback(self, event):
@@ -86,7 +87,10 @@ class Router:
 
         self.services.app_service.set_req_info(event)
         method = event.postback.data[1:]
-        self.routing_by_method(method)
+        if self.services.app_service.req_room_id != None:
+            self.routing_in_room_by_method(method)
+        else:
+            self.routing_by_method(method)
         self.services.reply_service.reply(event)
 
     def routing_by_text(self, event):
@@ -201,8 +205,13 @@ class Router:
                 services.room_service.modes.delete)
         # finish
         elif method == RCommands.finish.name:
-            self.services.results_service.finish()
+            self.services.reply_service.add_text(
+                'この機能はまだ使えません。開発者にお金を寄付すれば対応を急ぎます。')
+            # self.services.results_service.finish()
         # github
         elif method == RCommands.github.name:
             self.services.reply_service.add_text(
                 'https://github.com/bbladr/mahjong-manager-bot')
+        elif method == RCommands.recommend.name:
+            self.services.reply_service.add_text(
+                f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')

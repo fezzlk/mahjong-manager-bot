@@ -10,8 +10,8 @@ class CalculateService:
     def calculate(self, points=None):
         """calculate"""
         if points is None:
-            room_id = self.services.app_service.req_room_id
-            points = self.services.room_service.rooms[room_id]['points']
+            result = self.services.results_service.get_current()
+            points = json.loads(result.points)
         if len(points) != 4:
             self.services.reply_service.add_text(
                 '四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
@@ -23,7 +23,6 @@ class CalculateService:
         calc_result = self.run_calculate(points)
         self.services.results_service.add(calc_result)
         self.services.results_service.reply_current_result()
-        self.services.points_service.reset()
 
     def run_calculate(self, points):
         sorted_points = sorted(points.items(), key=lambda x: x[1])

@@ -2,7 +2,7 @@
 
 import json
 from models import Results
-from sqlalchemy import and_
+from sqlalchemy import and_, desc
 
 
 class ResultsService:
@@ -125,7 +125,9 @@ class ResultsService:
             .query(Results).filter(and_(
                 Results.room_id == room_id,
                 Results.status == 1,
-            )).first()
+            ))\
+            .order_by(Results.id.desc())\
+            .first()
 
     def add_point(self, name, point):
         result = self.services.results_service.get_current()

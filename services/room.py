@@ -60,7 +60,7 @@ class RoomService:
             return
         elif mode == self.modes.wait:
             self.services.reply_service.add_text(
-                f'こんにちは。快適な麻雀生活の提供に努めます。今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+                f'始める時は「_start」と入力してください。')
             return
         elif mode == self.modes.delete:
             self.services.reply_service.add_text(
