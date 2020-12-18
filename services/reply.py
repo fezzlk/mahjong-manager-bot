@@ -60,6 +60,11 @@ class ReplyService:
                             display_text='精算',
                             data='_finish'
                         ),
+                        PostbackAction(
+                            label='その他',
+                            display_text='その他',
+                            data='_others'
+                        ),
                     ]
                 )
             )
@@ -82,6 +87,34 @@ class ReplyService:
                             label='設定変更',
                             display_text='設定変更',
                             data='_setting'
+                        ),
+                    ]
+                )
+            )
+        )
+
+    def add_settings_menu(self):
+        self.buttons.append(
+            TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='設定変更',
+                    text='どの設定を変更をしますか？',
+                    actions=[
+                        PostbackAction(
+                            label='レート',
+                            display_text='レート',
+                            data='_update_req:レート'
+                        ),
+                        PostbackAction(
+                            label='順位点',
+                            display_text='順位点',
+                            data='_update_req:順位点'
+                        ),
+                        PostbackAction(
+                            label='飛び賞',
+                            display_text='飛び賞',
+                            data='_update_req:飛び賞'
                         ),
                     ]
                 )

@@ -28,6 +28,7 @@ class RCommands(Enum):
     finish = 'finish'
     github = 'github'
     recommend = 'recommend'
+    others = 'others'
 
 
 class Router:
@@ -193,6 +194,7 @@ class Router:
         # setting
         elif method == RCommands.setting.name:
             self.services.config_service.reply()
+            self.services.reply_service.add_settings_menu()
         # reset
         elif method == RCommands.reset.name:
             self.services.results_service.reset()
@@ -215,3 +217,5 @@ class Router:
         elif method == RCommands.recommend.name:
             self.services.reply_service.add_text(
                 f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+        elif method == RCommands.others.name:
+            self.services.reply_service.add_others_menu()

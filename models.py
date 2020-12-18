@@ -77,6 +77,7 @@ class Results(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_id = Column(String(255), nullable=False)
     points = Column(String(255), nullable=True)
+    result = Column(String(255), nullable=True)
     match_id = Column(Integer, ForeignKey("matches.id"))
     # status:
     # 0: disabled
