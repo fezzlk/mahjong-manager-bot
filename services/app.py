@@ -30,6 +30,7 @@ class AppService:
         """set request info"""
 
         self.req_user_id = event.source.user_id
+        self.req_room_id = None
         if event.source.type == 'room':
             self.req_room_id = event.source.room_id
 
