@@ -8,7 +8,12 @@ class UCommands(Enum):
 
     exit = 'exit'
     mode = 'mode'
+    payment = 'payment'
+    analysis = 'analysis'
+    fortune = 'fortune'
+    history = 'history'
     help = 'help'
+    setting = 'setting'
     github = 'github'
     users = 'users'
 
@@ -28,7 +33,7 @@ class RCommands(Enum):
     delete = 'delete'
     finish = 'finish'
     github = 'github'
-    recommend = 'recommend'
+    fortune = 'fortune'
     others = 'others'
 
 
@@ -125,6 +130,22 @@ class Router:
             self.services.user_service.chmod(
                 self.services.user_service.modes.wait
             )
+        # payment
+        elif method == UCommands.payment.name:
+            self.services.reply_service.add_text('この機能は開発中です。')
+        # analysis
+        elif method == UCommands.analysis.name:
+            self.services.reply_service.add_text('この機能は開発中です。')
+        # fortune
+        elif method == UCommands.fortune.name:
+            self.services.reply_service.add_text(
+                f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。').reply_service.add_text('使い方は明日書きます。')
+        # history
+        elif method == UCommands.history.name:
+            self.services.reply_service.add_text('この機能は開発中です。')
+        # setting
+        elif method == UCommands.setting.name:
+            self.services.reply_service.add_text('この機能は開発中です。')
         # help
         elif method == UCommands.help.name:
             self.services.reply_service.add_text('使い方は明日書きます。')
@@ -169,7 +190,7 @@ class Router:
     def routing_in_room_by_method(self, method):
         """routing by method"""
 
-        # start
+        # start menu
         if method == RCommands.start.name:
             self.services.reply_service.add_start_menu()
         # input
@@ -218,8 +239,10 @@ class Router:
         elif method == RCommands.github.name:
             self.services.reply_service.add_text(
                 'https://github.com/bbladr/mahjong-manager-bot')
-        elif method == RCommands.recommend.name:
+        # fortune
+        elif method == RCommands.fortune.name:
             self.services.reply_service.add_text(
                 f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+        # others manu
         elif method == RCommands.others.name:
             self.services.reply_service.add_others_menu()

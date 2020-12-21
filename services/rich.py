@@ -36,22 +36,22 @@ class RichMenuService:
                 RichMenuArea(
                     bounds=RichMenuBounds(x=0, y=0, width=833, height=550),
                     action=PostbackTemplateAction(
-                        label='input',
-                        data='_input'
+                        label='payment',
+                        data='_payment'
                     )
                 ),
                 RichMenuArea(
                     bounds=RichMenuBounds(x=833, y=0, width=834, height=550),
                     action=PostbackTemplateAction(
-                        label='results',
-                        data='_results'
+                        label='analysis',
+                        data='_analysis'
                     )
                 ),
                 RichMenuArea(
                     bounds=RichMenuBounds(x=1667, y=0, width=833, height=550),
                     action=PostbackTemplateAction(
-                        label='finish',
-                        data='_finish'
+                        label='fortune',
+                        data='_fortune'
                     )
                 ),
                 RichMenuArea(
