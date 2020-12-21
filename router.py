@@ -197,7 +197,7 @@ class Router:
             self.services.reply_service.add_settings_menu()
         # reset
         elif method == RCommands.reset.name:
-            self.services.results_service.reset()
+            self.services.results_service.reset_points()
         # results
         elif method == RCommands.results.name:
             self.services.results_service.reply_all()

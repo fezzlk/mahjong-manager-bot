@@ -11,8 +11,10 @@ class MatchesService:
     def __init__(self, services):
         self.services = services
 
-    def get_or_add_current(self, room_id):
+    def get_or_add_current(self, room_id=None):
         """get or add"""
+        if room_id is None:
+            room_id = self.services.app_service.req_room_id
         current = self.services.app_service.db.session\
             .query(Matches).filter(and_(
                 Matches.room_id == room_id,
@@ -25,9 +27,18 @@ class MatchesService:
             self.services.app_service.db.session.commit()
         return current
 
-    def add(self, results):
-        """add"""
-        self.matches.append(results)
+    def add_result(self):
+        """add result"""
+        current_result = self.services.results_service.get_current()
+        current_match = self.get_or_add_current()
+        result_ids = current_match.result_ids.split(',')
+        if result_ids[0] == '':
+            result_ids[0] = str(current_result.id)
+        else:
+            result_ids.append(str(current_result.id))
+        current_match.result_ids = ','.join(result_ids)
+        self.services.app_service.db.session.commit()
+        self.services.results_service.archive()
 
     def drop(self, i):
         if len(self.matches) > i:
@@ -37,9 +48,6 @@ class MatchesService:
         self.results = []
         self.services.reply_service.add_text('結果を全て削除しました。')
 
-    def count(self):
-        return len(self.matches)
-
     def count_results(self):
         room_id = self.services.app_service.req_room_id
         match = self.services.app_service.db.session\
@@ -47,7 +55,11 @@ class MatchesService:
                 Matches.room_id == room_id,
                 Matches.status == 1,
             )).first()
-        return len(match.result_ids.split(','))
+        ids = match.result_ids.split(',')
+        if ids[0] == '':
+            return 0
+        else:
+            return len(ids)
 
     def reply_all(self):
         if self.count() == 0:

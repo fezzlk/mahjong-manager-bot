@@ -20,9 +20,17 @@ class CalculateService:
             self.services.reply_service.add_text(
                 f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
             return
+        if len(set(points.values())) != 4:
+            self.services.reply_service.add_text(
+                f'同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
+            return
         calc_result = self.run_calculate(points)
-        self.services.results_service.add(calc_result)
+        self.services.results_service.update_result(calc_result)
         self.services.results_service.reply_current_result()
+        self.services.matches_service.add_result()
+        self.services.room_service.chmod(
+            self.services.room_service.modes.wait
+        )
 
     def run_calculate(self, points):
         sorted_points = sorted(points.items(), key=lambda x: x[1])

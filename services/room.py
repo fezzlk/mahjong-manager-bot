@@ -55,14 +55,16 @@ class RoomService:
 
         if mode == self.modes.input:
             self.services.reply_service.add_text(
-                f'第{self.services.matches_service.count_results()+1}回戦お疲れ様です。各自点数を入力してください。\
-                （同点の場合は上家が高くなるように数点追加してください）')
+                f'第{self.services.matches_service.count_results()}回戦お疲れ様です。各自点数を入力してください。\
+                \n（同点の場合は上家が高くなるように数点追加してください）')
             return
-        elif mode == self.modes.wait:
+        else:
+            self.services.results_service.drop_active()
+        if mode == self.modes.wait:
             self.services.reply_service.add_text(
                 f'始める時は「_start」と入力してください。')
             return
-        elif mode == self.modes.delete:
+        if mode == self.modes.delete:
             self.services.reply_service.add_text(
                 '削除したい結果を数字で指定してください。(終了したい場合は _exit)')
             self.services.points_service.reply_results()

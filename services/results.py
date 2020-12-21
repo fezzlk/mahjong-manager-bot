@@ -36,11 +36,11 @@ class ResultsService:
             results.pop(i)
 
     def reply_current_result(self):
-        room_id = self.services.app_service.req_room_id
-        results = self.services.room_service.rooms[room_id]['results']
+        result = self.services.results_service.get_current()
+        calculated_result = json.loads(result.result)
         self.services.reply_service.add_text(f'一半荘お疲れ様でした。結果を表示します。')
         self.services.reply_service.add_text(
-            '\n'.join([f'{user}: {point}' for user, point in results[-1].items()]))
+            '\n'.join([f'{user}: {point}' for user, point in calculated_result.items()]))
         self.services.reply_service.add_text('今回の結果に一喜一憂せず次の戦いに望んでください。')
 
     def count(self):
@@ -135,4 +135,38 @@ class ResultsService:
         points[name] = point
         result.points = json.dumps(points)
         self.services.app_service.db.session.commit()
-        return result
+        return points
+
+    def drop_point(self, name):
+        result = self.services.results_service.get_current()
+        points = json.loads(result.points)
+        if name in points.keys():
+            points.pop(name)
+        result.points = json.dumps(points)
+        self.services.app_service.db.session.commit()
+        return points
+
+    def reset_points(self):
+        result = self.services.results_service.get_current()
+        result.points = json.dumps({})
+        self.services.app_service.db.session.commit()
+
+    def update_result(self, calculated_result):
+        result = self.services.results_service.get_current()
+        result.result = json.dumps(calculated_result)
+        self.services.app_service.db.session.commit()
+
+    def archive(self):
+        result = self.services.results_service.get_current()
+        result.status = 2
+        self.services.app_service.db.session.commit()
+
+    def drop_active(self):
+        room_id = self.services.app_service.req_room_id
+        self.services.app_service.db.session\
+            .query(Results).filter(and_(
+                Results.room_id == room_id,
+                Results.status == 1,
+            ))\
+            .delete()
+        self.services.app_service.db.session.commit()

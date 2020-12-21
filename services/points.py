@@ -24,7 +24,6 @@ class PointsService:
 
     def add_by_text(self, text):
         result = self.services.results_service.get_current()
-        points = json.loads(result.points)
         profile = self.services.app_service.line_bot_api.get_profile(
             self.services.app_service.req_user_id
         )
@@ -33,7 +32,7 @@ class PointsService:
             point, target_user = self.get_point_with_target_user(text[1:])
             point = point.replace(',', '')
             if point == 'delete':
-                self.drop(target_user)
+                points = self.services.results_service.drop_point(target_user)
                 self.reply()
                 if len(points) == 4:
                     self.services.calculate_service.calculate(points)
@@ -53,11 +52,11 @@ class PointsService:
         if isMinus == True:
             point = '-' + point
 
-        result = self.services.results_service.add_point(
+        points = self.services.results_service.add_point(
             target_user,
             int(point),
         )
-        self.reply(result)
+        self.reply()
 
         if len(points) == 4:
             self.services.calculate_service.calculate(points)
@@ -71,13 +70,3 @@ class PointsService:
             return s[-1], ' '.join(s[:-1])
         elif len(s) == 1:
             return 'delete', s[0]
-
-    def drop(self, name):
-        room_id = self.services.app_service.req_room_id
-        points = self.services.room_service.rooms[room_id]['points']
-        if name in points.keys():
-            points.pop(name)
-
-    def reset(self):
-        room_id = self.services.app_service.req_room_id
-        self.services.room_service.rooms[room_id]['points'] = {}
