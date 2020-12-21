@@ -26,6 +26,8 @@ class ReplyService:
     def reply(self, event):
         if (len(self.texts) == 0) & (len(self.buttons) == 0):
             return
+        print(event.reply_token)
+        print(self.texts)
         self.services.app_service.line_bot_api.reply_message(
             event.reply_token,
             [TextSendMessage(text=text) for text in self.texts] + self.buttons)
