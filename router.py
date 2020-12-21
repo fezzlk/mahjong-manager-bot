@@ -57,6 +57,7 @@ class Router:
             {profile.display_name}さんの快適な麻雀生活をサポートします。')
         self.services.reply_service.reply(event)
         self.services.rich_menu_service.create_and_link('personal')
+        self.services.app_service.delete_req_info(event)
 
     def unfollow(self, event):
         """unfollow event"""
@@ -64,6 +65,7 @@ class Router:
         self.services.user_service.delete(
             self.services.app_service.req_user_id
         )
+        self.services.app_service.delete_req_info(event)
 
     def join(self, event):
         """join event"""
@@ -72,6 +74,7 @@ class Router:
         self.services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。')
         self.services.room_service.register()
         self.services.reply_service.reply(event)
+        self.services.app_service.delete_req_info(event)
 
     def textMessage(self, event):
         """receive text message event"""
@@ -81,6 +84,7 @@ class Router:
         else:
             self.routing_by_text(event)
         self.services.reply_service.reply(event)
+        self.services.app_service.delete_req_info(event)
 
     def imageMessage(self, event):
         """receive image message event"""
@@ -89,6 +93,7 @@ class Router:
         self.services.reply_service.add_text(
             '画像への返信はまだサポートされていません。開発者にお金を寄付すれば対応を急ぎます。')
         self.services.reply_service.reply(event)
+        self.services.app_service.delete_req_info(event)
 
     def postback(self, event):
         """postback event"""
@@ -100,6 +105,7 @@ class Router:
         else:
             self.routing_by_method(method)
         self.services.reply_service.reply(event)
+        self.services.app_service.delete_req_info(event)
 
     def routing_by_text(self, event):
         """routing by text for personal chat"""
