@@ -53,23 +53,30 @@ class ResultsService:
         self.services.room_service.rooms[room_id]['results'] = []
         self.services.reply_service.add_text('今回の対戦結果を全て削除しました。')
 
-    def reply_all(self):
-        room_id = self.services.app_service.req_room_id
-        results = self.services.room_service.rooms[room_id]['results']
-        count = self.count()
-        if count == 0:
-            self.services.reply_service.add_text(
-                'まだ結果がありません。メニューの結果入力を押して結果を追加してください。')
-            return
+    def reply_all_by_ids(self, ids):
+        results = self.services.app_service.db.session\
+            .query(Results).filter(
+                Results.id.in_([int(s) for s in ids]),
+            ).all()
+        results_list = []
+        sum_results = {}
+        for i in range(len(ids)):
+            result = json.loads(results[i].result)
+            results_list.append(
+                f'第{i+1}回\n' + '\n'.join(
+                    [f'{user}: {point}' for user, point in result.items()]
+                )
+            )
+            for name, point in result.items():
+                if not name in sum_results.keys():
+                    sum_results[name] = 0
+                sum_results[name] += point
+        self.services.reply_service.add_text('\n\n'.join(results_list))
         self.services.reply_service.add_text(
-            'これまでの対戦結果です。(結果を指定して取り消したい場合は _delete, 全削除したい場合は _reset)')
-        for i in range(count):
-            self.services.reply_service.add_text(
-                f'第{i+1}回\n'
-                + '\n'.join([f'{user}: {point}' for user, point in results[i].items()]))
-        sum = self.get_sum()
-        self.services.reply_service.add_text(
-            '総計\n' + '\n'.join([f'{user}: {point}' for user, point in sum.items()]))
+            '総計\n' + '\n'.join(
+                [f'{user}: {point}' for user, point in sum_results.items()]
+            )
+        )
 
     def finish(self):
         room_id = self.services.app_service.req_room_id
@@ -95,18 +102,8 @@ class ResultsService:
             [f'{user}: {point * self.services.config_service.get_rate()}円'
                 for user, point in sum.items()]))
 
-    def get_sum(self, results=None):
-        if results == None:
-            room_id = self.services.app_service.req_room_id
-            results = self.services.room_service.rooms[room_id]['results']
-            results = results
+    def get_sum(self):
         sum_result = {}
-        for res in results:
-            for name, point in res.items():
-                if not name in sum_result.keys():
-                    sum_result[name] = 0
-                sum_result[name] += point
-        return sum_result
 
     def delete_by_text(self, text):
         if text.isdigit() == False:

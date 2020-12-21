@@ -200,7 +200,7 @@ class Router:
             self.services.results_service.reset_points()
         # results
         elif method == RCommands.results.name:
-            self.services.results_service.reply_all()
+            self.services.matches_service.reply_sum_results()
         # delete
         elif method == RCommands.delete.name:
             self.services.room_service.chmod(
