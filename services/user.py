@@ -70,3 +70,10 @@ class UserService:
         if target == None:
             return
         return target.mode
+
+    def reply_all(self):
+        users = self.services.app_service.db.session\
+            .query(Users).all()
+        self.services.reply_service.add_text(
+            '\n'.join([user.name for user in users])
+        )

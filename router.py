@@ -10,6 +10,7 @@ class UCommands(Enum):
     mode = 'mode'
     help = 'help'
     github = 'github'
+    users = 'users'
 
 
 class RCommands(Enum):
@@ -133,6 +134,9 @@ class Router:
         elif method == UCommands.github.name:
             self.services.reply_service.add_text(
                 'https://github.com/bbladr/mahjong-manager-bot')
+        # users
+        elif method == UCommands.users.name:
+            self.services.user_service.reply_all()
 
     def routing_in_room_by_text(self, event):
         """routing by text"""
