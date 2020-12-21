@@ -24,7 +24,6 @@ from router import Router
 from services import Services
 
 # テーブルの作成
-# Base.metadata.drop_all(bind=Engine)
 Base.metadata.create_all(bind=Engine)
 
 YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
@@ -42,16 +41,8 @@ router = Router(services)
 
 @app.route('/')
 def hello_world():
-    # meta = MetaData(bind=Engine)
-    # mytable = Table('users', meta, autoload=True)
-    # Column('display_name', VARCHAR(255)).create(mytable)
-    # users = db.session.query(Users).all()
-    # for user in users:
-    #     print(user.name)
-    # target = db.session.query(Users).get(1)
-    # db.session.delete(target)
-    # # db.session.query(Users).delete()
-    # db.session.commit()
+    Base.metadata.drop_all(bind=Engine)
+    Base.metadata.create_all(bind=Engine)
     return "hello world."
 
 
