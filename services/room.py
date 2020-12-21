@@ -55,7 +55,7 @@ class RoomService:
 
         if mode == self.modes.input:
             self.services.reply_service.add_text(
-                f'第{self.services.matches_service.count_results()}回戦お疲れ様です。各自点数を入力してください。\
+                f'第{self.services.matches_service.count_results()+1}回戦お疲れ様です。各自点数を入力してください。\
                 \n（同点の場合は上家が高くなるように数点追加してください）')
             return
         else:

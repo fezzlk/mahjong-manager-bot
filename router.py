@@ -35,6 +35,7 @@ class RCommands(Enum):
     github = 'github'
     fortune = 'fortune'
     others = 'others'
+    matches = 'matches'
 
 
 class Router:
@@ -139,7 +140,7 @@ class Router:
         # fortune
         elif method == UCommands.fortune.name:
             self.services.reply_service.add_text(
-                f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。').reply_service.add_text('使い方は明日書きます。')
+                f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
         # history
         elif method == UCommands.history.name:
             self.services.reply_service.add_text('この機能は開発中です。')
@@ -232,9 +233,7 @@ class Router:
                 services.room_service.modes.delete)
         # finish
         elif method == RCommands.finish.name:
-            self.services.reply_service.add_text(
-                'この機能はまだ使えません。開発者にお金を寄付すれば対応を急ぎます。')
-            # self.services.results_service.finish()
+            self.services.matches_service.finish()
         # github
         elif method == RCommands.github.name:
             self.services.reply_service.add_text(
@@ -246,3 +245,6 @@ class Router:
         # others manu
         elif method == RCommands.others.name:
             self.services.reply_service.add_others_menu()
+        # matches
+        elif method == RCommands.matches.name:
+            self.services.matches_service.reply()

@@ -78,32 +78,24 @@ class ResultsService:
             )
         )
 
-    def finish(self):
-        room_id = self.services.app_service.req_room_id
-        results = self.services.room_service.rooms[room_id]['results']
-        count = self.count()
-        if count == 0:
+    def reply_sum_and_money_by_ids(self, ids, is_rep_sum=True, date=''):
+        results = self.services.app_service.db.session\
+            .query(Results).filter(
+                Results.id.in_([int(s) for s in ids]),
+            ).all()
+        sum_results = {}
+        for i in range(len(ids)):
+            result = json.loads(results[i].result)
+            for name, point in result.items():
+                if not name in sum_results.keys():
+                    sum_results[name] = 0
+                sum_results[name] += point
+        if is_rep_sum:
             self.services.reply_service.add_text(
-                'まだ結果がありません。メニューの結果入力を押して結果を追加してください。')
-            return
-        self.services.matches_service.add(results)
-        self.services.reply_service.add_text('今回の総計を表示します。')
-        self.reply_sum_and_money()
-
-    def reply_sum_and_money(self, results=None):
-        if results == None:
-            room_id = self.services.app_service.req_room_id
-            results = self.services.room_service.rooms[room_id]['results']
-            results = results
-        sum = self.get_sum(results)
-        self.services.reply_service.add_text(
-            '\n'.join([f'{user}: {point}' for user, point in sum.items()]))
-        self.services.reply_service.add_text('\n'.join(
+                '\n'.join([f'{user}: {point}' for user, point in sum_results.items()]))
+        self.services.reply_service.add_text(date + '\n'.join(
             [f'{user}: {point * self.services.config_service.get_rate()}円'
-                for user, point in sum.items()]))
-
-    def get_sum(self):
-        sum_result = {}
+                for user, point in sum_results.items()]))
 
     def delete_by_text(self, text):
         if text.isdigit() == False:

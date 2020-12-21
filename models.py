@@ -1,7 +1,8 @@
 """models"""
 
-from sqlalchemy import Column, String, Integer, ForeignKey, Table
+from sqlalchemy import Column, String, Integer, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.functions import current_timestamp
 from db_setting import Base
 import json
 
@@ -112,6 +113,8 @@ class Matches(Base):
         secondary=association_table_user_match,
         back_populates="matches"
     )
+    created_at = Column(DateTime, nullable=False,
+                        server_default=current_timestamp())
 
     def __init__(self, room_id):
         self.room_id = room_id

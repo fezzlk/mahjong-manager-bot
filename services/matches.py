@@ -18,7 +18,8 @@ class MatchesService:
             .query(Matches).filter(and_(
                 Matches.room_id == room_id,
                 Matches.status == 1
-            )).first()
+            )).order_by(Matches.id.desc())\
+            .first()
 
     def get_or_add_current(self, room_id=None):
         """get or add"""
@@ -67,3 +68,38 @@ class MatchesService:
         self.services.results_service.reply_all_by_ids(
             current.result_ids.split(',')
         )
+
+    def finish(self):
+        if self.count_results() == 0:
+            self.services.reply_service.add_text(
+                'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
+            return
+        current = self.get_current()
+        self.services.results_service.reply_sum_and_money_by_ids(
+            current.result_ids.split(',')
+        )
+        self.archive()
+
+    def archive(self):
+        match = self.services.matches_service.get_current()
+        match.status = 2
+        self.services.app_service.db.session.commit()
+
+    def reply(self):
+        room_id = self.services.app_service.req_room_id
+        matches = self.services.app_service.db.session\
+            .query(Matches).filter(and_(
+                Matches.room_id == room_id,
+                Matches.status == 2
+            )).order_by(Matches.id)\
+            .all()
+        if len(matches) == 0:
+            self.services.reply_service.add_text(
+                'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
+            return
+        for match in matches:
+            self.services.results_service.reply_sum_and_money_by_ids(
+                match.result_ids.split(','),
+                is_rep_sum=False,
+                date=match.created_at.strftime('%Y-%m-%d')+'\n'
+            )
