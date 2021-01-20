@@ -27,7 +27,7 @@ class RCommands(Enum):
     mode = 'mode'
     help = 'help'
     calc = 'calculator'
-    setting = 'settings'
+    settings = 'settings'
     reset = 'reset'
     results = 'results'
     delete = 'delete'
@@ -37,6 +37,7 @@ class RCommands(Enum):
     others = 'others'
     matches = 'matches'
     shooter = 'shooter'
+    drop_result = 'drop_result'
 
 
 class Router:
@@ -234,6 +235,10 @@ class Router:
         # results
         elif method == RCommands.results.name:
             self.services.matches_service.reply_sum_results()
+        # drop result
+        elif method.startswith(RCommands.drop_result.name):
+            target_time = int(text.split()[1])
+            self.services.matches_service.reply_sum_results(target_time)
         # delete
         elif method == RCommands.delete.name:
             self.services.room_service.chmod(
