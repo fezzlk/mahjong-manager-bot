@@ -120,3 +120,22 @@ class ReplyService:
                 )
             )
         )
+
+    def add_shooter_menu(self, members):
+        print(members)
+        self.buttons.append(
+            TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='飛び賞おめでとうございます',
+                    text='どなたが飛ばしましたか？',
+                    actions=[
+                        PostbackAction(
+                            label=member,
+                            display_text=member,
+                            data=f'_shooter_{member}'
+                        ) for member in members
+                    ]
+                )
+            )
+        )
