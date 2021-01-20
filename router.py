@@ -27,7 +27,7 @@ class RCommands(Enum):
     mode = 'mode'
     help = 'help'
     calc = 'calculator'
-    settings = 'settings'
+    setting = 'setting'
     reset = 'reset'
     results = 'results'
     delete = 'delete'

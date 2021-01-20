@@ -9,7 +9,7 @@ class ConfigService:
 
     def __init__(self, services):
         self.services = services
-        self.prize = [30, 10, -10, -30]
+        self.prize = [20, 10, -10, -20]
         self.configs = {'レート': '点3', '順位点': str(
             self.prize), '飛び賞': 10, 'チップ': 'なし', '人数': 4}
 
@@ -19,10 +19,10 @@ class ConfigService:
         #     .filter(Configs.target_id == self.services.app_service.req_room_id)\
         #     .all()
         # print(configs)
+        res = self.configs
         # for config in configs:
-        #     pring(config)
-        configs = self.configs
-        return configs
+        # res[key] = value
+        return res
 
     def reply(self):
         configs = self.get_by_target()
@@ -50,7 +50,8 @@ class ConfigService:
         self.services.app_service.db.session.commit()
 
     def add(self, key, value):
-        config = Configs(target_id=self.services.app_service.req_room_id,
+        target_id = self.services.app_service.req_room_id
+        config = Configs(target_id=target_id,
                          key=key,
                          value=value,
                          )
