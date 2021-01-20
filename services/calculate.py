@@ -44,19 +44,9 @@ class CalculateService:
         result = {}
         shut_players = []
         for t in sorted_points[:-1]:
-            # 切り下げ
-            # tuner = 0
-            # if 四捨五入
-            # tuner = 500
-            # if 五者六入
-            tuner = 400
-            # 切り上げ
-            # tuner = 1000
+            result[t[0]] = int((t[1]-30000)/1000)
             if (t[1] < 0):
-                result[t[0]] = int((t[1] - 1000 + tuner)/1000) - 30
                 shut_players.append(t[0])
-            else:
-                result[t[0]] = int((t[1] + tuner)/1000) - 30
 
         if shooter in result.keys():
             result[shooter] += 10
