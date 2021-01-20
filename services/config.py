@@ -11,7 +11,7 @@ class ConfigService:
         self.services = services
         self.prize = [30, 10, -10, -30]
         self.configs = {'レート': '点3', '順位点': str(
-            self.prize), '飛び賞': 'なし', 'チップ': 'なし', '人数': 4}
+            self.prize), '飛び賞': 10, 'チップ': 'なし', '人数': 4}
 
     def get_by_target(self):
         # configs = self.services.app_service.db.session\
