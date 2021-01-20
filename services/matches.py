@@ -44,6 +44,16 @@ class MatchesService:
         self.services.app_service.db.session.commit()
         self.services.results_service.archive()
 
+    def drop_result_by_time(self, i):
+        """drop result"""
+        if self.count_results() == 0:
+            self.services.reply_service.add_text(
+                'まだ対戦結果がありません。')
+            return
+        current = self.get_current()
+        result_ids = current.result_ids.split(',')
+        self.services.results_service.drop_by_id(result_ids[i-1])
+
     def count_results(self):
         room_id = self.services.app_service.req_room_id
         match = self.services.app_service.db.session\

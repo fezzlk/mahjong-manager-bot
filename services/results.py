@@ -35,6 +35,14 @@ class ResultsService:
         if self.count() > i:
             results.pop(i)
 
+    def drop_by_id(self, target_id):
+        target = self.services.app_service.db.session\
+            .query(Results).filter(and_(
+                Results.room_id == room_id,
+                Results.id == target_id,
+            )).delete()
+        self.services.app_service.db.session.commit()
+
     def reply_current_result(self):
         result = self.services.results_service.get_current()
         calculated_result = json.loads(result.result)
