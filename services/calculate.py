@@ -42,6 +42,7 @@ class CalculateService:
     def run_calculate(self, points, shooter=None):
         sorted_points = sorted(points.items(), key=lambda x: x[1])
         result = {}
+        shut_players = []
         for t in sorted_points[:-1]:
             # 切り下げ
             # tuner = 0
@@ -53,7 +54,7 @@ class CalculateService:
             # tuner = 1000
             if (t[1] < 0):
                 result[t[0]] = int((t[1] - 1000 + tuner)/1000) - 30
-                shut_player = t[0]
+                shut_players.append(t[0])
             else:
                 result[t[0]] = int((t[1] + tuner)/1000) - 30
 
@@ -63,9 +64,9 @@ class CalculateService:
         sorted_prize = sorted(self.services.config_service.prize)
         for i, t in enumerate(sorted_points):
             result[t[0]] += sorted_prize[i]
-            if t[0] == shooter:
-                result[t[0]] += 10
-            if t[0] == shut_player:
+            if t[0] in shut_players:
                 result[t[0]] -= 10
+            if t[0] == shooter:
+                result[t[0]] += 10*len(shut_players)
 
         return result
