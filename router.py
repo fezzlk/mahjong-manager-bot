@@ -36,6 +36,7 @@ class RCommands(Enum):
     fortune = 'fortune'
     others = 'others'
     matches = 'matches'
+    shooter = 'shooter'
 
 
 class Router:
@@ -254,3 +255,6 @@ class Router:
         # matches
         elif method == RCommands.matches.name:
             self.services.matches_service.reply()
+        elif method.startswith(RCommands.shooter.name):
+            shooter = method[8:]
+            self.services.calculate_service.calculate(shooter=shooter)
