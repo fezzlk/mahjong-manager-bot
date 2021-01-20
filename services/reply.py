@@ -133,8 +133,74 @@ class ReplyService:
                         PostbackAction(
                             label=member,
                             display_text=member,
-                            data=f'_shooter_{member}'
+                            data=f'_shooter {member}'
                         ) for member in members
+                    ]
+                )
+            )
+        )
+
+    def add_rate_menu(self):
+        self.buttons.append(
+            TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='レート変更',
+                    text='レートを選んでください',
+                    actions=[
+                        PostbackAction(
+                            label=i,
+                            display_text=f'点{i}',
+                            data=f'_update_rate:点{i}'
+                        ) for i in range(3)
+                    ] + [
+                        PostbackAction(
+                            label='high_rate',
+                            display_text='点4~6',
+                            data='_higt_rate_menu'
+                        )
+                    ]
+                )
+            )
+        )
+
+    def add_high_rate_menu(self):
+        self.buttons.append(
+            TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='レート変更',
+                    text='レートを選んでください',
+                    actions=[
+                        PostbackAction(
+                            label=i,
+                            display_text=f'点{i}',
+                            data=f'_update_rate:点{i}'
+                        ) for i in range(4, 6)
+                    ] + [
+                        PostbackAction(
+                            label='low_rate',
+                            display_text='点1~3',
+                            data='_low_rate_menu'
+                        )
+                    ]
+                )
+            )
+        )
+
+    def add_shooting_prize_menu(self, members):
+        self.buttons.append(
+            TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='飛び賞変更',
+                    text='いくらにしますか？',
+                    actions=[
+                        PostbackAction(
+                            label=p,
+                            display_text=p,
+                            data=f'_shooting_prize:{p}'
+                        ) for p in [0, 10, 20, 30]
                     ]
                 )
             )

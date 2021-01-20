@@ -174,7 +174,7 @@ class Router:
 
         text = event.message.text
         prefix = text[0]
-        if (prefix == '_') & (text[1:] in [e.name for e in RCommands]):
+        if (prefix == '_') & (text[1:].split()[0] in [e.name for e in RCommands]):
             self.routing_in_room_by_method(text[1:])
             return
 
