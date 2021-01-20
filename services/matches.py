@@ -53,6 +53,9 @@ class MatchesService:
         current = self.get_current()
         result_ids = current.result_ids.split(',')
         self.services.results_service.drop_by_id(result_ids[i-1])
+        result_ids.pop(i-1)
+        current.result_ids = ','.join(result_ids)
+        self.services.app_service.db.session.commit()
 
     def count_results(self):
         room_id = self.services.app_service.req_room_id
@@ -113,3 +116,8 @@ class MatchesService:
                 is_rep_sum=False,
                 date=match.created_at.strftime('%Y-%m-%d')+'\n'
             )
+
+    def drop_current(self):
+        match = self.get_current()
+        match.status = 0
+        self.services.app_service.db.session.commit()

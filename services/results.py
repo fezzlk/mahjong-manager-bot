@@ -36,12 +36,15 @@ class ResultsService:
             results.pop(i)
 
     def drop_by_id(self, target_id):
+        room_id = self.services.app_service.req_room_id
         target = self.services.app_service.db.session\
             .query(Results).filter(and_(
                 Results.room_id == room_id,
                 Results.id == target_id,
-            )).delete()
+            )).first()
+        target.status = 0
         self.services.app_service.db.session.commit()
+        self.services.reply_service.add_text(f'id={target_id}の結果を削除しました。')
 
     def reply_current_result(self):
         result = self.services.results_service.get_current()

@@ -37,7 +37,8 @@ class RCommands(Enum):
     others = 'others'
     matches = 'matches'
     shooter = 'shooter'
-    drop_result = 'drop_result'
+    drop = 'drop'
+    drop_m = 'drop_m'
 
 
 class Router:
@@ -235,10 +236,15 @@ class Router:
         # results
         elif method == RCommands.results.name:
             self.services.matches_service.reply_sum_results()
-        # drop result
-        elif method.startswith(RCommands.drop_result.name):
-            target_time = int(text.split()[1])
-            self.services.matches_service.reply_sum_results(target_time)
+        # drop
+        elif method.startswith(RCommands.drop.name):
+            a = method.split()
+            if len(a) < 2:
+                return
+            target_time = int(a[1])
+            self.services.matches_service.drop_result_by_time(target_time)
+        elif method == RCommands.drop_m.name:
+            self.services.matches_service.drop_current()
         # delete
         elif method == RCommands.delete.name:
             self.services.room_service.chmod(
