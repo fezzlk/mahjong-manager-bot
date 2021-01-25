@@ -16,6 +16,11 @@ class UCommands(Enum):
     setting = 'setting'
     github = 'github'
     users = 'users'
+    d_users = 'd_users'
+    d_rooms = 'd_rooms'
+    d_results = 'd_results'
+    d_matches = 'd_matches'
+    d_configs = 'd_configs'
 
 
 class RCommands(Enum):
@@ -36,7 +41,7 @@ class RCommands(Enum):
     fortune = 'fortune'
     others = 'others'
     matches = 'matches'
-    shooter = 'shooter'
+    tobi = 'tobi'
     drop = 'drop'
     drop_m = 'drop_m'
 
@@ -168,6 +173,21 @@ class Router:
         # users
         elif method == UCommands.users.name:
             self.services.user_service.reply_all()
+        # dev users
+        elif method == UCommands.d_users.name:
+            self.services.user_service.reply_all_records()
+        # dev rooms
+        elif method == UCommands.d_rooms.name:
+            self.services.room_service.reply_all_records()
+        # dev results
+        elif method == UCommands.d_results.name:
+            self.services.results_service.reply_all_records()
+        # dev matches
+        elif method == UCommands.d_matches.name:
+            self.services.matches_service.reply_all_records()
+        # dev configs
+        elif method == UCommands.d_configs.name:
+            self.services.config_service.reply_all_records()
 
     def routing_in_room_by_text(self, event):
         """routing by text"""
@@ -266,6 +286,7 @@ class Router:
         # matches
         elif method == RCommands.matches.name:
             self.services.matches_service.reply()
-        elif method.startswith(RCommands.shooter.name):
-            shooter = method[8:]
-            self.services.calculate_service.calculate(shooter=shooter)
+        elif method.startswith(RCommands.tobi.name):
+            tobashita_player = method[5:]
+            self.services.calculate_service.calculate(
+                tobashita_player=tobashita_player)
