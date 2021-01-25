@@ -120,9 +120,10 @@ class Router:
 
         text = event.message.text
         prefix = text[0]
-        if (prefix == '_') & (text[1:] in [e.name for e in UCommands]):
-            self.routing_by_method(text[1:])
-            return
+        if len(text) > 1:
+            if (prefix == '_') & (text[1:] in [e.name for e in UCommands]):
+                self.routing_by_method(text[1:])
+                return
 
         # routing by mode
         # wait mode
@@ -195,9 +196,10 @@ class Router:
 
         text = event.message.text
         prefix = text[0]
-        if (prefix == '_') & (text[1:].split()[0] in [e.name for e in RCommands]):
-            self.routing_in_room_by_method(text[1:])
-            return
+        if len(text) > 1:
+            if (prefix == '_') & (text[1:].split()[0] in [e.name for e in RCommands]):
+                self.routing_in_room_by_method(text[1:])
+                return
 
         current_mode = self.services.room_service.get_mode()
         # routing by mode
