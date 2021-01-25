@@ -121,3 +121,11 @@ class MatchesService:
         match = self.get_current()
         match.status = 0
         self.services.app_service.db.session.commit()
+
+    def reply_all_records(self):
+        # matches = self.services.app_service.db.session\
+        #     .query(Matches).all()
+        # if len(matches) == 0:
+        #     matches = ['なし']
+        # self.services.reply_service.add_text('\n\n'.join(matches))
+        return

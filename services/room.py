@@ -77,3 +77,13 @@ class RoomService:
         if target == None:
             return
         return target.mode
+
+    def reply_all_records(self):
+        # rooms = self.services.app_service.db.session\
+        #     .query(Rooms).all()
+        # if len(rooms) == 0:
+        #     rooms = ['なし']
+        # self.services.reply_service.add_text(
+        #     [str(room)+'\n\n' for room in rooms]
+        # )
+        return

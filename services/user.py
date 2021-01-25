@@ -77,3 +77,13 @@ class UserService:
         self.services.reply_service.add_text(
             '\n'.join([user.name for user in users])
         )
+
+    def reply_all_records(self):
+        # users = self.services.app_service.db.session\
+        #     .query(Users).all()
+        # if len(users) == 0:
+        #     users = ['なし']
+        # self.services.reply_service.add_text(
+        #     [str(user)+'\n\n' for user in users]
+        # )
+        return
