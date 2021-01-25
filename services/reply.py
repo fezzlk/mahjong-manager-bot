@@ -121,7 +121,7 @@ class ReplyService:
             )
         )
 
-    def add_shooter_menu(self, members):
+    def add_tobi_menu(self, members):
         print(members)
         self.buttons.append(
             TemplateSendMessage(
@@ -133,7 +133,7 @@ class ReplyService:
                         PostbackAction(
                             label=member,
                             display_text=member,
-                            data=f'_shooter {member}'
+                            data=f'_tobi {member}'
                         ) for member in members
                     ]
                 )
@@ -188,7 +188,7 @@ class ReplyService:
             )
         )
 
-    def add_shooting_prize_menu(self, members):
+    def add_tobi_prize_menu(self, members):
         self.buttons.append(
             TemplateSendMessage(
                 alt_text='Buttons template',
@@ -199,7 +199,7 @@ class ReplyService:
                         PostbackAction(
                             label=p,
                             display_text=p,
-                            data=f'_shooting_prize:{p}'
+                            data=f'_tobi_prize:{p}'
                         ) for p in [0, 10, 20, 30]
                     ]
                 )
