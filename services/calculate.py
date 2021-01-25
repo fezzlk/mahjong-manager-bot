@@ -9,7 +9,7 @@ class CalculateService:
     def __init__(self, services):
         self.services = services
 
-    def calculate(self, points=None, shooter=None):
+    def calculate(self, points=None, tobashita_player=None):
         """calculate"""
         if points is None:
             result = self.services.results_service.get_current()
@@ -28,10 +28,10 @@ class CalculateService:
                 f'同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
             return
         # 飛び賞
-        if (any((x < 0 for x in points.values()))) & (shooter is None):
-            self.services.reply_service.add_shooter_menu(points.keys())
+        if (any((x < 0 for x in points.values()))) & (tobashita_player is None):
+            self.services.reply_service.add_tobi_menu(points.keys())
             return
-        calc_result = self.run_calculate(points, shooter)
+        calc_result = self.run_calculate(points, tobashita_player)
         self.services.results_service.update_result(calc_result)
         self.services.results_service.reply_current_result()
         self.services.matches_service.add_result()
@@ -39,24 +39,43 @@ class CalculateService:
             self.services.room_service.modes.wait
         )
 
-    def run_calculate(self, points, shooter=None):
+    def run_calculate(self, points, tobashita_player=None):
+        # 得点の準備
         sorted_points = sorted(points.items(), key=lambda x: x[1])
-        result = {}
-        shut_players = []
-        for t in sorted_points[:-1]:
-            result[t[0]] = int((t[1]-30000)/1000)
-            if (t[1] < 0):
-                shut_players.append(t[0])
+        sorted_prize = sorted(self.services.config_service.get('順位点'))
+        tobi_prize = self.services.config_service.get('飛び賞')
+        clac_method = self.services.config_service.get('計算方法')
 
-        if shooter in result.keys():
-            result[shooter] += 10
+        # 素点計算
+        result = {}
+        tobasare_players = []
+        disabled_tobi = False
+        # 2~4位
+        for t in sorted_points[:-1]:
+            if clac_method == '五捨六入':
+                result[t[0]] = int((t[1]+70400)/1000)-100
+            if clac_method == '四捨五入':
+                result[t[0]] = int((t[1]+70500)/1000)-100
+            if clac_method == '切り捨て':
+                result[t[0]] = int((t[1]+70000)/1000)-100
+            if clac_method == '切り上げ':
+                result[t[0]] = int((t[1]+70900)/1000)-100
+            else:
+                result[t[0]] = int((t[1]-30000)/1000)
+            if (t[1] < 0):
+                if t[0] == tobashita_player:
+                    disabled_tobi = True
+                else:
+                    tobasare_players.append(t[0])
+        # 1位
         result[sorted_points[-1][0]] = -1 * sum(result.values())
-        sorted_prize = sorted(self.services.config_service.prize)
+
+        # 順位点、飛び賞加算
         for i, t in enumerate(sorted_points):
             result[t[0]] += sorted_prize[i]
-            if t[0] in shut_players:
-                result[t[0]] -= 10
-            if t[0] == shooter:
-                result[t[0]] += 10*len(shut_players)
-
+            if disabled_tobi == False:
+                if t[0] in tobasare_players:
+                    result[t[0]] -= tobi_prize
+                if t[0] == tobashita_player:
+                    result[t[0]] += tobi_prize*len(tobasare_players)
         return result
