@@ -68,7 +68,9 @@ class ResultsService:
         results = self.services.app_service.db.session\
             .query(Results).filter(
                 Results.id.in_([int(s) for s in ids]),
-            ).all()
+            )\
+            .order_by(Results.id)\
+            .all()
         results_list = []
         sum_results = {}
         for i in range(len(ids)):
@@ -104,9 +106,10 @@ class ResultsService:
         if is_rep_sum:
             self.services.reply_service.add_text(
                 '\n'.join([f'{user}: {point}' for user, point in sum_results.items()]))
+        key = 'レート'
         self.services.reply_service.add_text(date + '\n'.join(
-            [f'{user}: {point * self.services.config_service.get_rate()}円'
-                for user, point in sum_results.items()]))
+            [f'{user}: {point * int(self.services.config_service.get(key)) * 10}円'
+             for user, point in sum_results.items()]))
 
     def delete_by_text(self, text):
         if text.isdigit() == False:
@@ -126,7 +129,7 @@ class ResultsService:
                 Results.room_id == room_id,
                 Results.status == 1,
             ))\
-            .order_by(Results.id.desc())\
+            .order_by(desc(Results.id))\
             .first()
 
     def add_point(self, name, point):
@@ -170,3 +173,11 @@ class ResultsService:
             ))\
             .delete()
         self.services.app_service.db.session.commit()
+
+    def reply_all_records(self):
+        # results = self.services.app_service.db.session\
+        #     .query(Results).all()
+        # if len(results) == 0:
+        #     results = ['なし']
+        # self.services.reply_service.add_text('\n\n'.join(results))
+        return
