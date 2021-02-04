@@ -13,6 +13,7 @@ class OcrService:
         from google.oauth2 import service_account
         # Read env data
         self.credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+        print('GOOGLE_APPLICATION_CREDENTIALS: ', self.credentials_raw)
         if self.credentials_raw != None:
             # Generate credentials
             service_account_info = json.loads(
