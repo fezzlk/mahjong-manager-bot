@@ -21,6 +21,7 @@ class UCommands(Enum):
     d_results = 'd_results'
     d_matches = 'd_matches'
     d_configs = 'd_configs'
+    test = 'test'
 
 
 class RCommands(Enum):
@@ -98,8 +99,17 @@ class Router:
         """receive image message event"""
 
         self.services.app_service.set_req_info(event)
-        self.services.reply_service.add_text(
-            '画像への返信はまだサポートされていません。開発者にお金を寄付すれば対応を急ぎます。')
+        message_id = event.message.id
+        # message_idから画像のバイナリデータを取得
+        message_content = self.services.app_service.line_bot_api.get_message_content(
+            message_id
+        )
+
+        with open(f"images/{message_id}.jpg", "wb") as f:
+            # バイナリを1024バイトずつ書き込む
+            for chunk in message_content.iter_content():
+                f.write(chunk)
+
         self.services.reply_service.reply(event)
         self.services.app_service.delete_req_info()
 
@@ -189,6 +199,9 @@ class Router:
         # dev configs
         elif method == UCommands.d_configs.name:
             self.services.config_service.reply_all_records()
+        # dev test
+        elif method == UCommands.test.name:
+            self.services.ocr_service.run()
 
     def routing_in_room_by_text(self, event):
         """routing by text"""
