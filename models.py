@@ -130,7 +130,7 @@ class Configs(Base):
     __tablename__ = 'configs'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    target_id = Column(Integer, nullable=False)
+    target_id = Column(String(255), nullable=False)
     key = Column(String(255), nullable=False)
     value = Column(String(255), nullable=False)
 
