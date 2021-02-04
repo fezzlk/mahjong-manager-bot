@@ -12,16 +12,21 @@ class OcrService:
 
         from google.oauth2 import service_account
         # Read env data
-        credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-        # Generate credentials
-        service_account_info = json.loads(credentials_raw, strict=False)
-        self.credentials = service_account.Credentials.from_service_account_info(
-            service_account_info)
+        self.credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+        if self.credentials_raw != None:
+            # Generate credentials
+            service_account_info = json.loads(
+                self.credentials_raw, strict=False)
+            self.credentials = service_account.Credentials.from_service_account_info(
+                service_account_info)
 
     def run(self):
         self.detect_text('ex.JPG')
 
     def detect_text(self, path):
+        if self.credentials_raw == None:
+            self.services.reply_service.add_text('ocr_service is not setup')
+            return
         """Detects text in the file."""
         from google.cloud import vision
         import io
