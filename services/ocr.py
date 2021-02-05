@@ -21,8 +21,8 @@ class OcrService:
             self.credentials = service_account.Credentials.from_service_account_info(
                 service_account_info)
 
-    def run(self):
-        self.detect_text('ex.JPG')
+    def run_test(self):
+        self.detect_text('IMG_8799.PNG')
 
     def detect_text(self, path):
         if self.credentials_raw == None:
@@ -39,14 +39,87 @@ class OcrService:
 
         response = client.text_detection(image=image)
         texts = response.text_annotations
-        print('Texts:')
-        self.services.reply_service.add_text(texts[0].description)
+        # print('Texts:')
+        # print(texts)
+        # self.services.reply_service.add_text(texts[0].description)
+
+        pos_PTs = []
+        for text in texts:
+            if (text.description.startswith('PT')):
+                pos_upper_left = text.bounding_poly.vertices[0]
+                print('pos_upper_left', pos_upper_left)
+                pos_PTs.append(pos_upper_left)
+
+        if len(pos_PTs) != 4:
+            print('cannot find 4 "PT" marks')
+            self.services.reply_service.add_text('点数を読み取れませんでした。手入力してください。')
+            return
+
+        def sorter(v): return (v.y, v.x)
+        pos_PTs = sorted(pos_PTs, key=sorter)
+
+        # distance_between_PTs_y
+        distance_between_PTs_y = pos_PTs[3].y - pos_PTs[0].y
+        pre_upper_PT_y = 333
+        pre_distance_between_PTs_y = 456
+        rates_y = [
+            [(v - pre_upper_PT_y)/pre_distance_between_PTs_y for v in rete_array]
+            for rete_array in [
+                [255, 302, 380],
+                [435, 473, 533],
+                [584, 622, 682],
+                [727, 763, 827],
+            ]
+        ]
+
+        # distance_between_PTs_x
+        distance_between_PTs_x = pos_PTs[3].x - pos_PTs[0].x
+        pre_upper_PT_x = 1176
+        rates_x = [
+            [(v - pre_upper_PT_x)/pre_distance_between_PTs_y for v in rete_array]
+            for rete_array in [
+                [765, 1028],
+                [843, 1056],
+                [922, 1139],
+                [1002, 1211],
+            ]
+        ]
+
+        # 一番上のPTの左上からの距離
+        target_y = [
+            [v * distance_between_PTs_y + pos_PTs[0].y for v in rete_array]
+            for rete_array in rates_y
+        ]
+        target_x = [
+            [v * distance_between_PTs_y + pos_PTs[0].x for v in rete_array]
+            for rete_array in rates_x
+        ]
+
+        target_name_parts = [[], [], [], []]
+        target_points = []
 
         for text in texts:
-            vertices = (['({},{})'.format(vertex.x, vertex.y)
-                         for vertex in text.bounding_poly.vertices])
+            x = text.bounding_poly.vertices[0].x
+            y = text.bounding_poly.vertices[0].y
+            for i in range(4):
+                range_x = target_x[i]
+                range_y = target_y[i]
+                if (x >= range_x[0]) & (x <= range_x[1]) & (y >= range_y[0]) & (y <= range_y[1]):
+                    target_name_parts[i].append(text.description)
 
-            print('bounds: {}'.format(','.join(vertices)))
+                if (x >= range_x[0]) & (x <= range_x[1])\
+                        & (y >= range_y[1]) & (y <= range_y[2])\
+                        & ((text.description.endswith('00')) | (text.description == '0')):
+                    target_points.append(int(text.description))
+
+        target_names = [''.join(parts) for parts in target_name_parts]
+
+        print('target_names', target_names)
+        print('target_points', target_points)
+        results = {}
+        for i in range(4):
+            results[target_names[i]] = target_points[i]
+        return results
 
         if response.error.message:
             raise Exception(

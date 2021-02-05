@@ -9,6 +9,8 @@ from linebot.models import (
     URIAction,
 )
 
+import json
+
 
 class ReplyService:
     """reply service"""
@@ -201,6 +203,29 @@ class ReplyService:
                             display_text=p,
                             data=f'_tobi_prize:{p}'
                         ) for p in [0, 10, 20, 30]
+                    ]
+                )
+            )
+        )
+
+    def add_submit_results_by_ocr_menu(self, results):
+        self.buttons.append(
+            TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='画像読み込み完了',
+                    text=f'内容があっているか確認してください。',
+                    actions=[
+                        PostbackAction(
+                            label='この結果で計算する',
+                            display_text='この結果で計算する',
+                            data='_add_result '+json.dumps(results),
+                        ),
+                        PostbackAction(
+                            label='手入力する',
+                            display_text='手入力する',
+                            data='_input'
+                        ),
                     ]
                 )
             )

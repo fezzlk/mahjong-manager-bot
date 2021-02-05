@@ -1,6 +1,7 @@
 """router"""
 
 from enum import Enum
+import json
 
 
 class UCommands(Enum):
@@ -45,6 +46,7 @@ class RCommands(Enum):
     tobi = 'tobi'
     drop = 'drop'
     drop_m = 'drop_m'
+    add_result = 'add_result'
 
 
 class Router:
@@ -105,11 +107,13 @@ class Router:
             message_id
         )
 
-        with open(f"images/{message_id}.jpg", "wb") as f:
+        path = f"images/results/{message_id}.jpg"
+        with open(path, "wb") as f:
             # バイナリを1024バイトずつ書き込む
             for chunk in message_content.iter_content():
                 f.write(chunk)
 
+        self.services.points_service.add_by_ocr(path)
         self.services.reply_service.reply(event)
         self.services.app_service.delete_req_info()
 
@@ -121,6 +125,7 @@ class Router:
         if self.services.app_service.req_room_id != None:
             self.routing_in_room_by_method(method)
         else:
+            print(method)
             self.routing_by_method(method)
         self.services.reply_service.reply(event)
         self.services.app_service.delete_req_info()
@@ -201,7 +206,7 @@ class Router:
             self.services.config_service.reply_all_records()
         # dev test
         elif method == UCommands.test.name:
-            self.services.ocr_service.run()
+            self.services.ocr_service.run_test()
 
     def routing_in_room_by_text(self, event):
         """routing by text"""
@@ -305,3 +310,10 @@ class Router:
             tobashita_player = method[5:]
             self.services.calculate_service.calculate(
                 tobashita_player=tobashita_player)
+        # add results
+        elif method.startswith(RCommands.add_result.name):
+            results = method[11:]
+            self.services.results_service.add()
+            self.services.calculate_service.calculate(
+                json.loads(results)
+            )
