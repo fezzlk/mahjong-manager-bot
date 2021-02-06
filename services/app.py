@@ -5,6 +5,8 @@ import re
 import random
 import datetime
 from linebot import LineBotApi
+from flask import logging
+from flask_sqlalchemy import SQLAlchemy
 
 YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
@@ -17,15 +19,14 @@ HAI = [k+'萬' for k in KANSUJI] + [k+'筒' for k in KANSUJI] + \
 class AppService:
     """app service"""
 
-    def __init__(self, service, logger):
+    def __init__(self, service, app):
         self.line_bot_api = line_bot_api
-        self.logger = logger
+        self.logger = logging.create_logger(app)
         self.req_user_id = None
         self.req_room_id = None
-        self.db = None
 
-    def set_db(self, db):
-        self.db = db
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
+        self.db = SQLAlchemy(app)
 
     def set_req_info(self, event):
         """set request info"""

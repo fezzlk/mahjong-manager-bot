@@ -15,8 +15,8 @@ from .user import UserService
 class Services:
     """services"""
 
-    def __init__(self, logger):
-        self.app_service = AppService(self, logger)
+    def __init__(self, app):
+        self.app_service = AppService(self, app)
         self.calculate_service = CalculateService(self)
         self.config_service = ConfigService(self)
         self.matches_service = MatchesService(self)
