@@ -73,6 +73,8 @@ class PointsService:
 
     def add_by_ocr(self):
         results = self.services.ocr_service.get_points()
+        if results is None:
+            return
         res_message = "\n".join([f'{user}: {point}' for user, point in results.items()])
         self.services.reply_service.add_text(res_message)
         self.services.reply_service.add_submit_results_by_ocr_menu(results)

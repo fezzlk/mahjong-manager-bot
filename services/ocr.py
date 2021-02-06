@@ -50,6 +50,12 @@ class OcrService:
             'ocr: text detection running'
         )
         response = client.text_detection(image=image)
+        if response.error.message:
+            raise Exception(
+                '{}\nFor more info on error messages, check: '
+                'https://cloud.google.com/apis/design/errors'.format(
+                    response.error.message))
+
         self.result = response.text_annotations
 
     def delete_result(self):
@@ -71,7 +77,7 @@ class OcrService:
         if len(pos_PTs) != 4:
             print('cannot find 4 "PT" marks')
             self.services.reply_service.add_text('点数を読み取れませんでした。手入力してください。')
-            return
+            return None
 
         def sorter(v): return (v.y, v.x)
         pos_PTs = sorted(pos_PTs, key=sorter)
@@ -138,9 +144,3 @@ class OcrService:
         for i in range(4):
             results[target_names[i]] = target_points[i]
         return results
-
-        if response.error.message:
-            raise Exception(
-                '{}\nFor more info on error messages, check: '
-                'https://cloud.google.com/apis/design/errors'.format(
-                    response.error.message))

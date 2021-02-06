@@ -108,7 +108,7 @@ class ResultsService:
                 '\n'.join([f'{user}: {point}' for user, point in sum_results.items()]))
         key = 'レート'
         self.services.reply_service.add_text(date + '\n'.join(
-            [f'{user}: {point * int(self.services.config_service.get(key)) * 10}円'
+            [f'{user}: {point * int(self.services.config_service.get(key)[1]) * 10}円'
              for user, point in sum_results.items()]))
 
     def delete_by_text(self, text):
