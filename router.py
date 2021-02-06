@@ -113,11 +113,11 @@ class Router:
             self.services.ocr_service.run(message_content.content)
             if self.services.ocr_service.isResultImage():
                 self.services.points_service.add_by_ocr()
-            self.services.ocr_service.delete_result()
             else:
                 self.services.app_service.logger(
                     'this image is not result of jantama'
                 )
+            self.services.ocr_service.delete_result()
 
     def postback(self, event):
         """postback event"""
@@ -275,7 +275,7 @@ class Router:
         # fortune
         elif method == RCommands.fortune.name:
             self.services.reply_service.add_text(
-                f'{self.service.user_service.get_name()}の今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+                f'{self.services.user_service.get_name()}さんの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
         # others manu
         elif method == RCommands.others.name:
             self.services.reply_service.add_others_menu()

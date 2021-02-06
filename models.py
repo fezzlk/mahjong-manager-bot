@@ -41,8 +41,9 @@ class Users(Base):
         back_populates="users"
     )
 
-    def __init__(self, name, user_id, mode):
+    def __init__(self, name, user_id, jantama_name, mode):
         self.name = name
+        self.jantama_name = jantama_name
         self.user_id = user_id
         self.mode = mode
 
