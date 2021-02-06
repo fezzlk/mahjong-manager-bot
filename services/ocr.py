@@ -21,10 +21,7 @@ class OcrService:
             self.credentials = service_account.Credentials.from_service_account_info(
                 service_account_info)
 
-    def run_test(self):
-        self.detect_text('IMG_8799.PNG')
-
-    def detect_text(self, path):
+    def run(self, content=None):
         if self.credentials_raw == None:
             self.services.reply_service.add_text('ocr_service is not setup')
             return
@@ -32,8 +29,8 @@ class OcrService:
         from google.cloud import vision
         import io
         client = vision.ImageAnnotatorClient(credentials=self.credentials)
-        with io.open(path, 'rb') as image_file:
-            content = image_file.read()
+        # with io.open(path, 'rb') as image_file:
+        #     content = image_file.read()
 
         image = vision.Image(content=content)
 

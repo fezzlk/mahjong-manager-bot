@@ -22,7 +22,6 @@ class UCommands(Enum):
     d_results = 'd_results'
     d_matches = 'd_matches'
     d_configs = 'd_configs'
-    test = 'test'
 
 
 class RCommands(Enum):
@@ -107,13 +106,8 @@ class Router:
             message_id
         )
 
-        path = f"images/results/{message_id}.jpg"
-        with open(path, "wb") as f:
-            # バイナリを1024バイトずつ書き込む
-            for chunk in message_content.iter_content():
-                f.write(chunk)
-
-        self.services.points_service.add_by_ocr(path)
+        self.services.points_service.add_by_ocr(
+            content=message_content.content)
         self.services.reply_service.reply(event)
         self.services.app_service.delete_req_info()
 
@@ -204,9 +198,6 @@ class Router:
         # dev configs
         elif method == UCommands.d_configs.name:
             self.services.config_service.reply_all_records()
-        # dev test
-        elif method == UCommands.test.name:
-            self.services.ocr_service.run_test()
 
     def routing_in_room_by_text(self, event):
         """routing by text"""
