@@ -67,27 +67,37 @@ class OcrService:
                 'the requested image is not loaded(required execute self.run()'
             )
 
-        pos_PTs = []
+        # 00を含むテキストを抽出
+        pos_points = []
         for text in self.result:
-            if (text.description.startswith('PT')):
-                pos_upper_left = text.bounding_poly.vertices[0]
-                print('pos_upper_left', pos_upper_left)
-                pos_PTs.append(pos_upper_left)
-
-        if len(pos_PTs) != 4:
-            print('cannot find 4 "PT" marks')
-            self.services.reply_service.add_text('点数を読み取れませんでした。手入力してください。')
-            return None
+            if (text.description.endswith('00')):
+                pos_upper_left_point = text.bounding_poly.vertices[1]
+                pos_points.append(pos_upper_left_point)
 
         def sorter(v): return (v.y, v.x)
-        pos_PTs = sorted(pos_PTs, key=sorter)
+        pos_points = sorted(pos_points, key=sorter)
 
-        # distance_between_PTs_y
-        distance_between_PTs_y = pos_PTs[3].y - pos_PTs[0].y
-        pre_upper_PT_y = 333
-        pre_distance_between_PTs_y = 456
+        # 1位と2位の点数の距離
+        distance_x = pos_points[1].x - pos_points[0].x
+        pre_distance_x = 34
+        distance_y = pos_points[1].y - pos_points[0].y
+        pre_distance_y = 168
+        # 1位の点数の右上
+        upper_x = pos_points[0].x
+        pre_upper_x = 979
+        upper_y = pos_points[0].y
+        pre_upper_y = 313
+        rates_x = [
+            [(v - pre_upper_x)/pre_distance_x for v in rete_array]
+            for rete_array in [
+                [765, 1028],
+                [843, 1056],
+                [922, 1139],
+                [1002, 1211],
+            ]
+        ]
         rates_y = [
-            [(v - pre_upper_PT_y)/pre_distance_between_PTs_y for v in rete_array]
+            [(v - pre_upper_y)/pre_distance_y for v in rete_array]
             for rete_array in [
                 [255, 302, 380],
                 [435, 473, 533],
@@ -96,27 +106,14 @@ class OcrService:
             ]
         ]
 
-        # distance_between_PTs_x
-        distance_between_PTs_x = pos_PTs[3].x - pos_PTs[0].x
-        pre_upper_PT_x = 1176
-        rates_x = [
-            [(v - pre_upper_PT_x)/pre_distance_between_PTs_y for v in rete_array]
-            for rete_array in [
-                [765, 1028],
-                [843, 1056],
-                [922, 1139],
-                [1002, 1211],
-            ]
-        ]
-
-        # 一番上のPTの左上からの距離
-        target_y = [
-            [v * distance_between_PTs_y + pos_PTs[0].y for v in rete_array]
-            for rete_array in rates_y
-        ]
+        # 各ボーダーの１位の点数の左上からの距離
         target_x = [
-            [v * distance_between_PTs_y + pos_PTs[0].x for v in rete_array]
+            [v * distance_x + upper_x for v in rete_array]
             for rete_array in rates_x
+        ]
+        target_y = [
+            [v * distance_y + upper_y for v in rete_array]
+            for rete_array in rates_y
         ]
 
         target_name_parts = [[], [], [], []]
@@ -130,7 +127,6 @@ class OcrService:
                 range_y = target_y[i]
                 if (x >= range_x[0]) & (x <= range_x[1]) & (y >= range_y[0]) & (y <= range_y[1]):
                     target_name_parts[i].append(text.description)
-
                 if (x >= range_x[0]) & (x <= range_x[1])\
                         & (y >= range_y[1]) & (y <= range_y[2])\
                         & ((text.description.endswith('00')) | (text.description == '0')):
