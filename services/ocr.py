@@ -29,8 +29,6 @@ class OcrService:
         from google.cloud import vision
         import io
         client = vision.ImageAnnotatorClient(credentials=self.credentials)
-        # with io.open(path, 'rb') as image_file:
-        #     content = image_file.read()
 
         image = vision.Image(content=content)
 

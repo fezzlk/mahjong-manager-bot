@@ -1,11 +1,14 @@
-"""application root"""
+"""
+Application root
+If '$ flask run' is executed, this file is call at first.
+"""
+import os
 
-import set_local_env  # for dev
+import set_local_env  # for local dev env
 
 from db_setting import Engine
-from models import Base, Users
+from models import Base
 
-import os
 from flask import Flask, request, abort, logging, g
 from linebot import LineBotApi, WebhookHandler, exceptions
 from linebot.models import (
@@ -18,32 +21,38 @@ from linebot.models import (
     PostbackEvent,
 )
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import *
-# from migrate import *
+
 from router import Router
 from services import Services
 
-# テーブルの作成
-Base.metadata.create_all(bind=Engine)
-
-YOUR_CHANNEL_SECRET = os.environ["YOUR_CHANNEL_SECRET"]
-handler = WebhookHandler(YOUR_CHANNEL_SECRET)
+"""define LINE bot handler"""
+handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])
 
 app = Flask(__name__)
 logger = logging.create_logger(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 db = SQLAlchemy(app)
 
-services = Services()
+services = Services(logger)
 services.app_service.set_db(db)
 router = Router(services)
 
 
 @app.route('/')
 def hello_world():
-    Base.metadata.drop_all(bind=Engine)
+    # テーブルの作成
     Base.metadata.create_all(bind=Engine)
+    logger.info('lllllllllllll')
+    # Base.metadata.drop_all(bind=Engine)
+    # Base.metadata.create_all(bind=Engine)
     return "hello world."
+
+
+@app.route('/create')
+def create_table():
+    # テーブルの作成
+    Base.metadata.create_all(bind=Engine)
+    return "create table"
 
 
 @app.route("/callback", methods=['POST'])
@@ -56,7 +65,10 @@ def callback():
         abort(400)
     return 'OK'
 
-# handle event
+
+"""
+handle events
+"""
 
 
 @handler.add(FollowEvent)
@@ -97,5 +109,3 @@ def handle_postback(event):
 
 if __name__ == "__main__":
     app.run()
-    # port = int(os.getenv("PORT"))
-    # app.run(host="0.0.0.0", port=port)

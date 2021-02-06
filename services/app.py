@@ -17,8 +17,9 @@ HAI = [k+'萬' for k in KANSUJI] + [k+'筒' for k in KANSUJI] + \
 class AppService:
     """app service"""
 
-    def __init__(self):
+    def __init__(self, service, logger):
         self.line_bot_api = line_bot_api
+        self.logger = logger
         self.req_user_id = None
         self.req_room_id = None
         self.db = None
