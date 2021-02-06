@@ -77,6 +77,9 @@ class UserService:
             return
         return target.mode
 
+    def reply_mode(self):
+        self.services.reply_service.add_text(self.get_mode())
+
     def reply_all(self):
         users = self.services.app_service.db.session\
             .query(Users).all()

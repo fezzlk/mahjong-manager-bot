@@ -96,60 +96,62 @@ class Router:
 
     def textMessage(self, event):
         """receive text message event"""
-        if event.message.source.type == 'room':
+        if event.source.type == 'room':
             self.routing_for_room_by_text(event)
-        elif event.message.source.type == 'user':
+        elif event.source.type == 'user':
             self.routing_by_text(event)
         else:
-            self.services.app_service.logger.info(f'message.source.type: {event.message.source.type}')
+            self.services.app_service.logger.info(f'message.source.type: {event.source.type}')
             raise BaseException('this sender is not supported')
 
     def imageMessage(self, event):
         """receive image message event"""
-        if event.message.source.type == 'room':
+        if event.source.type == 'room':
             message_content = self.services.app_service.line_bot_api.get_message_content(
                 event.message.id
             )
-            self.services.points_service.add_by_ocr(
-                content=message_content.content
-            )
+            self.services.ocr_service.run(message_content.content)
+            if self.services.ocr_service.isResultImage():
+                self.services.points_service.add_by_ocr()
+            self.services.ocr_service.delete_result()
+            else:
+                self.services.app_service.logger(
+                    'this image is not result of jantama'
+                )
 
     def postback(self, event):
         """postback event"""
 
         method = event.postback.data[1:]
-        if self.services.app_service.req_room_id != None:
+        if event.source.type == 'room':
             self.routing_in_room_by_method(method)
-        else:
-            print(method)
+        elif event.source.type == 'user':
             self.routing_by_method(method)
 
     def routing_by_text(self, event):
         """routing by text for personal chat"""
-
         text = event.message.text
-        prefix = text[0]
-        if len(text) > 1:
-            if (prefix == '_') & (text[1:] in [e.name for e in UCommands]):
-                self.routing_by_method(text[1:])
+        if (text[0] == '_') & (len(text) > 1):
+            method = text[1:].split()[0]
+            if method in [c.name for c in UCommands]:
+                body = text[len(method)+2:]
+                self.routing_by_method(method, body)
                 return
+            else:
+                self.services.reply_service.add_text(
+                    '使い方がわからない場合はメニューの中の「使い方」を押してください。'
+                )
 
-        # routing by mode
-        # wait mode
-        if prefix == '_':
-            self.services.reply_service.add_text(
-                '使い方がわからない場合はメニューの中の「使い方」を押してください。')
-            return
-        # the other
-        self.services.reply_service.add_text('雑談してる暇があったら麻雀の勉強をしましょう')
+        """routing by text on each mode"""
+        """wait mode"""
+        self.services.reply_service.add_text('雑談してる暇があったら麻雀の勉強をしましょう。')
 
-    def routing_by_method(self, method):
+    def routing_by_method(self, method, body):
         """routing by method for personal chat"""
 
         # mode
         if method == UCommands.mode.name:
-            mode = self.services.user_service.get_mode()
-            self.services.reply_service.add_text(mode)
+            self.services.user_service.reply_mode()
         # exit
         elif method == UCommands.exit.name:
             self.services.user_service.chmod(
@@ -175,11 +177,13 @@ class Router:
         elif method == UCommands.help.name:
             self.services.reply_service.add_text('使い方は明日書きます。')
             self.services.reply_service.add_text(
-                '\n'.join(['_' + e.name for e in UCommands]))
+                '\n'.join(['_' + e.name for e in UCommands])
+            )
         # github
         elif method == UCommands.github.name:
             self.services.reply_service.add_text(
-                'https://github.com/bbladr/mahjong-manager-bot')
+                'https://github.com/bbladr/mahjong-manager-bot'
+            )
         # users
         elif method == UCommands.users.name:
             self.services.user_service.reply_all()

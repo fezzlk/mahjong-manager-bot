@@ -71,8 +71,8 @@ class PointsService:
         elif len(s) == 1:
             return 'delete', s[0]
 
-    def add_by_ocr(self, content):
-        results = self.services.ocr_service.run(content)
+    def add_by_ocr(self):
+        results = self.services.ocr_service.get_points()
         res_message = "\n".join([f'{user}: {point}' for user, point in results.items()])
         self.services.reply_service.add_text(res_message)
         self.services.reply_service.add_submit_results_by_ocr_menu(results)

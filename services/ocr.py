@@ -9,7 +9,7 @@ class OcrService:
 
     def __init__(self, services):
         self.services = services
-
+        self.result = None
         from google.oauth2 import service_account
         # Read env data
         self.credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
@@ -21,9 +21,23 @@ class OcrService:
             self.credentials = service_account.Credentials.from_service_account_info(
                 service_account_info)
 
+    def isResultImage(self):
+        if self.result is None:
+            self.services.app_service.logger.warning(
+                'the requested image is not loaded(required execute self.run()'
+            )
+            return
+        for text in self.result:
+            print(text.description)
+            if ('終局' in text.description):
+                return True
+        return False
+
     def run(self, content=None):
         if self.credentials_raw == None:
-            self.services.reply_service.add_text('ocr_service is not setup')
+            self.services.app_service.logger.warning(
+                'ocr_service is not setup'
+            )
             return
         """Detects text in the file."""
         from google.cloud import vision
@@ -32,14 +46,23 @@ class OcrService:
 
         image = vision.Image(content=content)
 
+        self.services.app_service.logger.info(
+            'ocr: text detection running'
+        )
         response = client.text_detection(image=image)
-        texts = response.text_annotations
-        # print('Texts:')
-        # print(texts)
-        # self.services.reply_service.add_text(texts[0].description)
+        self.result = response.text_annotations
+
+    def delete_result(self):
+        self.result = None
+
+    def get_points(self):
+        if self.result is None:
+            self.services.app_service.logger.warning(
+                'the requested image is not loaded(required execute self.run()'
+            )
 
         pos_PTs = []
-        for text in texts:
+        for text in self.result:
             if (text.description.startswith('PT')):
                 pos_upper_left = text.bounding_poly.vertices[0]
                 print('pos_upper_left', pos_upper_left)
@@ -93,7 +116,7 @@ class OcrService:
         target_name_parts = [[], [], [], []]
         target_points = []
 
-        for text in texts:
+        for text in self.result:
             x = text.bounding_poly.vertices[0].x
             y = text.bounding_poly.vertices[0].y
             for i in range(4):
