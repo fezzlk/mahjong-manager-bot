@@ -17,21 +17,27 @@ class UserService:
         self.services = services
         self.modes = Modes
 
-    def register(self, profile):
+    def register(self, profile=None):
         """register"""
+        if profile is None:
+            profile = self.services.app_service.line_bot_api.get_profile(
+                self.services.app_service.req_user_id
+            )
         target = self.services.app_service.db.session\
             .query(Users).filter(Users.user_id == profile.user_id).all()
-        if len(target) >= 1:
-            return
-        user = Users(name=profile.display_name,
-                     user_id=profile.user_id,
-                     mode=self.modes.wait.value,
-                     )
-        self.services.app_service.db.session.add(user)
-        self.services.app_service.db.session.commit()
+        if len(target) == 0:
+            self.services.app_service.logger.info('create a user record')
+            user = Users(name=profile.display_name,
+                         user_id=profile.user_id,
+                         mode=self.modes.wait.value,
+                         )
+            self.services.app_service.db.session.add(user)
+            self.services.app_service.db.session.commit()
+        return profile
 
     def delete(self, user_id):
         """delete"""
+        self.services.app_service.logger.info('delete a user record')
         self.services.app_service.db.session.query(Users).\
             filter(Users.user_id == user_id).\
             delete()

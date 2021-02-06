@@ -52,7 +52,6 @@ class Router:
     def root(self, event):
         """root"""
         self.services.app_service.logger.info(f'receive {event.type} event')
-        print(event)
         self.services.app_service.set_req_info(event)
 
         try:
@@ -78,9 +77,7 @@ class Router:
 
     def follow(self, event):
         """follow event"""
-        profile = self.services.app_service.line_bot_api.get_profile(
-            self.services.app_service.req_user_id)
-        self.services.user_service.register(profile)
+        profile = self.services.user_service.register()
         self.services.reply_service.add_text(
             f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
             {profile.display_name}さんの快適な麻雀生活をサポートします。')
@@ -88,35 +85,34 @@ class Router:
 
     def unfollow(self, event):
         """unfollow event"""
-        self.services.app_service.logger.info('unfollow')
         self.services.user_service.delete(
             self.services.app_service.req_user_id
         )
 
     def join(self, event):
         """join event"""
-
         self.services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。')
         self.services.room_service.register()
 
     def textMessage(self, event):
         """receive text message event"""
-        if self.services.app_service.req_room_id != None:
-            self.routing_in_room_by_text(event)
-        else:
+        if event.message.source.type == 'room':
+            self.routing_for_room_by_text(event)
+        elif event.message.source.type == 'user':
             self.routing_by_text(event)
+        else:
+            self.services.app_service.logger.info(f'message.source.type: {event.message.source.type}')
+            raise BaseException('this sender is not supported')
 
     def imageMessage(self, event):
         """receive image message event"""
-
-        message_id = event.message.id
-        # message_idから画像のバイナリデータを取得
-        message_content = self.services.app_service.line_bot_api.get_message_content(
-            message_id
-        )
-
-        self.services.points_service.add_by_ocr(
-            content=message_content.content)
+        if event.message.source.type == 'room':
+            message_content = self.services.app_service.line_bot_api.get_message_content(
+                event.message.id
+            )
+            self.services.points_service.add_by_ocr(
+                content=message_content.content
+            )
 
     def postback(self, event):
         """postback event"""
@@ -161,20 +157,20 @@ class Router:
             )
         # payment
         elif method == UCommands.payment.name:
-            self.services.reply_service.add_text('この機能は開発中です。')
+            self.services.reply_service.add_text('支払い機能は開発中です。')
         # analysis
         elif method == UCommands.analysis.name:
-            self.services.reply_service.add_text('この機能は開発中です。')
+            self.services.reply_service.add_text('分析機能は開発中です。')
         # fortune
         elif method == UCommands.fortune.name:
             self.services.reply_service.add_text(
                 f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
         # history
         elif method == UCommands.history.name:
-            self.services.reply_service.add_text('この機能は開発中です。')
+            self.services.reply_service.add_text('対戦履歴機能は開発中です。')
         # setting
         elif method == UCommands.setting.name:
-            self.services.reply_service.add_text('この機能は開発中です。')
+            self.services.reply_service.add_text('個人設定機能は開発中です。')
         # help
         elif method == UCommands.help.name:
             self.services.reply_service.add_text('使い方は明日書きます。')
@@ -188,7 +184,7 @@ class Router:
         elif method == UCommands.users.name:
             self.services.user_service.reply_all()
 
-    def routing_in_room_by_text(self, event):
+    def routing_for_room_by_text(self, event):
         """routing by text"""
         self.services.room_service.register()
 
