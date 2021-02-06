@@ -31,7 +31,6 @@ class OcrService:
             )
             return
         for text in self.result:
-            print(text.description)
             if ('終局' in text.description):
                 return True
         return False
