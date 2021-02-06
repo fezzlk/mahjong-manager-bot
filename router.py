@@ -114,7 +114,7 @@ class Router:
             if self.services.ocr_service.isResultImage():
                 self.services.points_service.add_by_ocr()
             else:
-                self.services.app_service.logger(
+                self.services.app_service.logger.warning(
                     'this image is not result of jantama'
                 )
             self.services.ocr_service.delete_result()

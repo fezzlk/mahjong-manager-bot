@@ -2,6 +2,9 @@
 
 import json
 import os
+import io
+from google.cloud import vision
+from google.oauth2 import service_account
 
 
 class OcrService:
@@ -10,16 +13,16 @@ class OcrService:
     def __init__(self, services):
         self.services = services
         self.result = None
-        from google.oauth2 import service_account
-        # Read env data
-        self.credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-        print('GOOGLE_APPLICATION_CREDENTIALS: ', self.credentials_raw)
-        if self.credentials_raw != None:
-            # Generate credentials
+        self.client = None
+        credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+        if credentials_raw != None:
             service_account_info = json.loads(
-                self.credentials_raw, strict=False)
-            self.credentials = service_account.Credentials.from_service_account_info(
-                service_account_info)
+                credentials_raw, strict=False
+            )
+            credentials = service_account.Credentials.from_service_account_info(
+                service_account_info
+            )
+            self.client = vision.ImageAnnotatorClient(credentials=credentials)
 
     def isResultImage(self):
         if self.result is None:
@@ -34,22 +37,19 @@ class OcrService:
         return False
 
     def run(self, content=None):
-        if self.credentials_raw == None:
+        if self.client == None:
             self.services.app_service.logger.warning(
                 'ocr_service is not setup'
             )
             return
         """Detects text in the file."""
-        from google.cloud import vision
-        import io
-        client = vision.ImageAnnotatorClient(credentials=self.credentials)
 
         image = vision.Image(content=content)
 
         self.services.app_service.logger.info(
             'ocr: text detection running'
         )
-        response = client.text_detection(image=image)
+        response = self.client.text_detection(image=image)
         if response.error.message:
             raise Exception(
                 '{}\nFor more info on error messages, check: '
@@ -134,8 +134,6 @@ class OcrService:
 
         target_names = [''.join(parts) for parts in target_name_parts]
 
-        print('target_names', target_names)
-        print('target_points', target_points)
         results = {}
         for i in range(4):
             results[target_names[i]] = target_points[i]
