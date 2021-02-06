@@ -17,11 +17,6 @@ class UCommands(Enum):
     setting = 'setting'
     github = 'github'
     users = 'users'
-    d_users = 'd_users'
-    d_rooms = 'd_rooms'
-    d_results = 'd_results'
-    d_matches = 'd_matches'
-    d_configs = 'd_configs'
 
 
 class RCommands(Enum):
@@ -54,52 +49,66 @@ class Router:
     def __init__(self, services):
         self.services = services
 
+    def root(self, event):
+        """root"""
+        self.services.app_service.logger.info(f'receive {event.type} event')
+        print(event)
+        self.services.app_service.set_req_info(event)
+
+        try:
+            if event.type == 'message':
+                if event.message.type == 'text':
+                    self.textMessage(event)
+                elif event.message.type == 'image':
+                    self.imageMessage(event)
+            elif event.type == 'follow':
+                self.follow(event)
+            elif event.type == 'unfollow':
+                self.unfollow(event)
+            elif event.type == 'join':
+                self.join(event)
+            elif event.type == 'postback':
+                self.postback(event)
+        except BaseException as err:
+            self.services.app_service.logger.exception(err)
+            self.services.reply_service.add_text(str(err))
+
+        self.services.reply_service.reply(event)
+        self.services.app_service.delete_req_info()
+
     def follow(self, event):
         """follow event"""
-
-        self.services.app_service.set_req_info(event)
         profile = self.services.app_service.line_bot_api.get_profile(
             self.services.app_service.req_user_id)
         self.services.user_service.register(profile)
-
         self.services.reply_service.add_text(
             f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
             {profile.display_name}さんの快適な麻雀生活をサポートします。')
-        self.services.reply_service.reply(event)
         self.services.rich_menu_service.create_and_link('personal')
-        self.services.app_service.delete_req_info()
 
     def unfollow(self, event):
         """unfollow event"""
-        self.services.app_service.set_req_info(event)
+        self.services.app_service.logger.info('unfollow')
         self.services.user_service.delete(
             self.services.app_service.req_user_id
         )
-        self.services.app_service.delete_req_info()
 
     def join(self, event):
         """join event"""
 
-        self.services.app_service.set_req_info(event)
         self.services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。')
         self.services.room_service.register()
-        self.services.reply_service.reply(event)
-        self.services.app_service.delete_req_info()
 
     def textMessage(self, event):
         """receive text message event"""
-        self.services.app_service.set_req_info(event)
         if self.services.app_service.req_room_id != None:
             self.routing_in_room_by_text(event)
         else:
             self.routing_by_text(event)
-        self.services.reply_service.reply(event)
-        self.services.app_service.delete_req_info()
 
     def imageMessage(self, event):
         """receive image message event"""
 
-        self.services.app_service.set_req_info(event)
         message_id = event.message.id
         # message_idから画像のバイナリデータを取得
         message_content = self.services.app_service.line_bot_api.get_message_content(
@@ -108,21 +117,16 @@ class Router:
 
         self.services.points_service.add_by_ocr(
             content=message_content.content)
-        self.services.reply_service.reply(event)
-        self.services.app_service.delete_req_info()
 
     def postback(self, event):
         """postback event"""
 
-        self.services.app_service.set_req_info(event)
         method = event.postback.data[1:]
         if self.services.app_service.req_room_id != None:
             self.routing_in_room_by_method(method)
         else:
             print(method)
             self.routing_by_method(method)
-        self.services.reply_service.reply(event)
-        self.services.app_service.delete_req_info()
 
     def routing_by_text(self, event):
         """routing by text for personal chat"""
@@ -183,21 +187,6 @@ class Router:
         # users
         elif method == UCommands.users.name:
             self.services.user_service.reply_all()
-        # dev users
-        elif method == UCommands.d_users.name:
-            self.services.user_service.reply_all_records()
-        # dev rooms
-        elif method == UCommands.d_rooms.name:
-            self.services.room_service.reply_all_records()
-        # dev results
-        elif method == UCommands.d_results.name:
-            self.services.results_service.reply_all_records()
-        # dev matches
-        elif method == UCommands.d_matches.name:
-            self.services.matches_service.reply_all_records()
-        # dev configs
-        elif method == UCommands.d_configs.name:
-            self.services.config_service.reply_all_records()
 
     def routing_in_room_by_text(self, event):
         """routing by text"""
@@ -303,6 +292,7 @@ class Router:
                 tobashita_player=tobashita_player)
         # add results
         elif method.startswith(RCommands.add_result.name):
+
             results = method[11:]
             self.services.results_service.add()
             self.services.calculate_service.calculate(
