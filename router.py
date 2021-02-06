@@ -224,9 +224,6 @@ class Router:
 
     def routing_for_room_by_method(self, method, body):
         """routing by method"""
-
-        print(method)
-        print(body)
         # start menu
         if method == RCommands.start.name:
             self.services.reply_service.add_start_menu()
@@ -288,10 +285,9 @@ class Router:
             self.services.matches_service.reply()
         elif method == RCommands.tobi.name:
             self.services.calculate_service.calculate(
-                tobashita_player=text)
+                tobashita_player=body)
         # add results
         elif method == RCommands.add_result.name:
-            print(json.loads(body))
             self.services.results_service.add()
             self.services.calculate_service.calculate(
                 json.loads(body)
