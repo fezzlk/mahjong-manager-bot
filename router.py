@@ -122,7 +122,7 @@ class Router:
     def postback(self, event):
         """postback event"""
 
-        text = event.postback.data[1:]
+        text = event.postback.data
         method = text[1:].split()[0]
         body = text[len(method)+2:]
         if event.source.type == 'room':
@@ -225,6 +225,8 @@ class Router:
     def routing_for_room_by_method(self, method, body):
         """routing by method"""
 
+        print(method)
+        print(body)
         # start menu
         if method == RCommands.start.name:
             self.services.reply_service.add_start_menu()
@@ -289,7 +291,8 @@ class Router:
                 tobashita_player=text)
         # add results
         elif method == RCommands.add_result.name:
+            print(json.loads(body))
             self.services.results_service.add()
             self.services.calculate_service.calculate(
-                json.loads(results)
+                json.loads(body)
             )
