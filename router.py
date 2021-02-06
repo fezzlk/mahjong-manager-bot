@@ -122,11 +122,13 @@ class Router:
     def postback(self, event):
         """postback event"""
 
-        method = event.postback.data[1:]
+        text = event.postback.data[1:]
+        method = text[1:].split()[0]
+        body = text[len(method)+2:]
         if event.source.type == 'room':
-            self.routing_in_room_by_method(method)
+            self.routing_in_room_by_method(method, body)
         elif event.source.type == 'user':
-            self.routing_by_method(method)
+            self.routing_by_method(method, body)
 
     def routing_by_text(self, event):
         """routing by text for personal chat"""

@@ -36,9 +36,8 @@ router = Router(services)
 @app.route('/')
 def hello_world():
     # テーブルの作成
+    Base.metadata.drop_all(bind=Engine)
     Base.metadata.create_all(bind=Engine)
-    # Base.metadata.drop_all(bind=Engine)
-    # Base.metadata.create_all(bind=Engine)
     return "hello world."
 
 
