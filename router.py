@@ -141,6 +141,7 @@ class Router:
                 self.services.reply_service.add_text(
                     '使い方がわからない場合はメニューの中の「使い方」を押してください。'
                 )
+                return
 
         """routing by text on each mode"""
         """wait mode"""
@@ -193,31 +194,33 @@ class Router:
         self.services.room_service.register()
 
         text = event.message.text
-        prefix = text[0]
-        if len(text) > 1:
-            if (prefix == '_') & (text[1:].split()[0] in [e.name for e in RCommands]):
-                self.routing_in_room_by_method(text[1:])
+        if (text[0] == '_') & (len(text) > 1):
+            method = text[1:].split()[0]
+            if method in [c.name for c in RCommands]:
+                body = text[len(method)+2:]
+                self.routing_in_room_by_method(method, body)
+                return
+            else:
+                self.services.reply_service.add_text(
+                    '使い方がわからない場合は「_help」と入力してください。'
+                )
                 return
 
+        """routing by text on each mode"""
         current_mode = self.services.room_service.get_mode()
-        # routing by mode
-        # input mode
+        """input mode"""
         if current_mode == self.services.room_service.modes.input.value:
             self.services.points_service.add_by_text(text)
             return
 
-        # delete mode
+        """delete mode"""
         if current_mode == self.services.room_service.modes.delete.value:
             self.services.results_service.delete_by_text(text)
             return
 
-        # wait mode
-        if prefix == '_':
-            self.services.reply_service.add_text(
-                '使い方がわからない場合はメニューの中の「使い方」を押してください。')
-            return
+        """wait mode(do nothing)"""
 
-    def routing_in_room_by_method(self, method):
+    def routing_in_room_by_method(self, method, body):
         """routing by method"""
 
         # start menu
@@ -257,12 +260,9 @@ class Router:
         elif method == RCommands.results.name:
             self.services.matches_service.reply_sum_results()
         # drop
-        elif method.startswith(RCommands.drop.name):
-            a = method.split()
-            if len(a) < 2:
-                return
-            target_time = int(a[1])
-            self.services.matches_service.drop_result_by_time(target_time)
+        elif method == RCommands.drop.name:
+            self.services.matches_service.drop_result_by_time(body)
+        # drop match
         elif method == RCommands.drop_m.name:
             self.services.matches_service.drop_current()
         # delete
@@ -272,28 +272,21 @@ class Router:
         # finish
         elif method == RCommands.finish.name:
             self.services.matches_service.finish()
-        # github
-        elif method == RCommands.github.name:
-            self.services.reply_service.add_text(
-                'https://github.com/bbladr/mahjong-manager-bot')
         # fortune
         elif method == RCommands.fortune.name:
             self.services.reply_service.add_text(
-                f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+                f'{self.service.user_service.get_name()}の今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
         # others manu
         elif method == RCommands.others.name:
             self.services.reply_service.add_others_menu()
         # matches
         elif method == RCommands.matches.name:
             self.services.matches_service.reply()
-        elif method.startswith(RCommands.tobi.name):
-            tobashita_player = method[5:]
+        elif method == RCommands.tobi.name:
             self.services.calculate_service.calculate(
-                tobashita_player=tobashita_player)
+                tobashita_player=text)
         # add results
-        elif method.startswith(RCommands.add_result.name):
-
-            results = method[11:]
+        elif method == RCommands.add_result.name:
             self.services.results_service.add()
             self.services.calculate_service.calculate(
                 json.loads(results)

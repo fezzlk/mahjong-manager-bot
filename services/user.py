@@ -35,6 +35,12 @@ class UserService:
             self.services.app_service.db.session.commit()
         return profile
 
+    def get_name(self):
+        profile = self.services.app_service.line_bot_api.get_profile(
+            self.services.app_service.req_user_id
+        )
+        return profile.display_name
+
     def delete(self, user_id):
         """delete"""
         self.services.app_service.logger.info('delete a user record')
