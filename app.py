@@ -9,7 +9,7 @@ import set_local_env  # for local dev env
 from db_setting import Engine
 from models import Base
 
-from flask import Flask, request, abort, g
+from flask import Flask, request, abort, g, render_template
 from linebot import LineBotApi, WebhookHandler, exceptions
 from linebot.models import (
     FollowEvent,
@@ -36,9 +36,10 @@ router = Router(services)
 @app.route('/')
 def hello_world():
     # テーブルの作成
-    Base.metadata.drop_all(bind=Engine)
-    Base.metadata.create_all(bind=Engine)
-    return "hello world."
+    # Base.metadata.drop_all(bind=Engine)
+    # Base.metadata.create_all(bind=Engine)
+    name = "Hoge"
+    return render_template('index.html', title='flask test', name=name)
 
 
 @app.route('/create')
