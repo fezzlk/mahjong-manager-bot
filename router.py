@@ -269,7 +269,8 @@ class Router:
         # delete
         elif method == RCommands.delete.name:
             self.services.room_service.chmod(
-                services.room_service.modes.delete)
+                self.services.room_service.modes.delete
+            )
         # finish
         elif method == RCommands.finish.name:
             self.services.matches_service.finish()

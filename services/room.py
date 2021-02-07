@@ -67,7 +67,6 @@ class RoomService:
         if mode == self.modes.delete:
             self.services.reply_service.add_text(
                 '削除したい結果を数字で指定してください。(終了したい場合は _exit)')
-            self.services.points_service.reply_results()
             return
 
     def get_mode(self):
