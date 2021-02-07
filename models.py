@@ -87,9 +87,9 @@ class Results(Base):
     # 2: archive
     status = Column(Integer, nullable=False)
 
-    def __init__(self, room_id, match_id):
+    def __init__(self, room_id, match_id, points={}):
         self.room_id = room_id
-        self.points = json.dumps({})
+        self.points = json.dumps(points)
         self.match_id = match_id
         self.status = 1
 

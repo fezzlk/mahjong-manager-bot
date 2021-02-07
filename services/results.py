@@ -21,7 +21,7 @@ class ResultsService:
         result = Results(
             room_id=room_id,
             match_id=current_match.id,
-            points=points
+            points=points,
         )
         self.services.app_service.db.session.add(result)
         self.services.app_service.db.session.commit()
