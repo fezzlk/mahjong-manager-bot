@@ -283,12 +283,14 @@ class Router:
         # matches
         elif method == RCommands.matches.name:
             self.services.matches_service.reply()
+        # tobi
         elif method == RCommands.tobi.name:
             self.services.calculate_service.calculate(
                 tobashita_player=body)
         # add results
         elif method == RCommands.add_result.name:
-            self.services.results_service.add()
+            points = json.loads(body)
+            self.services.results_service.add(points)
             self.services.calculate_service.calculate(
-                json.loads(body)
+                points
             )

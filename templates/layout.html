@@ -2,9 +2,17 @@
 <html>
 <head>
 <title>{{ title }}</title>
+<link rel="stylesheet" type="text/css" href="../static/style.css">
 </head>
 <body>
-{% block content %}
-{% endblock %}
+    <div>
+        <a href="/users">users</a>
+        <a href="/rooms">rooms</a>
+        <a href="/results">results</a>
+        <a href="/matches">matches</a>
+        <a href="/configs">configs</a>
+    </div>
+    {% block content %}
+    {% endblock %}
 </body>
 </html>

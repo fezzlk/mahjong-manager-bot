@@ -11,7 +11,7 @@ class ResultsService:
     def __init__(self, services):
         self.services = services
 
-    def add(self):
+    def add(self, points={}):
         """add"""
 
         room_id = self.services.app_service.req_room_id
@@ -21,6 +21,7 @@ class ResultsService:
         result = Results(
             room_id=room_id,
             match_id=current_match.id,
+            points=points
         )
         self.services.app_service.db.session.add(result)
         self.services.app_service.db.session.commit()
@@ -174,10 +175,6 @@ class ResultsService:
             .delete()
         self.services.app_service.db.session.commit()
 
-    def reply_all_records(self):
-        # results = self.services.app_service.db.session\
-        #     .query(Results).all()
-        # if len(results) == 0:
-        #     results = ['なし']
-        # self.services.reply_service.add_text('\n\n'.join(results))
-        return
+    def get_all(self):
+        return self.services.app_service.db.session\
+            .query(Results).all()

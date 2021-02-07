@@ -87,8 +87,10 @@ class UserService:
         self.services.reply_service.add_text(self.get_mode())
 
     def reply_all(self):
-        users = self.services.app_service.db.session\
-            .query(Users).all()
         self.services.reply_service.add_text(
-            '\n'.join([user.name for user in users])
+            '\n'.join([user.name for user in self.get_all()])
         )
+
+    def get_all(self):
+        return self.services.app_service.db.session\
+            .query(Users).all()

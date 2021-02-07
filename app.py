@@ -34,19 +34,75 @@ router = Router(services)
 
 
 @app.route('/')
-def hello_world():
+def index():
     # テーブルの作成
     # Base.metadata.drop_all(bind=Engine)
     # Base.metadata.create_all(bind=Engine)
-    name = "Hoge"
-    return render_template('index.html', title='flask test', name=name)
+    data = {}
+    data['name'] = "Hoge"
+    return render_template('index.html', title='index', data=data)
 
 
-@app.route('/create')
-def create_table():
-    # テーブルの作成
-    Base.metadata.create_all(bind=Engine)
-    return "create table"
+@app.route('/users')
+def users():
+    data = services.user_service.get_all()
+    keys = ['id', 'name', 'user_id', 'mode', 'rooms', 'matches']
+    return render_template(
+        'table.html',
+        title='users',
+        keys=keys,
+        data=data
+    )
+
+
+@app.route('/rooms')
+def rooms():
+    data = services.room_service.get_all()
+    keys = ['id', 'room_id', 'mode', 'users']
+    return render_template(
+        'table.html',
+        title='rooms',
+        keys=keys,
+        data=data
+    )
+
+
+@app.route('/results')
+def results():
+    data = services.results_service.get_all()
+    for d in data:
+        print(d.result)
+    keys = ['id', 'room_id', 'points', 'result', 'match_id', 'status']
+    return render_template(
+        'table.html',
+        title='results',
+        keys=keys,
+        data=data
+    )
+
+
+@app.route('/matches')
+def matches():
+    data = services.matches_service.get_all()
+    keys = ['id', 'room_id', 'result_ids', 'created_at', 'status', 'users']
+    return render_template(
+        'table.html',
+        title='matches',
+        keys=keys,
+        data=data
+    )
+
+
+@app.route('/configs')
+def configs():
+    data = services.config_service.get_all_r()
+    keys = ['id', 'key', 'value', 'target_id']
+    return render_template(
+        'table.html',
+        title='configs',
+        keys=keys,
+        data=data
+    )
 
 
 """

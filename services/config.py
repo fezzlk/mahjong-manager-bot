@@ -65,10 +65,6 @@ class ConfigService:
         self.services.app_service.db.session.commit()
         return
 
-    def reply_all_records(self):
-        # configs = self.services.app_service.db.session\
-        #     .query(Configs).all()
-        # if len(configs) == 0:
-        #     configs = ['なし']
-        # self.services.reply_service.add_text('\n\n'.join(configs))
-        return
+    def get_all_r(self, id):
+        return self.services.app_service.db.session\
+            .query(Configs).all()

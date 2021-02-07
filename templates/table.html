@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+{% if data|length != 0 %}
+<table>
+    <thead>
+        <tr>
+            {% for k in keys %}
+            <th>{{ k }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for v in data %}
+        <tr>
+            {% for k in keys %}
+            <td>{{ v[k] }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>no record</p>
+{% endif %}
+{% endblock %}
