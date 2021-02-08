@@ -46,10 +46,10 @@ class CalculateService:
         # 得点の準備
         sorted_points = sorted(points.items(), key=lambda x: x[1])
         sorted_prize = sorted(
-            [int(s) for s in self.services.config_service.get('順位点').split(',')]
+            [int(s) for s in self.services.config_service.get_by_key('順位点').split(',')]
         )
-        tobi_prize = int(self.services.config_service.get('飛び賞'))
-        clac_method = self.services.config_service.get('計算方法')
+        tobi_prize = int(self.services.config_service.get_by_key('飛び賞'))
+        clac_method = self.services.config_service.get_by_key('計算方法')
 
         # 素点計算
         result = {}

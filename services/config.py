@@ -29,7 +29,7 @@ class ConfigService:
         s = [f'{key}: {str(value)}' for key, value in configs.items()]
         self.services.reply_service.add_text('[設定]\n' + '\n'.join(s))
 
-    def get(self, key):
+    def get_by_key(self, key):
         target_id = self.services.app_service.req_room_id
         config = self.services.app_service.db.session\
             .query(Configs)\
@@ -52,20 +52,27 @@ class ConfigService:
             ))\
             .delete()
         if value != self.configs[key]:
-            config = Configs(target_id=target_id,
-                             key=key,
-                             value=value,
-                             )
+            config = Configs(
+                target_id=target_id,
+                key=key,
+                value=value,
+            )
             self.services.app_service.db.session.add(config)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'update:{key}:{value}:{target_id}')
         self.services.reply_service.add_text(f'{key}を{value}に変更しました。')
 
-    def get_all(self):
+    def get(self, target_ids=None):
+        if target_ids is None:
+            return self.services.app_service.db.session\
+                .query(Configs)\
+                .order_by(Configs.id)\
+                .all()
+        if type(target_ids) != list:
+            target_ids = [target_ids]
         return self.services.app_service.db.session\
-            .query(Configs)\
-            .order_by(Configs.id)\
-            .all()
+            .query(Configs).filter(Configs.id.in_(target_ids))\
+            .order_by(Configs.id).all()
 
     def delete(self, target_ids):
         if type(target_ids) != list:
