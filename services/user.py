@@ -93,4 +93,16 @@ class UserService:
 
     def get_all(self):
         return self.services.app_service.db.session\
-            .query(Users).all()
+            .query(Users)\
+            .order_by(Users.id)\
+            .all()
+
+    def delete(self, target_ids):
+        if type(target_ids) != list:
+            target_ids = [target_ids]
+        self.services.app_service.db.session\
+            .query(Users).filter(
+                Users.id.in_(target_ids),
+            ).delete(synchronize_session=False)
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'delete: id={target_ids}')

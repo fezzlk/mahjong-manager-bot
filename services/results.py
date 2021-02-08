@@ -176,5 +176,25 @@ class ResultsService:
         self.services.app_service.db.session.commit()
 
     def get_all(self):
-        return self.services.app_service.db.session\
-            .query(Results).all()
+        results = self.services.app_service.db.session\
+            .query(Results)\
+            .order_by(Results.id)\
+            .all()
+        for result in results:
+            result.points = json.loads(result.points)
+            result.result = json.loads(result.result)
+        return results
+
+    def delete(self, target_ids):
+        if type(target_ids) != list:
+            target_ids = [target_ids]
+        targets = self.services.app_service.db.session\
+            .query(Results).filter(
+                Results.id.in_(target_ids),
+            ).all()
+        for target in targets:
+            self.services.matches_service.remove_result_id(
+                target.match_id, target.id)
+            self.services.app_service.db.session.delete(target)
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'delete: id={target_ids}')

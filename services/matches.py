@@ -124,4 +124,32 @@ class MatchesService:
 
     def get_all(self):
         return self.services.app_service.db.session\
-            .query(Matches).all()
+            .query(Matches)\
+            .order_by(Matches.id)\
+            .all()
+
+    def remove_result_id(self, match_id, result_id):
+        match = self.services.app_service.db.session\
+            .query(Matches).filter(
+                Matches.id == match_id
+            ).first()
+        result_ids = match.result_ids.split(',')
+        if result_id in result_ids:
+            result_ids.remove(result_id)
+        match.result_ids = ','.join(result_ids)
+        self.services.app_service.db.session.commit()
+
+    def delete(self, target_ids):
+        if type(target_ids) != 'list':
+            target_ids = [target_ids]
+        targets = self.services.app_service.db.session\
+            .query(Matches).filter(
+                Matches.id.in_(target_ids),
+            ).all()
+        for target in targets:
+            self.services.results_service.delete(
+                target.result_ids.split(',')
+            )
+            self.services.app_service.db.session.delete(target)
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'delete: id={target_ids}')

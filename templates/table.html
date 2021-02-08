@@ -7,6 +7,7 @@
             {% for k in keys %}
             <th>{{ k }}</th>
             {% endfor %}
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
@@ -15,6 +16,11 @@
             {% for k in keys %}
             <td>{{ v[k] }}</td>
             {% endfor %}
+            <td>
+                <form action="{{ url_for('delete_'+title, target_id=v['id']) }}" method="post">
+                    <button type="submit">削除</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

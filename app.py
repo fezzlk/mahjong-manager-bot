@@ -9,7 +9,7 @@ import set_local_env  # for local dev env
 from db_setting import Engine
 from models import Base
 
-from flask import Flask, request, abort, g, render_template
+from flask import Flask, request, abort, g, render_template, url_for, redirect
 from linebot import LineBotApi, WebhookHandler, exceptions
 from linebot.models import (
     FollowEvent,
@@ -39,12 +39,12 @@ def index():
     # Base.metadata.drop_all(bind=Engine)
     # Base.metadata.create_all(bind=Engine)
     data = {}
-    data['name'] = "Hoge"
+    data['name'] = 'hoge'
     return render_template('index.html', title='index', data=data)
 
 
 @app.route('/users')
-def users():
+def get_users():
     data = services.user_service.get_all()
     keys = ['id', 'name', 'user_id', 'mode', 'rooms', 'matches']
     return render_template(
@@ -55,8 +55,15 @@ def users():
     )
 
 
+@app.route('/users/delete', methods=['POST'])
+def delete_users():
+    target_id = request.args.get('target_id')
+    services.user_service.delete(int(target_id))
+    return redirect(url_for('get_users'))
+
+
 @app.route('/rooms')
-def rooms():
+def get_rooms():
     data = services.room_service.get_all()
     keys = ['id', 'room_id', 'mode', 'users']
     return render_template(
@@ -67,11 +74,16 @@ def rooms():
     )
 
 
+@app.route('/rooms/delete', methods=['POST'])
+def delete_rooms():
+    target_id = request.args.get('target_id')
+    services.room_service.delete(int(target_id))
+    return redirect(url_for('get_rooms'))
+
+
 @app.route('/results')
-def results():
+def get_results():
     data = services.results_service.get_all()
-    for d in data:
-        print(d.result)
     keys = ['id', 'room_id', 'points', 'result', 'match_id', 'status']
     return render_template(
         'table.html',
@@ -81,8 +93,15 @@ def results():
     )
 
 
+@app.route('/results/delete', methods=['POST'])
+def delete_results():
+    target_id = request.args.get('target_id')
+    services.results_service.delete(int(target_id))
+    return redirect(url_for('get_results'))
+
+
 @app.route('/matches')
-def matches():
+def get_matches():
     data = services.matches_service.get_all()
     keys = ['id', 'room_id', 'result_ids', 'created_at', 'status', 'users']
     return render_template(
@@ -93,8 +112,15 @@ def matches():
     )
 
 
+@app.route('/matches/delete', methods=['POST'])
+def delete_matches():
+    target_id = request.args.get('target_id')
+    services.matches_service.delete(int(target_id))
+    return redirect(url_for('get_matches'))
+
+
 @app.route('/configs')
-def configs():
+def get_configs():
     data = services.config_service.get_all_r()
     keys = ['id', 'key', 'value', 'target_id']
     return render_template(
@@ -103,6 +129,13 @@ def configs():
         keys=keys,
         data=data
     )
+
+
+@app.route('/configs/delete', methods=['POST'])
+def delete_configs():
+    target_id = request.args.get('target_id')
+    services.config_service.delete(int(target_id))
+    return redirect(url_for('get_configs'))
 
 
 """
@@ -157,4 +190,4 @@ def handle_postback(event):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

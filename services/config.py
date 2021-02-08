@@ -65,6 +65,18 @@ class ConfigService:
         self.services.app_service.db.session.commit()
         return
 
-    def get_all_r(self, id):
+    def get_all_r(self):
         return self.services.app_service.db.session\
-            .query(Configs).all()
+            .query(Configs)\
+            .order_by(Configs.id)\
+            .all()
+
+    def delete(self, target_ids):
+        if type(target_ids) != list:
+            target_ids = [target_ids]
+        self.services.app_service.db.session\
+            .query(Configs).filter(
+                Configs.id.in_(target_ids),
+            ).delete(synchronize_session=False)
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'delete: id={target_ids}')

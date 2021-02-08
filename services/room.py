@@ -79,4 +79,16 @@ class RoomService:
 
     def get_all(self):
         return self.services.app_service.db.session\
-            .query(Rooms).all()
+            .query(Rooms)\
+            .order_by(Rooms.id)\
+            .all()
+
+    def delete(self, target_ids):
+        if type(target_ids) != list:
+            target_ids = [target_ids]
+        self.services.app_service.db.session\
+            .query(Rooms).filter(
+                Rooms.id.in_(target_ids),
+            ).delete(synchronize_session=False)
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'delete: id={target_ids}')
