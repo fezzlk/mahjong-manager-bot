@@ -90,7 +90,7 @@ def delete_rooms():
 
 @app.route('/results')
 def get_results():
-    data = services.results_service.get_all()
+    data = services.results_service.get()
     keys = ['id', 'room_id', 'points', 'result', 'match_id', 'status']
     return render_template(
         'table.html',

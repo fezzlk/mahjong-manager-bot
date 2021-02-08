@@ -28,12 +28,6 @@ class ResultsService:
         self.services.app_service.db.session.add(result)
         self.services.app_service.db.session.commit()
 
-    def drop(self, i):
-        room_id = self.services.app_service.req_room_id
-        results = self.services.room_service.rooms[room_id]['results']
-        if self.count() > i:
-            results.pop(i)
-
     def delete_by_id(self, target_id):
         room_id = self.services.app_service.req_room_id
         target = self.services.app_service.db.session\
@@ -52,16 +46,6 @@ class ResultsService:
         self.services.reply_service.add_message(
             '\n'.join([f'{user}: {point}' for user, point in calculated_result.items()]))
         self.services.reply_service.add_message('今回の結果に一喜一憂せず次の戦いに望んでください。')
-
-    def count(self):
-        room_id = self.services.app_service.req_room_id
-        results = self.services.room_service.rooms[room_id]['results']
-        return len(results)
-
-    def reset(self):
-        room_id = self.services.app_service.req_room_id
-        self.services.room_service.rooms[room_id]['results'] = []
-        self.services.reply_service.add_message('今回の対戦結果を全て削除しました。')
 
     def reply_by_ids(self, ids):
         results = self.services.app_service.db.session\
@@ -163,17 +147,13 @@ class ResultsService:
         result.status = 2
         self.services.app_service.db.session.commit()
 
-    def drop_active(self):
-        room_id = self.services.app_service.req_room_id
-        self.services.app_service.db.session\
-            .query(Results).filter(and_(
-                Results.room_id == room_id,
-                Results.status == 1,
-            ))\
-            .delete()
+    def delete_current(self):
+        current = self.get_current
+        if current is None:
+            return
+        self.services.app_service.db.session.delete(current)
         self.services.app_service.db.session.commit()
 
-    def get_all(self):
         results = self.services.app_service.db.session\
             .query(Results)\
             .order_by(Results.id)\
@@ -182,6 +162,23 @@ class ResultsService:
             result.points = json.loads(result.points)
             result.result = json.loads(result.result)
         return results
+
+    def get(self, target_ids=None):
+        if target_ids is None:
+            targets = self.services.app_service.db.session\
+                .query(Matches)\
+                .order_by(Matches.id)\
+                .all()
+        else:
+            if type(target_ids) != list:
+                target_ids = [target_ids]
+            targets = self.services.app_service.db.session\
+                .query(Matches).filter(Matches.id.in_(target_ids))\
+                .order_by(Matches.id).all()
+        for result in targets:
+            result.points = json.loads(result.points)
+            result.result = json.loads(result.result)
+        return targets
 
     def delete(self, target_ids):
         if type(target_ids) != list:
