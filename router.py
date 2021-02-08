@@ -16,7 +16,6 @@ class UCommands(Enum):
     help = 'help'
     setting = 'setting'
     github = 'github'
-    users = 'users'
 
 
 class RCommands(Enum):
@@ -54,7 +53,7 @@ class Router:
         """root"""
         self.services.app_service.logger.info(f'receive {event.type} event')
         self.services.app_service.set_req_info(event)
-
+        isEnabledReply = True
         try:
             if event.type == 'message':
                 if event.message.type == 'text':
@@ -65,6 +64,7 @@ class Router:
                 self.follow(event)
             elif event.type == 'unfollow':
                 self.unfollow(event)
+                isEnabledReply = False
             elif event.type == 'join':
                 self.join(event)
             elif event.type == 'postback':
@@ -73,20 +73,21 @@ class Router:
             self.services.app_service.logger.exception(err)
             self.services.reply_service.add_text(str(err))
 
-        self.services.reply_service.reply(event)
+        if isEnabledReply == True:
+            self.services.reply_service.reply(event)
         self.services.app_service.delete_req_info()
 
     def follow(self, event):
         """follow event"""
-        profile = self.services.user_service.register()
+        user = self.services.user_service.register()
         self.services.reply_service.add_text(
             f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
-            {profile.display_name}さんの快適な麻雀生活をサポートします。')
+            {user.name}さんの快適な麻雀生活をサポートします。')
         self.services.rich_menu_service.create_and_link('personal')
 
     def unfollow(self, event):
         """unfollow event"""
-        self.services.user_service.delete(
+        self.services.user_service.delete_by_user_id(
             self.services.app_service.req_user_id
         )
 
@@ -188,9 +189,6 @@ class Router:
             self.services.reply_service.add_text(
                 'https://github.com/bbladr/mahjong-manager-bot'
             )
-        # users
-        elif method == UCommands.users.name:
-            self.services.user_service.reply_all()
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
@@ -277,7 +275,7 @@ class Router:
         # fortune
         elif method == RCommands.fortune.name:
             self.services.reply_service.add_text(
-                f'{self.services.user_service.get_name()}さんの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
+                f'{self.services.user_service.get_name_by_user_id()}さんの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
         # others manu
         elif method == RCommands.others.name:
             self.services.reply_service.add_others_menu()

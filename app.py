@@ -52,7 +52,7 @@ def reset_db():
 
 @app.route('/users')
 def get_users():
-    data = services.user_service.get_all()
+    data = services.user_service.get()
     keys = ['id', 'name', 'user_id', 'mode', 'rooms', 'matches']
     return render_template(
         'table.html',
