@@ -35,12 +35,18 @@ router = Router(services)
 
 @app.route('/')
 def index():
-    # テーブルの作成
-    # Base.metadata.drop_all(bind=Engine)
-    # Base.metadata.create_all(bind=Engine)
-    data = {}
-    data['name'] = 'hoge'
-    return render_template('index.html', title='index', data=data)
+    if request.args.get('message') is not None:
+        message = request.args.get('message')
+    else:
+        message = ''
+    return render_template('index.html', title='home', message=message)
+
+
+@app.route('/reset', methods=['POST'])
+def reset_db():
+    Base.metadata.drop_all(bind=Engine)
+    Base.metadata.create_all(bind=Engine)
+    return redirect(url_for('index', message='DBをリセットしました。'))
 
 
 @app.route('/users')

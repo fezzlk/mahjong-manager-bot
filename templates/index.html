@@ -1,5 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 <h3>Hello</h3>
-こんにちは。{{ data.name }}さん。
+<form action="{{ url_for('reset_db') }}" method="post">
+    <button type="submit">DBをリセットする</button>
+</form>
+<p>{{ message }}</p>
 {% endblock %}
