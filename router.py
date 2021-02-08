@@ -41,6 +41,7 @@ class RCommands(Enum):
     drop = 'drop'
     drop_m = 'drop_m'
     add_result = 'add_result'
+    update_config = 'update_config'
 
 
 class Router:
@@ -252,8 +253,7 @@ class Router:
                 '\n'.join(['_' + e.name for e in RCommands]))
         # setting
         elif method == RCommands.setting.name:
-            self.services.config_service.reply()
-            self.services.reply_service.add_settings_menu()
+            self.services.reply_service.add_settings_menu(body)
         # reset
         elif method == RCommands.reset.name:
             self.services.results_service.reset_points()
@@ -294,4 +294,11 @@ class Router:
             self.services.results_service.add(points)
             self.services.calculate_service.calculate(
                 points
+            )
+        # update config
+        elif method == RCommands.update_config.name:
+            key = body.split(' ')[0]
+            value = body.split(' ')[1]
+            self.services.config_service.update(
+                key, value
             )

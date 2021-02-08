@@ -93,33 +93,87 @@ class ReplyService:
             )
         )
 
-    def add_settings_menu(self):
-        self.buttons.append(
-            TemplateSendMessage(
+    def add_settings_menu(self, key=''):
+        if key == '':
+            self.services.config_service.reply()
+            button = TemplateSendMessage(
                 alt_text='Buttons template',
                 template=ButtonsTemplate(
                     title='設定変更',
-                    text='どの設定を変更をしますか？',
+                    text='現在以下の項目のみ変更可能です。',
                     actions=[
                         PostbackAction(
                             label='レート',
                             display_text='レート',
-                            data='_update_req:レート'
-                        ),
-                        PostbackAction(
-                            label='順位点',
-                            display_text='順位点',
-                            data='_update_req:順位点'
+                            data='_setting レート'
                         ),
                         PostbackAction(
                             label='飛び賞',
                             display_text='飛び賞',
-                            data='_update_req:飛び賞'
+                            data='_setting 飛び賞'
                         ),
                     ]
                 )
             )
-        )
+        elif key == 'レート':
+            button = TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='レート変更',
+                    text='レートを選んでください',
+                    actions=[
+                        PostbackAction(
+                            label=f'点{i}',
+                            display_text=f'点{i}',
+                            data=f'_update_config レート 点{i}'
+                        ) for i in range(1, 4)
+                    ] + [
+                        PostbackAction(
+                            label='点4~6',
+                            display_text='点4~6',
+                            data='_setting 高レート'
+                        )
+                    ]
+                )
+            )
+        elif key == '高レート':
+            button = TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='レート変更',
+                    text='レートを選んでください',
+                    actions=[
+                        PostbackAction(
+                            label=f'点{i}',
+                            display_text=f'点{i}',
+                            data=f'_update_config レート 点{i}'
+                        ) for i in range(4, 7)
+                    ] + [
+                        PostbackAction(
+                            label='点1~3',
+                            display_text='点1~3',
+                            data='_setting レート'
+                        )
+                    ]
+                )
+            )
+        elif key == '飛び賞':
+            button = TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='飛び賞変更',
+                    text='いくらにしますか？',
+                    actions=[
+                        PostbackAction(
+                            label=p,
+                            display_text=p,
+                            data=f'_update_config 飛び賞 {p}'
+                        ) for p in [0, 10, 20, 30]
+                    ]
+                )
+            )
+
+        self.buttons.append(button)
 
     def add_tobi_menu(self, members):
         self.buttons.append(
@@ -134,72 +188,6 @@ class ReplyService:
                             display_text=member,
                             data=f'_tobi {member}'
                         ) for member in members
-                    ]
-                )
-            )
-        )
-
-    def add_rate_menu(self):
-        self.buttons.append(
-            TemplateSendMessage(
-                alt_text='Buttons template',
-                template=ButtonsTemplate(
-                    title='レート変更',
-                    text='レートを選んでください',
-                    actions=[
-                        PostbackAction(
-                            label=i,
-                            display_text=f'点{i}',
-                            data=f'_update_rate:点{i}'
-                        ) for i in range(3)
-                    ] + [
-                        PostbackAction(
-                            label='high_rate',
-                            display_text='点4~6',
-                            data='_higt_rate_menu'
-                        )
-                    ]
-                )
-            )
-        )
-
-    def add_high_rate_menu(self):
-        self.buttons.append(
-            TemplateSendMessage(
-                alt_text='Buttons template',
-                template=ButtonsTemplate(
-                    title='レート変更',
-                    text='レートを選んでください',
-                    actions=[
-                        PostbackAction(
-                            label=i,
-                            display_text=f'点{i}',
-                            data=f'_update_rate:点{i}'
-                        ) for i in range(4, 6)
-                    ] + [
-                        PostbackAction(
-                            label='low_rate',
-                            display_text='点1~3',
-                            data='_low_rate_menu'
-                        )
-                    ]
-                )
-            )
-        )
-
-    def add_tobi_prize_menu(self, members):
-        self.buttons.append(
-            TemplateSendMessage(
-                alt_text='Buttons template',
-                template=ButtonsTemplate(
-                    title='飛び賞変更',
-                    text='いくらにしますか？',
-                    actions=[
-                        PostbackAction(
-                            label=p,
-                            display_text=p,
-                            data=f'_tobi_prize:{p}'
-                        ) for p in [0, 10, 20, 30]
                     ]
                 )
             )

@@ -42,8 +42,10 @@ class CalculateService:
     def run_calculate(self, points, tobashita_player=None):
         # 得点の準備
         sorted_points = sorted(points.items(), key=lambda x: x[1])
-        sorted_prize = sorted(self.services.config_service.get('順位点'))
-        tobi_prize = self.services.config_service.get('飛び賞')
+        sorted_prize = sorted(
+            [int(s) for s in self.services.config_service.get('順位点').split(',')]
+        )
+        tobi_prize = int(self.services.config_service.get('飛び賞'))
         clac_method = self.services.config_service.get('計算方法')
 
         # 素点計算

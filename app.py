@@ -121,7 +121,7 @@ def delete_matches():
 
 @app.route('/configs')
 def get_configs():
-    data = services.config_service.get_all_r()
+    data = services.config_service.get_all()
     keys = ['id', 'key', 'value', 'target_id']
     return render_template(
         'table.html',
