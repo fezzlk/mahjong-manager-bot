@@ -58,7 +58,7 @@ class UserService:
             .query(Users).filter(Users.user_id == user_id).first()
         if target == None:
             self.services.app_service.logger.warning(f'user is not found: {user_id}')
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 'ユーザーを認識できませんでした。お手数おかけしますが当アカウントをブロック、ブロック解除してください'
             )
         target.mode = mode.value
@@ -71,14 +71,14 @@ class UserService:
             .query(Users).filter(Users.user_id == user_id).first()
         if target == None:
             self.services.app_service.logger.warning(f'user is not found: {user_id}')
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 'ユーザーを認識できませんでした。お手数おかけしますが当アカウントを一度ブロックし、ブロック解除してください'
             )
             return
         return target.mode
 
     def reply_mode(self):
-        self.services.reply_service.add_text(self.get_mode())
+        self.services.reply_service.add_message(self.get_mode())
 
     def get(self, target_ids=None):
         if target_ids is None:

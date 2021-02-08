@@ -27,7 +27,7 @@ class ConfigService:
     def reply(self):
         configs = self.get_by_target()
         s = [f'{key}: {str(value)}' for key, value in configs.items()]
-        self.services.reply_service.add_text('[設定]\n' + '\n'.join(s))
+        self.services.reply_service.add_message('[設定]\n' + '\n'.join(s))
 
     def get_by_key(self, key):
         target_id = self.services.app_service.req_room_id
@@ -60,7 +60,7 @@ class ConfigService:
             self.services.app_service.db.session.add(config)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'update:{key}:{value}:{target_id}')
-        self.services.reply_service.add_text(f'{key}を{value}に変更しました。')
+        self.services.reply_service.add_message(f'{key}を{value}に変更しました。')
 
     def get(self, target_ids=None):
         if target_ids is None:

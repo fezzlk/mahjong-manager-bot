@@ -20,9 +20,8 @@ class ReplyService:
         self.texts = []
         self.buttons = []
 
-    def add_text(self, text):
+    def add_message(self, text):
         """add"""
-
         self.texts.append(text)
 
     def reply(self, event):

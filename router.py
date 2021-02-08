@@ -71,7 +71,7 @@ class Router:
                 self.postback(event)
         except BaseException as err:
             self.services.app_service.logger.exception(err)
-            self.services.reply_service.add_text(str(err))
+            self.services.reply_service.add_message(str(err))
 
         if isEnabledReply == True:
             self.services.reply_service.reply(event)
@@ -80,7 +80,7 @@ class Router:
     def follow(self, event):
         """follow event"""
         user = self.services.user_service.register()
-        self.services.reply_service.add_text(
+        self.services.reply_service.add_message(
             f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
             {user.name}さんの快適な麻雀生活をサポートします。')
         self.services.rich_menu_service.create_and_link('personal')
@@ -93,7 +93,7 @@ class Router:
 
     def join(self, event):
         """join event"""
-        self.services.reply_service.add_text(f'こんにちは、今日は麻雀日和ですね。')
+        self.services.reply_service.add_message(f'こんにちは、今日は麻雀日和ですね。')
         self.services.room_service.register()
 
     def textMessage(self, event):
@@ -142,14 +142,14 @@ class Router:
                 self.routing_by_method(method, body)
                 return
             else:
-                self.services.reply_service.add_text(
+                self.services.reply_service.add_message(
                     '使い方がわからない場合はメニューの中の「使い方」を押してください。'
                 )
                 return
 
         """routing by text on each mode"""
         """wait mode"""
-        self.services.reply_service.add_text('雑談してる暇があったら麻雀の勉強をしましょう。')
+        self.services.reply_service.add_message('雑談してる暇があったら麻雀の勉強をしましょう。')
 
     def routing_by_method(self, method, body):
         """routing by method for personal chat"""
@@ -164,29 +164,29 @@ class Router:
             )
         # payment
         elif method == UCommands.payment.name:
-            self.services.reply_service.add_text('支払い機能は開発中です。')
+            self.services.reply_service.add_message('支払い機能は開発中です。')
         # analysis
         elif method == UCommands.analysis.name:
-            self.services.reply_service.add_text('分析機能は開発中です。')
+            self.services.reply_service.add_message('分析機能は開発中です。')
         # fortune
         elif method == UCommands.fortune.name:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 f'あなたの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
         # history
         elif method == UCommands.history.name:
-            self.services.reply_service.add_text('対戦履歴機能は開発中です。')
+            self.services.reply_service.add_message('対戦履歴機能は開発中です。')
         # setting
         elif method == UCommands.setting.name:
-            self.services.reply_service.add_text('個人設定機能は開発中です。')
+            self.services.reply_service.add_message('個人設定機能は開発中です。')
         # help
         elif method == UCommands.help.name:
-            self.services.reply_service.add_text('使い方は明日書きます。')
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message('使い方は明日書きます。')
+            self.services.reply_service.add_message(
                 '\n'.join(['_' + e.name for e in UCommands])
             )
         # github
         elif method == UCommands.github.name:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 'https://github.com/bbladr/mahjong-manager-bot'
             )
 
@@ -202,7 +202,7 @@ class Router:
                 self.routing_for_room_by_method(method, body)
                 return
             else:
-                self.services.reply_service.add_text(
+                self.services.reply_service.add_message(
                     '使い方がわからない場合は「_help」と入力してください。'
                 )
                 return
@@ -238,7 +238,7 @@ class Router:
         # mode
         elif method == RCommands.mode.name:
             mode = self.services.room_service.get_mode()
-            self.services.reply_service.add_text(mode)
+            self.services.reply_service.add_message(mode)
         # exit
         elif method == RCommands.exit.name:
             self.services.room_service.chmod(
@@ -246,8 +246,8 @@ class Router:
             )
         # help
         elif method == RCommands.help.name:
-            self.services.reply_service.add_text('使い方は明日書きます。')
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message('使い方は明日書きます。')
+            self.services.reply_service.add_message(
                 '\n'.join(['_' + e.name for e in RCommands]))
         # setting
         elif method == RCommands.setting.name:
@@ -274,7 +274,7 @@ class Router:
             self.services.matches_service.finish()
         # fortune
         elif method == RCommands.fortune.name:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 f'{self.services.user_service.get_name_by_user_id()}さんの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
         # others manu
         elif method == RCommands.others.name:

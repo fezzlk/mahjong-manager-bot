@@ -47,7 +47,7 @@ class MatchesService:
     def drop_result_by_time(self, i):
         """drop result"""
         if self.count_results() == 0:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 'まだ対戦結果がありません。')
             return
         current = self.get_current()
@@ -74,7 +74,7 @@ class MatchesService:
 
     def reply_sum_results(self):
         if self.count_results() == 0:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
         current = self.get_current()
@@ -84,7 +84,7 @@ class MatchesService:
 
     def finish(self):
         if self.count_results() == 0:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
         current = self.get_current()
@@ -107,7 +107,7 @@ class MatchesService:
             )).order_by(Matches.id)\
             .all()
         if len(matches) == 0:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
         for match in matches:

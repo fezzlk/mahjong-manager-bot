@@ -16,15 +16,15 @@ class CalculateService:
             points = json.loads(result.points)
 
         if len(points) != 4:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 '四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
             return
         if int(sum(points.values())/100) != 1000:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
             return
         if len(set(points.values())) != 4:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 f'同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
             return
         # 飛び賞

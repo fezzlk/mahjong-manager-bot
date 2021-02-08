@@ -45,15 +45,15 @@ class ResultsService:
             )).first()
         target.status = 0
         self.services.app_service.db.session.commit()
-        self.services.reply_service.add_text(f'id={target_id}の結果を削除しました。')
+        self.services.reply_service.add_message(f'id={target_id}の結果を削除しました。')
 
     def reply_current_result(self):
         result = self.services.results_service.get_current()
         calculated_result = json.loads(result.result)
-        self.services.reply_service.add_text(f'一半荘お疲れ様でした。結果を表示します。')
-        self.services.reply_service.add_text(
+        self.services.reply_service.add_message(f'一半荘お疲れ様でした。結果を表示します。')
+        self.services.reply_service.add_message(
             '\n'.join([f'{user}: {point}' for user, point in calculated_result.items()]))
-        self.services.reply_service.add_text('今回の結果に一喜一憂せず次の戦いに望んでください。')
+        self.services.reply_service.add_message('今回の結果に一喜一憂せず次の戦いに望んでください。')
 
     def count(self):
         room_id = self.services.app_service.req_room_id
@@ -63,7 +63,7 @@ class ResultsService:
     def reset(self):
         room_id = self.services.app_service.req_room_id
         self.services.room_service.rooms[room_id]['results'] = []
-        self.services.reply_service.add_text('今回の対戦結果を全て削除しました。')
+        self.services.reply_service.add_message('今回の対戦結果を全て削除しました。')
 
     def reply_all_by_ids(self, ids):
         results = self.services.app_service.db.session\
@@ -85,8 +85,8 @@ class ResultsService:
                 if not name in sum_results.keys():
                     sum_results[name] = 0
                 sum_results[name] += point
-        self.services.reply_service.add_text('\n\n'.join(results_list))
-        self.services.reply_service.add_text(
+        self.services.reply_service.add_message('\n\n'.join(results_list))
+        self.services.reply_service.add_message(
             '総計\n' + '\n'.join(
                 [f'{user}: {point}' for user, point in sum_results.items()]
             )
@@ -105,23 +105,23 @@ class ResultsService:
                     sum_results[name] = 0
                 sum_results[name] += point
         if is_rep_sum:
-            self.services.reply_service.add_text(
+            self.services.reply_service.add_message(
                 '\n'.join([f'{user}: {point}' for user, point in sum_results.items()]))
         key = 'レート'
-        self.services.reply_service.add_text(date + '\n'.join(
+        self.services.reply_service.add_message(date + '\n'.join(
             [f'{user}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円'
              for user, point in sum_results.items()]))
 
     def delete_by_text(self, text):
         if text.isdigit() == False:
-            self.services.reply_service.add_text('数字で指定してください。')
+            self.services.reply_service.add_message('数字で指定してください。')
             return
         i = int(text)
         if 0 < i & self.services.results_service.count() <= i:
             self.services.results_service.drop(i-1)
-            self.services.reply_service.add_text(f'{i}回目の結果を削除しました。')
+            self.services.reply_service.add_message(f'{i}回目の結果を削除しました。')
             return
-        self.services.reply_service.add_text('指定された結果が存在しません。')
+        self.services.reply_service.add_message('指定された結果が存在しません。')
 
     def get_current(self):
         room_id = self.services.app_service.req_room_id
