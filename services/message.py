@@ -19,6 +19,12 @@ wait_messages = [
     'まもなく天和が訪れるでしょう。',
 ]
 
+result_messages = [
+    '今回の結果に一喜一憂せず次の戦いに望んでください。',
+    '次の半荘で役満が出る予感...',
+    '今回の反省点を次に活かしましょう',
+]
+
 
 class MessageService:
     """message service"""
@@ -37,7 +43,6 @@ class MessageService:
 
     def get_wait_massage(self):
         user_id = self.services.app_service.req_user_id
-        counter = self.services.user_service()
         now = datetime.datetime.now()
         random.seed(
             int(now.minute) +
@@ -45,3 +50,13 @@ class MessageService:
         )
 
         return random.choice(wait_messages)
+
+    def get_result_message(self):
+        user_id = self.services.app_service.req_user_id
+        now = datetime.datetime.now()
+        random.seed(
+            int(now.minute) +
+            int(re.sub("\\D", "", self.services.app_service.req_user_id))
+        )
+
+        return random.choice(result_messages)

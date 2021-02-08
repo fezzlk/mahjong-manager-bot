@@ -147,7 +147,8 @@ class Router:
 
         """routing by text on each mode"""
         """wait mode"""
-        self.services.reply_service.add_message('雑談してる暇があったら麻雀の勉強をしましょう。')
+        self.services.reply_service.add_message(
+            self.services.message_service.get_wait_massage())
 
     def routing_by_method(self, method, body):
         """routing by method for personal chat"""

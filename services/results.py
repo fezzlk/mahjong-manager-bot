@@ -43,7 +43,8 @@ class ResultsService:
         self.services.reply_service.add_message(f'一半荘お疲れ様でした。結果を表示します。')
         self.services.reply_service.add_message(
             '\n'.join([f'{user}: {point}' for user, point in calculated_result.items()]))
-        self.services.reply_service.add_message('今回の結果に一喜一憂せず次の戦いに望んでください。')
+        self.services.reply_service.add_message(
+            self.services.message_service.get_result_message())
 
     def reply_by_ids(self, ids):
         results = self.services.app_service.db.session\
