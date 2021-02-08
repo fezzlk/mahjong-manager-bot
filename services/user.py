@@ -72,7 +72,7 @@ class UserService:
         if target == None:
             self.services.app_service.logger.warning(f'user is not found: {user_id}')
             self.services.reply_service.add_text(
-                'ユーザーを認識できませんでした。お手数おかけしますが当アカウントをブロック、ブロック解除してください'
+                'ユーザーを認識できませんでした。お手数おかけしますが当アカウントを一度ブロックし、ブロック解除してください'
             )
             return
         return target.mode
