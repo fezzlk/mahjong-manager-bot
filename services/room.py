@@ -55,7 +55,7 @@ class RoomService:
                 \n（同点の場合は上家が高くなるように数点追加してください）')
             return
         else:
-            self.services.results_service.delete_current()
+            self.services.results_service.disable()
         if mode == self.modes.wait:
             self.services.reply_service.add_message(
                 f'始める時は「_start」と入力してください。')

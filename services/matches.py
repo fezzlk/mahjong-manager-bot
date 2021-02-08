@@ -127,7 +127,7 @@ class MatchesService:
         for match in matches:
             self.services.results_service.reply_sum_and_money_by_ids(
                 match.result_ids.split(','),
-                is_rep_sum=False,
+                is_required_sum=False,
                 date=match.created_at.strftime('%Y-%m-%d')+'\n'
             )
 

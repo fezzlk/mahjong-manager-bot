@@ -23,10 +23,7 @@ class ResultsService:
         )
         self.services.app_service.db.session.add(result)
         self.services.app_service.db.session.commit()
-
-    def update(self, result):
-        self.services.app_service.db.session.add(result)
-        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'create: room_id={room_id}')
 
     def delete_by_id(self, target_id):
         room_id = self.services.app_service.req_room_id
@@ -37,6 +34,7 @@ class ResultsService:
             )).first()
         target.status = 0
         self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'delete: id={target_id} room_id={room_id}')
         self.services.reply_service.add_message(f'id={target_id}の結果を削除しました。')
 
     def reply_current_result(self):
@@ -74,7 +72,7 @@ class ResultsService:
             )
         )
 
-    def reply_sum_and_money_by_ids(self, ids, is_rep_sum=True, date=''):
+    def reply_sum_and_money_by_ids(self, ids, is_required_sum=True, date=''):
         results = self.services.app_service.db.session\
             .query(Results).filter(
                 Results.id.in_([int(s) for s in ids]),
@@ -86,24 +84,13 @@ class ResultsService:
                 if not name in sum_results.keys():
                     sum_results[name] = 0
                 sum_results[name] += point
-        if is_rep_sum:
+        if is_required_sum:
             self.services.reply_service.add_message(
                 '\n'.join([f'{user}: {point}' for user, point in sum_results.items()]))
         key = 'レート'
         self.services.reply_service.add_message(date + '\n'.join(
             [f'{user}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円'
              for user, point in sum_results.items()]))
-
-    def delete_by_text(self, text):
-        if text.isdigit() == False:
-            self.services.reply_service.add_message('数字で指定してください。')
-            return
-        i = int(text)
-        if 0 < i & self.services.results_service.count() <= i:
-            self.services.results_service.drop(i-1)
-            self.services.reply_service.add_message(f'{i}回目の結果を削除しました。')
-            return
-        self.services.reply_service.add_message('指定された結果が存在しません。')
 
     def get_current(self):
         room_id = self.services.app_service.req_room_id
@@ -141,27 +128,23 @@ class ResultsService:
         result = self.services.results_service.get_current()
         result.result = json.dumps(calculated_result)
         self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'update result: id={result.id}')
 
     def archive(self):
-        result = self.services.results_service.get_current()
-        result.status = 2
+        current = self.services.results_service.get_current()
+        if current is None:
+            return
+        current.status = 2
         self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'archive: id={current.id}')
 
-    def delete_current(self):
+    def disable(self):
         current = self.get_current
         if current is None:
             return
-        self.services.app_service.db.session.delete(current)
+        current.status = 0
         self.services.app_service.db.session.commit()
-
-        results = self.services.app_service.db.session\
-            .query(Results)\
-            .order_by(Results.id)\
-            .all()
-        for result in results:
-            result.points = json.loads(result.points)
-            result.result = json.loads(result.result)
-        return results
+        self.services.app_service.logger.info(f'disable: id={current.id}')
 
     def get(self, target_ids=None):
         if target_ids is None:
