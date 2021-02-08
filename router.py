@@ -255,10 +255,10 @@ class Router:
             self.services.matches_service.reply_sum_results()
         # drop
         elif method == RCommands.drop.name:
-            self.services.matches_service.drop_result_by_time(int(body))
+            self.services.matches_service.drop_result_by_number(int(body))
         # drop match
         elif method == RCommands.drop_m.name:
-            self.services.matches_service.drop_current()
+            self.services.matches_service.disable()
         # delete
         elif method == RCommands.delete.name:
             self.services.room_service.chmod(

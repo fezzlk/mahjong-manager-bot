@@ -109,7 +109,7 @@ def delete_results():
 
 @app.route('/matches')
 def get_matches():
-    data = services.matches_service.get_all()
+    data = services.matches_service.get()
     keys = ['id', 'room_id', 'result_ids', 'created_at', 'status', 'users']
     return render_template(
         'table.html',

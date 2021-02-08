@@ -15,9 +15,7 @@ class ResultsService:
         """add"""
 
         room_id = self.services.app_service.req_room_id
-        current_match = self.services.matches_service.get_or_add_current(
-            room_id
-        )
+        current_match = self.services.matches_service.get_or_add_current()
         result = Results(
             room_id=room_id,
             match_id=current_match.id,
@@ -36,7 +34,7 @@ class ResultsService:
         if self.count() > i:
             results.pop(i)
 
-    def drop_by_id(self, target_id):
+    def delete_by_id(self, target_id):
         room_id = self.services.app_service.req_room_id
         target = self.services.app_service.db.session\
             .query(Results).filter(and_(
@@ -65,7 +63,7 @@ class ResultsService:
         self.services.room_service.rooms[room_id]['results'] = []
         self.services.reply_service.add_message('今回の対戦結果を全て削除しました。')
 
-    def reply_all_by_ids(self, ids):
+    def reply_by_ids(self, ids):
         results = self.services.app_service.db.session\
             .query(Results).filter(
                 Results.id.in_([int(s) for s in ids]),

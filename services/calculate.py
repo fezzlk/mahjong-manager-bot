@@ -37,6 +37,7 @@ class CalculateService:
         self.services.results_service.update_result(calc_result)
         self.services.results_service.reply_current_result()
         self.services.matches_service.add_result()
+        self.services.results_service.archive()
         self.services.room_service.chmod(
             self.services.room_service.modes.wait
         )

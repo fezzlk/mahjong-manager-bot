@@ -11,9 +11,8 @@ class MatchesService:
     def __init__(self, services):
         self.services = services
 
-    def get_current(self, room_id=None):
-        if room_id is None:
-            room_id = self.services.app_service.req_room_id
+    def get_current(self):
+        room_id = self.services.app_service.req_room_id
         return self.services.app_service.db.session\
             .query(Matches).filter(and_(
                 Matches.room_id == room_id,
@@ -21,14 +20,16 @@ class MatchesService:
             )).order_by(Matches.id.desc())\
             .first()
 
-    def get_or_add_current(self, room_id=None):
+    def get_or_add_current(self):
         """get or add"""
         current = self.get_current(room_id)
 
-        if current == None:
+        if current is None:
+            room_id = self.services.app_service.req_room_id
             current = Matches(room_id=room_id)
             self.services.app_service.db.session.add(current)
             self.services.app_service.db.session.commit()
+            f'create: room_id={room_id}'
         return current
 
     def add_result(self):
@@ -42,31 +43,35 @@ class MatchesService:
             result_ids.append(str(current_result.id))
         current_match.result_ids = ','.join(result_ids)
         self.services.app_service.db.session.commit()
-        self.services.results_service.archive()
+        self.services.app_service.logger.info(f'update: id={current_match.id}')
 
-    def drop_result_by_time(self, i):
+    def drop_result_by_number(self, i):
         """drop result"""
-        if self.count_results() == 0:
+
+        if count_results() == 0:
+            self.services.app_service.logger.warning(
+                'current match is not found'
+            )
             self.services.reply_service.add_message(
-                'まだ対戦結果がありません。')
+                'まだ対戦結果がありません。'
+            )
             return
+
         current = self.get_current()
         result_ids = current.result_ids.split(',')
-        self.services.results_service.drop_by_id(result_ids[i-1])
+        self.services.results_service.delete_by_id(result_ids[i-1])
         result_ids.pop(i-1)
         current.result_ids = ','.join(result_ids)
         self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(
+            f'delete result: match_id={current.id} result_id={i-1}'
+        )
 
     def count_results(self):
-        room_id = self.services.app_service.req_room_id
-        match = self.services.app_service.db.session\
-            .query(Matches).filter(and_(
-                Matches.room_id == room_id,
-                Matches.status == 1,
-            )).first()
-        if match is None:
+        current = self.get_current()
+        if current is None:
             return 0
-        ids = match.result_ids.split(',')
+        ids = current.result_ids.split(',')
         if ids[0] == '':
             return 0
         else:
@@ -78,7 +83,7 @@ class MatchesService:
                 'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
         current = self.get_current()
-        self.services.results_service.reply_all_by_ids(
+        self.services.results_service.reply_by_ids(
             current.result_ids.split(',')
         )
 
@@ -94,21 +99,30 @@ class MatchesService:
         self.archive()
 
     def archive(self):
-        match = self.services.matches_service.get_current()
+        current = self.get_current()
         match.status = 2
         self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'archive: id={match.id}')
+
+    def disable(self):
+        match = self.get_current()
+        if match is None:
+            return
+        match.status = 0
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'disable: id={match.id}')
 
     def reply(self):
         room_id = self.services.app_service.req_room_id
         matches = self.services.app_service.db.session\
             .query(Matches).filter(and_(
-                Matches.room_id == room_id,
                 Matches.status == 2
             )).order_by(Matches.id)\
             .all()
         if len(matches) == 0:
             self.services.reply_service.add_message(
-                'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
+                'まだ対戦結果がありません。'
+            )
             return
         for match in matches:
             self.services.results_service.reply_sum_and_money_by_ids(
@@ -117,16 +131,17 @@ class MatchesService:
                 date=match.created_at.strftime('%Y-%m-%d')+'\n'
             )
 
-    def drop_current(self):
-        match = self.get_current()
-        match.status = 0
-        self.services.app_service.db.session.commit()
-
-    def get_all(self):
+    def get(self, target_ids=None):
+        if target_ids is None:
+            return self.services.app_service.db.session\
+                .query(Matches)\
+                .order_by(Matches.id)\
+                .all()
+        if type(target_ids) != list:
+            target_ids = [target_ids]
         return self.services.app_service.db.session\
-            .query(Matches)\
-            .order_by(Matches.id)\
-            .all()
+            .query(Matches).filter(Matches.id.in_(target_ids))\
+            .order_by(Matches.id).all()
 
     def remove_result_id(self, match_id, result_id):
         match = self.services.app_service.db.session\
