@@ -83,7 +83,7 @@ class Router:
         self.services.reply_service.add_message(
             f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
             {user.name}さんの快適な麻雀生活をサポートします。')
-        self.services.rich_menu_service.create_and_link('personal')
+        self.services.rich_menu_service.create_and_link()
 
     def unfollow(self, event):
         """unfollow event"""
