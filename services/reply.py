@@ -188,6 +188,12 @@ class ReplyService:
                             display_text=member,
                             data=f'_tobi {member}'
                         ) for member in members
+                    ] + [
+                        PostbackAction(
+                            label='誰も飛ばしていません',
+                            display_text='彼が勝手に飛びました',
+                            data=f'_tobi'
+                        )
                     ]
                 )
             )

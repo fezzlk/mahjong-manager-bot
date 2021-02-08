@@ -28,8 +28,10 @@ class CalculateService:
                 f'同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
             return
         # 飛び賞
-        if (any((x < 0 for x in points.values()))) & (tobashita_player is None):
-            self.services.reply_service.add_tobi_menu(points.keys())
+        if (any(x < 0 for x in points.values())) & (tobashita_player is None):
+            self.services.reply_service.add_tobi_menu(
+                [player for player in points.keys() if points[player] > 0]
+            )
             return
         calc_result = self.run_calculate(points, tobashita_player)
         self.services.results_service.update_result(calc_result)
@@ -40,6 +42,7 @@ class CalculateService:
         )
 
     def run_calculate(self, points, tobashita_player=None):
+        print('tobashita_player:', tobashita_player)
         # 得点の準備
         sorted_points = sorted(points.items(), key=lambda x: x[1])
         sorted_prize = sorted(
@@ -51,24 +54,23 @@ class CalculateService:
         # 素点計算
         result = {}
         tobasare_players = []
-        disabled_tobi = False
+        disabled_tobi = (tobashita_player is None) | (tobashita_player == '')
         # 2~4位
         for t in sorted_points[:-1]:
+            player = t[0]
+            point = t[1]
             if clac_method == '五捨六入':
-                result[t[0]] = int((t[1]+70400)/1000)-100
-            if clac_method == '四捨五入':
-                result[t[0]] = int((t[1]+70500)/1000)-100
-            if clac_method == '切り捨て':
-                result[t[0]] = int((t[1]+70000)/1000)-100
-            if clac_method == '切り上げ':
-                result[t[0]] = int((t[1]+70900)/1000)-100
+                result[player] = int((point+70400)/1000)-100
+            elif clac_method == '四捨五入':
+                result[player] = int((point+70500)/1000)-100
+            elif clac_method == '切り捨て':
+                result[player] = int((point+70000)/1000)-100
+            elif clac_method == '切り上げ':
+                result[player] = int((point+70900)/1000)-100
             else:
-                result[t[0]] = int((t[1]-30000)/1000)
-            if (t[1] < 0):
-                if t[0] == tobashita_player:
-                    disabled_tobi = True
-                else:
-                    tobasare_players.append(t[0])
+                result[player] = int((point-30000)/1000)
+            if (point < 0):
+                tobasare_players.append(player)
         # 1位
         result[sorted_points[-1][0]] = -1 * sum(result.values())
 
@@ -80,4 +82,8 @@ class CalculateService:
                     result[t[0]] -= tobi_prize
                 if t[0] == tobashita_player:
                     result[t[0]] += tobi_prize*len(tobasare_players)
+                else:
+                    self.services.app_service.logger.warning(
+                        'tobashita_player is not matching'
+                    )
         return result
