@@ -214,11 +214,6 @@ class Router:
             self.services.points_service.add_by_text(text)
             return
 
-        """delete mode"""
-        if current_mode == self.services.room_service.modes.delete.value:
-            self.services.results_service.delete_by_text(text)
-            return
-
         """wait mode(do nothing)"""
 
     def routing_for_room_by_method(self, method, body):

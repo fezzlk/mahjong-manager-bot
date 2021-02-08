@@ -9,7 +9,6 @@ class Modes(Enum):
 
     wait = 'wait'
     input = 'input'
-    delete = 'delete'
 
 
 class RoomService:
@@ -24,6 +23,7 @@ class RoomService:
 
         room_id = self.services.app_service.req_room_id
         if room_id == None:
+            self.services.app_service.logger.warning(f'{room_id} is not found')
             return
         room = self.services.app_service.db.session\
             .query(Rooms).filter(Rooms.room_id == room_id).first()
@@ -33,11 +33,7 @@ class RoomService:
                          )
             self.services.app_service.db.session.add(room)
             self.services.app_service.db.session.commit()
-
-    def get():
-        room_id = self.services.app_service.req_room_id
-        return self.services.app_service.db.session\
-            .query(Rooms).filter(Rooms.room_id == room_id).first()
+            self.services.app_service.logger.info(f'create: {room_id}')
 
     def chmod(self, mode):
         room_id = self.services.app_service.req_room_id
@@ -64,10 +60,6 @@ class RoomService:
             self.services.reply_service.add_message(
                 f'始める時は「_start」と入力してください。')
             return
-        if mode == self.modes.delete:
-            self.services.reply_service.add_message(
-                '削除したい結果を数字で指定してください。(終了したい場合は _exit)')
-            return
 
     def get_mode(self):
         room_id = self.services.app_service.req_room_id
@@ -77,11 +69,17 @@ class RoomService:
             return
         return target.mode
 
-    def get_all(self):
+    def get(self, target_ids=None):
+        if target_ids is None:
+            return self.services.app_service.db.session\
+                .query(Rooms)\
+                .order_by(Rooms.id)\
+                .all()
+        if type(target_ids) != list:
+            target_ids = [target_ids]
         return self.services.app_service.db.session\
-            .query(Rooms)\
-            .order_by(Rooms.id)\
-            .all()
+            .query(Rooms).filter(Rooms.id.in_(target_ids))\
+            .order_by(Rooms.id).all()
 
     def delete(self, target_ids):
         if type(target_ids) != list:

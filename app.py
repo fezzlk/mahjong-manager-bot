@@ -71,7 +71,7 @@ def delete_users():
 
 @app.route('/rooms')
 def get_rooms():
-    data = services.room_service.get_all()
+    data = services.room_service.get()
     keys = ['id', 'room_id', 'mode', 'users']
     return render_template(
         'table.html',
@@ -128,7 +128,7 @@ def delete_matches():
 
 @app.route('/configs')
 def get_configs():
-    data = services.config_service.get_all()
+    data = services.config_service.get()
     keys = ['id', 'key', 'value', 'target_id']
     return render_template(
         'table.html',
