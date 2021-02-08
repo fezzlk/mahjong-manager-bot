@@ -46,6 +46,7 @@ def index():
 def reset_db():
     Base.metadata.drop_all(bind=Engine)
     Base.metadata.create_all(bind=Engine)
+    services.app_service.logger.info('reset DB')
     return redirect(url_for('index', message='DBをリセットしました。'))
 
 
