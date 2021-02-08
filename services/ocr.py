@@ -65,14 +65,16 @@ class OcrService:
             self.services.app_service.logger.warning(
                 'the requested image is not loaded(required execute self.run()'
             )
-
+        for r in self.result:
+            print(r.description)
+            print(r.bounding_poly.vertices[1])
         # 00を含むテキストを抽出
         pos_points = []
         for text in self.result:
             if (text.description.endswith('00')):
                 pos_upper_left_point = text.bounding_poly.vertices[1]
                 pos_points.append(pos_upper_left_point)
-
+        print(pos_points)
         def sorter(v): return (v.y, v.x)
         pos_points = sorted(pos_points, key=sorter)
 
@@ -89,19 +91,19 @@ class OcrService:
         rates_x = [
             [(v - pre_upper_x)/pre_distance_x for v in rete_array]
             for rete_array in [
-                [765, 1028],
-                [843, 1056],
-                [922, 1139],
-                [1002, 1211],
+                [753, 1000],
+                [838, 1039],
+                [917, 1111],
+                [996, 1186],
             ]
         ]
         rates_y = [
             [(v - pre_upper_y)/pre_distance_y for v in rete_array]
             for rete_array in [
-                [255, 302, 380],
-                [435, 473, 533],
-                [584, 622, 682],
-                [727, 763, 827],
+                [251, 297, 385],
+                [431, 468, 533],
+                [578, 619, 682],
+                [721, 763, 827],
             ]
         ]
 
@@ -114,7 +116,8 @@ class OcrService:
             [v * distance_y + upper_y for v in rete_array]
             for rete_array in rates_y
         ]
-
+        print(target_x)
+        print(target_y)
         target_name_parts = [[], [], [], []]
         target_points = []
 
@@ -133,7 +136,12 @@ class OcrService:
 
         target_names = [''.join(parts) for parts in target_name_parts]
 
+        print(target_names)
+        print(target_points)
+
         results = {}
+        if len(target_points) != 4:
+            raise BaseException('点数が読み取れませんでした。手入力してください。')
         for i in range(4):
-            results[target_names[i]] = target_points[i]
+            results[target_names[i]] = target_points[i] + 3 - i
         return results
