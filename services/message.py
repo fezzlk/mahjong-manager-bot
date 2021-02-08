@@ -12,11 +12,12 @@ HAI = [k+'萬' for k in KANSUJI] + [k+'筒' for k in KANSUJI] + \
 class MessageService:
     """message service"""
 
-    # def __init__(self):
+    def __init__(self, services):
+        self.services = services
 
     def get_random_hai(self):
         now = datetime.datetime.now()
         random.seed(int(now.year+now.month+now.day) +
-                    int(re.sub("\\D", "", self.req_user_id)))
+                    int(re.sub("\\D", "", self.services.app_service.req_user_id)))
 
         return random.choice(HAI)
