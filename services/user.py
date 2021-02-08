@@ -73,7 +73,7 @@ class UserService:
 
         if mode == self.modes.wait:
             self.services.reply_service.add_text(
-                f'こんにちは。快適な麻雀生活の提供に努めます。今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+                f'こんにちは。快適な麻雀生活の提供に努めます。今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
 
     def get_mode(self):
         user_id = self.services.app_service.req_user_id

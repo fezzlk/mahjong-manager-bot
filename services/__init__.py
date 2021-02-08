@@ -3,6 +3,7 @@ from .app import AppService
 from .calculate import CalculateService
 from .config import ConfigService
 from .matches import MatchesService
+from .message import MessageService
 from .ocr import OcrService
 from .points import PointsService
 from .reply import ReplyService
@@ -20,6 +21,7 @@ class Services:
         self.calculate_service = CalculateService(self)
         self.config_service = ConfigService(self)
         self.matches_service = MatchesService(self)
+        self.message_service = MessageService()
         self.ocr_service = OcrService(self)
         self.points_service = PointsService(self)
         self.reply_service = ReplyService(self)

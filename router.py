@@ -169,7 +169,7 @@ class Router:
         # fortune
         elif method == UCommands.fortune.name:
             self.services.reply_service.add_text(
-                f'あなたの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+                f'あなたの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
         # history
         elif method == UCommands.history.name:
             self.services.reply_service.add_text('対戦履歴機能は開発中です。')
@@ -277,7 +277,7 @@ class Router:
         # fortune
         elif method == RCommands.fortune.name:
             self.services.reply_service.add_text(
-                f'{self.services.user_service.get_name()}さんの今日のラッキー牌は「{self.services.app_service.get_random_hai()}」です。')
+                f'{self.services.user_service.get_name()}さんの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
         # others manu
         elif method == RCommands.others.name:
             self.services.reply_service.add_others_menu()
