@@ -30,9 +30,7 @@ class RCommands(Enum):
     setting = 'setting'
     reset = 'reset'
     results = 'results'
-    delete = 'delete'
     finish = 'finish'
-    github = 'github'
     fortune = 'fortune'
     others = 'others'
     matches = 'matches'
@@ -259,11 +257,6 @@ class Router:
         # drop match
         elif method == RCommands.drop_m.name:
             self.services.matches_service.disable()
-        # delete
-        elif method == RCommands.delete.name:
-            self.services.room_service.chmod(
-                self.services.room_service.modes.delete
-            )
         # finish
         elif method == RCommands.finish.name:
             self.services.matches_service.finish()

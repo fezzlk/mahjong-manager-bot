@@ -43,7 +43,6 @@ class CalculateService:
         )
 
     def run_calculate(self, points, tobashita_player=None):
-        print('tobashita_player:', tobashita_player)
         # 得点の準備
         sorted_points = sorted(points.items(), key=lambda x: x[1])
         sorted_prize = sorted(
