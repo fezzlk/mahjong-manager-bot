@@ -43,7 +43,11 @@ class ResultsService:
         sum_results = self.services.matches_service.get_sum_results()
         self.services.reply_service.add_message(f'一半荘お疲れ様でした。結果を表示します。')
         self.services.reply_service.add_message(
-            '\n'.join([f'{user}: {"+" if point > 0 else ""}{point} ({"+" if sum_results[user] > 0 else ""}{sum_results[user]})' for user, point in calculated_result.items()]))
+            '\n'.join([
+                f'{r[0]}: {"+" if r[1] > 0 else ""}{r[1]} ({"+" if sum_results[r[0]] > 0 else ""}{sum_results[r[0]]})'
+                for r in sorted(calculated_result.items(), key=lambda x:x[1], reverse=True)
+            ])
+        )
         self.services.reply_service.add_message(
             self.services.message_service.get_result_message())
 
