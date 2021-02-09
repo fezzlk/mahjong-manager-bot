@@ -36,12 +36,9 @@ class MatchesService:
         """add result"""
         current_result = self.services.results_service.get_current()
         current_match = self.get_or_add_current()
-        result_ids = current_match.result_ids.split(',')
-        if result_ids[0] == '':
-            result_ids[0] = str(current_result.id)
-        else:
-            result_ids.append(str(current_result.id))
-        current_match.result_ids = ','.join(result_ids)
+        result_ids = json.loads(current_match.result_ids)
+        result_ids.append(str(current_result.id))
+        current_match.result_ids = json.dumps(result_ids)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'update: id={current_match.id}')
 
@@ -58,10 +55,10 @@ class MatchesService:
             return
 
         current = self.get_current()
-        result_ids = current.result_ids.split(',')
+        result_ids = json.loads(current.result_ids)
         self.services.results_service.delete_by_id(result_ids[i-1])
         result_ids.pop(i-1)
-        current.result_ids = ','.join(result_ids)
+        current.result_ids = json.dumps(result_ids)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(
             f'delete result: match_id={current.id} result_id={i-1}'
@@ -71,16 +68,12 @@ class MatchesService:
         current = self.get_current()
         if current is None:
             return 0
-        ids = current.result_ids.split(',')
-        if ids[0] == '':
-            return 0
-        else:
-            return len(ids)
+        return len(json.loads(current.result_ids))
 
     def get_sum_results(self):
         current = self.get_current()
         return self.services.results_service.get_sum_result_by_ids(
-            current.result_ids.split(',')
+            json.loads(current.result_ids)
         )
 
     def reply_sum_results(self):
@@ -90,7 +83,7 @@ class MatchesService:
             return
         current = self.get_current()
         self.services.results_service.reply_by_ids(
-            current.result_ids.split(',')
+            json.loads(current.result_ids)
         )
 
     def finish(self):
@@ -100,7 +93,7 @@ class MatchesService:
             return
         current = self.get_current()
         self.services.results_service.reply_sum_and_money_by_ids(
-            current.result_ids.split(',')
+            json.loads(current.result_ids)
         )
         self.archive()
 
@@ -132,7 +125,7 @@ class MatchesService:
             return
         for match in matches:
             self.services.results_service.reply_sum_and_money_by_ids(
-                match.result_ids.split(','),
+                json.loads(match.result_ids),
                 is_required_sum=False,
                 date=match.created_at.strftime('%Y-%m-%d')+'\n'
             )
@@ -154,10 +147,10 @@ class MatchesService:
             .query(Matches).filter(
                 Matches.id == match_id
             ).first()
-        result_ids = match.result_ids.split(',')
+        result_ids = json.loads(match.result_ids)
         if result_id in result_ids:
             result_ids.remove(result_id)
-        match.result_ids = ','.join(result_ids)
+        match.result_ids = json.dumps(result_ids)
         self.services.app_service.db.session.commit()
 
     def delete(self, target_ids):
@@ -169,7 +162,7 @@ class MatchesService:
             ).all()
         for target in targets:
             self.services.results_service.delete(
-                target.result_ids.split(',')
+                json.loads(target.result_ids)
             )
             self.services.app_service.db.session.delete(target)
         self.services.app_service.db.session.commit()

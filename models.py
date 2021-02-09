@@ -119,7 +119,7 @@ class Matches(Base):
 
     def __init__(self, room_id):
         self.room_id = room_id
-        self.result_ids = ','.join([])
+        self.result_ids = json.dumps([])
         self.status = 1
 
 
