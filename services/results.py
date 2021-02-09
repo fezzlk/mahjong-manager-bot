@@ -81,7 +81,7 @@ class ResultsService:
             result = json.loads(results[i].result)
             results_list.append(
                 f'第{i+1}回\n' + '\n'.join(
-                    [f'{user}: {point}' for user, point in result.items()]
+                    [f'{r[0]}: {r[1]}' for r in sorted(result.items(), key=lambda x:x[1], reverse=True)]
                 )
             )
             for name, point in result.items():
@@ -91,7 +91,7 @@ class ResultsService:
         self.services.reply_service.add_message('\n\n'.join(results_list))
         self.services.reply_service.add_message(
             '総計\n' + '\n'.join(
-                [f'{user}: {point}' for user, point in sum_results.items()]
+                [f'{r[0]}: {r[1]}' for r in sorted(sum_results.items(), key=lambda x:x[1], reverse=True)]
             )
         )
 
