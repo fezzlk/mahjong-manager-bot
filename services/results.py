@@ -38,13 +38,31 @@ class ResultsService:
         self.services.reply_service.add_message(f'id={target_id}の結果を削除しました。')
 
     def reply_current_result(self):
-        result = self.services.results_service.get_current()
+        result = self.get_current()
         calculated_result = json.loads(result.result)
+        sum_results = self.services.matches_service.get_sum_results()
         self.services.reply_service.add_message(f'一半荘お疲れ様でした。結果を表示します。')
         self.services.reply_service.add_message(
-            '\n'.join([f'{user}: {point}' for user, point in calculated_result.items()]))
+            '\n'.join([f'{user}: {"+" if point > 0 else ""}{point} ({"+" if sum_results[user] > 0 else ""}{sum_results[user]})' for user, point in calculated_result.items()]))
         self.services.reply_service.add_message(
             self.services.message_service.get_result_message())
+
+    def get_sum_result_by_ids(self, ids):
+        results = self.services.app_service.db.session\
+            .query(Results).filter(
+                Results.id.in_([int(s) for s in ids]),
+            )\
+            .order_by(Results.id)\
+            .all()
+        sum_results = {}
+        for r in results:
+            res_obj = json.loads(r.result)
+            print(res_obj)
+            for name, point in res_obj.items():
+                if not name in sum_results.keys():
+                    sum_results[name] = 0
+                sum_results[name] += point
+        return sum_results
 
     def reply_by_ids(self, ids):
         results = self.services.app_service.db.session\
@@ -104,7 +122,7 @@ class ResultsService:
             .first()
 
     def add_point(self, name, point):
-        result = self.services.results_service.get_current()
+        result = self.get_current()
         points = json.loads(result.points)
         points[name] = point
         result.points = json.dumps(points)
@@ -112,7 +130,7 @@ class ResultsService:
         return points
 
     def drop_point(self, name):
-        result = self.services.results_service.get_current()
+        result = self.get_current()
         points = json.loads(result.points)
         if name in points.keys():
             points.pop(name)
@@ -121,18 +139,18 @@ class ResultsService:
         return points
 
     def reset_points(self):
-        result = self.services.results_service.get_current()
+        result = self.get_current()
         result.points = json.dumps({})
         self.services.app_service.db.session.commit()
 
     def update_result(self, calculated_result):
-        result = self.services.results_service.get_current()
+        result = self.get_current()
         result.result = json.dumps(calculated_result)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'update result: id={result.id}')
 
     def archive(self):
-        current = self.services.results_service.get_current()
+        current = self.get_current()
         if current is None:
             return
         current.status = 2
@@ -140,7 +158,7 @@ class ResultsService:
         self.services.app_service.logger.info(f'archive: id={current.id}')
 
     def disable(self):
-        current = self.get_current
+        current = self.get_current()
         if current is None:
             return
         current.status = 0
@@ -150,18 +168,20 @@ class ResultsService:
     def get(self, target_ids=None):
         if target_ids is None:
             targets = self.services.app_service.db.session\
-                .query(Matches)\
-                .order_by(Matches.id)\
+                .query(Results)\
+                .order_by(Results.id)\
                 .all()
         else:
             if type(target_ids) != list:
                 target_ids = [target_ids]
             targets = self.services.app_service.db.session\
-                .query(Matches).filter(Matches.id.in_(target_ids))\
-                .order_by(Matches.id).all()
+                .query(Results).filter(Results.id.in_(target_ids))\
+                .order_by(Results.id).all()
         for result in targets:
-            result.points = json.loads(result.points)
-            result.result = json.loads(result.result)
+            if result.points is not None:
+                result.points = json.loads(result.points)
+            if result.result is not None:
+                result.result = json.loads(result.result)
         return targets
 
     def delete(self, target_ids):

@@ -35,8 +35,8 @@ class CalculateService:
             return
         calc_result = self.run_calculate(points, tobashita_player)
         self.services.results_service.update_result(calc_result)
-        self.services.results_service.reply_current_result()
         self.services.matches_service.add_result()
+        self.services.results_service.reply_current_result()
         self.services.results_service.archive()
         self.services.room_service.chmod(
             self.services.room_service.modes.wait
@@ -44,9 +44,12 @@ class CalculateService:
 
     def run_calculate(self, points, tobashita_player=None):
         # 得点の準備
-        sorted_points = sorted(points.items(), key=lambda x: x[1])
+        sorted_points = sorted(
+            points.items(), key=lambda x: x[1], reverse=True)
         sorted_prize = sorted(
-            [int(s) for s in self.services.config_service.get_by_key('順位点').split(',')]
+            [int(s) for s in self.services.config_service.get_by_key(
+                '順位点').split(',')],
+            reverse=True,
         )
         tobi_prize = int(self.services.config_service.get_by_key('飛び賞'))
         clac_method = self.services.config_service.get_by_key('計算方法')
@@ -56,7 +59,7 @@ class CalculateService:
         tobasare_players = []
         disabled_tobi = (tobashita_player is None) | (tobashita_player == '')
         # 2~4位
-        for t in sorted_points[:-1]:
+        for t in sorted_points[1:]:
             player = t[0]
             point = t[1]
             if clac_method == '五捨六入':
@@ -72,7 +75,7 @@ class CalculateService:
             if (point < 0):
                 tobasare_players.append(player)
         # 1位
-        result[sorted_points[-1][0]] = -1 * sum(result.values())
+        result[sorted_points[0][0]] = -1 * sum(result.values())
 
         # 順位点、飛び賞加算
         for i, t in enumerate(sorted_points):

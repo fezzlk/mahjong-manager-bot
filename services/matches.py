@@ -22,7 +22,7 @@ class MatchesService:
 
     def get_or_add_current(self):
         """get or add"""
-        current = self.get_current(room_id)
+        current = self.get_current()
 
         if current is None:
             room_id = self.services.app_service.req_room_id
@@ -76,6 +76,12 @@ class MatchesService:
             return 0
         else:
             return len(ids)
+
+    def get_sum_results(self):
+        current = self.get_current()
+        return self.services.results_service.get_sum_result_by_ids(
+            current.result_ids.split(',')
+        )
 
     def reply_sum_results(self):
         if self.count_results() == 0:
