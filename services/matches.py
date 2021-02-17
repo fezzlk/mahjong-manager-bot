@@ -99,9 +99,9 @@ class MatchesService:
 
     def archive(self):
         current = self.get_current()
-        match.status = 2
+        current.status = 2
         self.services.app_service.db.session.commit()
-        self.services.app_service.logger.info(f'archive: id={match.id}')
+        self.services.app_service.logger.info(f'archive: id={current.id}')
 
     def disable(self):
         match = self.get_current()
