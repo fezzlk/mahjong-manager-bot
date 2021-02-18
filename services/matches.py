@@ -45,7 +45,7 @@ class MatchesService:
     def drop_result_by_number(self, i):
         """drop result"""
 
-        if count_results() == 0:
+        if self.count_results() == 0:
             self.services.app_service.logger.warning(
                 'current match is not found'
             )
