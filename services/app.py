@@ -5,8 +5,11 @@ from linebot import LineBotApi
 from flask import logging
 from flask_sqlalchemy import SQLAlchemy
 
-YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
-line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
+if os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]:
+    YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
+    line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
+else:
+    line_bot_api = None
 
 
 class AppService:
