@@ -1,6 +1,8 @@
 name: Python package
 
 on: [push]
+env:
+  YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
 
 jobs:
   build:
@@ -40,5 +42,3 @@ jobs:
       - name: Test with pytest
         run: |
           pytest ./tests/test.py
-        env:
-          YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
