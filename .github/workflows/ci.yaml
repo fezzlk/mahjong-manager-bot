@@ -18,9 +18,9 @@ jobs:
       - name: Cache pip
         uses: actions/cache@v2
         with:
-          # ‚±‚ÌƒpƒX‚Í Ubuntu ‚ÉŒÅ—L‚Å‚·
+          # ã“ã®ãƒ‘ã‚¹ã¯ Ubuntu ã«å›ºæœ‰ã§ã™
           path: ~/.cache/pip
-          # ‘Î‰‚·‚é—vŒƒtƒ@ƒCƒ‹‚ÉƒLƒƒƒbƒVƒ…ƒqƒbƒg‚ª‚ ‚é‚©‚Ç‚¤‚©‚ğŠm”F‚·‚é
+          # å¯¾å¿œã™ã‚‹è¦ä»¶ãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚­ãƒ£ãƒƒã‚·ãƒ¥ãƒ’ãƒƒãƒˆãŒã‚ã‚‹ã‹ã©ã†ã‹ã‚’ç¢ºèªã™ã‚‹
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
@@ -33,9 +33,9 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with flake8
         run: |
-          # Python \•¶ƒGƒ‰[‚Ü‚½‚Í–¢’è‹`‚Ì–¼‘O‚ª‚ ‚éê‡‚Íƒrƒ‹ƒh‚ğ’â~‚·‚é
+          # Python æ§‹æ–‡ã‚¨ãƒ©ãƒ¼ã¾ãŸã¯æœªå®šç¾©ã®åå‰ãŒã‚ã‚‹å ´åˆã¯ãƒ“ãƒ«ãƒ‰ã‚’åœæ­¢ã™ã‚‹
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero‚Í‚·‚×‚Ä‚ÌƒGƒ‰[‚ğŒx‚Æ‚µ‚Äˆµ‚¤B GitHub‚ÌƒGƒfƒBƒ^‚Ì•‚Í127•¶š
+          # exit-zeroã¯ã™ã¹ã¦ã®ã‚¨ãƒ©ãƒ¼ã‚’è­¦å‘Šã¨ã—ã¦æ‰±ã†ã€‚ GitHubã®ã‚¨ãƒ‡ã‚£ã‚¿ã®å¹…ã¯127æ–‡å­—
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: |
