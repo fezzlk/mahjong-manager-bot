@@ -190,7 +190,7 @@ class ReplyService:
                     ] + [
                         PostbackAction(
                             label='誰も飛ばしていません',
-                            display_text='彼が勝手に飛びました',
+                            display_text='勝手に飛びました',
                             data=f'_tobi'
                         )
                     ]
