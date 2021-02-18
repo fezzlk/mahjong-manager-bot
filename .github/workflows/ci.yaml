@@ -3,6 +3,29 @@ name: Python package
 on: [push]
 
 jobs:
+  # # コンテナジョブのラベル
+  # container-job:
+  #   # コンテナはLinuxベースのオペレーティングシステム内で実行しなければならない
+  #   runs-on: ubuntu-latest
+  #   # `container-job`が実行されるDocker Hubのイメージ
+  #   container: node:10.18-jessie
+
+  #   # `container-job`と実行されるサービスコンテナ
+  #   services:
+  #     # サービスコンテナへのアクセスに使われるラベル
+  #     postgres:
+  #       # Docker Hubのイメージ
+  #       image: postgres
+  #       # postgresのパスワードを提供
+  #       env:
+  #         POSTGRES_PASSWORD: postgres
+  #       # postgresが起動するまで待つヘルスチェックの設定
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -18,7 +41,6 @@ jobs:
       - name: Cache pip
         uses: actions/cache@v2
         with:
-          # このパスは Ubuntu に固有です
           path: ~/.cache/pip
           # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
@@ -39,6 +61,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: |
+          echo $YOUR_CHANNEL_SECRET
           pytest ./tests/test.py
         env:
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
