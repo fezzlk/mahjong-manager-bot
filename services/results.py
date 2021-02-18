@@ -111,7 +111,7 @@ class ResultsService:
             self.services.reply_service.add_message(
                 '\n'.join([f'{user}: {point}' for user, point in sum_results.items()]))
         key = 'レート'
-        self.services.reply_service.add_message('対戦ID: match_id' + match_id + '\n' + date + '\n'.join(
+        self.services.reply_service.add_message('対戦ID: ' + str(match_id) + '\n' + date + '\n'.join(
             [f'{user}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円'
              for user, point in sum_results.items()]))
 

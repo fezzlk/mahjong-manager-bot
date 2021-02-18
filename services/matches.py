@@ -130,7 +130,7 @@ class MatchesService:
             )
             return
         self.services.reply_service.add_message(
-            '最近の4試合の結果を表示します。詳細は_match \{id\}')
+            '最近の4試合の結果を表示します。詳細は「_match <ID>」')
         for match in matches[:4]:
             self.services.results_service.reply_sum_and_money_by_ids(
                 json.loads(match.result_ids),
