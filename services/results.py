@@ -95,7 +95,7 @@ class ResultsService:
             )
         )
 
-    def reply_sum_and_money_by_ids(self, ids, is_required_sum=True, date=''):
+    def reply_sum_and_money_by_ids(self, ids, match_id, is_required_sum=True, date=''):
         results = self.services.app_service.db.session\
             .query(Results).filter(
                 Results.id.in_([int(s) for s in ids]),
@@ -111,7 +111,7 @@ class ResultsService:
             self.services.reply_service.add_message(
                 '\n'.join([f'{user}: {point}' for user, point in sum_results.items()]))
         key = 'レート'
-        self.services.reply_service.add_message(date + '\n'.join(
+        self.services.reply_service.add_message('対戦ID: match_id' + match_id + '\n' + date + '\n'.join(
             [f'{user}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円'
              for user, point in sum_results.items()]))
 

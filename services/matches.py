@@ -29,7 +29,7 @@ class MatchesService:
             current = Matches(room_id=room_id)
             self.services.app_service.db.session.add(current)
             self.services.app_service.db.session.commit()
-            f'create: room_id={room_id}'
+            self.services.app_service.logger.info(f'create: room_id={room_id}')
         return current
 
     def add_result(self):
@@ -76,14 +76,20 @@ class MatchesService:
             json.loads(current.result_ids)
         )
 
-    def reply_sum_results(self):
-        if self.count_results() == 0:
-            self.services.reply_service.add_message(
-                'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
-            return
-        current = self.get_current()
+    def reply_sum_results(self, match_id=None):
+        if match_id == None:
+            if self.count_results() == 0:
+                self.services.reply_service.add_message(
+                    'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
+                return
+            match = self.get_current()
+        else:
+            match = self.services.app_service.db.session\
+                .query(Matches).filter(
+                    Matches.id == match_id,
+                ).first()
         self.services.results_service.reply_by_ids(
-            json.loads(current.result_ids)
+            json.loads(match.result_ids)
         )
 
     def finish(self):
@@ -93,7 +99,8 @@ class MatchesService:
             return
         current = self.get_current()
         self.services.results_service.reply_sum_and_money_by_ids(
-            json.loads(current.result_ids)
+            json.loads(current.result_ids),
+            current.id,
         )
         self.archive()
 
@@ -112,20 +119,22 @@ class MatchesService:
         self.services.app_service.logger.info(f'disable: id={match.id}')
 
     def reply(self):
-        room_id = self.services.app_service.req_room_id
         matches = self.services.app_service.db.session\
-            .query(Matches).filter(and_(
+            .query(Matches).filter(
                 Matches.status == 2
-            )).order_by(Matches.id)\
+            ).order_by(Matches.id)\
             .all()
         if len(matches) == 0:
             self.services.reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
             return
-        for match in matches:
+        self.services.reply_service.add_message(
+            '最近の4試合の結果を表示します。詳細は_match \{id\}')
+        for match in matches[:4]:
             self.services.results_service.reply_sum_and_money_by_ids(
                 json.loads(match.result_ids),
+                match.id,
                 is_required_sum=False,
                 date=match.created_at.strftime('%Y-%m-%d')+'\n'
             )

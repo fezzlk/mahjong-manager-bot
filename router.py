@@ -34,6 +34,7 @@ class RCommands(Enum):
     fortune = 'fortune'
     others = 'others'
     matches = 'matches'
+    match = 'match'
     tobi = 'tobi'
     drop = 'drop'
     drop_m = 'drop_m'
@@ -252,6 +253,9 @@ class Router:
         # results
         elif method == RCommands.results.name:
             self.services.matches_service.reply_sum_results()
+        # results by match id
+        elif method == RCommands.match.name:
+            self.services.matches_service.reply_sum_results(body)
         # drop
         elif method == RCommands.drop.name:
             self.services.matches_service.drop_result_by_number(int(body))
