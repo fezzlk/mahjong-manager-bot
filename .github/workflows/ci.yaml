@@ -15,16 +15,16 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-        - name: Cache pip
-          uses: actions/cache@v2
-          with:
-            # このパスは Ubuntu に固有です
-            path: ~/.cache/pip
-            # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
-            key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-            restore-keys: |
-              ${{ runner.os }}-pip-
-              ${{ runner.os }}-
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          # このパスは Ubuntu に固有です
+          path: ~/.cache/pip
+          # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
