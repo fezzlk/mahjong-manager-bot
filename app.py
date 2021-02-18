@@ -21,8 +21,8 @@ from linebot.models import (
     PostbackEvent,
 )
 
-from router import Router
-from services import Services
+from .router import Router
+from .services import Services
 
 """define LINE bot handler"""
 handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])

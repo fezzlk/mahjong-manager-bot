@@ -1,5 +1,5 @@
-from router import Router
-from services import Services
+from ..router import Router
+from ..services import Services
 
 
 def test_hoge():
