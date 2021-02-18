@@ -39,4 +39,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: |
+          export YOUR_CHANNEL_SECRET=${{ secrets.YOUR_CHANNEL_SECRET }}
           pytest ./tests/test.py
+        env:
+          YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
