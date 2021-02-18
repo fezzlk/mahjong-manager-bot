@@ -60,11 +60,10 @@ jobs:
           # exit-zeroはすべてのエラーを警告として扱う。 GitHubのエディタの幅は127文字
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
-              env:
+        env:
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
           HOGE: "hoge"
           FUGA: ${{ secrets.FUGA }}
-
         run: |
           echo $YOUR_CHANNEL_SECRET
           echo $HOGE
