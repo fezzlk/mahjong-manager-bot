@@ -4,6 +4,7 @@
 # sys.path.append(os.path.abspath(".."))
 from services import Services
 from router import Router
+import os
 print(os.environ["HOGE"])
 print(os.environ["FUGA"])
 print(os.environ["YOUR_CHANNEL_ACCESS_TOKEN"])
