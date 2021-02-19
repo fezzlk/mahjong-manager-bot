@@ -2,8 +2,11 @@
 # import sys
 # import os
 # sys.path.append(os.path.abspath(".."))
-from router import Router
 from services import Services
+from router import Router
+print(os.environ["HOGE"])
+print(os.environ["FUGA"])
+print(os.environ["YOUR_CHANNEL_ACCESS_TOKEN"])
 
 
 def init_test_dev():

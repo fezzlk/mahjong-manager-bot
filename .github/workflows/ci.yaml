@@ -61,11 +61,11 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         env:
-          YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
+          YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
           HOGE: "hoge"
           FUGA: ${{ secrets.FUGA }}
         run: |
-          echo $YOUR_CHANNEL_SECRET
+          echo $YOUR_CHANNEL_ACCESS_TOKEN
           echo $HOGE
           echo $FUGA
           pytest ./tests/test.py
