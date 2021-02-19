@@ -5,19 +5,19 @@ from linebot import LineBotApi
 from flask import logging
 from flask_sqlalchemy import SQLAlchemy
 
-if "YOUR_CHANNEL_ACCESS_TOKEN" in os.environ:
-    YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
-    line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
-else:
-    line_bot_api = None
-
 
 class AppService:
     """app service"""
 
     def __init__(self, service, app):
-        self.line_bot_api = line_bot_api
         self.logger = logging.create_logger(app)
+        self.line_bot_api = None
+        if "YOUR_CHANNEL_ACCESS_TOKEN" in os.environ:
+            YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
+            self.line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
+        else:
+            self.logger.warning(
+                'line_bot_api is not setup because YOUR_CHANNEL_ACCESS_TOKEN is not found.')
         self.req_user_id = None
         self.req_room_id = None
 
