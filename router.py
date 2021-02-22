@@ -215,6 +215,16 @@ class Router:
             return
 
         """wait mode(do nothing)"""
+        rows = [r for r in text.split('\n') if ':' in r]
+        if len(rows) == 4:
+            points = {}
+            for r in rows:
+                col = r.split(':')
+                points[col[0]] = int(col[1])
+        self.services.results_service.add(points)
+        self.services.calculate_service.calculate(
+            points
+        )
 
     def routing_for_room_by_method(self, method, body):
         """routing by method"""
