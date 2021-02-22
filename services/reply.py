@@ -27,9 +27,10 @@ class ReplyService:
     def reply(self, event):
         if (len(self.texts) == 0) & (len(self.buttons) == 0):
             return
-        self.services.app_service.line_bot_api.reply_message(
-            event.reply_token,
-            [TextSendMessage(text=text) for text in self.texts] + self.buttons)
+        if hasattr(event, 'reply_token'):
+            self.services.app_service.line_bot_api.reply_message(
+                event.reply_token,
+                [TextSendMessage(text=text) for text in self.texts] + self.buttons)
         self.reset()
 
     def reset(self):
