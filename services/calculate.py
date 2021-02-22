@@ -12,8 +12,13 @@ class CalculateService:
     def calculate(self, points=None, tobashita_player=None):
         """calculate"""
         if points is None:
-            result = self.services.results_service.get_current()
-            points = json.loads(result.points)
+            current = self.services.results_service.get_current()
+            if current is None:
+                self.services.app_service.logger.error(
+                    'current points is not found.'
+                )
+                raise BaseException(f'calculation error: points is not found.')
+            points = json.loads(current.points)
 
         if len(points) != 4:
             self.services.reply_service.add_message(
