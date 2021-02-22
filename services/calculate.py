@@ -17,7 +17,7 @@ class CalculateService:
                 self.services.app_service.logger.error(
                     'current points is not found.'
                 )
-                raise BaseException(f'calculation error: points is not found.')
+                return
             points = json.loads(current.points)
 
         if len(points) != 4:
