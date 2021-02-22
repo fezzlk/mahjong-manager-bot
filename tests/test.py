@@ -11,6 +11,26 @@ services = Services(app)
 router = Router(services)
 
 
+class Event:
+    def __init__(self):
+        self.type = 'message'
+        self.source = Source()
+        self.message = Message()
+
+
+class Source:
+    def __init__(self):
+        self.type = 'room'
+        self.user_id = os.environ["TEST_USER_ID"]
+        self.room_id = os.environ["TEST_ROOM_ID"]
+
+
+class Message:
+    def __init__(self):
+        self.type = 'text'
+        self.text = 'hoge'
+
+
 def test_hoge():
     a = 1
     b = 1
@@ -20,17 +40,6 @@ def test_hoge():
 def test_fuga():
     a = 1
     b = 1
-    event = {
-        'type': 'message',
-        'source': {
-            'type': 'room',
-            'user_id': os.environ["TEST_USER_ID"],
-            'room_id': os.environ["TEST_ROOM_ID"],
-        },
-        'message': {
-            'type': 'text',
-            'text': 'hoge',
-        },
-    }
+    event = Event()
     router.root(event)
     assert a == b
