@@ -1,25 +1,30 @@
 
-# import sys
-# import os
-# sys.path.append(os.path.abspath(".."))
+import set_local_env  # for local dev env
+
 from services import Services
 from router import Router
 
 
-def init_test_dev():
-    print('hoge')
-
-
 def test_hoge():
-    init_test_dev()
     a = 1
     b = 1
     assert a == b
 
 
 def test_fuga():
-    init_test_dev()
     a = 1
     b = 1
-    Router.root()
+    event = {
+        'type': 'message',
+        'source': {
+            'type': 'room',
+            'user_id': os.environ["TEST_USER_ID"],
+            'room_id': os.environ["TEST_ROOM_ID"],
+        },
+        'message': {
+            'type': 'text',
+            'text': 'hoge',
+        },
+    }
+    Router.root(event)
     assert a == b

@@ -48,7 +48,11 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          TEST_ROOM_ID: ${{ secrets.TEST_ROOM_ID }}
+          TEST_USER_ID: ${{ secrets.TEST_USER_ID }}
           YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
+          YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
         run: |
           pytest ./tests/test.py
