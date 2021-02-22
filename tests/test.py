@@ -2,8 +2,13 @@
 import set_local_env  # for local dev env
 
 import os
+from flask import Flask
 from services import Services
 from router import Router
+app = Flask(__name__)
+
+services = Services(app)
+router = Router(services)
 
 
 def test_hoge():
@@ -27,5 +32,5 @@ def test_fuga():
             'text': 'hoge',
         },
     }
-    Router.root(event)
+    router.root(event)
     assert a == b
