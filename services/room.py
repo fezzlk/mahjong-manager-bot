@@ -66,7 +66,10 @@ class RoomService:
         target = self.services.app_service.db.session\
             .query(Rooms).filter(Rooms.room_id == room_id).first()
         if target == None:
-            return
+            self.services.app_service.logger.warning(
+                'failed to get mode because room is not found'
+            )
+            return room_id
         return target.mode
 
     def get(self, target_ids=None):
