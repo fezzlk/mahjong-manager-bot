@@ -54,12 +54,22 @@ def reset_db():
 def get_users():
     data = services.user_service.get()
     keys = ['id', 'name', 'user_id', 'mode', 'rooms', 'matches']
+    input_keys = ['name', 'user_id']
     return render_template(
-        'table.html',
+        'model.html',
         title='users',
         keys=keys,
+        input_keys=input_keys,
         data=data
     )
+
+
+@app.route('/users/create', methods=['POST'])
+def create_users():
+    name = request.form['name']
+    user_id = request.form['user_id']
+    services.user_service.create(name, user_id)
+    return redirect(url_for('get_users'))
 
 
 @app.route('/users/delete', methods=['POST'])
@@ -73,10 +83,12 @@ def delete_users():
 def get_rooms():
     data = services.room_service.get()
     keys = ['id', 'room_id', 'mode', 'users']
+    input_keys = ['room_id']
     return render_template(
-        'table.html',
+        'model.html',
         title='rooms',
         keys=keys,
+        input_keys=input_keys,
         data=data
     )
 
@@ -92,10 +104,12 @@ def delete_rooms():
 def get_results():
     data = services.results_service.get()
     keys = ['id', 'room_id', 'points', 'result', 'match_id', 'status']
+    input_keys = ['room_id', 'points', 'result', 'match_id', 'status']
     return render_template(
-        'table.html',
+        'model.html',
         title='results',
         keys=keys,
+        input_keys=input_keys,
         data=data
     )
 
@@ -111,10 +125,12 @@ def delete_results():
 def get_matches():
     data = services.matches_service.get()
     keys = ['id', 'room_id', 'result_ids', 'created_at', 'status', 'users']
+    input_keys = ['room_id', 'result_ids', 'status']
     return render_template(
-        'table.html',
+        'model.html',
         title='matches',
         keys=keys,
+        input_keys=input_keys,
         data=data
     )
 
@@ -130,10 +146,12 @@ def delete_matches():
 def get_configs():
     data = services.config_service.get()
     keys = ['id', 'key', 'value', 'target_id']
+    input_keys = ['key', 'value', 'target_id']
     return render_template(
-        'table.html',
+        'model.html',
         title='configs',
         keys=keys,
+        input_keys=input_keys,
         data=data
     )
 
