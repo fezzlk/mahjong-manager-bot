@@ -32,7 +32,7 @@ class Message:
         self.text = text
 
 
-def set_req_info():
+def test_set_req_info():
     event1 = Event('hoge')
     router.root(event1)
 
@@ -46,10 +46,10 @@ def set_req_info():
     # assert not errors, "errors occured:\n{}".format("\n".join(errors))
 
 
-def change_mode():
+def test_set_req_info():
     message_event1 = Event('_input')
     router.root(message_event1)
 
 
-set_req_info()
-change_mode()
+test_set_req_info()
+test_set_req_info()
