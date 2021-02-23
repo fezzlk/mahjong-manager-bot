@@ -61,7 +61,6 @@ class ResultsService:
         sum_results = {}
         for r in results:
             res_obj = json.loads(r.result)
-            print(res_obj)
             for user_id, point in res_obj.items():
                 if not user_id in sum_results.keys():
                     sum_results[user_id] = 0
