@@ -41,6 +41,11 @@ class UserService:
         profile = self.services.app_service.line_bot_api.get_profile(user_id)
         return profile.display_name
 
+    def get_user_id_by_name(self, name):
+        target = self.services.app_service.db.session\
+            .query(Users).filter(Users.name == name).first()
+        return target.id
+
     def delete_by_user_id(self, user_id):
         """delete"""
         self.services.app_service.db.session.query(Users).\

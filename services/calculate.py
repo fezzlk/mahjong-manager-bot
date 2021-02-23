@@ -9,7 +9,7 @@ class CalculateService:
     def __init__(self, services):
         self.services = services
 
-    def calculate(self, points=None, tobashita_player=None):
+    def calculate(self, points=None, tobashita_player_id=None):
         """calculate"""
         if points is None:
             current = self.services.results_service.get_current()
@@ -33,12 +33,12 @@ class CalculateService:
                 f'同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
             return
         # 飛び賞
-        if (any(x < 0 for x in points.values())) & (tobashita_player is None):
+        if (any(x < 0 for x in points.values())) & (tobashita_player_id is None):
             self.services.reply_service.add_tobi_menu(
-                [player for player in points.keys() if points[player] > 0]
+                [player_id for player_id in points.keys() if points[player_id] > 0]
             )
             return
-        calc_result = self.run_calculate(points, tobashita_player)
+        calc_result = self.run_calculate(points, tobashita_player_id)
         self.services.results_service.update_result(calc_result)
         self.services.matches_service.add_result()
         self.services.results_service.reply_current_result()
@@ -47,7 +47,7 @@ class CalculateService:
             self.services.room_service.modes.wait
         )
 
-    def run_calculate(self, points, tobashita_player=None):
+    def run_calculate(self, points, tobashita_player_id=None):
         # 得点の準備
         sorted_points = sorted(
             points.items(), key=lambda x: x[1], reverse=True)
@@ -62,7 +62,8 @@ class CalculateService:
         # 素点計算
         result = {}
         tobasare_players = []
-        disabled_tobi = (tobashita_player is None) | (tobashita_player == '')
+        disabled_tobi = (tobashita_player_id is None) | (
+            tobashita_player_id == '')
         # 2~4位
         for t in sorted_points[1:]:
             player = t[0]
@@ -88,10 +89,10 @@ class CalculateService:
             if disabled_tobi == False:
                 if t[0] in tobasare_players:
                     result[t[0]] -= tobi_prize
-                if t[0] == tobashita_player:
+                if t[0] == tobashita_player_id:
                     result[t[0]] += tobi_prize*len(tobasare_players)
                 else:
                     self.services.app_service.logger.warning(
-                        'tobashita_player is not matching'
+                        'tobashita_player_id is not matching'
                     )
         return result

@@ -19,25 +19,26 @@ class PointsService:
             self.services.reply_service.add_message(
                 '点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
             return
-        res = [f'{user}: {point}' for user, point in points.items()]
+        res = [f'{self.services.user_service.get_name_by_user_id(user_id)}: {point}' for user_id, point in points.items()]
         self.services.reply_service.add_message("\n".join(res))
 
     def add_by_text(self, text):
         result = self.services.results_service.get_current()
-        profile = self.services.app_service.line_bot_api.get_profile(
-            self.services.app_service.req_user_id
-        )
-        target_user = profile.display_name
         if text[0] == '@':
             point, target_user = self.get_point_with_target_user(text[1:])
+            target_user_id = self.services.user_service.get_user_id_by_name(
+                target_user
+            )
             point = point.replace(',', '')
             if point == 'delete':
-                points = self.services.results_service.drop_point(target_user)
+                points = self.services.results_service.drop_point(
+                    target_user_id)
                 self.reply()
                 if len(points) == 4:
                     self.services.calculate_service.calculate(points)
                 return
         else:
+            target_user_id = self.services.app_service.req_user_id
             point = text.replace(',', '')
         isMinus = False
         if point[0] == '-':
@@ -53,7 +54,7 @@ class PointsService:
             point = '-' + point
 
         points = self.services.results_service.add_point(
-            target_user,
+            target_user_id,
             int(point),
         )
         self.reply()

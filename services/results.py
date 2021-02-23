@@ -44,7 +44,7 @@ class ResultsService:
         self.services.reply_service.add_message(f'一半荘お疲れ様でした。結果を表示します。')
         self.services.reply_service.add_message(
             '\n'.join([
-                f'{r[0]}: {"+" if r[1] > 0 else ""}{r[1]} ({"+" if sum_results[r[0]] > 0 else ""}{sum_results[r[0]]})'
+                f'{self.services.user_service.get_name_by_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]} ({"+" if sum_results[r[0]] > 0 else ""}{sum_results[r[0]]})'
                 for r in sorted(calculated_result.items(), key=lambda x:x[1], reverse=True)
             ])
         )
@@ -62,10 +62,10 @@ class ResultsService:
         for r in results:
             res_obj = json.loads(r.result)
             print(res_obj)
-            for name, point in res_obj.items():
-                if not name in sum_results.keys():
-                    sum_results[name] = 0
-                sum_results[name] += point
+            for user_id, point in res_obj.items():
+                if not user_id in sum_results.keys():
+                    sum_results[user_id] = 0
+                sum_results[user_id] += point
         return sum_results
 
     def reply_by_ids(self, ids):
@@ -81,17 +81,17 @@ class ResultsService:
             result = json.loads(results[i].result)
             results_list.append(
                 f'第{i+1}回\n' + '\n'.join(
-                    [f'{r[0]}: {"+" if r[1] > 0 else ""}{r[1]}' for r in sorted(result.items(), key=lambda x:x[1], reverse=True)]
+                    [f'{self.services.user_service.get_name_by_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}' for r in sorted(result.items(), key=lambda x:x[1], reverse=True)]
                 )
             )
-            for name, point in result.items():
-                if not name in sum_results.keys():
-                    sum_results[name] = 0
-                sum_results[name] += point
+            for user_id, point in result.items():
+                if not user_id in sum_results.keys():
+                    sum_results[user_id] = 0
+                sum_results[user_id] += point
         self.services.reply_service.add_message('\n\n'.join(results_list))
         self.services.reply_service.add_message(
             '総計\n' + '\n'.join(
-                [f'{r[0]}: {"+" if r[1] > 0 else ""}{r[1]}' for r in sorted(sum_results.items(), key=lambda x:x[1], reverse=True)]
+                [f'{self.services.user_service.get_name_by_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}' for r in sorted(sum_results.items(), key=lambda x:x[1], reverse=True)]
             )
         )
 
@@ -103,17 +103,17 @@ class ResultsService:
         sum_results = {}
         for i in range(len(ids)):
             result = json.loads(results[i].result)
-            for name, point in result.items():
-                if not name in sum_results.keys():
-                    sum_results[name] = 0
-                sum_results[name] += point
+            for user_id, point in result.items():
+                if not user_id in sum_results.keys():
+                    sum_results[user_id] = 0
+                sum_results[user_id] += point
         if is_required_sum:
             self.services.reply_service.add_message(
-                '\n'.join([f'{user}: {point}' for user, point in sum_results.items()]))
+                '\n'.join([f'{self.services.user_service.get_name_by_user_id(user_id)}: {point}' for user_id, point in sum_results.items()]))
         key = 'レート'
         self.services.reply_service.add_message('対戦ID: ' + str(match_id) + '\n' + date + '\n'.join(
-            [f'{user}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円'
-             for user, point in sum_results.items()]))
+            [f'{self.services.user_service.get_name_by_user_id(user_id)}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円'
+             for user_id, point in sum_results.items()]))
 
     def get_current(self, room_id=None):
         if room_id is None:
@@ -126,19 +126,19 @@ class ResultsService:
             .order_by(desc(Results.id))\
             .first()
 
-    def add_point(self, name, point):
+    def add_point(self, user_id, point):
         result = self.get_current()
         points = json.loads(result.points)
-        points[name] = point
+        points[user_id] = point
         result.points = json.dumps(points)
         self.services.app_service.db.session.commit()
         return points
 
-    def drop_point(self, name):
+    def drop_point(self, user_id):
         result = self.get_current()
         points = json.loads(result.points)
-        if name in points.keys():
-            points.pop(name)
+        if user_id in points.keys():
+            points.pop(user_id)
         result.points = json.dumps(points)
         self.services.app_service.db.session.commit()
         return points

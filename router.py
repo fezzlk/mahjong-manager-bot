@@ -288,7 +288,7 @@ class Router:
         # tobi
         elif method == RCommands.tobi.name:
             self.services.calculate_service.calculate(
-                tobashita_player=body)
+                tobashita_player_id=body)
         # add results
         elif method == RCommands.add_result.name:
             points = json.loads(body)

@@ -175,7 +175,7 @@ class ReplyService:
 
         self.buttons.append(button)
 
-    def add_tobi_menu(self, members):
+    def add_tobi_menu(self, player_ids):
         self.buttons.append(
             TemplateSendMessage(
                 alt_text='Buttons template',
@@ -184,10 +184,14 @@ class ReplyService:
                     text='どなたが飛ばしましたか？',
                     actions=[
                         PostbackAction(
-                            label=member,
-                            display_text=member,
-                            data=f'_tobi {member}'
-                        ) for member in members
+                            label=self.services.user_service.get_name_by_user_id(
+                                player_id
+                            ),
+                            display_text=self.services.user_service.get_name_by_user_id(
+                                player_id
+                            ),
+                            data=f'_tobi {player_id}'
+                        ) for player_id in player_ids
                     ] + [
                         PostbackAction(
                             label='誰も飛ばしていません',
