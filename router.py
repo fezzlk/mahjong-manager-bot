@@ -97,6 +97,7 @@ class Router:
 
     def textMessage(self, event):
         """receive text message event"""
+        self.services.user_service.register()
         if event.source.type == 'room':
             self.routing_for_room_by_text(event)
         elif event.source.type == 'user':
@@ -192,7 +193,6 @@ class Router:
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
-        self.services.user_service.register()
         self.services.room_service.register()
 
         text = event.message.text
