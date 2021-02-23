@@ -32,24 +32,50 @@ class Message:
         self.text = text
 
 
-def test_set_req_info():
-    event1 = Event('hoge')
-    router.root(event1)
+def test_recieve_message():
+    router.root(Event('hoge'))
 
-    # errors = []
-    # # replace assertions by conditions
-    # if not services.app_service.req_user_id == event1.source.user_id:
-    #     errors.append("failed to set req_user_id")
-    # if not services.app_service.req_room_id == event1.source.room_id:
-    #     errors.append("failed to set req_room_id")
-    # # # assert no error message has been registered, else print messages
+
+def test_input():
+    errors = []
+
+    router.root(Event('_input'))
+    router.root(Event('@a 10000'))
+    result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
+    if not result.points == '{"a": 10000}':
+        errors.append("failed to input point")
+    router.root(Event('@b 20000'))
+    router.root(Event('@c 30000'))
+    router.root(Event('@d 40000'))
+
+    # assert no error message has been registered, else print messages
+    assert not errors, "errors occured:\n{}".format("\n".join(errors))
+
+
+# def test_input_with_tobi():
+#     errors = []
+
+#     router.root(Event('_input'))
+#     router.root(Event('@a -10000'))
+#     result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
+#     if not result.points == '{"a": -10000}':
+#         errors.append("failed to input point")
+#     router.root(Event('@b 20000'))
+#     router.root(Event('@c 30000'))
+#     router.root(Event('@d 60000'))
+
+    # router.root(Event(='_tobi a', event_type='postback))
+
+    # router.root(Event('_input'))
+    # router.root(Event('@a -1000'))
+    # result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
+    # if not result.points == '{"a": 10000}':
+    #     errors.append("failed to input point")
+    # router.root(Event('@b -200'))
+    # router.root(Event('@c 51200'))
+    # router.root(Event('@d 50000'))
+
+    # router.root(Event(='_tobi', event_type='postback))
+
+    # # assert no error message has been registered, else print messages
     # assert not errors, "errors occured:\n{}".format("\n".join(errors))
-
-
-def test_set_req_info():
-    message_event1 = Event('_input')
-    router.root(message_event1)
-
-
-test_set_req_info()
-test_set_req_info()
