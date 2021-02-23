@@ -12,10 +12,13 @@ router = Router(services)
 
 
 class Event:
-    def __init__(self, message_text, message_type='text', event_type='message', source_type='room'):
-        self.type = 'message'
+    def __init__(self, data, message_type='text', event_type='message', source_type='room'):
+        self.type = event_type
         self.source = Source(source_type)
-        self.message = Message(message_text, message_type)
+        if self.type == 'message':
+            self.message = Message(data, message_type)
+        if self.type == 'postback':
+            self.postback == Postback(data)
 
 
 class Source:
@@ -30,6 +33,11 @@ class Message:
     def __init__(self, text, message_type='text'):
         self.type = message_type
         self.text = text
+
+
+class Postback:
+    def __init__(self, data=''):
+        self.data = data
 
 
 def test_recieve_message():
