@@ -53,6 +53,9 @@ def test_input():
     if not result.points == '{"a": 10000}':
         errors.append("failed to input point")
     router.root(Event('@b 20000'))
+    router.root(Event('@c 60000'))
+    router.root(Event('@f 60000'))
+    router.root(Event('@f'))
     router.root(Event('@c 30000'))
     router.root(Event('@d 40000'))
 
