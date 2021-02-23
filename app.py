@@ -93,6 +93,11 @@ def get_rooms():
     )
 
 
+@app.route('/rooms/create', methods=['POST'])
+def create_rooms():
+    return redirect(url_for('get_rooms'))
+
+
 @app.route('/rooms/delete', methods=['POST'])
 def delete_rooms():
     target_id = request.args.get('target_id')
@@ -112,6 +117,11 @@ def get_results():
         input_keys=input_keys,
         data=data
     )
+
+
+@app.route('/results/create', methods=['POST'])
+def create_results():
+    return redirect(url_for('get_results'))
 
 
 @app.route('/results/delete', methods=['POST'])
@@ -135,6 +145,11 @@ def get_matches():
     )
 
 
+@app.route('/matches/create', methods=['POST'])
+def create_matches():
+    return redirect(url_for('get_matches'))
+
+
 @app.route('/matches/delete', methods=['POST'])
 def delete_matches():
     target_id = request.args.get('target_id')
@@ -154,6 +169,11 @@ def get_configs():
         input_keys=input_keys,
         data=data
     )
+
+
+@app.route('/configs/create', methods=['POST'])
+def create_configs():
+    return redirect(url_for('get_configs'))
 
 
 @app.route('/configs/delete', methods=['POST'])
