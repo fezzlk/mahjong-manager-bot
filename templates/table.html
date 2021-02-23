@@ -1,5 +1,4 @@
-{% extends "layout.html" %}
-{% block content %}
+{% macro render(title, keys, data) -%}
 {% if data|length != 0 %}
 <table>
     <thead>
@@ -28,4 +27,4 @@
 {% else %}
 <p>no record</p>
 {% endif %}
-{% endblock %}
+{%- endmacro %}

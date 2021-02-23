@@ -1,0 +1,7 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% import 'table.html' as table %}
+    {{ table.render(title, keys, data) }}
+    {% import 'form.html' as form %}
+    {{ form.render(title, input_keys) }}
+{% endblock %}

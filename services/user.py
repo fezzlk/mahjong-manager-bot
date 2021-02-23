@@ -25,14 +25,7 @@ class UserService:
         target = self.services.app_service.db.session\
             .query(Users).filter(Users.user_id == profile.user_id).first()
         if target is None:
-            target = Users(
-                name=profile.display_name,
-                user_id=profile.user_id,
-                mode=self.modes.wait.value,
-            )
-            self.services.app_service.db.session.add(target)
-            self.services.app_service.db.session.commit()
-            self.services.app_service.logger.info(f'create: {profile.user_id} {profile.display_name}')
+            target = self.create(profile.display_name, profile.user_id)
         return target
 
     def get_name_by_user_id(self, user_id=None):
@@ -101,3 +94,15 @@ class UserService:
             ).delete(synchronize_session=False)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'delete: id={target_ids}')
+
+    def create(self, name, user_id):
+        """create"""
+        new_user = Users(
+            name=name,
+            user_id=user_id,
+            mode=self.modes.wait.value,
+        )
+        self.services.app_service.db.session.add(new_user)
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'create: {new_user.user_id} {new_user.name}')
+        return new_user
