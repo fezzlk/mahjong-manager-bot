@@ -192,6 +192,7 @@ class Router:
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
+        self.services.user_service.register()
         self.services.room_service.register()
 
         text = event.message.text
