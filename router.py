@@ -215,13 +215,16 @@ class Router:
             self.services.points_service.add_by_text(text)
             return
 
-        """wait mode(do nothing)"""
+        """wait mode"""
+        """if text is result, add result"""
         rows = [r for r in text.split('\n') if ':' in r]
         if len(rows) == 4:
             points = {}
             for r in rows:
                 col = r.split(':')
-                points[col[0]] = int(col[1])
+                points[
+                    self.services.user_service.get_user_id_by_name(col[0])
+                ] = int(col[1])
             self.services.results_service.add(points)
             self.services.calculate_service.calculate(
                 points
