@@ -31,13 +31,20 @@ class UserService:
     def get_name_by_user_id(self, user_id=None):
         if user_id is None:
             user_id = self.services.app_service.req_user_id
-        profile = self.services.app_service.line_bot_api.get_profile(user_id)
-        return profile.display_name
+        print(user_id)
+        try:
+            profile = self.services.app_service.line_bot_api.get_profile(
+                user_id)
+            return profile.display_name
+        except Exception as err:
+            target = self.services.app_service.db.session\
+                .query(Users).filter(Users.user_id == user_id).first()
+            return target.name
 
     def get_user_id_by_name(self, name):
         target = self.services.app_service.db.session\
             .query(Users).filter(Users.name == name).first()
-        return target.id
+        return target.user_id
 
     def delete_by_user_id(self, user_id):
         """delete"""
