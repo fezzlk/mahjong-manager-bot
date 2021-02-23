@@ -22,7 +22,8 @@ class Source:
     def __init__(self, source_type='room'):
         self.type = source_type
         self.user_id = os.environ["TEST_USER_ID"]
-        self.room_id = os.environ["TEST_ROOM_ID"]
+        if source_type == 'room':
+            self.room_id = os.environ["TEST_ROOM_ID"]
 
 
 class Message:
@@ -31,8 +32,24 @@ class Message:
         self.text = text
 
 
+def set_req_info():
+    event1 = Event('hoge')
+    router.root(event1)
+
+    # errors = []
+    # # replace assertions by conditions
+    # if not services.app_service.req_user_id == event1.source.user_id:
+    #     errors.append("failed to set req_user_id")
+    # if not services.app_service.req_room_id == event1.source.room_id:
+    #     errors.append("failed to set req_room_id")
+    # # # assert no error message has been registered, else print messages
+    # assert not errors, "errors occured:\n{}".format("\n".join(errors))
+
+
 def change_mode():
     message_event1 = Event('_input')
     router.root(message_event1)
-    mode = services.room_service.get_mode()
-    assert mode == services.room_service.modes.input
+
+
+set_req_info()
+change_mode()
