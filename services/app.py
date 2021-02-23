@@ -22,6 +22,7 @@ class AppService:
         self.req_room_id = None
 
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         self.db = SQLAlchemy(app)
 
     def set_req_info(self, event):
