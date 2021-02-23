@@ -115,8 +115,9 @@ class ResultsService:
             [f'{user}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円'
              for user, point in sum_results.items()]))
 
-    def get_current(self):
-        room_id = self.services.app_service.req_room_id
+    def get_current(self, room_id=None):
+        if room_id is None:
+            room_id = self.services.app_service.req_room_id
         return self.services.app_service.db.session\
             .query(Results).filter(and_(
                 Results.room_id == room_id,
