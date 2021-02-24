@@ -2,6 +2,7 @@
 import set_local_env  # for local dev env
 
 import os
+import json
 from flask import Flask
 from services import Services
 from router import Router
@@ -12,9 +13,9 @@ router = Router(services)
 
 
 class Event:
-    def __init__(self, data, message_type='text', event_type='message', source_type='room'):
+    def __init__(self, data, req_user='a', message_type='text', event_type='message', source_type='room'):
         self.type = event_type
-        self.source = Source(source_type)
+        self.source = Source(req_user, source_type)
         if self.type == 'message':
             self.message = Message(data, message_type)
         if self.type == 'postback':
@@ -22,9 +23,10 @@ class Event:
 
 
 class Source:
-    def __init__(self, source_type='room'):
+    def __init__(self, req_user='a', source_type='room'):
+        test_user_ids = json.loads(os.environ["TEST_USER_IDS"])
         self.type = source_type
-        self.user_id = os.environ["TEST_USER_ID"]
+        self.user_id = test_user_ids[req_user]
         if source_type == 'room':
             self.room_id = os.environ["TEST_ROOM_ID"]
 
@@ -46,18 +48,23 @@ def test_recieve_message():
 
 def test_input():
     errors = []
+    router.root(Event(req_user='a', event_type='follow'))
+    router.root(Event(req_user='b', event_type='follow'))
+    router.root(Event(req_user='c', event_type='follow'))
+    router.root(Event(req_user='d', event_type='follow'))
+    router.root(Event(req_user='e', event_type='follow'))
 
     router.root(Event('_input'))
-    router.root(Event('@a 10000'))
+    router.root(Event('10000', 'a'))
     result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
     if not result.points == '{"a": 10000}':
         errors.append("failed to input point")
-    router.root(Event('@b 20000'))
-    router.root(Event('@c 60000'))
-    router.root(Event('@f 60000'))
-    router.root(Event('@f'))
-    router.root(Event('@c 30000'))
-    router.root(Event('@d 40000'))
+    router.root(Event('@b 20000', 'a'))
+    router.root(Event('60000', 'c'))
+    router.root(Event('@e 60000', 'c'))
+    router.root(Event('@e', 'c'))
+    router.root(Event('@c 30000', 'e'))
+    router.root(Event('@d 40000', 'd'))
 
     # assert no error message has been registered, else print messages
     assert not errors, "errors occured:\n{}".format("\n".join(errors))
