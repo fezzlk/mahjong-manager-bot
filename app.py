@@ -62,8 +62,9 @@ def migrate():
 @app.route('/users')
 def get_users():
     data = services.user_service.get()
-    keys = ['id', 'name', 'user_id', 'mode', 'rooms', 'matches']
-    input_keys = ['name', 'user_id']
+    keys = ['id', 'name', 'user_id', 'jantama_name',
+            'zoom_id', 'mode', 'rooms', 'matches']
+    input_keys = ['name', 'user_id', 'jantama_name']
     return render_template(
         'model.html',
         title='users',
@@ -91,8 +92,8 @@ def delete_users():
 @app.route('/rooms')
 def get_rooms():
     data = services.room_service.get()
-    keys = ['id', 'room_id', 'mode', 'users']
-    input_keys = ['room_id']
+    keys = ['id', 'room_id', 'zoom_url', 'mode', 'users']
+    input_keys = ['room_id', 'zoom_url']
     return render_template(
         'model.html',
         title='rooms',
