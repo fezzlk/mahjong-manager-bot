@@ -4,5 +4,8 @@
 <form action="{{ url_for('reset_db') }}" method="post">
     <button type="submit">DBをリセットする</button>
 </form>
+<form action="{{ url_for('migrate') }}" method="post">
+    <button type="submit">migrate</button>
+</form>
 <p>{{ message }}</p>
 {% endblock %}

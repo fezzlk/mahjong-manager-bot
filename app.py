@@ -7,7 +7,7 @@ import os
 import set_local_env  # for local dev env
 
 from db_setting import Engine
-from models import Base
+from models import Base, Users, Rooms
 
 from flask import Flask, request, abort, g, render_template, url_for, redirect
 from linebot import LineBotApi, WebhookHandler, exceptions
@@ -48,6 +48,15 @@ def reset_db():
     Base.metadata.create_all(bind=Engine)
     services.app_service.logger.info('reset DB')
     return redirect(url_for('index', message='DBをリセットしました。'))
+
+
+@app.route('/migrate', methods=['POST'])
+def migrate():
+    Rooms.add_column(Engine, 'zoom_url')
+    Users.add_column(Engine, 'zoom_id')
+    Users.add_column(Engine, 'jantama_name')
+    services.app_service.logger.info('migrate')
+    return redirect(url_for('index', message='migrateしました'))
 
 
 @app.route('/users')

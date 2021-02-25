@@ -3,7 +3,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
-from db_setting import Base
+from db_setting import Base, Engine
 import json
 
 association_table_user_match = Table(
@@ -29,7 +29,9 @@ class Users(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
     user_id = Column(String(255), nullable=False)
+    zoom_id = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
+    jantama_name = Column(String(255), nullable=True)
     matches = relationship(
         "Matches",
         secondary=association_table_user_match,
@@ -47,6 +49,13 @@ class Users(Base):
         self.user_id = user_id
         self.mode = mode
 
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (Users.__tablename__, column_name, column_type))
+
 
 class Rooms(Base):
     """
@@ -57,6 +66,7 @@ class Rooms(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_id = Column(String(255), nullable=False)
+    zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
     users = relationship(
         "Users",
@@ -67,6 +77,13 @@ class Rooms(Base):
     def __init__(self, room_id, mode):
         self.room_id = room_id
         self.mode = mode
+
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (Rooms.__tablename__, column_name, column_type))
 
 
 class Results(Base):
@@ -92,6 +109,13 @@ class Results(Base):
         self.points = json.dumps(points)
         self.match_id = match_id
         self.status = 1
+
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (Results.__tablename__, column_name, column_type))
 
 
 class Matches(Base):
@@ -122,6 +146,13 @@ class Matches(Base):
         self.result_ids = json.dumps([])
         self.status = 1
 
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (Matches.__tablename__, column_name, column_type))
+
 
 class Configs(Base):
     """
@@ -139,3 +170,11 @@ class Configs(Base):
         self.target_id = target_id
         self.key = key
         self.value = value
+
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_name = column.compile(dialect=engine.dialect)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (Configs.__tablename__, column_name, column_type))
