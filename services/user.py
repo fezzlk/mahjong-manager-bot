@@ -118,3 +118,30 @@ class UserService:
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'create: {new_user.user_id} {new_user.name}')
         return new_user
+
+    def set_zoom_id(self, zoom_id):
+        user_id = self.services.app_service.req_user_id
+        target = self.services.app_service.db.session\
+            .query(Users).filter(Users.user_id == user_id).first()
+        if target == None:
+            self.services.app_service.logger.warning(f'set_zoom_url: user(id={user_id}) is not found')
+            return
+        target.zoom_id = zoom_id
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'set_user_url: {zoom_id} to {user_id}')
+        self.services.reply_service.add_message(
+            f'Zoom URL を登録しました。\nトークルームにて「_my_zoom」で呼び出すことができます。')
+
+    def reply_zoom_id(self):
+        user_id = self.services.app_service.req_user_id
+        target = self.services.app_service.db.session\
+            .query(Users).filter(Users.user_id == user_id).first()
+        if target == None:
+            self.services.app_service.logger.warning(f'reply_zoom_url: user(id={user_id}) is not found')
+            return
+        if target.zoom_id is None:
+            self.services.reply_service.add_message(
+                f'Zoom URL が登録されていません。個人チャットの設定から登録してください。')
+            return
+        self.services.reply_service.add_message(target.zoom_id)
+        return

@@ -41,6 +41,7 @@ class RCommands(Enum):
     add_result = 'add_result'
     update_config = 'update_config'
     zoom = 'zoom'
+    my_zoom = 'my_zoom'
 
 
 class Router:
@@ -152,6 +153,10 @@ class Router:
         """wait mode"""
         self.services.reply_service.add_message(
             self.services.message_service.get_wait_massage())
+
+        """if zoom url, register to room"""
+        if '.zoom.us' in text:
+            self.services.user_service.set_zoom_id(text)
 
     def routing_by_method(self, method, body):
         """routing by method for personal chat"""
@@ -314,3 +319,5 @@ class Router:
             )
         elif method == RCommands.zoom.name:
             self.services.room_service.reply_zoom_url()
+        elif method == RCommands.my_zoom.name:
+            self.services.user_service.reply_zoom_id()
