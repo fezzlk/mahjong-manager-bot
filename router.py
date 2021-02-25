@@ -40,6 +40,7 @@ class RCommands(Enum):
     drop_m = 'drop_m'
     add_result = 'add_result'
     update_config = 'update_config'
+    zoom = 'zoom'
 
 
 class Router:
@@ -230,6 +231,10 @@ class Router:
                 points
             )
 
+        """if zoom url, register to room"""
+        if '.zoom.us' in text:
+            self.services.room_service.set_zoom_url(text)
+
     def routing_for_room_by_method(self, method, body):
         """routing by method"""
         # start menu
@@ -307,3 +312,5 @@ class Router:
             self.services.config_service.update(
                 key, value
             )
+        elif method == RCommands.zoom.name:
+            self.services.room_service.reply_zoom_url()

@@ -93,3 +93,31 @@ class RoomService:
             ).delete(synchronize_session=False)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'delete: id={target_ids}')
+
+    def set_zoom_url(self, zoom_url):
+        room_id = self.services.app_service.req_room_id
+        target = self.services.app_service.db.session\
+            .query(Rooms).filter(Rooms.room_id == room_id).first()
+        if target == None:
+            self.services.app_service.logger.warning(f'set_zoom_url: room(id={room_id}) is not found')
+            return
+        target.zoom_url = zoom_url
+        self.services.app_service.db.session.commit()
+        self.services.app_service.logger.info(f'set_zoom_url: {zoom_url} to {room_id}')
+        self.services.reply_service.add_message(
+            f'Zoom URL を登録しました。\n「_zoom」で呼び出すことができます。')
+
+    def reply_zoom_url(self):
+        room_id = self.services.app_service.req_room_id
+        target = self.services.app_service.db.session\
+            .query(Rooms).filter(Rooms.room_id == room_id).first()
+        if target == None:
+            self.services.app_service.logger.warning(f'reply_zoom_url: room(id={room_id}) is not found')
+            return
+        print(target.zoom_url)
+        if target.zoom_url is None:
+            self.services.reply_service.add_message(
+                f'Zoom URL が登録されていません。URLを送信して下さい。')
+            return
+        self.services.reply_service.add_message(target.zoom_url)
+        return
