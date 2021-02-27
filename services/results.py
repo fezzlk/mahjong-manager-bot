@@ -111,7 +111,7 @@ class ResultsService:
                 '\n'.join([f'{self.services.user_service.get_name_by_user_id(user_id)}: {point}' for user_id, point in sum_results.items()]))
         key = 'レート'
         self.services.reply_service.add_message('対戦ID: ' + str(match_id) + '\n' + date + '\n'.join(
-            [f'{self.services.user_service.get_name_by_user_id(user_id)}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円'
+            [f'{self.services.user_service.get_name_by_user_id(user_id)}: {point * int(self.services.config_service.get_by_key(key)[1]) * 10}円 ({"+" if point > 0 else ""}{point})'
              for user_id, point in sum_results.items()]))
 
     def get_current(self, room_id=None):
