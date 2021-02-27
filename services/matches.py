@@ -122,7 +122,7 @@ class MatchesService:
         matches = self.services.app_service.db.session\
             .query(Matches).filter(
                 Matches.status == 2
-            ).order_by(Matches.id)\
+            ).order_by(Matches.id.desc())\
             .all()
         if len(matches) == 0:
             self.services.reply_service.add_message(
