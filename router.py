@@ -318,10 +318,13 @@ class Router:
             self.services.config_service.update(
                 key, value
             )
+        # zoom
         elif method == RCommands.zoom.name:
             self.services.room_service.reply_zoom_url()
+        # my_zoom
         elif method == RCommands.my_zoom.name:
             self.services.user_service.reply_zoom_id()
+        # sum_matches
         elif method == RCommands.sum_matches.name:
             ids = body.split(' ')
             self.services.matches_service.reply_sum_matches_by_ids(ids)

@@ -67,7 +67,7 @@ class ResultsService:
                 sum_results[user_id] += point
         return sum_results
 
-    def reply_by_ids(self, ids):
+    def reply_by_ids(self, ids, date):
         results = self.services.app_service.db.session\
             .query(Results).filter(
                 Results.id.in_([int(s) for s in ids]),
@@ -89,7 +89,7 @@ class ResultsService:
                 sum_results[user_id] += point
         self.services.reply_service.add_message('\n\n'.join(results_list))
         self.services.reply_service.add_message(
-            '総計\n' + '\n'.join(
+            '総計\n' + date + '\n'.join(
                 [f'{self.services.user_service.get_name_by_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}' for r in sorted(sum_results.items(), key=lambda x:x[1], reverse=True)]
             )
         )

@@ -89,7 +89,8 @@ class MatchesService:
                     Matches.id == match_id,
                 ).first()
         self.services.results_service.reply_by_ids(
-            json.loads(match.result_ids)
+            json.loads(match.result_ids),
+            date=match.created_at.strftime('%Y-%m-%d')+'\n',
         )
 
     def finish(self):
