@@ -39,7 +39,11 @@ class UserService:
         except Exception as err:
             target = self.services.app_service.db.session\
                 .query(Users).filter(Users.user_id == user_id).first()
-            return target.name
+            if target is None:
+                self.services.app_service.logger.Warning(f'user({user_id}) is not found')
+                return user_id
+            else:
+                return target.name
 
     def get_user_id_by_name(self, name):
         target = self.services.app_service.db.session\
