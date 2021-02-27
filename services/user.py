@@ -40,7 +40,7 @@ class UserService:
             target = self.services.app_service.db.session\
                 .query(Users).filter(Users.user_id == user_id).first()
             if target is None:
-                self.services.app_service.logger.Warning(f'user({user_id}) is not found')
+                self.services.app_service.logger.warning(f'user({user_id}) is not found')
                 return user_id
             else:
                 return target.name
@@ -48,6 +48,9 @@ class UserService:
     def get_user_id_by_name(self, name):
         target = self.services.app_service.db.session\
             .query(Users).filter(Users.name == name).first()
+        if target is None:
+            self.services.app_service.logger.warning(f'user({name}) is not found')
+            return name
         return target.user_id
 
     def delete_by_user_id(self, user_id):

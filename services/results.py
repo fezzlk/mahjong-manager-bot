@@ -201,3 +201,21 @@ class ResultsService:
             self.services.app_service.db.session.delete(target)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'delete: id={target_ids}')
+
+    def migrate(self):
+        targets = self.services.app_service.db.session.query(Results).all()
+        for t in targets:
+            points = json.loads(t.points)
+            new_points = {}
+            for k, v in points.items():
+                user_id = self.services.user_service.get_user_id_by_name(k)
+                new_points[user_id] = v
+            t.points = json.dumps(new_points)
+            if t.result is not None:
+                result = json.loads(t.result)
+                new_result = {}
+                for k, v in result.items():
+                    user_id = self.services.user_service.get_user_id_by_name(k)
+                    new_result[user_id] = v
+                t.result = json.dumps(new_result)
+        self.services.app_service.db.session.commit()

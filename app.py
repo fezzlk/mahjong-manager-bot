@@ -52,9 +52,10 @@ def reset_db():
 
 @app.route('/migrate', methods=['POST'])
 def migrate():
-    Rooms.add_column(Engine, 'zoom_url')
-    Users.add_column(Engine, 'zoom_id')
-    Users.add_column(Engine, 'jantama_name')
+    # Rooms.add_column(Engine, 'zoom_url')
+    # Users.add_column(Engine, 'zoom_id')
+    # Users.add_column(Engine, 'jantama_name')
+    services.results_service.migrate()
     services.app_service.logger.info('migrate')
     return redirect(url_for('index', message='migrateしました'))
 
