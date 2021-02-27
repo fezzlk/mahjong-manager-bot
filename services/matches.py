@@ -176,3 +176,26 @@ class MatchesService:
             self.services.app_service.db.session.delete(target)
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'delete: id={target_ids}')
+
+    def reply_sum_matches_by_ids(self, ids):
+        matches = self.services.app_service.db.session\
+            .query(Matches).filter(
+                Matches.id.in_(ids),
+            ).order_by(Matches.id)\
+            .all()
+        if len(matches) == 0:
+            self.services.reply_service.add_message(
+                '該当する対戦結果がありません。'
+            )
+            return
+        self.services.reply_service.add_message(
+            f'対戦ID={",".join(ids)}の累計を表示します。'
+        )
+        result_ids = []
+        for match in matches:
+            result_ids += json.loads(match.result_ids)
+        self.services.results_service.reply_sum_and_money_by_ids(
+            result_ids,
+            ','.join(ids),
+            is_required_sum=False,
+        )

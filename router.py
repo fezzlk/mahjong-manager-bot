@@ -42,6 +42,7 @@ class RCommands(Enum):
     update_config = 'update_config'
     zoom = 'zoom'
     my_zoom = 'my_zoom'
+    sum_matches = 'sum_matches'
 
 
 class Router:
@@ -321,3 +322,6 @@ class Router:
             self.services.room_service.reply_zoom_url()
         elif method == RCommands.my_zoom.name:
             self.services.user_service.reply_zoom_id()
+        elif method == RCommands.sum_matches.name:
+            ids = body.split(' ')
+            self.services.matches_service.reply_sum_matches_by_ids(ids)
