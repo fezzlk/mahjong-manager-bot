@@ -294,7 +294,7 @@ class Router:
         elif method == RCommands.fortune.name:
             self.services.reply_service.add_message(
                 f'{self.services.user_service.get_name_by_user_id()}さんの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
-        # others manu
+        # others menu
         elif method == RCommands.others.name:
             self.services.reply_service.add_others_menu()
         # matches
@@ -324,6 +324,7 @@ class Router:
         # my_zoom
         elif method == RCommands.my_zoom.name:
             self.services.user_service.reply_zoom_id()
+            self.services.room_service.set_zoom_url(text)
         # sum_matches
         elif method == RCommands.sum_matches.name:
             ids = body.split(' ')

@@ -94,7 +94,15 @@ class RoomService:
         self.services.app_service.db.session.commit()
         self.services.app_service.logger.info(f'delete: id={target_ids}')
 
-    def set_zoom_url(self, zoom_url):
+    def set_zoom_url(self, zoom_url=None):
+        if zoom_url is None:
+            user_id = self.services.app_service.req_user_id
+            user = self.services.app_service.db.session\
+                .query(Users).filter(Users.user_id == user_id).first()
+            if user == None:
+                self.services.app_service.logger.warning(f'set_zoom_url: user(id={user_id}) is not found')
+                return
+            zoom_url = user.zoom_id
         room_id = self.services.app_service.req_room_id
         target = self.services.app_service.db.session\
             .query(Rooms).filter(Rooms.room_id == room_id).first()
