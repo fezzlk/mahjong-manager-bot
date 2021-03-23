@@ -247,6 +247,6 @@ class MatchesService:
         # path = "static/images/graphs/fuga.png"
 
         # fig.savefig(path)
-        # # image_url = f'https://f4d896d5edd1.ngrok.io/{path}'
-        # # image_url = f'https://mahjong-manager.herokuapp.com/{path}'
-        # # self.services.reply_service.add_image(image_url)
+        # image_url = f'https://f4d896d5edd1.ngrok.io/{path}'
+        # image_url = f'https://mahjong-manager.herokuapp.com/{path}'
+        # self.services.reply_service.add_image(image_url)
