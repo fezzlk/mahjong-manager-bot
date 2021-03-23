@@ -3,6 +3,8 @@
 from models import Matches
 from sqlalchemy import and_
 import json
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class MatchesService:
@@ -120,10 +122,12 @@ class MatchesService:
         self.services.app_service.logger.info(f'disable: id={match.id}')
 
     def reply(self):
+        room_id = self.services.app_service.req_room_id
         matches = self.services.app_service.db.session\
-            .query(Matches).filter(
-                Matches.status == 2
-            ).order_by(Matches.id.desc())\
+            .query(Matches).filter(and_(
+                Matches.status == 2,
+                Matches.room_id == room_id,
+            )).order_by(Matches.id.desc())\
             .all()
         if len(matches) == 0:
             self.services.reply_service.add_message(
@@ -179,10 +183,12 @@ class MatchesService:
         self.services.app_service.logger.info(f'delete: id={target_ids}')
 
     def reply_sum_matches_by_ids(self, ids):
+        room_id = self.services.app_service.req_room_id
         matches = self.services.app_service.db.session\
-            .query(Matches).filter(
+            .query(Matches).filter(and_(
                 Matches.id.in_(ids),
-            ).order_by(Matches.id)\
+                Matches.room_id == room_id
+            )).order_by(Matches.id)\
             .all()
         if len(matches) == 0:
             self.services.reply_service.add_message(
@@ -190,7 +196,7 @@ class MatchesService:
             )
             return
         self.services.reply_service.add_message(
-            f'対戦ID={",".join(ids)}の累計を表示します。'
+            f'対戦ID={",".join(list(set(ids)))}の累計を表示します。'
         )
         result_ids = []
         for match in matches:
@@ -200,3 +206,22 @@ class MatchesService:
             ','.join(ids),
             is_required_sum=False,
         )
+
+    def plot(self):
+        # plt.figure()
+        # # Data for plotting
+        # t = np.arange(0.0, 2.0, 0.01)
+        # s = 1 + np.sin(2 * np.pi * t)
+
+        # fig, ax = plt.subplots()
+        # ax.plot(t, s)
+
+        # ax.set(xlabel='time (s)', ylabel='voltage (mV)',
+        #        title='About as simple as it gets, folks')
+        # ax.grid()
+        path = "static/images/graphs/hogehoge.png"
+
+        # fig.savefig(path)
+        image_url = f'https://f4d896d5edd1.ngrok.io/{path}'
+        # image_url = f'https://mahjong-manager.herokuapp.com/{path}'
+        self.services.reply_service.add_image(image_url)

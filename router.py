@@ -43,6 +43,7 @@ class RCommands(Enum):
     zoom = 'zoom'
     my_zoom = 'my_zoom'
     sum_matches = 'sum_matches'
+    graph = 'graph'
 
 
 class Router:
@@ -327,5 +328,14 @@ class Router:
             self.services.room_service.set_zoom_url(text)
         # sum_matches
         elif method == RCommands.sum_matches.name:
-            ids = body.split(' ')
-            self.services.matches_service.reply_sum_matches_by_ids(ids)
+            args = body.split(' ')
+            month = None
+            while 'to' in args:
+                index = args.index('to')
+                if index != 0 and len(args)-1 > index:
+                    args += [i for i in range(args[index-1], args[index+1]+1)]
+                args.remove('to')
+            self.services.matches_service.reply_sum_matches_by_ids(ids, month)
+        # graph
+        elif method == RCommands.graph.name:
+            self.services.matches_service.plot()
