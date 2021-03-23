@@ -3,9 +3,9 @@
 from models import Matches, Results
 from sqlalchemy import and_
 import json
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
+# import matplotlib.pyplot as plt
+# import numpy as np
+# import pandas as pd
 
 
 class MatchesService:
@@ -210,28 +210,28 @@ class MatchesService:
 
     def plot(self):
         # room_id = self.services.app_service.req_room_id¥
-        room_id = 'R808c3c802d36f386290630fc6ba10f0c'
-        matches = self.services.app_service.db.session\
-            .query(Matches).filter(and_(
-                # Matches.status == 2,
-                Matches.room_id == room_id,
-            )).order_by(Matches.id.desc())\
-            .all()
-        match = matches[0]
-        print(match)
+        # room_id = 'R808c3c802d36f386290630fc6ba10f0c'
+        # matches = self.services.app_service.db.session\
+            # .query(Matches).filter(and_(
+                ## Matches.status == 2,
+                # Matches.room_id == room_id,
+            # )).order_by(Matches.id.desc())\
+            # .all()
+        # match = matches[0]
+        # print(match)
         # 以下ResultServiceに移植
-        results = self.services.app_service.db.session\
-            .query(Results).filter(
-                Results.id.in_([int(s) for s in json.loads(match.result_ids)]),
-            )\
-            .order_by(Results.id)\
-            .all()
-        x = []
-        y = pd.DataFrame({})
-        print(results)
-        for result in results:
-            y = y.append(pd.Series(json.loads(result.result), name=result.id))
-        print(y)
+        # results = self.services.app_service.db.session\
+            # .query(Results).filter(
+                # Results.id.in_([int(s) for s in json.loads(match.result_ids)]),
+            # )\
+            # .order_by(Results.id)\
+            # .all()
+        # x = []
+        # y = pd.DataFrame({})
+        # print(results)
+        # for result in results:
+            # y = y.append(pd.Series(json.loads(result.result), name=result.id))
+        # print(y)
         # plt.figure()
 
         # # Data for plotting
