@@ -3,6 +3,7 @@
 from linebot.models import (
     TextSendMessage,
     TemplateSendMessage,
+    ImageSendMessage,
     ButtonsTemplate,
     PostbackAction,
     MessageAction,
@@ -19,23 +20,34 @@ class ReplyService:
         self.services = services
         self.texts = []
         self.buttons = []
+        self.images = []
 
     def add_message(self, text):
         """add"""
         self.texts.append(text)
 
+    def add_image(self, image_url):
+        """add"""
+        self.images.append(
+            ImageSendMessage(
+                original_content_url=image_url,
+                preview_image_url=image_url,
+            )
+        )
+
     def reply(self, event):
-        if (len(self.texts) == 0) & (len(self.buttons) == 0):
+        if (len(self.texts) == 0) & (len(self.buttons) == 0) & (len(self.images) == 0):
             return
         if hasattr(event, 'reply_token'):
             self.services.app_service.line_bot_api.reply_message(
                 event.reply_token,
-                [TextSendMessage(text=text) for text in self.texts] + self.buttons)
+                [TextSendMessage(text=text) for text in self.texts] + self.images + self.buttons)
         self.reset()
 
     def reset(self):
         self.texts = []
         self.buttons = []
+        self.images = []
 
     def add_start_menu(self):
         self.buttons.append(
