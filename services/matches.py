@@ -1,10 +1,11 @@
 """matches"""
 
-from models import Matches
+from models import Matches, Results
 from sqlalchemy import and_
 import json
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 
 class MatchesService:
@@ -208,7 +209,31 @@ class MatchesService:
         )
 
     def plot(self):
+        # room_id = self.services.app_service.req_room_id¥
+        room_id = 'R808c3c802d36f386290630fc6ba10f0c'
+        matches = self.services.app_service.db.session\
+            .query(Matches).filter(and_(
+                # Matches.status == 2,
+                Matches.room_id == room_id,
+            )).order_by(Matches.id.desc())\
+            .all()
+        match = matches[0]
+        print(match)
+        # 以下ResultServiceに移植
+        results = self.services.app_service.db.session\
+            .query(Results).filter(
+                Results.id.in_([int(s) for s in json.loads(match.result_ids)]),
+            )\
+            .order_by(Results.id)\
+            .all()
+        x = []
+        y = pd.DataFrame({})
+        print(results)
+        for result in results:
+            y = y.append(pd.Series(json.loads(result.result), name=result.id))
+        print(y)
         # plt.figure()
+
         # # Data for plotting
         # t = np.arange(0.0, 2.0, 0.01)
         # s = 1 + np.sin(2 * np.pi * t)
@@ -219,9 +244,9 @@ class MatchesService:
         # ax.set(xlabel='time (s)', ylabel='voltage (mV)',
         #        title='About as simple as it gets, folks')
         # ax.grid()
-        path = "static/images/graphs/hogehoge.png"
+        # path = "static/images/graphs/fuga.png"
 
         # fig.savefig(path)
-        image_url = f'https://f4d896d5edd1.ngrok.io/{path}'
-        # image_url = f'https://mahjong-manager.herokuapp.com/{path}'
-        self.services.reply_service.add_image(image_url)
+        # # image_url = f'https://f4d896d5edd1.ngrok.io/{path}'
+        # # image_url = f'https://mahjong-manager.herokuapp.com/{path}'
+        # # self.services.reply_service.add_image(image_url)

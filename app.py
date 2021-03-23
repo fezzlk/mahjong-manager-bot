@@ -42,6 +42,12 @@ def index():
     return render_template('index.html', title='home', message=message)
 
 
+@app.route('/plot')
+def plot():
+    services.matches_service.plot()
+    return render_template('index.html', title='home', message='message')
+
+
 @app.route('/reset', methods=['POST'])
 def reset_db():
     Base.metadata.drop_all(bind=Engine)
