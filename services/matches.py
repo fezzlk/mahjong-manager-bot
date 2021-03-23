@@ -208,7 +208,7 @@ class MatchesService:
             is_required_sum=False,
         )
 
-    def plot(self):
+    #def plot(self):
         # room_id = self.services.app_service.req_room_id¥
         # room_id = 'R808c3c802d36f386290630fc6ba10f0c'
         # matches = self.services.app_service.db.session\
