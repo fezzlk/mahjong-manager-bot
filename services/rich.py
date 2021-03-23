@@ -83,7 +83,7 @@ class RichMenuService:
         rich_menu_id = self.services.app_service.line_bot_api.create_rich_menu(
             rich_menu=rich_menu_to_create
         )
-        file_path = './images/rich/personal.png'
+        file_path = './static/images/rich/personal.png'
         content_type = 'Image/png'
         with open(file_path, 'rb') as f:
             self.services.app_service.line_bot_api.set_rich_menu_image(
