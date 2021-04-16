@@ -336,6 +336,6 @@ class Router:
                     args += [i for i in range(args[index-1], args[index+1]+1)]
                 args.remove('to')
             self.services.matches_service.reply_sum_matches_by_ids(ids, month)
-        # graph
+        # graphes
         elif method == RCommands.graph.name:
             self.services.matches_service.plot()
