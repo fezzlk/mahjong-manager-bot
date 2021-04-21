@@ -57,7 +57,7 @@ class CalculateService:
             reverse=True,
         )
         tobi_prize = int(self.services.config_service.get_by_key('飛び賞'))
-        clac_method = self.services.config_service.get_by_key('計算方法')
+        clac_method = self.services.config_service.get_by_key('端数計算方法')
 
         # 素点計算
         result = {}
