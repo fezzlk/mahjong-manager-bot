@@ -188,7 +188,7 @@ class MatchesService:
         matches = self.services.app_service.db.session\
             .query(Matches).filter(and_(
                 Matches.id.in_(ids),
-                Matches.room_id == room_id
+                # Matches.room_id == room_id
             )).order_by(Matches.id)\
             .all()
         if len(matches) == 0:
@@ -208,29 +208,29 @@ class MatchesService:
             is_required_sum=False,
         )
 
-    #def plot(self):
+    # def plot(self):
         # room_id = self.services.app_service.req_room_id¥
         # room_id = 'R808c3c802d36f386290630fc6ba10f0c'
         # matches = self.services.app_service.db.session\
-            # .query(Matches).filter(and_(
-                ## Matches.status == 2,
-                # Matches.room_id == room_id,
-            # )).order_by(Matches.id.desc())\
-            # .all()
+        # .query(Matches).filter(and_(
+        ## Matches.status == 2,
+        # Matches.room_id == room_id,
+        # )).order_by(Matches.id.desc())\
+        # .all()
         # match = matches[0]
         # print(match)
         # 以下ResultServiceに移植
         # results = self.services.app_service.db.session\
-            # .query(Results).filter(
-                # Results.id.in_([int(s) for s in json.loads(match.result_ids)]),
-            # )\
-            # .order_by(Results.id)\
-            # .all()
+        # .query(Results).filter(
+        # Results.id.in_([int(s) for s in json.loads(match.result_ids)]),
+        # )\
+        # .order_by(Results.id)\
+        # .all()
         # x = []
         # y = pd.DataFrame({})
         # print(results)
         # for result in results:
-            # y = y.append(pd.Series(json.loads(result.result), name=result.id))
+        # y = y.append(pd.Series(json.loads(result.result), name=result.id))
         # print(y)
         # plt.figure()
 
