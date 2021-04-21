@@ -197,7 +197,7 @@ class MatchesService:
             )
             return
         self.services.reply_service.add_message(
-            f'対戦ID={",".join(list(set(ids)))}の累計を表示します。'
+            f'対戦ID={",".join(sorted(list(set(ids))))}の累計を表示します。'
         )
         result_ids = []
         for match in matches:
