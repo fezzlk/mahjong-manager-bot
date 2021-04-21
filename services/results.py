@@ -95,6 +95,7 @@ class ResultsService:
         )
 
     def reply_sum_and_money_by_ids(self, ids, match_id, is_required_sum=True, date=''):
+        print(type(match_id))
         if type(match_id) == list:
             match_id.sort()
         results = self.services.app_service.db.session\
