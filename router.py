@@ -334,10 +334,22 @@ class Router:
                 index = args.index('to')
                 if index != 0 and len(args)-1 > index:
                     args += [
-                        str(i) for i in range(args[index-1], args[index+1]+1)
+                        str(i) for i in int(range(args[index-1]), int(args[index+1])+1)
                     ]
                 args.remove('to')
             self.services.matches_service.reply_sum_matches_by_ids(args)
         # graphes
         elif method == RCommands.graph.name:
             self.services.matches_service.plot()
+
+
+def parse_int_list(args):
+    args = body.split(' ')
+    month = None
+    while 'to' in args:
+        index = args.index('to')
+        if index != 0 and len(args)-1 > index:
+            args += [
+                str(i) for i in range(args[index-1], args[index+1]+1)
+            ]
+        args.remove('to')
