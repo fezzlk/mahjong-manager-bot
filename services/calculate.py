@@ -68,14 +68,15 @@ class CalculateService:
         for t in sorted_points[1:]:
             player = t[0]
             point = t[1]
+            # マイナス点の場合の端数処理を考慮し、100000足して130(=100000/1000)を引く
             if clac_method == '五捨六入':
-                result[player] = int((point+70400)/1000)-100
+                result[player] = int((point+100400)/1000)-130
             elif clac_method == '四捨五入':
-                result[player] = int((point+70500)/1000)-100
+                result[player] = int((point+100500)/1000)-130
             elif clac_method == '切り捨て':
-                result[player] = int((point+70000)/1000)-100
+                result[player] = int((point+100000)/1000)-130
             elif clac_method == '切り上げ':
-                result[player] = int((point+70900)/1000)-100
+                result[player] = int((point+100900)/1000)-130
             else:
                 result[player] = int((point-30000)/1000)
             if (point < 0):

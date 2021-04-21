@@ -96,8 +96,8 @@ class ReplyService:
                             data='_matches'
                         ),
                         PostbackAction(
-                            label='設定変更',
-                            display_text='設定変更',
+                            label='設定',
+                            display_text='設定',
                             data='_setting'
                         ),
                     ]
@@ -111,8 +111,8 @@ class ReplyService:
             button = TemplateSendMessage(
                 alt_text='Buttons template',
                 template=ButtonsTemplate(
-                    title='設定変更',
-                    text='現在以下の項目のみ変更可能です。',
+                    title='設定',
+                    text='現在のバージョンでは以下の項目のみ変更可能です。',
                     actions=[
                         PostbackAction(
                             label='レート',
@@ -120,9 +120,19 @@ class ReplyService:
                             data='_setting レート'
                         ),
                         PostbackAction(
+                            label='順位点',
+                            display_text='順位点',
+                            data='_setting 順位点'
+                        ),
+                        PostbackAction(
                             label='飛び賞',
                             display_text='飛び賞',
                             data='_setting 飛び賞'
+                        ),
+                        PostbackAction(
+                            label='端数計算方法',
+                            display_text='端数計算方法',
+                            data='_setting 端数計算方法'
                         ),
                     ]
                 )
@@ -141,8 +151,8 @@ class ReplyService:
                         ) for i in range(1, 4)
                     ] + [
                         PostbackAction(
-                            label='点4~6',
-                            display_text='点4~6',
+                            label='点4~',
+                            display_text='点4~',
                             data='_setting 高レート'
                         )
                     ]
@@ -159,28 +169,97 @@ class ReplyService:
                             label=f'点{i}',
                             display_text=f'点{i}',
                             data=f'_update_config レート 点{i}'
-                        ) for i in range(4, 7)
-                    ] + [
-                        PostbackAction(
-                            label='点1~3',
-                            display_text='点1~3',
-                            data='_setting レート'
-                        )
-                    ]
+                        ) for i in [4, 5, 10])
+                ] + [
+                    PostbackAction(
+                        label='点1~3',
+                        display_text='点1~3',
+                        data='_setting レート'
+                    )
+                ]
+            )
+            )
+                elif key == '順位点':
+                button=TemplateSendMessage(
+            alt_text = 'Buttons template',
+            template = ButtonsTemplate(
+                title='順位点変更',
+                text='いくらにしますか？',
+                actions=[
+                     PostbackAction(
+                         label=p,
+                         display_text=p,
+                         data=f'_update_config 順位点 {i}'
+                     ) for i in [
+                         ','.join(['20', '10', '-10', '-20'],
+                                  ','.join(['30', '10', '-10', '-30'],
+                                           ]
+                                  ]
+                     )
+                )
+                elif key == '飛び賞':
+                button=TemplateSendMessage(
+                    alt_text='Buttons template',
+                    template=ButtonsTemplate(
+                        title='飛び賞変更',
+                        text='いくらにしますか？',
+                        actions=[
+                             PostbackAction(
+                                 label=p,
+                                 display_text=p,
+                                 data=f'_update_config 飛び賞 {i}'
+                             ) for i in [0, 10, 20, 30]
+                        ]
+                    )
+                )
+                elif key == '端数計算方法':
+                button=TemplateSendMessage(
+                    alt_text='Buttons template',
+                    template=ButtonsTemplate(
+                        title='端数計算方法変更',
+                        text='どれにしますか？',
+                        actions=[
+                            PostbackAction(
+                                label=p,
+                                display_text=p,
+                                data=f'_update_config 端数計算方法 {i}'
+                            )
+                            for i in [
+                                '3万点以下切り上げ/以上切り捨て',
+                                '五捨六入',
+                                '四捨五入',
+                            ]
+                        ] + [
+                            PostbackAction(
+                                label='その他',
+                                display_text='その他',
+                                data='_setting 端数計算方法2'
+                            )
+                        ]
+                    )
                 )
             )
-        elif key == '飛び賞':
+        elif key == '端数計算方法2':
             button = TemplateSendMessage(
                 alt_text='Buttons template',
                 template=ButtonsTemplate(
-                    title='飛び賞変更',
-                    text='いくらにしますか？',
+                    title='端数計算方法変更',
+                    text='どれにしますか？',
                     actions=[
                         PostbackAction(
                             label=p,
                             display_text=p,
-                            data=f'_update_config 飛び賞 {p}'
-                        ) for p in [0, 10, 20, 30]
+                            data=f'_update_config 端数計算方法 {i}'
+                        ) for i in [
+                            '切り捨て',
+                            '切り上げ',
+                        ])
+                    ] + [
+                        PostbackAction(
+                            label='その他',
+                            display_text='その他',
+                            data='_setting 端数計算方法'
+                        )
                     ]
                 )
             )
