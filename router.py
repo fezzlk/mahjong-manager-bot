@@ -333,7 +333,9 @@ class Router:
             while 'to' in args:
                 index = args.index('to')
                 if index != 0 and len(args)-1 > index:
-                    args += [i for i in range(args[index-1], args[index+1]+1)]
+                    args += [
+                        str(i) for i in range(args[index-1], args[index+1]+1)
+                    ]
                 args.remove('to')
             self.services.matches_service.reply_sum_matches_by_ids(args)
         # graphes
