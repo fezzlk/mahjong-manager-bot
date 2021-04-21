@@ -184,6 +184,7 @@ class MatchesService:
         self.services.app_service.logger.info(f'delete: id={target_ids}')
 
     def reply_sum_matches_by_ids(self, ids):
+        formatted_id_list = sorted(list(set(ids)))
         room_id = self.services.app_service.req_room_id
         matches = self.services.app_service.db.session\
             .query(Matches).filter(and_(
@@ -197,14 +198,14 @@ class MatchesService:
             )
             return
         self.services.reply_service.add_message(
-            f'対戦ID={",".join(sorted(list(set(ids))))}の累計を表示します。'
+            f'対戦ID={",".join(formatted_id_list)}の累計を表示します。'
         )
         result_ids = []
         for match in matches:
             result_ids += json.loads(match.result_ids)
         self.services.results_service.reply_sum_and_money_by_ids(
             result_ids,
-            ','.join(ids),
+            ','.join(formatted_id_list),
             is_required_sum=False,
         )
 
