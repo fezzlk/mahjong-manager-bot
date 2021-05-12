@@ -1,10 +1,18 @@
 """models"""
 
+# from marshmallow import Schema, fields
 from sqlalchemy import Column, String, Integer, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
 from db_setting import Base, Engine
 import json
+
+
+# class ResultSchema(Schema):
+#     room_id = fields.Str()
+
+#     # created_at = fields.DateTime('%Y-%m-%dT%H:%M:%S+09:00')
+
 
 association_table_user_match = Table(
     'user_match', Base.metadata,
@@ -117,6 +125,53 @@ class Results(Base):
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
                        (Results.__tablename__, column_name, column_type))
 
+    @staticmethod
+    def clone(engine):
+        engine.execute('SELECT * INTO hanchans FROM results')
+
+    # @staticmethod
+    # def get_json(engine):
+    #     res = ResultSchema().dump(Results.query.all().data)
+    #     print(res)
+    #     return res
+
+
+class Hanchans(Base):
+    """
+    Hanchan model
+    """
+
+    __tablename__ = 'hanchans'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    room_id = Column(String(255), nullable=False)
+    raw_scores = Column(String(255), nullable=True)
+    converted_score = Column(String(255), nullable=True)
+    match_id = Column(Integer, ForeignKey("matches.id"))
+    # status:
+    # 0: disabled
+    # 1: active
+    # 2: archive
+    status = Column(Integer, nullable=False)
+
+    # def __init__(self, id, room_id, match_id, raw_scores={}, converted_score, status):
+    #     self.id = id
+    #     self.room_id = room_id
+    #     self.raw_scores = json.dumps(raw_scores)
+    #     self.match_id = match_id
+    #     self.status = 1
+
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (Hanchans.__tablename__, column_name, column_type))
+
+#     @staticmethod
+#     def clone(engine):
+#         engine.execute('SELECT * INTO hanchans FROM results')
+
 
 class Matches(Base):
     """
@@ -178,3 +233,20 @@ class Configs(Base):
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
                        (Configs.__tablename__, column_name, column_type))
+
+
+# class Advise(Base):
+#     """
+#     Advise model
+#     """
+
+#     __tablename__ = 'advises'
+
+#     id = Column(Integer, primary_key=True, autoincrement=True)
+#     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+#     phrase = Column(String(255), nullable=False)
+#     match_id = Column(Integer, ForeignKey("matches.id"))
+
+#     def __init__(self, user_id, phrase):
+#         self.user_id = user_id
+#         self.phrase = phrase

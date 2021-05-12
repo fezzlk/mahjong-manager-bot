@@ -7,9 +7,10 @@ import os
 import set_local_env  # for local dev env
 
 from db_setting import Engine
-from models import Base, Users, Rooms
+from models import Base, Users, Rooms, Results, Hanchans
 
-from flask import Flask, request, abort, g, render_template, url_for, redirect
+from flask import Flask, request, abort, g, render_template, url_for, redirect, jsonify
+
 from linebot import LineBotApi, WebhookHandler, exceptions
 from linebot.models import (
     FollowEvent,
@@ -31,6 +32,7 @@ app = Flask(__name__)
 
 services = Services(app)
 router = Router(services)
+Base.metadata.create_all(bind=Engine)
 
 
 @app.route('/')
@@ -61,7 +63,21 @@ def migrate():
     # Rooms.add_column(Engine, 'zoom_url')
     # Users.add_column(Engine, 'zoom_id')
     # Users.add_column(Engine, 'jantama_name')
-    services.results_service.migrate()
+    # services.results_service.migrate()
+    res = services.app_service.db.session\
+        .query(Results).all()
+    for r in res:
+        h = Hanchans(
+            id=r.id,
+            room_id=r.room_id,
+            raw_scores=r.points,
+            converted_score=r.result,
+            match_id=r.match_id,
+            status=r.status,
+        )
+        services.app_service.db.session.add(h)
+    services.app_service.db.session.commit()
+
     services.app_service.logger.info('migrate')
     return redirect(url_for('index', message='migrateしました'))
 
@@ -198,6 +214,22 @@ def delete_configs():
     target_id = request.args.get('target_id')
     services.config_service.delete(int(target_id))
     return redirect(url_for('get_configs'))
+
+
+"""
+api
+"""
+
+
+@app.route('/_api/results')
+def api_get_results():
+    Results.get_json(Engine)
+    get_json
+    # data = services.results_service.get()
+    # print(data)
+    # print(type(data))
+    # return redirect(url_for('get_configs'))
+    return 'hoge'
 
 
 """
