@@ -71,7 +71,7 @@ def migrate():
             id=r.id,
             room_id=r.room_id,
             raw_scores=r.points,
-            converted_score=r.result,
+            converted_scores=r.result,
             match_id=r.match_id,
             status=r.status,
         )
@@ -136,6 +136,34 @@ def delete_rooms():
     target_id = request.args.get('target_id')
     services.room_service.delete(int(target_id))
     return redirect(url_for('get_rooms'))
+
+
+@app.route('/hanchans')
+def get_hanchans():
+    data = services.hanchans_service.get()
+    keys = ['id', 'room_id', 'raw_scores',
+            'converted_scores', 'match_id', 'status']
+    input_keys = ['room_id', 'raw_scores',
+                  'convertes_scores', 'match_id', 'status']
+    return render_template(
+        'model.html',
+        title='hanchans',
+        keys=keys,
+        input_keys=input_keys,
+        data=data
+    )
+
+
+@app.route('/hanchans/create', methods=['POST'])
+def create_hanchans():
+    return redirect(url_for('get_hanchans'))
+
+
+@app.route('/hanchans/delete', methods=['POST'])
+def delete_hanchans():
+    # target_id = request.args.get('target_id')
+    # services.hanchans_service.delete(int(target_id))
+    return redirect(url_for('get_hanchans'))
 
 
 @app.route('/results')

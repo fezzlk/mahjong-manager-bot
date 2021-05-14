@@ -2,6 +2,7 @@
 from .app import AppService
 from .calculate import CalculateService
 from .config import ConfigService
+from .hanchans import HanchansService
 from .matches import MatchesService
 from .message import MessageService
 from .ocr import OcrService
@@ -20,6 +21,7 @@ class Services:
         self.app_service = AppService(self, app)
         self.calculate_service = CalculateService(self)
         self.config_service = ConfigService(self)
+        self.hanchans_service = HanchansService(self)
         self.matches_service = MatchesService(self)
         self.message_service = MessageService(self)
         self.ocr_service = OcrService(self)
