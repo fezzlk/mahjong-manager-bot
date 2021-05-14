@@ -146,7 +146,7 @@ class Hanchans(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_id = Column(String(255), nullable=False)
     raw_scores = Column(String(255), nullable=True)
-    converted_score = Column(String(255), nullable=True)
+    converted_scores = Column(String(255), nullable=True)
     match_id = Column(Integer, ForeignKey("matches.id"))
     # status:
     # 0: disabled
@@ -154,7 +154,7 @@ class Hanchans(Base):
     # 2: archive
     status = Column(Integer, nullable=False)
 
-    # def __init__(self, id, room_id, match_id, raw_scores={}, converted_score, status):
+    # def __init__(self, id, room_id, match_id, raw_scores={}, converted_scores, status):
     #     self.id = id
     #     self.room_id = room_id
     #     self.raw_scores = json.dumps(raw_scores)
