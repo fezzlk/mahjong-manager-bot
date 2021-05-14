@@ -169,76 +169,77 @@ class ReplyService:
                             label=f'点{i}',
                             display_text=f'点{i}',
                             data=f'_update_config レート 点{i}'
-                        ) for i in [4, 5, 10])
-                ] + [
-                    PostbackAction(
-                        label='点1~3',
-                        display_text='点1~3',
-                        data='_setting レート'
-                    )
-                ]
-            )
-            )
-                elif key == '順位点':
-                button=TemplateSendMessage(
-            alt_text = 'Buttons template',
-            template = ButtonsTemplate(
-                title='順位点変更',
-                text='いくらにしますか？',
-                actions=[
-                     PostbackAction(
-                         label=p,
-                         display_text=p,
-                         data=f'_update_config 順位点 {i}'
-                     ) for i in [
-                         ','.join(['20', '10', '-10', '-20'],
-                                  ','.join(['30', '10', '-10', '-30'],
-                                           ]
-                                  ]
-                     )
+                        ) for i in [4, 5, 10]
+                    ] + [
+                        PostbackAction(
+                            label='点1~3',
+                            display_text='点1~3',
+                            data='_setting レート'
+                        )
+                    ]
                 )
-                elif key == '飛び賞':
-                button=TemplateSendMessage(
-                    alt_text='Buttons template',
-                    template=ButtonsTemplate(
-                        title='飛び賞変更',
-                        text='いくらにしますか？',
-                        actions=[
-                             PostbackAction(
-                                 label=p,
-                                 display_text=p,
-                                 data=f'_update_config 飛び賞 {i}'
-                             ) for i in [0, 10, 20, 30]
+            )
+        elif key == '順位点':
+            button = TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='順位点変更',
+                    text='いくらにしますか？',
+                    actions=[
+                        PostbackAction(
+                            label=p,
+                            display_text=p,
+                            data=f'_update_config 順位点 {i}'
+                        ) for i in [
+                            ','.join(['20', '10', '-10', '-20']),
+                            ','.join(['30', '10', '-10', '-30']),
                         ]
-                    )
-                )
-                elif key == '端数計算方法':
-                button=TemplateSendMessage(
-                    alt_text='Buttons template',
-                    template=ButtonsTemplate(
-                        title='端数計算方法変更',
-                        text='どれにしますか？',
-                        actions=[
-                            PostbackAction(
-                                label=p,
-                                display_text=p,
-                                data=f'_update_config 端数計算方法 {i}'
-                            )
-                            for i in [
-                                '3万点以下切り上げ/以上切り捨て',
-                                '五捨六入',
-                                '四捨五入',
-                            ]
-                        ] + [
-                            PostbackAction(
-                                label='その他',
-                                display_text='その他',
-                                data='_setting 端数計算方法2'
-                            )
-                        ]
-                    )
+                    ]
                 )
             )
+        elif key == '飛び賞':
+            button = TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='飛び賞変更',
+                    text='いくらにしますか？',
+                    actions=[
+                        PostbackAction(
+                            label=p,
+                            display_text=p,
+                            data=f'_update_config 飛び賞 {i}'
+                        ) for i in [0, 10, 20, 30]
+                    ]
+                )
+            )
+
+        elif key == '端数計算方法':
+            button = TemplateSendMessage(
+                alt_text='Buttons template',
+                template=ButtonsTemplate(
+                    title='端数計算方法変更',
+                    text='どれにしますか？',
+                    actions=[
+                        PostbackAction(
+                            label=p,
+                            display_text=p,
+                            data=f'_update_config 端数計算方法 {i}'
+                        )
+                        for i in [
+                            '3万点以下切り上げ/以上切り捨て',
+                            '五捨六入',
+                            '四捨五入',
+                        ]
+                    ] + [
+                        PostbackAction(
+                            label='その他',
+                            display_text='その他',
+                            data='_setting 端数計算方法2'
+                        )
+                    ]
+                )
+            )
+
         elif key == '端数計算方法2':
             button = TemplateSendMessage(
                 alt_text='Buttons template',
@@ -253,7 +254,7 @@ class ReplyService:
                         ) for i in [
                             '切り捨て',
                             '切り上げ',
-                        ])
+                        ]
                     ] + [
                         PostbackAction(
                             label='その他',
