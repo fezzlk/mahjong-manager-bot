@@ -2,7 +2,7 @@
 {% block content %}
 <h3>Hello</h3>
 <form action="{{ url_for('reset_db') }}" method="post">
-    <button type="submit">DBをリセットする</button>
+    <button type="submit" disabled>DBをリセットする</button>
 </form>
 <form action="{{ url_for('migrate') }}" method="post">
     <button type="submit">migrate</button>
