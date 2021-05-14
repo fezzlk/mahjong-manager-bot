@@ -13,9 +13,9 @@ class PointsService:
         """reply"""
 
         if result is None:
-            result = self.services.results_service.get_current()
-        points = json.loads(result.points)
-        if len(points) == 0:
+            result = self.services.hanchans_service.get_current()
+        raw_scores = json.loads(result.raw_scores)
+        if len(raw_scores) == 0:
             self.services.reply_service.add_message(
                 '点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
             return
@@ -23,7 +23,7 @@ class PointsService:
         self.services.reply_service.add_message("\n".join(res))
 
     def add_by_text(self, text):
-        result = self.services.results_service.get_current()
+        result = self.services.hanchans_service.get_current()
         if text[0] == '@':
             point, target_user = self.get_point_with_target_user(text[1:])
             target_user_id = self.services.user_service.get_user_id_by_name(
@@ -31,7 +31,7 @@ class PointsService:
             )
             point = point.replace(',', '')
             if point == 'delete':
-                points = self.services.results_service.drop_point(
+                points = self.services.hanchans_service.drop_point(
                     target_user_id)
                 self.reply()
                 if len(points) == 4:
@@ -53,7 +53,7 @@ class PointsService:
         if isMinus == True:
             point = '-' + point
 
-        points = self.services.results_service.add_point(
+        points = self.services.hanchans_service.add_point(
             target_user_id,
             int(point),
         )

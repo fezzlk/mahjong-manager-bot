@@ -37,7 +37,7 @@ class MatchesService:
 
     def add_result(self):
         """add result"""
-        current_result = self.services.results_service.get_current()
+        current_result = self.services.hanchans_service.get_current()
         current_match = self.get_or_add_current()
         result_ids = json.loads(current_match.result_ids)
         result_ids.append(str(current_result.id))
@@ -59,7 +59,7 @@ class MatchesService:
 
         current = self.get_current()
         result_ids = json.loads(current.result_ids)
-        self.services.results_service.delete_by_id(result_ids[i-1])
+        self.services.hanchans_service.delete_by_id(result_ids[i-1])
         result_ids.pop(i-1)
         current.result_ids = json.dumps(result_ids)
         self.services.app_service.db.session.commit()
@@ -75,7 +75,7 @@ class MatchesService:
 
     def get_sum_results(self):
         current = self.get_current()
-        return self.services.results_service.get_sum_result_by_ids(
+        return self.services.hanchans_service.get_sum_result_by_ids(
             json.loads(current.result_ids)
         )
 
@@ -91,7 +91,7 @@ class MatchesService:
                 .query(Matches).filter(
                     Matches.id == match_id,
                 ).first()
-        self.services.results_service.reply_by_ids(
+        self.services.hanchans_service.reply_by_ids(
             json.loads(match.result_ids),
             date=match.created_at.strftime('%Y-%m-%d')+'\n',
         )
@@ -102,7 +102,7 @@ class MatchesService:
                 'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
             return
         current = self.get_current()
-        self.services.results_service.reply_sum_and_money_by_ids(
+        self.services.hanchans_service.reply_sum_and_money_by_ids(
             json.loads(current.result_ids),
             current.id,
         )
@@ -138,7 +138,7 @@ class MatchesService:
         self.services.reply_service.add_message(
             '最近の4試合の結果を表示します。詳細は「_match <ID>」')
         for match in matches[:4]:
-            self.services.results_service.reply_sum_and_money_by_ids(
+            self.services.hanchans_service.reply_sum_and_money_by_ids(
                 json.loads(match.result_ids),
                 match.id,
                 is_required_sum=False,
@@ -176,7 +176,7 @@ class MatchesService:
                 Matches.id.in_(target_ids),
             ).all()
         for target in targets:
-            self.services.results_service.delete(
+            self.services.hanchans_service.delete(
                 json.loads(target.result_ids)
             )
             self.services.app_service.db.session.delete(target)
@@ -203,7 +203,7 @@ class MatchesService:
         result_ids = []
         for match in matches:
             result_ids += json.loads(match.result_ids)
-        self.services.results_service.reply_sum_and_money_by_ids(
+        self.services.hanchans_service.reply_sum_and_money_by_ids(
             result_ids,
             ','.join(formatted_id_list),
             is_required_sum=False,
