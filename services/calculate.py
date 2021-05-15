@@ -12,13 +12,13 @@ class CalculateService:
     def calculate(self, points=None, tobashita_player_id=None):
         """calculate"""
         if points is None:
-            current = self.services.hanchans_service.get_current()
+            current = self.services.results_service.get_current()
             if current is None:
                 self.services.app_service.logger.error(
                     'current points is not found.'
                 )
                 return
-            points = json.loads(current.raw_scores)
+            points = json.loads(current.points)
 
         if len(points) != 4:
             self.services.reply_service.add_message(
@@ -39,10 +39,10 @@ class CalculateService:
             )
             return
         calc_result = self.run_calculate(points, tobashita_player_id)
-        self.services.hanchans_service.update_result(calc_result)
+        self.services.results_service.update_result(calc_result)
         self.services.matches_service.add_result()
-        self.services.hanchans_service.reply_current_result()
-        self.services.hanchans_service.archive()
+        self.services.results_service.reply_current_result()
+        self.services.results_service.archive()
         self.services.room_service.chmod(
             self.services.room_service.modes.wait
         )

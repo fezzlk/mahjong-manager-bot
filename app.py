@@ -7,7 +7,7 @@ import os
 import set_local_env  # for local dev env
 
 from db_setting import Engine
-from models import Base, Users, Rooms, Hanchans
+from models import Base, Users, Rooms, Results, Hanchans
 
 from flask import Flask, request, abort, g, render_template, url_for, redirect, jsonify
 
@@ -63,20 +63,20 @@ def migrate():
     # Rooms.add_column(Engine, 'zoom_url')
     # Users.add_column(Engine, 'zoom_id')
     # Users.add_column(Engine, 'jantama_name')
-    # services.hanchans_service.migrate()
-    # res = services.app_service.db.session\
-    #     .query(Results).all()
-    # for r in res:
-    #     h = Hanchans(
-    #         id=r.id,
-    #         room_id=r.room_id,
-    #         raw_scores=r.points,
-    #         converted_scores=r.result,
-    #         match_id=r.match_id,
-    #         status=r.status,
-    #     )
-    #     services.app_service.db.session.add(h)
-    # services.app_service.db.session.commit()
+    # services.results_service.migrate()
+    res = services.app_service.db.session\
+        .query(Results).all()
+    for r in res:
+        h = Hanchans(
+            id=r.id,
+            room_id=r.room_id,
+            raw_scores=r.points,
+            converted_scores=r.result,
+            match_id=r.match_id,
+            status=r.status,
+        )
+        services.app_service.db.session.add(h)
+    services.app_service.db.session.commit()
 
     services.app_service.logger.info('migrate')
     return redirect(url_for('index', message='migrateしました'))
@@ -166,30 +166,30 @@ def delete_hanchans():
     return redirect(url_for('get_hanchans'))
 
 
-# @app.route('/results')
-# def get_results():
-#     data = services.hanchans_service.get()
-#     keys = ['id', 'room_id', 'points', 'result', 'match_id', 'status']
-#     input_keys = ['room_id', 'points', 'result', 'match_id', 'status']
-#     return render_template(
-#         'model.html',
-#         title='results',
-#         keys=keys,
-#         input_keys=input_keys,
-#         data=data
-#     )
+@app.route('/results')
+def get_results():
+    data = services.results_service.get()
+    keys = ['id', 'room_id', 'points', 'result', 'match_id', 'status']
+    input_keys = ['room_id', 'points', 'result', 'match_id', 'status']
+    return render_template(
+        'model.html',
+        title='results',
+        keys=keys,
+        input_keys=input_keys,
+        data=data
+    )
 
 
-# @app.route('/results/create', methods=['POST'])
-# def create_results():
-#     return redirect(url_for('get_results'))
+@app.route('/results/create', methods=['POST'])
+def create_results():
+    return redirect(url_for('get_results'))
 
 
-# @app.route('/results/delete', methods=['POST'])
-# def delete_results():
-#     target_id = request.args.get('target_id')
-#     services.hanchans_service.delete(int(target_id))
-#     return redirect(url_for('get_results'))
+@app.route('/results/delete', methods=['POST'])
+def delete_results():
+    target_id = request.args.get('target_id')
+    services.results_service.delete(int(target_id))
+    return redirect(url_for('get_results'))
 
 
 @app.route('/matches')
@@ -250,10 +250,10 @@ api
 
 
 @app.route('/_api/results')
-def api_get_hanchans():
-    Hanchans.get_json(Engine)
+def api_get_results():
+    Results.get_json(Engine)
     get_json
-    # data = services.hanchans_service.get()
+    # data = services.results_service.get()
     # print(data)
     # print(type(data))
     # return redirect(url_for('get_configs'))

@@ -56,8 +56,8 @@ def test_input():
 
     router.root(Event('_input'))
     router.root(Event('10000', 'a'))
-    result = services.hanchans_service.get_current(os.environ["TEST_ROOM_ID"])
-    if not result.raw_scores == '{"a": 10000}':
+    result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
+    if not result.points == '{"a": 10000}':
         errors.append("failed to input point")
     router.root(Event('@b 20000', 'a'))
     router.root(Event('60000', 'c'))
@@ -75,8 +75,8 @@ def test_input():
 
 #     router.root(Event('_input'))
 #     router.root(Event('@a -10000'))
-#     result = services.hanchans_service.get_current(os.environ["TEST_ROOM_ID"])
-#     if not result.raw_scores == '{"a": -10000}':
+#     result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
+#     if not result.points == '{"a": -10000}':
 #         errors.append("failed to input point")
 #     router.root(Event('@b 20000'))
 #     router.root(Event('@c 30000'))
@@ -86,8 +86,8 @@ def test_input():
 
     # router.root(Event('_input'))
     # router.root(Event('@a -1000'))
-    # result = services.hanchans_service.get_current(os.environ["TEST_ROOM_ID"])
-    # if not result.raw_scores == '{"a": 10000}':
+    # result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
+    # if not result.points == '{"a": 10000}':
     #     errors.append("failed to input point")
     # router.root(Event('@b -200'))
     # router.root(Event('@c 51200'))

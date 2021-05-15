@@ -233,7 +233,7 @@ class Router:
                 points[
                     self.services.user_service.get_user_id_by_name(col[0])
                 ] = int(col[1])
-            self.services.hanchans_service.add(points)
+            self.services.results_service.add(points)
             self.services.calculate_service.calculate(
                 points
             )
@@ -249,7 +249,7 @@ class Router:
             self.services.reply_service.add_start_menu()
         # input
         elif method == RCommands.input.name:
-            self.services.hanchans_service.add()
+            self.services.results_service.add()
             self.services.room_service.chmod(
                 self.services.room_service.modes.input
             )
@@ -275,7 +275,7 @@ class Router:
             self.services.reply_service.add_settings_menu(body)
         # reset
         elif method == RCommands.reset.name:
-            self.services.hanchans_service.reset_points()
+            self.services.results_service.reset_points()
         # results
         elif method == RCommands.results.name:
             self.services.matches_service.reply_sum_results()
@@ -308,7 +308,7 @@ class Router:
         # add results
         elif method == RCommands.add_result.name:
             points = json.loads(body)
-            self.services.hanchans_service.add(points)
+            self.services.results_service.add(points)
             self.services.calculate_service.calculate(
                 points
             )
