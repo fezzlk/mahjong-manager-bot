@@ -1,7 +1,7 @@
 """room"""
 
 from enum import Enum
-from models import Rooms
+from models import Rooms, Users
 
 
 class Modes(Enum):
