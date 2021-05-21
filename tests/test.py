@@ -25,6 +25,8 @@ class Event:
 class Source:
     def __init__(self, req_user='a', source_type='room'):
         test_user_ids = json.loads(os.environ["TEST_USER_IDS"])
+        print(type(test_user_ids))
+        print(test_user_ids)
         self.type = source_type
         self.user_id = test_user_ids[req_user]
         if source_type == 'room':
@@ -46,28 +48,28 @@ def test_recieve_message():
     router.root(Event('hoge'))
 
 
-def test_input():
-    errors = []
-    router.root(Event(req_user='a', event_type='follow'))
-    router.root(Event(req_user='b', event_type='follow'))
-    router.root(Event(req_user='c', event_type='follow'))
-    router.root(Event(req_user='d', event_type='follow'))
-    router.root(Event(req_user='e', event_type='follow'))
+# def test_input():
+#     errors = []
+#     router.root(Event(req_user='a', event_type='follow'))
+#     router.root(Event(req_user='b', event_type='follow'))
+#     router.root(Event(req_user='c', event_type='follow'))
+#     router.root(Event(req_user='d', event_type='follow'))
+#     router.root(Event(req_user='e', event_type='follow'))
 
-    router.root(Event('_input'))
-    router.root(Event('10000', 'a'))
-    result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
-    if not result.points == '{"a": 10000}':
-        errors.append("failed to input point")
-    router.root(Event('@b 20000', 'a'))
-    router.root(Event('60000', 'c'))
-    router.root(Event('@e 60000', 'c'))
-    router.root(Event('@e', 'c'))
-    router.root(Event('@c 30000', 'e'))
-    router.root(Event('@d 40000', 'd'))
+#     router.root(Event('_input'))
+#     router.root(Event('10000', 'a'))
+#     result = services.results_service.get_current(os.environ["TEST_ROOM_ID"])
+#     if not result.points == '{"a": 10000}':
+#         errors.append("failed to input point")
+#     router.root(Event('@b 20000', 'a'))
+#     router.root(Event('60000', 'c'))
+#     router.root(Event('@e 60000', 'c'))
+#     router.root(Event('@e', 'c'))
+#     router.root(Event('@c 30000', 'e'))
+#     router.root(Event('@d 40000', 'd'))
 
-    # assert no error message has been registered, else print messages
-    assert not errors, "errors occured:\n{}".format("\n".join(errors))
+#     # assert no error message has been registered, else print messages
+#     assert not errors, "errors occured:\n{}".format("\n".join(errors))
 
 
 # def test_input_with_tobi():
