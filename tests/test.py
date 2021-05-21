@@ -25,8 +25,6 @@ class Event:
 class Source:
     def __init__(self, req_user='a', source_type='room'):
         test_user_ids = json.loads(os.environ["TEST_USER_IDS"])
-        print(type(test_user_ids))
-        print(test_user_ids)
         self.type = source_type
         self.user_id = test_user_ids[req_user]
         if source_type == 'room':
@@ -45,7 +43,22 @@ class Postback:
 
 
 def test_recieve_message():
-    router.root(Event('hoge'))
+    from models import Users
+    # router.root(Event('hoge'))
+    new_user = Users(
+        name='name',
+        user_id='user_id',
+        mode=services.user_service.modes.wait.value,
+    )
+    services.app_service.db.session.add(new_user)
+    services.app_service.db.session.commit()
+    services.app_service.logger.info(f'create: {new_user.user_id} {new_user.name}')
+    print('hogehoge', new_user.name)
+
+    users = services.user_service.get()
+    for user in users:
+        print('fugafuga', user.user_id)
+    return new_user
 
 
 # def test_input():
