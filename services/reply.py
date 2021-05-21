@@ -187,10 +187,10 @@ class ReplyService:
                     text='いくらにしますか？',
                     actions=[
                         PostbackAction(
-                            label=p,
-                            display_text=p,
+                            label=i,
+                            display_text=i,
                             data=f'_update_config 順位点 {i}'
-                        ) for p in [
+                        ) for i in [
                             ','.join(['20', '10', '-10', '-20']),
                             ','.join(['30', '10', '-10', '-30']),
                         ]
@@ -205,8 +205,8 @@ class ReplyService:
                     text='いくらにしますか？',
                     actions=[
                         PostbackAction(
-                            label=p,
-                            display_text=p,
+                            label=i,
+                            display_text=i,
                             data=f'_update_config 飛び賞 {i}'
                         ) for i in [0, 10, 20, 30]
                     ]
@@ -221,8 +221,8 @@ class ReplyService:
                     text='どれにしますか？',
                     actions=[
                         PostbackAction(
-                            label=p,
-                            display_text=p,
+                            label=i,
+                            display_text=i,
                             data=f'_update_config 端数計算方法 {i}'
                         )
                         for i in [
@@ -248,8 +248,8 @@ class ReplyService:
                     text='どれにしますか？',
                     actions=[
                         PostbackAction(
-                            label=p,
-                            display_text=p,
+                            label=i,
+                            display_text=i,
                             data=f'_update_config 端数計算方法 {i}'
                         ) for i in [
                             '切り捨て',
