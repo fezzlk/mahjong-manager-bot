@@ -190,7 +190,7 @@ class ReplyService:
                             label=p,
                             display_text=p,
                             data=f'_update_config 順位点 {i}'
-                        ) for i in [
+                        ) for p in [
                             ','.join(['20', '10', '-10', '-20']),
                             ','.join(['30', '10', '-10', '-30']),
                         ]
