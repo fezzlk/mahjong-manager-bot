@@ -80,13 +80,13 @@ class HanchansService:
             converted_scores = json.loads(hanchans[i].converted_scores)
             hanchans_list.append(
                 f'第{i+1}回\n' + '\n'.join(
-                    [f'{self.services.user_service.get_name_by_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}' for r in sorted(converted_score.items(), key=lambda x:x[1], reverse=True)]
+                    [f'{self.services.user_service.get_name_by_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}' for r in sorted(converted_scores.items(), key=lambda x:x[1], reverse=True)]
                 )
             )
             for user_id, converted_score in converted_scores.items():
                 if not user_id in sum_hanchans.keys():
                     sum_hanchans[user_id] = 0
-                sum_hanchans[user_id] += raw_score
+                sum_hanchans[user_id] += converted_score
         self.services.reply_service.add_message('\n\n'.join(hanchans_list))
         self.services.reply_service.add_message(
             '総計\n' + date + '\n'.join(
@@ -111,7 +111,7 @@ class HanchansService:
                 '\n'.join([f'{self.services.user_service.get_name_by_user_id(user_id)}: {converted_score}' for user_id, converted_score in sum_hanchans.items()]))
         key = 'レート'
         self.services.reply_service.add_message('対戦ID: ' + str(match_id) + '\n' + date + '\n'.join(
-            [f'{self.services.user_service.get_name_by_user_id(user_id)}: {converted_score * int(self.services.config_service.get_by_key(key)[1]) * 10}円 ({"+" if raw_score > 0 else ""}{raw_score})'
+            [f'{self.services.user_service.get_name_by_user_id(user_id)}: {converted_score * int(self.services.config_service.get_by_key(key)[1]) * 10}円 ({"+" if converted_score > 0 else ""}{converted_score})'
              for user_id, converted_score in sum_hanchans.items()]))
 
     def get_current(self, room_id=None):
@@ -213,9 +213,9 @@ class HanchansService:
             t.raw_scores = json.dumps(new_raw_scores)
             if t.converted_scores is not None:
                 converted_scores = json.loads(t.converted_scores)
-                new_hanchan = {}
+                new_converted_scores = {}
                 for k, v in converted_scores.items():
                     user_id = self.services.user_service.get_user_id_by_name(k)
-                    new_converted_score[user_id] = v
-                t.converted_scores = json.dumps(new_converted_score)
+                    new_converted_scores[user_id] = v
+                t.converted_scores = json.dumps(new_converted_scores)
         self.services.app_service.db.session.commit()
