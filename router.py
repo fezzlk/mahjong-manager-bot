@@ -325,7 +325,7 @@ class Router:
         # my_zoom
         elif method == RCommands.my_zoom.name:
             self.services.user_service.reply_zoom_id()
-            self.services.room_service.set_zoom_url(text)
+            self.services.room_service.set_zoom_url(body)
         # sum_matches
         elif method == RCommands.sum_matches.name:
             args = body.split(' ')
