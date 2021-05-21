@@ -6,10 +6,14 @@ import json
 from flask import Flask
 from services import Services
 from router import Router
+from db_setting import Engine
+from models import Base
 app = Flask(__name__)
 
 services = Services(app)
 router = Router(services)
+
+Base.metadata.create_all(bind=Engine)
 
 
 class Event:
