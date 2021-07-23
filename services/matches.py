@@ -3,9 +3,6 @@
 from models import Matches, Results
 from sqlalchemy import and_
 import json
-# import matplotlib.pyplot as plt
-# import numpy as np
-# import pandas as pd
 
 
 class MatchesService:
