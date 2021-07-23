@@ -8,13 +8,11 @@ from flask_sqlalchemy import SQLAlchemy
 
 class AppService:
     """
-    app service
-
-    management following
-    - logger service
-    - line bot api instance
-    - ID of LINE user or talk room which this server recieve message from
-    - connection to DB with SQLAlchemy
+    以下を管理
+    - ロガー
+    - line bot api インスタンス
+    - メッセージ送信元の LINE ユーザー ID, トークルーム ID
+    - DB 接続 with SQLAlchemy
     """
 
     def __init__(self, service, app):
@@ -30,11 +28,11 @@ class AppService:
             self.logger.warning(
                 'line_bot_api is not setup because YOUR_CHANNEL_ACCESS_TOKEN is not found.')
 
-        # ID of LINE user, LINE room to talk to
+        # 送信元の LINE user ID, LINE room ID
         self.req_user_id = None
         self.req_room_id = None
 
-        # connection to DB
+        # DB 接続
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         self.db = SQLAlchemy(app)
@@ -47,7 +45,10 @@ class AppService:
             self.req_room_id = event.source.room_id
 
     def delete_req_info(self):
-        """delete request infomation"""
+        """
+        delete request infomation
+        一つ前のメッセージ送信元の情報が残らないようにするために使う
+        """
 
         self.req_user_id = None
         self.req_room_id = None
