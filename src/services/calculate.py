@@ -9,12 +9,7 @@ class CalculateService:
     """
 
     def __init__(self, services):
-        self.app_service = services.app_service
-        self.config_service = services.config_service
-        self.reply_service = services.reply_service
-        self.results_service = services.results_service
-        self.room_service = services.room_service
-        self.matches_service = services.matches_service
+        self.services = services
 
     def calculate(self, points=None, tobashita_player_id=None):
         """
@@ -24,9 +19,9 @@ class CalculateService:
         # points の取得(デフォルトでは引数 points が採用される)
         # 引数に points がない場合、現在 active な result (current)のポイントを計算対象にする
         if points is None:
-            current = self.results_service.get_current()
+            current = self.services.results_service.get_current()
             if current is None:
-                self.app_service.logger.error(
+                self.services.app_service.logger.error(
                     'current points is not found.'
                 )
                 return
@@ -35,23 +30,23 @@ class CalculateService:
         # 計算可能な points かチェック
         # 4人分の点数がない、または超えている場合中断する
         if len(points) != 4:
-            self.reply_service.add_message(
+            self.services.reply_service.add_message(
                 '四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
             return
         # 点数合計が 100000~100099 の範囲になければ中断する
         if int(sum(points.values())/100) != 1000:
-            self.reply_service.add_message(
+            self.services.reply_service.add_message(
                 f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
             return
         # 点数が全て異なっているかチェックし、同点があったら中断する
         if len(set(points.values())) != 4:
-            self.reply_service.add_message(
+            self.services.reply_service.add_message(
                 f'同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
             return
 
         # 飛び賞が発生し、飛ばしたプレイヤーが未指定の場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
         if (any(x < 0 for x in points.values())) & (tobashita_player_id is None):
-            self.reply_service.add_tobi_menu(
+            self.services.reply_service.add_tobi_menu(
                 [player_id for player_id in points.keys() if points[player_id] > 0]
             )
             return
@@ -60,20 +55,20 @@ class CalculateService:
         calc_result = self.run_calculate(points, tobashita_player_id)
 
         # その半荘の結果を更新
-        self.results_service.update_result(calc_result)
+        self.services.results_service.update_result(calc_result)
 
         # 総合結果に半荘結果を追加
-        self.matches_service.add_result()
+        self.services.matches_service.add_result()
 
         # 結果の表示
-        self.results_service.reply_current_result()
+        self.services.results_service.reply_current_result()
 
         # はんちゃん結果をアーカイブ
-        self.results_service.archive()
+        self.services.results_service.archive()
 
         # ルームを待機モードにする
-        self.room_service.chmod(
-            self.room_service.modes.wait
+        self.services.room_service.chmod(
+            self.services.room_service.modes.wait
         )
 
     def run_calculate(self, points, tobashita_player_id=None):
@@ -85,13 +80,13 @@ class CalculateService:
         sorted_points = sorted(
             points.items(), key=lambda x: x[1], reverse=True)
         sorted_prize = sorted(
-            [int(s) for s in self.config_service.get_by_key(
+            [int(s) for s in self.services.config_service.get_by_key(
                 '順位点').split(',')],
             reverse=True,
         )
-        tobi_prize = int(self.config_service.get_by_key('飛び賞'))
+        tobi_prize = int(self.services.config_service.get_by_key('飛び賞'))
         # 計算方法合わせて点数調整用の padding を設定
-        clac_method = self.config_service.get_by_key('端数計算方法')
+        clac_method = self.services.config_service.get_by_key('端数計算方法')
         pagging = 0
         if clac_method == '五捨六入':
             padding = 400
@@ -132,7 +127,7 @@ class CalculateService:
                 if t[0] == tobashita_player_id:
                     result[t[0]] += tobi_prize*len(tobasare_players)
                 else:
-                    self.app_service.logger.warning(
+                    self.services.app_service.logger.warning(
                         'tobashita_player_id is not matching'
                     )
         return result

@@ -15,7 +15,7 @@ class AppService:
     - DB 接続 with SQLAlchemy
     """
 
-    def __init__(self, service, app):
+    def __init__(self, services, app):
         # logger
         self.logger = logging.create_logger(app)
 
