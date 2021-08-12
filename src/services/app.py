@@ -5,15 +5,15 @@ from linebot import LineBotApi
 from flask import logging
 from flask_sqlalchemy import SQLAlchemy
 
-
-class AppService:
-    """
+    """AppService
     以下を管理
     - ロガー
     - line bot api インスタンス
     - メッセージ送信元の LINE ユーザー ID, トークルーム ID
     - DB 接続 with SQLAlchemy
     """
+class AppService:
+
 
     def __init__(self, services, app):
         # logger
@@ -37,18 +37,18 @@ class AppService:
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         self.db = SQLAlchemy(app)
 
+    """
+    set request infomation from LINE event
+    """
     def set_req_info(self, event):
-        """set request infomation from LINE event"""
-
         self.req_user_id = event.source.user_id
         if event.source.type == 'room':
             self.req_room_id = event.source.room_id
 
+    """
+    delete request infomation
+    一つ前のメッセージ送信元の情報が残らないようにするために使う
+    """
     def delete_req_info(self):
-        """
-        delete request infomation
-        一つ前のメッセージ送信元の情報が残らないようにするために使う
-        """
-
         self.req_user_id = None
         self.req_room_id = None
