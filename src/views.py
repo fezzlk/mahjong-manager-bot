@@ -1,41 +1,11 @@
 """
-Application root
-If '$ flask run' is executed, this file is call at first.
+views
 """
 
-import sys
-sys.path.append("/src")
-
-import os
-
-from db_setting import Engine
+from flask import request, abort, render_template, url_for, redirect
 from models import Base, Users, Rooms, Results, Hanchans
 
-from flask import Flask, request, abort, g, render_template, url_for, redirect, jsonify
-
-from linebot import LineBotApi, WebhookHandler, exceptions
-from linebot.models import (
-    FollowEvent,
-    UnfollowEvent,
-    JoinEvent,
-    MessageEvent,
-    TextMessage,
-    ImageMessage,
-    PostbackEvent,
-)
-
-from router import Router
-from services import Services
-
-"""define LINE bot handler"""
-handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])
-
-app = Flask(__name__)
-
-services = Services(app)
-router = Router(services)
-Base.metadata.create_all(bind=Engine)
-
+from server import app
 
 @app.route('/')
 def index():
@@ -244,28 +214,9 @@ def delete_configs():
     target_id = request.args.get('target_id')
     services.config_service.delete(int(target_id))
     return redirect(url_for('get_configs'))
+    
 
-
-"""
-api
-"""
-
-
-@app.route('/_api/results')
-def api_get_results():
-    # Results.get_json(Engine)
-    # data = services.results_service.get()
-    # print(data)
-    # print(type(data))
-    # return redirect(url_for('get_configs'))
-    return 'hoge'
-
-
-"""
-receive action from LINE
-"""
-
-
+""" Endpoint for LINE messaging API """
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
@@ -275,42 +226,3 @@ def callback():
     except exceptions.InvalidSignatureError:
         abort(400)
     return 'OK'
-
-
-"""
-handle events
-"""
-
-
-@handler.add(FollowEvent)
-def handle_follow(event):
-    router.root(event)
-
-
-@handler.add(UnfollowEvent)
-def handle_unfollow(event):
-    router.root(event)
-
-
-@handler.add(JoinEvent)
-def handle_join(event):
-    router.root(event)
-
-
-@handler.add(MessageEvent, message=TextMessage)
-def handle_text_message(event):
-    router.root(event)
-
-
-@ handler.add(MessageEvent, message=ImageMessage)
-def handle_image_message(event):
-    router.root(event)
-
-
-@ handler.add(PostbackEvent)
-def handle_postback(event):
-    router.root(event)
-
-
-if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
