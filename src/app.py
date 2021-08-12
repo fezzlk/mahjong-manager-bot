@@ -4,9 +4,7 @@ If '$ flask run' is executed, this file is call at first.
 """
 import os
 
-import set_local_env  # for local dev env
-
-from db_setting import Engine
+from .db_setting import Engine
 from models import Base, Users, Rooms, Results, Hanchans
 
 from flask import Flask, request, abort, g, render_template, url_for, redirect, jsonify
@@ -308,7 +306,3 @@ def handle_image_message(event):
 @ handler.add(PostbackEvent)
 def handle_postback(event):
     router.root(event)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
