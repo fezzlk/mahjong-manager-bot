@@ -1,12 +1,12 @@
 """
-config repository
+configs repository
 """
 
 from models import Configs
 from sqlalchemy import and_
 
 
-class ConfigRepository:
+class ConfigsRepository:
 
     def find(session, target_id, key):
         return session\
