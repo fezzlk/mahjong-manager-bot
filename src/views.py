@@ -3,10 +3,9 @@ views
 """
 
 from flask import request, abort, render_template, url_for, redirect
-from server import Base, Engine
+from linebot import exceptions
+from server import app, Base, Engine, services, handler
 from models import Users, Rooms, Results, Hanchans
-
-from server import app
 
 @app.route('/')
 def index():
