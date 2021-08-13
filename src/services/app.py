@@ -3,14 +3,12 @@
 import os
 from linebot import LineBotApi
 from flask import logging
-from flask_sqlalchemy import SQLAlchemy
 
 """AppService
 以下を管理
 - ロガー
 - line bot api インスタンス
 - メッセージ送信元の LINE ユーザー ID, トークルーム ID
-- DB 接続 with SQLAlchemy
 """
 class AppService:
 
@@ -31,11 +29,6 @@ class AppService:
         # 送信元の LINE user ID, LINE room ID
         self.req_user_id = None
         self.req_room_id = None
-
-        # DB 接続
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
-        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        self.db = SQLAlchemy(app)
 
     """
     set request infomation from LINE event
