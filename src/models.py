@@ -4,7 +4,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
-from db_setting import Base, Engine
+from server import Base, Engine
 import json
 
 

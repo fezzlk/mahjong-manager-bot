@@ -3,7 +3,8 @@ views
 """
 
 from flask import request, abort, render_template, url_for, redirect
-from models import Base, Users, Rooms, Results, Hanchans
+from server import Base, Engine
+from models import Users, Rooms, Results, Hanchans
 
 from server import app
 
