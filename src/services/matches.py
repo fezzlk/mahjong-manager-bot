@@ -3,6 +3,7 @@
 from models import Matches, Results
 from sqlalchemy import and_
 import json
+from db_setting import Session
 
 
 class MatchesService:
@@ -13,7 +14,8 @@ class MatchesService:
 
     def get_current(self):
         room_id = self.services.app_service.req_room_id
-        return self.services.app_service.db.session\
+        session = Session()
+        return session\
             .query(Matches).filter(and_(
                 Matches.room_id == room_id,
                 Matches.status == 1
@@ -27,8 +29,8 @@ class MatchesService:
         if current is None:
             room_id = self.services.app_service.req_room_id
             current = Matches(room_id=room_id)
-            self.services.app_service.db.session.add(current)
-            self.services.app_service.db.session.commit()
+            session.add(current)
+            session.commit()
             self.services.app_service.logger.info(f'create: room_id={room_id}')
         return current
 
@@ -39,7 +41,7 @@ class MatchesService:
         result_ids = json.loads(current_match.result_ids)
         result_ids.append(str(current_result.id))
         current_match.result_ids = json.dumps(result_ids)
-        self.services.app_service.db.session.commit()
+        session.commit()
         self.services.app_service.logger.info(f'update: id={current_match.id}')
 
     def drop_result_by_number(self, i):
@@ -59,7 +61,7 @@ class MatchesService:
         self.services.results_service.delete_by_id(result_ids[i-1])
         result_ids.pop(i-1)
         current.result_ids = json.dumps(result_ids)
-        self.services.app_service.db.session.commit()
+        session.commit()
         self.services.app_service.logger.info(
             f'delete result: match_id={current.id} result_id={i-1}'
         )
@@ -77,14 +79,16 @@ class MatchesService:
         )
 
     def reply_sum_results(self, match_id=None):
-        if match_id == None:
+        print('hoge')
+        if match_id is None:
             if self.count_results() == 0:
                 self.services.reply_service.add_message(
                     'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
                 return
             match = self.get_current()
         else:
-            match = self.services.app_service.db.session\
+            session = Session()
+            match = session\
                 .query(Matches).filter(
                     Matches.id == match_id,
                 ).first()
@@ -108,7 +112,7 @@ class MatchesService:
     def archive(self):
         current = self.get_current()
         current.status = 2
-        self.services.app_service.db.session.commit()
+        session.commit()
         self.services.app_service.logger.info(f'archive: id={current.id}')
 
     def disable(self):
@@ -116,12 +120,12 @@ class MatchesService:
         if match is None:
             return
         match.status = 0
-        self.services.app_service.db.session.commit()
+        session.commit()
         self.services.app_service.logger.info(f'disable: id={match.id}')
 
     def reply(self):
         room_id = self.services.app_service.req_room_id
-        matches = self.services.app_service.db.session\
+        matches = session\
             .query(Matches).filter(and_(
                 Matches.status == 2,
                 Matches.room_id == room_id,
@@ -144,18 +148,18 @@ class MatchesService:
 
     def get(self, target_ids=None):
         if target_ids is None:
-            return self.services.app_service.db.session\
+            return session\
                 .query(Matches)\
                 .order_by(Matches.id)\
                 .all()
         if type(target_ids) != list:
             target_ids = [target_ids]
-        return self.services.app_service.db.session\
+        return session\
             .query(Matches).filter(Matches.id.in_(target_ids))\
             .order_by(Matches.id).all()
 
     def remove_result_id(self, match_id, result_id):
-        match = self.services.app_service.db.session\
+        match = session\
             .query(Matches).filter(
                 Matches.id == match_id
             ).first()
@@ -163,12 +167,12 @@ class MatchesService:
         if result_id in result_ids:
             result_ids.remove(result_id)
         match.result_ids = json.dumps(result_ids)
-        self.services.app_service.db.session.commit()
+        session.commit()
 
     def delete(self, target_ids):
         if type(target_ids) != 'list':
             target_ids = [target_ids]
-        targets = self.services.app_service.db.session\
+        targets = session\
             .query(Matches).filter(
                 Matches.id.in_(target_ids),
             ).all()
@@ -176,14 +180,14 @@ class MatchesService:
             self.services.results_service.delete(
                 json.loads(target.result_ids)
             )
-            self.services.app_service.db.session.delete(target)
-        self.services.app_service.db.session.commit()
+            session.delete(target)
+        session.commit()
         self.services.app_service.logger.info(f'delete: id={target_ids}')
 
     def reply_sum_matches_by_ids(self, ids):
         formatted_id_list = sorted(list(set(ids)))
         room_id = self.services.app_service.req_room_id
-        matches = self.services.app_service.db.session\
+        matches = session\
             .query(Matches).filter(and_(
                 Matches.id.in_(ids),
                 # Matches.room_id == room_id
@@ -209,7 +213,7 @@ class MatchesService:
     # def plot(self):
         # room_id = self.services.app_service.req_room_id¥
         # room_id = 'R808c3c802d36f386290630fc6ba10f0c'
-        # matches = self.services.app_service.db.session\
+        # matches = session\
         # .query(Matches).filter(and_(
         ## Matches.status == 2,
         # Matches.room_id == room_id,
@@ -218,7 +222,7 @@ class MatchesService:
         # match = matches[0]
         # print(match)
         # 以下ResultServiceに移植
-        # results = self.services.app_service.db.session\
+        # results = session\
         # .query(Results).filter(
         # Results.id.in_([int(s) for s in json.loads(match.result_ids)]),
         # )\
