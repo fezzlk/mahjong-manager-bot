@@ -4,7 +4,8 @@ views
 
 from flask import request, abort, render_template, url_for, redirect
 from linebot import exceptions
-from server import app, Base, Engine, services, handler
+from db_setting import Base, Engine
+from server import app, services, handler
 from models import Users, Rooms, Results, Hanchans
 
 @app.route('/')

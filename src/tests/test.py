@@ -6,8 +6,7 @@ import json
 from flask import Flask
 from services import Services
 from router import Router
-from db_setting import Engine
-from models import Base
+from db_setting import Base, Engine
 app = Flask(__name__)
 
 services = Services(app)

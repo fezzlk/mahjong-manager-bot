@@ -7,7 +7,7 @@ import os
 
 Engine = create_engine(os.environ["DATABASE_URL"])
 
-session = sessionmaker(
+Session = sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=Engine
