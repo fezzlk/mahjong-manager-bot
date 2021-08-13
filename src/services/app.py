@@ -5,13 +5,13 @@ from linebot import LineBotApi
 from flask import logging
 from flask_sqlalchemy import SQLAlchemy
 
-    """AppService
-    以下を管理
-    - ロガー
-    - line bot api インスタンス
-    - メッセージ送信元の LINE ユーザー ID, トークルーム ID
-    - DB 接続 with SQLAlchemy
-    """
+"""AppService
+以下を管理
+- ロガー
+- line bot api インスタンス
+- メッセージ送信元の LINE ユーザー ID, トークルーム ID
+- DB 接続 with SQLAlchemy
+"""
 class AppService:
 
 

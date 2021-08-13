@@ -4,11 +4,11 @@ api
 
 from server import app, Engine
 
-    """get results
+"""get results
 
-    Returns:
-        data: results list
-    """
+Returns:
+    data: results list
+"""
 @app.route('/_api/results')
 def api_get_results():
     Results.get_json(Engine)
