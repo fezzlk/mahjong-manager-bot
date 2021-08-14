@@ -6,7 +6,8 @@ from flask import request, abort, render_template, url_for, redirect
 from linebot import exceptions
 from db_setting import Base, Engine
 from server import app, services, handler
-from models import Users, Rooms, Results, Hanchans
+from models import Results, Hanchans
+
 
 @app.route('/')
 def index():
@@ -117,7 +118,7 @@ def get_hanchans():
     keys = ['id', 'room_id', 'raw_scores',
             'converted_scores', 'match_id', 'status']
     input_keys = ['room_id', 'raw_scores',
-                  'convertes_scores', 'match_id', 'status']
+                  'converted_scores', 'match_id', 'status']
     return render_template(
         'model.html',
         title='hanchans',
@@ -215,11 +216,12 @@ def delete_configs():
     target_id = request.args.get('target_id')
     services.config_service.delete(int(target_id))
     return redirect(url_for('get_configs'))
-    
 
-""" Endpoint for LINE messaging API """
+
 @app.route("/callback", methods=['POST'])
 def callback():
+    """ Endpoint for LINE messaging API """
+
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
     try:
