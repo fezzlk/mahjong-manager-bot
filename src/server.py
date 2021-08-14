@@ -2,13 +2,15 @@
 Application root
 If '$ flask run' is executed, this file is call at first.
 """
+# flake8: noqa
 
 import os
 import sys
 sys.path.append("/src")
 
-from flask import Flask
+from flask import Flask, logging
 app = Flask(__name__)
+logger = logging.create_logger(app)
 
 from linebot import WebhookHandler
 handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])
