@@ -18,7 +18,7 @@ class ConfigService:
         """
     def get(self, ids=None):
         # config.id を指定してなければ全ての config を取得
-        if target_ids is None:
+        if ids is None:
             with session_scope() as session:
                 return ConfigsRepository.find_all(session)
 
@@ -31,7 +31,7 @@ class ConfigService:
     def get_by_key(self, key):
         # リクエスト元ルームIDの取得
         target_id = self.services.app_service.req_room_id
-        
+
         # デフォルトから変更されている config の取得
         with session_scope() as session:
             config = ConfigsRepository.find(session, target_id, key)
@@ -54,7 +54,10 @@ class ConfigService:
 
         # デフォルト config から変更されている config を取得
         with session_scope() as session:
-            customized_configs = ConfigsRepository.find_by_target_id(session, target_id)
+            customized_configs = ConfigsRepository.find_by_target_id(
+                session,
+                target_id
+            )
 
             # デフォルト config をセット
             configs = DEFAULT_CONFIGS
@@ -92,7 +95,9 @@ class ConfigService:
             if value != DEFAULT_CONFIGS[key]:
                 ConfigsRepository.create(session, target_id, key, value)
 
-        self.services.app_service.logger.info(f'update:{key}:{value}:{target_id}')
+        self.services.app_service.logger.info(
+            f'update:{key}:{value}:{target_id}'
+        )
         self.services.reply_service.add_message(f'{key}を{value}に変更しました。')
 
     """delete by id
@@ -103,6 +108,6 @@ class ConfigService:
             ids = [ids]
 
         with session_scope() as session:
-            config.delete_by_ids(session, ids)
+            ConfigsRepository.delete_by_ids(session, ids)
 
         self.services.app_service.logger.info(f'delete: id={ids}')
