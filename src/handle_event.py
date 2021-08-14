@@ -12,6 +12,7 @@ from linebot.models import (
     PostbackEvent,
 )
 
+
 @handler.add(FollowEvent)
 def handle_follow(event):
     router.root(event)
