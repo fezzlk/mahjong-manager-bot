@@ -12,7 +12,7 @@ class UsersRepository:
             .query(Users)\
             .filter(Users.user_id == user_id)\
             .first()
-                    
+
     def find_by_name(session, name):
         return session\
             .query(Users)\
