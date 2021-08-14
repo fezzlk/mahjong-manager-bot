@@ -76,7 +76,7 @@ class Router:
             self.services.app_service.logger.exception(err)
             self.services.reply_service.add_message(str(err))
 
-        if isEnabledReply == True:
+        if isEnabledReply:
             self.services.reply_service.reply(event)
         self.services.app_service.delete_req_info()
 
@@ -96,7 +96,9 @@ class Router:
 
     def join(self, event):
         """join event"""
-        self.services.reply_service.add_message(f'こんにちは、今日は麻雀日和ですね。')
+        self.services.reply_service.add_message(
+            'こんにちは、今日は麻雀日和ですね。'
+        )
         self.services.room_service.register()
 
     def textMessage(self, event):
@@ -107,7 +109,9 @@ class Router:
         elif event.source.type == 'user':
             self.routing_by_text(event)
         else:
-            self.services.app_service.logger.info(f'message.source.type: {event.source.type}')
+            self.services.app_service.logger.info(
+                f'message.source.type: {event.source.type}'
+            )
             raise BaseException('this sender is not supported')
 
     def imageMessage(self, event):
@@ -180,7 +184,8 @@ class Router:
         # fortune
         elif method == UCommands.fortune.name:
             self.services.reply_service.add_message(
-                f'あなたの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
+                f'あなたの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。'
+            )
         # history
         elif method == UCommands.history.name:
             self.services.reply_service.add_message('対戦履歴機能は開発中です。')
@@ -294,7 +299,8 @@ class Router:
         # fortune
         elif method == RCommands.fortune.name:
             self.services.reply_service.add_message(
-                f'{self.services.user_service.get_name_by_user_id()}さんの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。')
+                f'{self.services.user_service.get_name_by_user_id()}さんの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。'
+            )
         # others menu
         elif method == RCommands.others.name:
             self.services.reply_service.add_others_menu()
@@ -329,16 +335,18 @@ class Router:
         # sum_matches
         elif method == RCommands.sum_matches.name:
             args = body.split(' ')
-            month = None
             while 'to' in args:
                 index = args.index('to')
-                if index != 0 and len(args)-1 > index:
+                if index != 0 and len(args) - 1 > index:
                     args += [
-                        str(i) for i in range(int(args[index-1]), int(args[index+1])+1)
+                        str(i) for i in range(
+                            int(args[index - 1]),
+                            int(args[index + 1]) + 1
+                        )
                     ]
                 args.remove('to')
             self.services.matches_service.reply_sum_matches_by_ids(args)
-        # graphes
+        # graphs
         elif method == RCommands.graph.name:
             self.services.matches_service.plot()
 
