@@ -27,7 +27,9 @@ class HanchansService:
                 raw_scores
             )
 
-        self.services.app_service.logger.info(f'create: room_id={room_id}')
+        self.services.app_service.logger.info(
+            f'create: room_id={room_id}'
+        )
 
     def delete_by_id(self, target_id):
         """disabled target hanchan"""
@@ -79,7 +81,7 @@ class HanchansService:
             for r in hanchans:
                 converted_scores = json.loads(r.converted_scores)
                 for user_id, converted_score in converted_scores.items():
-                    if not user_id in sum_hanchans.keys():
+                    if user_id not in sum_hanchans.keys():
                         sum_hanchans[user_id] = 0
                     sum_hanchans[user_id] += converted_score
             return sum_hanchans
