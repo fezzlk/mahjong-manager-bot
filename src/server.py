@@ -8,6 +8,9 @@ import os
 import sys
 sys.path.append("/src")
 
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, logging
 app = Flask(__name__)
 logger = logging.create_logger(app)
