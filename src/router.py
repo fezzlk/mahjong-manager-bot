@@ -3,9 +3,11 @@
 from enum import Enum
 import json
 
+from server import logger
+
 
 class UCommands(Enum):
-    """UCommands"""
+    """Commands for user"""
 
     exit = 'exit'
     mode = 'mode'
@@ -19,7 +21,7 @@ class UCommands(Enum):
 
 
 class RCommands(Enum):
-    """RCommands"""
+    """Commands for room"""
 
     start = 'start'
     exit = 'exit'
@@ -54,9 +56,10 @@ class Router:
 
     def root(self, event):
         """root"""
-        self.services.app_service.logger.info(f'receive {event.type} event')
+        logger.info(f'receive {event.type} event')
         self.services.app_service.set_req_info(event)
         isEnabledReply = True
+
         try:
             if event.type == 'message':
                 if event.message.type == 'text':
@@ -72,8 +75,9 @@ class Router:
                 self.join(event)
             elif event.type == 'postback':
                 self.postback(event)
+
         except BaseException as err:
-            self.services.app_service.logger.exception(err)
+            logger.exception(err)
             self.services.reply_service.add_message(str(err))
 
         if isEnabledReply:
@@ -109,7 +113,7 @@ class Router:
         elif event.source.type == 'user':
             self.routing_by_text(event)
         else:
-            self.services.app_service.logger.info(
+            logger.info(
                 f'message.source.type: {event.source.type}'
             )
             raise BaseException('this sender is not supported')
@@ -124,7 +128,7 @@ class Router:
             if self.services.ocr_service.isResultImage():
                 self.services.points_service.add_by_ocr()
             else:
-                self.services.app_service.logger.warning(
+                logger.warning(
                     'this image is not result of jantama'
                 )
             self.services.ocr_service.delete_result()
@@ -134,7 +138,7 @@ class Router:
 
         text = event.postback.data
         method = text[1:].split()[0]
-        body = text[len(method)+2:]
+        body = text[len(method) + 2:]
         if event.source.type == 'room':
             self.routing_for_room_by_method(method, body)
         elif event.source.type == 'user':
@@ -146,7 +150,7 @@ class Router:
         if (text[0] == '_') & (len(text) > 1):
             method = text[1:].split()[0]
             if method in [c.name for c in UCommands]:
-                body = text[len(method)+2:]
+                body = text[len(method) + 2:]
                 self.routing_by_method(method, body)
                 return
             else:
@@ -212,7 +216,7 @@ class Router:
         if (text[0] == '_') & (len(text) > 1):
             method = text[1:].split()[0]
             if method in [c.name for c in RCommands]:
-                body = text[len(method)+2:]
+                body = text[len(method) + 2:]
                 self.routing_for_room_by_method(method, body)
                 return
             else:
