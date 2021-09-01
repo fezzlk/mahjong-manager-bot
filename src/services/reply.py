@@ -1,33 +1,26 @@
-"""reply"""
-
 from linebot.models import (
     TextSendMessage,
     TemplateSendMessage,
     ImageSendMessage,
     ButtonsTemplate,
     PostbackAction,
-    MessageAction,
-    URIAction,
 )
 
 import json
+from server import line_bot_api
 
 
 class ReplyService:
-    """reply service"""
 
-    def __init__(self, services):
-        self.services = services
+    def __init__(self):
         self.texts = []
         self.buttons = []
         self.images = []
 
     def add_message(self, text):
-        """add"""
-        self.texts.append(text)
+        self.texts.append(TextSendMessage(text=text))
 
     def add_image(self, image_url):
-        """add"""
         self.images.append(
             ImageSendMessage(
                 original_content_url=image_url,
@@ -35,24 +28,10 @@ class ReplyService:
             )
         )
 
-    def reply(self, event):
-        if (len(self.texts) == 0) & (len(self.buttons) == 0) & (len(self.images) == 0):
-            return
-        if hasattr(event, 'reply_token'):
-            self.services.app_service.line_bot_api.reply_message(
-                event.reply_token,
-                [TextSendMessage(text=text) for text in self.texts] + self.images + self.buttons)
-        self.reset()
-
-    def reset(self):
-        self.texts = []
-        self.buttons = []
-        self.images = []
-
     def add_start_menu(self):
         self.buttons.append(
             TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Start Menu',
                 template=ButtonsTemplate(
                     title='スタートメニュー',
                     text='何をしますか？',
@@ -85,7 +64,7 @@ class ReplyService:
     def add_others_menu(self):
         self.buttons.append(
             TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Other Menu',
                 template=ButtonsTemplate(
                     title='その他のメニュー',
                     text='何をしますか？',
@@ -109,10 +88,10 @@ class ReplyService:
         if key == '':
             self.services.config_service.reply()
             button = TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Settings Menu',
                 template=ButtonsTemplate(
                     title='設定',
-                    text='現在のバージョンでは以下の項目のみ変更可能です。',
+                    text='変更したい項目を選んでください。',
                     actions=[
                         PostbackAction(
                             label='レート',
@@ -139,7 +118,7 @@ class ReplyService:
             )
         elif key == 'レート':
             button = TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Low Rate Setting',
                 template=ButtonsTemplate(
                     title='レート変更',
                     text='レートを選んでください',
@@ -160,7 +139,7 @@ class ReplyService:
             )
         elif key == '高レート':
             button = TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='High Rate Setting',
                 template=ButtonsTemplate(
                     title='レート変更',
                     text='レートを選んでください',
@@ -181,7 +160,7 @@ class ReplyService:
             )
         elif key == '順位点':
             button = TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Ranking Point Setting',
                 template=ButtonsTemplate(
                     title='順位点変更',
                     text='いくらにしますか？',
@@ -199,7 +178,7 @@ class ReplyService:
             )
         elif key == '飛び賞':
             button = TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Tobi Bonus Setting',
                 template=ButtonsTemplate(
                     title='飛び賞変更',
                     text='いくらにしますか？',
@@ -215,7 +194,7 @@ class ReplyService:
 
         elif key == '端数計算方法':
             button = TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Calculate Method Setting1',
                 template=ButtonsTemplate(
                     title='端数計算方法変更',
                     text='どれにしますか？',
@@ -242,7 +221,7 @@ class ReplyService:
 
         elif key == '端数計算方法2':
             button = TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Calculate Method Setting2',
                 template=ButtonsTemplate(
                     title='端数計算方法変更',
                     text='どれにしますか？',
@@ -267,28 +246,24 @@ class ReplyService:
 
         self.buttons.append(button)
 
-    def add_tobi_menu(self, player_ids):
+    def add_tobi_menu(self, player_id_and_names):
         self.buttons.append(
             TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Select Tobi Player Menu',
                 template=ButtonsTemplate(
                     title='飛び賞おめでとうございます',
                     text='どなたが飛ばしましたか？',
                     actions=[
                         PostbackAction(
-                            label=self.services.user_service.get_name_by_user_id(
-                                player_id
-                            ),
-                            display_text=self.services.user_service.get_name_by_user_id(
-                                player_id
-                            ),
-                            data=f'_tobi {player_id}'
-                        ) for player_id in player_ids
+                            label=player['name'],
+                            display_text=player['name'],
+                            data=f'_tobi {player['id']}',
+                        ) for player in player_id_and_names
                     ] + [
                         PostbackAction(
                             label='誰も飛ばしていません',
                             display_text='勝手に飛びました',
-                            data=f'_tobi'
+                            data='_tobi'
                         )
                     ]
                 )
@@ -298,15 +273,15 @@ class ReplyService:
     def add_submit_results_by_ocr_menu(self, results):
         self.buttons.append(
             TemplateSendMessage(
-                alt_text='Buttons template',
+                alt_text='Approve OCR result Menu',
                 template=ButtonsTemplate(
                     title='画像読み込み完了',
-                    text=f'内容があっているか確認してください。',
+                    text='内容があっているか確認してください。',
                     actions=[
                         PostbackAction(
                             label='この結果で計算する',
                             display_text='この結果で計算する',
-                            data='_add_result '+json.dumps(results),
+                            data='_add_result ' + json.dumps(results),
                         ),
                         PostbackAction(
                             label='手入力する',
@@ -317,3 +292,20 @@ class ReplyService:
                 )
             )
         )
+
+    def reply(self, event):
+        contents = self.texts + self.buttons + self.images
+
+        if (len(contents) == 0):
+            return
+        if hasattr(event, 'reply_token'):
+            line_bot_api.reply_message(
+                event.reply_token,
+                contents,
+            )
+        self.reset()
+
+    def reset(self):
+        self.texts = []
+        self.buttons = []
+        self.images = []
