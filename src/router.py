@@ -3,11 +3,12 @@
 from enum import Enum
 import json
 
-from server import logger
+from server import logger, line_bot_api
+from services import app_service, reply_service, user_service, room_service, rich_menu_service, ocr_service, points_service, message_service, results_service, calculate_service, matches_service, config_service
 
 
 class UCommands(Enum):
-    """Commands for user"""
+    """Commands for personal user"""
 
     exit = 'exit'
     mode = 'mode'
@@ -51,13 +52,10 @@ class RCommands(Enum):
 class Router:
     """router"""
 
-    def __init__(self, services):
-        self.services = services
-
     def root(self, event):
         """root"""
         logger.info(f'receive {event.type} event')
-        self.services.app_service.set_req_info(event)
+        app_service.set_req_info(event)
         isEnabledReply = True
 
         try:
@@ -78,36 +76,36 @@ class Router:
 
         except BaseException as err:
             logger.exception(err)
-            self.services.reply_service.add_message(str(err))
+            reply_service.add_message(str(err))
 
         if isEnabledReply:
-            self.services.reply_service.reply(event)
-        self.services.app_service.delete_req_info()
+            reply_service.reply(event)
+        app_service.delete_req_info()
 
     def follow(self, event):
         """follow event"""
-        user = self.services.user_service.register()
-        self.services.reply_service.add_message(
+        user = user_service.register()
+        reply_service.add_message(
             f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
             {user.name}さんの快適な麻雀生活をサポートします。')
-        self.services.rich_menu_service.create_and_link()
+        rich_menu_service.create_and_link()
 
     def unfollow(self, event):
         """unfollow event"""
-        self.services.user_service.delete_by_user_id(
-            self.services.app_service.req_user_id
+        user_service.delete_by_user_id(
+            app_service.req_user_id
         )
 
     def join(self, event):
         """join event"""
-        self.services.reply_service.add_message(
+        reply_service.add_message(
             'こんにちは、今日は麻雀日和ですね。'
         )
-        self.services.room_service.register()
+        room_service.register()
 
     def textMessage(self, event):
         """receive text message event"""
-        self.services.user_service.register()
+        user_service.register()
         if event.source.type == 'room':
             self.routing_for_room_by_text(event)
         elif event.source.type == 'user':
@@ -121,17 +119,17 @@ class Router:
     def imageMessage(self, event):
         """receive image message event"""
         if event.source.type == 'room':
-            message_content = self.services.app_service.line_bot_api.get_message_content(
+            message_content = line_bot_api.get_message_content(
                 event.message.id
             )
-            self.services.ocr_service.run(message_content.content)
-            if self.services.ocr_service.isResultImage():
-                self.services.points_service.add_by_ocr()
+            ocr_service.run(message_content.content)
+            if ocr_service.isResultImage():
+                points_service.add_by_ocr()
             else:
                 logger.warning(
                     'this image is not result of jantama'
                 )
-            self.services.ocr_service.delete_result()
+            ocr_service.delete_result()
 
     def postback(self, event):
         """postback event"""
@@ -154,63 +152,63 @@ class Router:
                 self.routing_by_method(method, body)
                 return
             else:
-                self.services.reply_service.add_message(
+                reply_service.add_message(
                     '使い方がわからない場合はメニューの中の「使い方」を押してください。'
                 )
                 return
 
         """routing by text on each mode"""
         """wait mode"""
-        self.services.reply_service.add_message(
-            self.services.message_service.get_wait_massage())
+        reply_service.add_message(
+            message_service.get_wait_massage())
 
         """if zoom url, register to room"""
         if '.zoom.us' in text:
-            self.services.user_service.set_zoom_id(text)
+            user_service.set_zoom_id(text)
 
     def routing_by_method(self, method, body):
         """routing by method for personal chat"""
 
         # mode
         if method == UCommands.mode.name:
-            self.services.user_service.reply_mode()
+            user_service.reply_mode()
         # exit
         elif method == UCommands.exit.name:
-            self.services.user_service.chmod(
-                self.services.user_service.modes.wait
+            user_service.chmod(
+                user_service.modes.wait
             )
         # payment
         elif method == UCommands.payment.name:
-            self.services.reply_service.add_message('支払い機能は開発中です。')
+            reply_service.add_message('支払い機能は開発中です。')
         # analysis
         elif method == UCommands.analysis.name:
-            self.services.reply_service.add_message('分析機能は開発中です。')
+            reply_service.add_message('分析機能は開発中です。')
         # fortune
         elif method == UCommands.fortune.name:
-            self.services.reply_service.add_message(
-                f'あなたの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。'
+            reply_service.add_message(
+                f'あなたの今日のラッキー牌は「{message_service.get_random_hai()}」です。'
             )
         # history
         elif method == UCommands.history.name:
-            self.services.reply_service.add_message('対戦履歴機能は開発中です。')
+            reply_service.add_message('対戦履歴機能は開発中です。')
         # setting
         elif method == UCommands.setting.name:
-            self.services.reply_service.add_message('個人設定機能は開発中です。')
+            reply_service.add_message('個人設定機能は開発中です。')
         # help
         elif method == UCommands.help.name:
-            self.services.reply_service.add_message('使い方は明日書きます。')
-            self.services.reply_service.add_message(
+            reply_service.add_message('使い方は明日書きます。')
+            reply_service.add_message(
                 '\n'.join(['_' + e.name for e in UCommands])
             )
         # github
         elif method == UCommands.github.name:
-            self.services.reply_service.add_message(
+            reply_service.add_message(
                 'https://github.com/bbladr/mahjong-manager-bot'
             )
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
-        self.services.room_service.register()
+        room_service.register()
 
         text = event.message.text
         if (text[0] == '_') & (len(text) > 1):
@@ -220,16 +218,16 @@ class Router:
                 self.routing_for_room_by_method(method, body)
                 return
             else:
-                self.services.reply_service.add_message(
+                reply_service.add_message(
                     '使い方がわからない場合は「_help」と入力してください。'
                 )
                 return
 
         """routing by text on each mode"""
-        current_mode = self.services.room_service.get_mode()
+        current_mode = room_service.get_mode()
         """input mode"""
-        if current_mode == self.services.room_service.modes.input.value:
-            self.services.points_service.add_by_text(text)
+        if current_mode == room_service.modes.input.value:
+            points_service.add_by_text(text)
             return
 
         """wait mode"""
@@ -240,102 +238,102 @@ class Router:
             for r in rows:
                 col = r.split(':')
                 points[
-                    self.services.user_service.get_user_id_by_name(col[0])
+                    user_service.get_user_id_by_name(col[0])
                 ] = int(col[1])
-            self.services.results_service.add(points)
-            self.services.calculate_service.calculate(
+            results_service.add(points)
+            calculate_service.calculate(
                 points
             )
 
         """if zoom url, register to room"""
         if '.zoom.us' in text:
-            self.services.room_service.set_zoom_url(text)
+            room_service.set_zoom_url(text)
 
     def routing_for_room_by_method(self, method, body):
         """routing by method"""
         # start menu
         if method == RCommands.start.name:
-            self.services.reply_service.add_start_menu()
+            reply_service.add_start_menu()
         # input
         elif method == RCommands.input.name:
-            self.services.results_service.add()
-            self.services.room_service.chmod(
-                self.services.room_service.modes.input
+            results_service.add()
+            room_service.chmod(
+                room_service.modes.input
             )
         # calculate
         elif method == RCommands.calc.name:
-            self.services.calculate_service.calculate()
+            calculate_service.calculate()
         # mode
         elif method == RCommands.mode.name:
-            mode = self.services.room_service.get_mode()
-            self.services.reply_service.add_message(mode)
+            mode = room_service.get_mode()
+            reply_service.add_message(mode)
         # exit
         elif method == RCommands.exit.name:
-            self.services.room_service.chmod(
-                self.services.room_service.modes.wait
+            room_service.chmod(
+                room_service.modes.wait
             )
         # help
         elif method == RCommands.help.name:
-            self.services.reply_service.add_message('使い方は明日書きます。')
-            self.services.reply_service.add_message(
+            reply_service.add_message('使い方は明日書きます。')
+            reply_service.add_message(
                 '\n'.join(['_' + e.name for e in RCommands]))
         # setting
         elif method == RCommands.setting.name:
-            self.services.reply_service.add_settings_menu(body)
+            reply_service.add_settings_menu(body)
         # reset
         elif method == RCommands.reset.name:
-            self.services.results_service.reset_points()
+            results_service.reset_points()
         # results
         elif method == RCommands.results.name:
-            self.services.matches_service.reply_sum_results()
+            matches_service.reply_sum_results()
         # results by match id
         elif method == RCommands.match.name:
-            self.services.matches_service.reply_sum_results(body)
+            matches_service.reply_sum_results(body)
         # drop
         elif method == RCommands.drop.name:
-            self.services.matches_service.drop_result_by_number(int(body))
+            matches_service.drop_result_by_number(int(body))
         # drop match
         elif method == RCommands.drop_m.name:
-            self.services.matches_service.disable()
+            matches_service.disable()
         # finish
         elif method == RCommands.finish.name:
-            self.services.matches_service.finish()
+            matches_service.finish()
         # fortune
         elif method == RCommands.fortune.name:
-            self.services.reply_service.add_message(
-                f'{self.services.user_service.get_name_by_user_id()}さんの今日のラッキー牌は「{self.services.message_service.get_random_hai()}」です。'
+            reply_service.add_message(
+                f'{user_service.get_name_by_user_id()}さんの今日のラッキー牌は「{message_service.get_random_hai()}」です。'
             )
         # others menu
         elif method == RCommands.others.name:
-            self.services.reply_service.add_others_menu()
+            reply_service.add_others_menu()
         # matches
         elif method == RCommands.matches.name:
-            self.services.matches_service.reply()
+            matches_service.reply()
         # tobi
         elif method == RCommands.tobi.name:
-            self.services.calculate_service.calculate(
+            calculate_service.calculate(
                 tobashita_player_id=body)
         # add results
         elif method == RCommands.add_result.name:
             points = json.loads(body)
-            self.services.results_service.add(points)
-            self.services.calculate_service.calculate(
+            results_service.add(points)
+            calculate_service.calculate(
                 points
             )
         # update config
         elif method == RCommands.update_config.name:
             key = body.split(' ')[0]
             value = body.split(' ')[1]
-            self.services.config_service.update(
+            config_service.update(
                 key, value
             )
         # zoom
         elif method == RCommands.zoom.name:
-            self.services.room_service.reply_zoom_url()
+            room_service.reply_zoom_url()
         # my_zoom
         elif method == RCommands.my_zoom.name:
-            self.services.user_service.reply_zoom_id()
-            self.services.room_service.set_zoom_url(body)
+            user_service.reply_zoom_id()
+            room_service.set_zoom_url(body)
         # sum_matches
         elif method == RCommands.sum_matches.name:
             args = body.split(' ')
@@ -349,10 +347,10 @@ class Router:
                         )
                     ]
                 args.remove('to')
-            self.services.matches_service.reply_sum_matches_by_ids(args)
+            matches_service.reply_sum_matches_by_ids(args)
         # graphs
         elif method == RCommands.graph.name:
-            self.services.matches_service.plot()
+            matches_service.plot()
 
 
 # def parse_int_list(args):
