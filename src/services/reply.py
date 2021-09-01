@@ -257,7 +257,7 @@ class ReplyService:
                         PostbackAction(
                             label=player['name'],
                             display_text=player['name'],
-                            data=f'_tobi {player['id']}',
+                            data='_tobi ' + player['id'],
                         ) for player in player_id_and_names
                     ] + [
                         PostbackAction(
