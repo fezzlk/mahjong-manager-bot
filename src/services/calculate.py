@@ -12,7 +12,7 @@ from services import (
 )
 
 
-class CalculateUseCases:
+class CalculateService:
     """
     calculate points
     """
