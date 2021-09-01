@@ -13,8 +13,8 @@ from services import (
 )
 
 
-class MatchesService:
-    """matches service"""
+class MatchesUseCases:
+    """matches use cases"""
 
     def get_current(self):
         room_id = app_service.req_room_id
