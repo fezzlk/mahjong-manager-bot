@@ -86,7 +86,6 @@ class ReplyService:
 
     def add_settings_menu(self, key=''):
         if key == '':
-            self.services.config_service.reply()
             button = TemplateSendMessage(
                 alt_text='Settings Menu',
                 template=ButtonsTemplate(
