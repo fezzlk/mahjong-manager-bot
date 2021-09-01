@@ -79,9 +79,9 @@ class Router:
                 elif event.message.type == 'image':
                     self.imageMessage(event)
             elif event.type == 'follow':
-                self.follow(event)
+                user_use_cases.follow(event)
             elif event.type == 'unfollow':
-                self.unfollow(event)
+                user_use_cases.unfollow(event)
                 isEnabledReply = False
             elif event.type == 'join':
                 self.join(event)
@@ -96,20 +96,6 @@ class Router:
             reply_service.reply(event)
         app_service.delete_req_info()
 
-    def follow(self, event):
-        """follow event"""
-        user = user_use_cases.register()
-        reply_service.add_message(
-            f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
-            {user.name}さんの快適な麻雀生活をサポートします。')
-        rich_menu_service.create_and_link(app_service.req_user_id)
-
-    def unfollow(self, event):
-        """unfollow event"""
-        user_use_cases.delete_by_user_id(
-            app_service.req_user_id
-        )
-
     def join(self, event):
         """join event"""
         reply_service.add_message(
@@ -119,7 +105,10 @@ class Router:
 
     def textMessage(self, event):
         """receive text message event"""
-        user_use_cases.register()
+        profile = line_bot_api.get_profile(
+            app_service.req_user_id
+        )
+        user_use_cases.find_or_create_by_profile(profile)
         if event.source.type == 'room':
             self.routing_for_room_by_text(event)
         elif event.source.type == 'user':
@@ -189,6 +178,7 @@ class Router:
         # exit
         elif method == UCommands.exit.name:
             user_use_cases.chmod(
+                app_service.req_user_id,
                 user_use_cases.modes.wait
             )
         # payment
@@ -222,7 +212,10 @@ class Router:
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
-        user_use_cases.register()
+        profile = line_bot_api.get_profile(
+            app_service.req_user_id
+        )
+        user_use_cases.find_or_create_by_profile(profile)
 
         text = event.message.text
         if (text[0] == '_') & (len(text) > 1):
