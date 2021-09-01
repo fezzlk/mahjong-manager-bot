@@ -2,20 +2,19 @@
 
 import json
 import os
-import io
 from google.cloud import vision
 from google.oauth2 import service_account
+from server import logger
 
 
 class OcrService:
     """ocr service"""
 
-    def __init__(self, services):
-        self.services = services
+    def __init__(self):
         self.result = None
         self.client = None
         credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-        if credentials_raw != None:
+        if credentials_raw is not None:
             service_account_info = json.loads(
                 credentials_raw, strict=False
             )
@@ -26,7 +25,7 @@ class OcrService:
 
     def isResultImage(self):
         if self.result is None:
-            self.services.app_service.logger.warning(
+            logger.warning(
                 'the requested image is not loaded(required execute self.run()'
             )
             return
@@ -36,8 +35,8 @@ class OcrService:
         return False
 
     def run(self, content=None):
-        if self.client == None:
-            self.services.app_service.logger.warning(
+        if self.client is None:
+            logger.warning(
                 'ocr_service is not setup'
             )
             return
@@ -45,7 +44,7 @@ class OcrService:
 
         image = vision.Image(content=content)
 
-        self.services.app_service.logger.info(
+        logger.info(
             'ocr: text detection running'
         )
         response = self.client.text_detection(image=image)
@@ -62,7 +61,7 @@ class OcrService:
 
     def get_points(self):
         if self.result is None:
-            self.services.app_service.logger.warning(
+            logger.warning(
                 'the requested image is not loaded(required execute self.run()'
             )
         for r in self.result:
@@ -75,7 +74,10 @@ class OcrService:
                 pos_upper_left_point = text.bounding_poly.vertices[1]
                 pos_points.append(pos_upper_left_point)
         print(pos_points)
-        def sorter(v): return (v.y, v.x)
+
+        def sorter(v):
+            return (v.y, v.x)
+
         pos_points = sorted(pos_points, key=sorter)
 
         # 1位と2位の点数の距離
@@ -89,7 +91,7 @@ class OcrService:
         upper_y = pos_points[0].y
         pre_upper_y = 313
         rates_x = [
-            [(v - pre_upper_x)/pre_distance_x for v in rete_array]
+            [(v - pre_upper_x) / pre_distance_x for v in rete_array]
             for rete_array in [
                 [753, 1000],
                 [838, 1039],
@@ -98,7 +100,7 @@ class OcrService:
             ]
         ]
         rates_y = [
-            [(v - pre_upper_y)/pre_distance_y for v in rete_array]
+            [(v - pre_upper_y) / pre_distance_y for v in rete_array]
             for rete_array in [
                 [251, 297, 385],
                 [431, 468, 533],
