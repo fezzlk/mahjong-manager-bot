@@ -9,8 +9,8 @@ DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10'
                    '端数計算方法': '3万点以下切り上げ/以上切り捨て'}
 
 
-class ConfigService:
-    """config service"""
+class ConfigUseCases:
+    """config use cases"""
 
     """
     get all configs by ids
