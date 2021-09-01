@@ -3,6 +3,10 @@
 from repositories import session_scope
 from repositories.configs import ConfigsRepository
 from server import logger
+from services import (
+    app_service,
+    reply_service,
+)
 
 DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10', '-20']),
                    '飛び賞': '10', 'チップ': 'なし', '人数': '4',
@@ -29,7 +33,7 @@ class ConfigUseCases:
         """
     def get_by_key(self, key):
         # リクエスト元ルームIDの取得
-        target_id = self.services.app_service.req_room_id
+        target_id = app_service.req_room_id
 
         # デフォルトから変更されている config の取得
         with session_scope() as session:
@@ -46,10 +50,10 @@ class ConfigUseCases:
         """
     def get_by_target(self):
         # リクエスト元ルームIDの取得（ルームからのリクエストでなければユーザーID)
-        if self.services.app_service.req_room_id is not None:
-            target_id = self.services.app_service.req_room_id
+        if app_service.req_room_id is not None:
+            target_id = app_service.req_room_id
         else:
-            target_id = self.services.app_service.req_user_id
+            target_id = app_service.req_user_id
 
         # デフォルト config から変更されている config を取得
         with session_scope() as session:
@@ -75,7 +79,7 @@ class ConfigUseCases:
 
         # 返信メッセージ用に変換&返信
         s = [f'{key}: {str(value)}' for key, value in configs.items()]
-        self.services.reply_service.add_message('[設定]\n' + '\n'.join(s))
+        reply_service.add_message('[設定]\n' + '\n'.join(s))
 
         """更新
         args:
@@ -84,7 +88,7 @@ class ConfigUseCases:
         """
     def update(self, key, value):
         # リクエスト元のルームIDの取得
-        target_id = self.services.app_service.req_room_id
+        target_id = app_service.req_room_id
 
         with session_scope() as session:
             # 既存の変更の削除
@@ -97,7 +101,7 @@ class ConfigUseCases:
         logger.info(
             f'update:{key}:{value}:{target_id}'
         )
-        self.services.reply_service.add_message(f'{key}を{value}に変更しました。')
+        reply_service.add_message(f'{key}を{value}に変更しました。')
 
     """delete by id
     """
