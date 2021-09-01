@@ -33,11 +33,11 @@ result_messages = [
 class MessageService:
     """message service"""
 
-    def get_random_hai(self):
+    def get_random_hai(self, user_id):
         now = datetime.datetime.now()
         random.seed(
             int(now.year + now.month + now.day) +
-            int(re.sub("\\D", "", self.services.app_service.req_user_id))
+            int(re.sub("\\D", "", user_id))
         )
 
         return random.choice(HAI)
