@@ -11,8 +11,8 @@ from services import (
 )
 
 
-class PointsService:
-    """point service"""
+class PointsUseCases:
+    """point use cases"""
 
     def reply(self, result=None):
         """reply"""
