@@ -18,6 +18,8 @@ logger = logging.create_logger(app)
 from linebot import WebhookHandler
 handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])
 
+from messaging_api_setting import line_bot_api
+
 from db_setting import Base, Engine
 Base.metadata.create_all(bind=Engine)
 
