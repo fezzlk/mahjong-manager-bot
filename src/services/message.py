@@ -5,8 +5,8 @@ import random
 import datetime
 
 KANSUJI = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
-HAI = [k+'萬' for k in KANSUJI] + [k+'筒' for k in KANSUJI] + \
-    [k+'索' for k in KANSUJI] + ['白', '發', '中', '東', '南', '西', '北']
+HAI = [k + '萬' for k in KANSUJI] + [k + '筒' for k in KANSUJI] + \
+    [k + '索' for k in KANSUJI] + ['白', '發', '中', '東', '南', '西', '北']
 
 wait_messages = [
     '雑談してる暇があったら麻雀の勉強をしましょう。',
@@ -33,34 +33,29 @@ result_messages = [
 class MessageService:
     """message service"""
 
-    def __init__(self, services):
-        self.services = services
-
     def get_random_hai(self):
         now = datetime.datetime.now()
         random.seed(
-            int(now.year+now.month+now.day) +
+            int(now.year + now.month + now.day) +
             int(re.sub("\\D", "", self.services.app_service.req_user_id))
         )
 
         return random.choice(HAI)
 
-    def get_wait_massage(self):
-        user_id = self.services.app_service.req_user_id
+    def get_wait_massage(self, user_id):
         now = datetime.datetime.now()
         random.seed(
             int(now.minute) +
-            int(re.sub("\\D", "", self.services.app_service.req_user_id))
+            int(re.sub("\\D", "", user_id))
         )
 
         return random.choice(wait_messages)
 
-    def get_result_message(self):
-        user_id = self.services.app_service.req_user_id
+    def get_result_message(self, user_id):
         now = datetime.datetime.now()
         random.seed(
             int(now.minute) +
-            int(re.sub("\\D", "", self.services.app_service.req_user_id))
+            int(re.sub("\\D", "", user_id))
         )
 
         return random.choice(result_messages)
