@@ -8,18 +8,16 @@ from linebot.models import (
     PostbackTemplateAction,
 )
 
+from server import line_bot_api
+
 
 class RichMenuService:
-    """rich menu service"""
 
-    def __init__(self, services):
-        self.services = services
-
-    def create_and_link(self):
+    def create_and_link(self, user_id):
         rich_menu_id = self.create_personal_menu()
 
-        self.services.app_service.line_bot_api.link_rich_menu_to_user(
-            self.services.app_service.req_user_id, rich_menu_id
+        line_bot_api.link_rich_menu_to_user(
+            user_id, rich_menu_id
         )
 
     def create_personal_menu(self):
@@ -80,12 +78,12 @@ class RichMenuService:
                 )
             ]
         )
-        rich_menu_id = self.services.app_service.line_bot_api.create_rich_menu(
+        rich_menu_id = line_bot_api.create_rich_menu(
             rich_menu=rich_menu_to_create
         )
         file_path = './static/images/rich/personal.png'
         content_type = 'Image/png'
         with open(file_path, 'rb') as f:
-            self.services.app_service.line_bot_api.set_rich_menu_image(
+            line_bot_api.set_rich_menu_image(
                 rich_menu_id, content_type, f)
         return rich_menu_id
