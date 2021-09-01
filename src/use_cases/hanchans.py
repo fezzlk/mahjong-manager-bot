@@ -15,8 +15,8 @@ from services import (
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
-class HanchansService:
-    """Hanchans service"""
+class HanchansUseCases:
+    """Hanchans use cases"""
 
     def add(self, raw_scores={}):
         """add"""
