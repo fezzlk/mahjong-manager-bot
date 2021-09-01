@@ -13,8 +13,8 @@ class Modes(Enum):
     wait = 'wait'
 
 
-class UserService:
-    """user service"""
+class UserUseCases:
+    """user use cases"""
 
     def __init__(self):
         self.modes = Modes
