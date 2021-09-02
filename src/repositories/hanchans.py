@@ -22,7 +22,7 @@ class HanchansRepository:
         return session\
             .query(Hanchans).filter(and_(
                 Hanchans.room_id == room_id,
-                Hanchans.status == 1,
+                Hanchans.status == status,
             ))\
             .order_by(desc(Hanchans.id))\
             .first()
