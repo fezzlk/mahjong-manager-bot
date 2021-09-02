@@ -1,15 +1,15 @@
 """matches"""
 
-from models import Matches
-from sqlalchemy import and_
+from repositories import session_scope
+from repositories.matches import MatchesRepository
+
 import json
-from db_setting import Session
 from server import logger
 from services import (
     app_service,
     hanchans_service,
     reply_service,
-
+    matches_service,
 )
 
 
@@ -18,134 +18,75 @@ class MatchesUseCases:
 
     def get_current(self):
         room_id = app_service.req_room_id
-        session = Session()
-        return session\
-            .query(Matches).filter(and_(
-                Matches.room_id == room_id,
-                Matches.status == 1
-            )).order_by(Matches.id.desc())\
-            .first()
+        return matches_service.get_current(room_id)
 
     def get_or_add_current(self):
-        """get or add"""
-        current = self.get_current()
-        session = Session()
+        room_id = app_service.req_room_id
+        current = matches_service.get_current(room_id)
 
         if current is None:
-            room_id = app_service.req_room_id
-            current = Matches(room_id=room_id)
-            session.add(current)
-            session.commit()
-            logger.info(f'create: room_id={room_id}')
+            current = matches_service.create(room_id)
+
         return current
 
     def add_result(self):
-        """add result"""
         room_id = app_service.req_room_id
-        session = Session()
         current_result = hanchans_service.get_current(room_id)
-        current_match = self.get_or_add_current()
-        result_ids = json.loads(current_match.result_ids)
-        result_ids.append(str(current_result.id))
-        current_match.result_ids = json.dumps(result_ids)
-        session.commit()
-        logger.info(f'update: id={current_match.id}')
+        matches_service.add_result(room_id, current_result.id)
 
     def drop_result_by_number(self, i):
         """drop result"""
-        session = Session()
 
-        if self.count_results() == 0:
-            logger.warning(
-                'current match is not found'
-            )
+        if matches_service.count_results() == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
             return
 
-        current = self.get_current()
-        result_ids = json.loads(current.result_ids)
-        hanchans_service.delete_by_id(result_ids[i - 1])
-        result_ids.pop(i - 1)
-        current.result_ids = json.dumps(result_ids)
-        session.commit()
-        logger.info(
-            f'delete result: match_id={current.id} result_id={i-1}'
-        )
-
-    def count_results(self):
-        current = self.get_current()
-        if current is None:
-            return 0
-        return len(json.loads(current.result_ids))
+        matches_service.drop_result_by_number(i)
 
     def get_sum_results(self):
-        current = self.get_current()
+        current = matches_service.get_current()
         return hanchans_service.get_sum_result_by_ids(
             json.loads(current.result_ids)
         )
 
     def reply_sum_results(self, match_id=None):
         if match_id is None:
-            if self.count_results() == 0:
+            if matches_service.count_results() == 0:
                 reply_service.add_message(
-                    'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
+                    'まだ対戦結果がありません。')
                 return
-            match = self.get_current()
+            match = matches_service.get_current()
         else:
-            session = Session()
-            match = session\
-                .query(Matches).filter(
-                    Matches.id == match_id,
-                ).first()
+            match = MatchesRepository.get(match_id)
+
         hanchans_service.reply_by_ids(
             json.loads(match.result_ids),
-            date=match.created_at.strftime('%Y-%m-%d')+'\n',
+            date=match.created_at.strftime('%Y-%m-%d') + '\n',
         )
 
     def finish(self):
-        if self.count_results() == 0:
+        if matches_service.count_results() == 0:
             reply_service.add_message(
-                'まだ対戦結果がありません。メニューの結果入力を押して結果を追加してください。')
+                'まだ対戦結果がありません。')
             return
-        current = self.get_current()
+        current = matches_service.get_current()
         hanchans_service.reply_sum_and_money_by_ids(
             json.loads(current.result_ids),
             current.id,
         )
-        self.archive()
-
-    def archive(self):
-        session = Session()
-        current = self.get_current()
-        current.status = 2
-        session.commit()
-        logger.info(f'archive: id={current.id}')
-
-    def disable(self):
-        session = Session()
-        match = self.get_current()
-        if match is None:
-            return
-        match.status = 0
-        session.commit()
-        logger.info(f'disable: id={match.id}')
+        matches_service.archive()
 
     def reply(self):
-        session = Session()
         room_id = app_service.req_room_id
-        matches = session\
-            .query(Matches).filter(and_(
-                Matches.status == 2,
-                Matches.room_id == room_id,
-            )).order_by(Matches.id.desc())\
-            .all()
-        if len(matches) == 0:
+        matches = matches_service.get_archived(room_id)
+        if matches is None:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
             return
+
         reply_service.add_message(
             '最近の4試合の結果を表示します。詳細は「_match <ID>」')
         for match in matches[:4]:
@@ -157,55 +98,22 @@ class MatchesUseCases:
             )
 
     def get(self, target_ids=None):
-        session = Session()
-        if target_ids is None:
-            return session\
-                .query(Matches)\
-                .order_by(Matches.id)\
-                .all()
-        if type(target_ids) != list:
-            target_ids = [target_ids]
-        return session\
-            .query(Matches).filter(Matches.id.in_(target_ids))\
-            .order_by(Matches.id).all()
+        matches_service.get(target_ids)
 
     def remove_result_id(self, match_id, result_id):
-        session = Session()
-        match = session\
-            .query(Matches).filter(
-                Matches.id == match_id
-            ).first()
-        result_ids = json.loads(match.result_ids)
-        if result_id in result_ids:
-            result_ids.remove(result_id)
-        match.result_ids = json.dumps(result_ids)
-        session.commit()
+        matches_service.remove_result_id(match_id, result_id)
 
     def delete(self, target_ids):
-        session = Session()
-        if type(target_ids) != 'list':
-            target_ids = [target_ids]
-        targets = session\
-            .query(Matches).filter(
-                Matches.id.in_(target_ids),
-            ).all()
+        targets = matches_service.delete(target_ids)
         for target in targets:
             hanchans_service.delete(
                 json.loads(target.result_ids)
             )
-            session.delete(target)
-        session.commit()
-        logger.info(f'delete: id={target_ids}')
+        logger.info(f'delete match: id={target_ids}')
 
     def reply_sum_matches_by_ids(self, ids):
-        session = Session()
         formatted_id_list = sorted(list(set(ids)))
-        matches = session\
-            .query(Matches).filter(and_(
-                Matches.id.in_(ids),
-                # Matches.room_id == room_id
-            )).order_by(Matches.id)\
-            .all()
+        matches = matches_service.get(ids)
         if len(matches) == 0:
             reply_service.add_message(
                 '該当する対戦結果がありません。'
