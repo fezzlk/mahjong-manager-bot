@@ -3,6 +3,7 @@
 import json
 from server import logger
 from services import (
+    app_service,
     user_service,
     reply_service,
     results_service,
@@ -84,16 +85,18 @@ class CalculateUseCases:
         """
 
         # 準備
+        room_id = app_service.req_room_id
         sorted_points = sorted(
             points.items(), key=lambda x: x[1], reverse=True)
         sorted_prize = sorted(
             [int(s) for s in config_service.get_by_key(
+                room_id,
                 '順位点').split(',')],
             reverse=True,
         )
-        tobi_prize = int(config_service.get_by_key('飛び賞'))
+        tobi_prize = int(config_service.get_by_key(room_id, '飛び賞'))
         # 計算方法合わせて点数調整用の padding を設定
-        calculate_method = config_service.get_by_key('端数計算方法')
+        calculate_method = config_service.get_by_key(room_id, '端数計算方法')
         padding = 0
         if calculate_method == '五捨六入':
             padding = 400

@@ -160,10 +160,11 @@ class HanchansUseCases:
                 )
 
             key = 'レート'
+            room_id = app_service.req_room_id
             reply_service.add_message(
                 '対戦ID: ' + str(match_id) + '\n' + date + '\n'.join([
                     f'{user_service.get_name_by_user_id(user_id)}: \
-                    {converted_score * int(config_service.get_by_key(key)[1]) * 10}円 \
+                    {converted_score * int(config_service.get_by_key(room_id, key)[1]) * 10}円 \
                     ({"+" if converted_score > 0 else ""}{converted_score})'
                     for user_id, converted_score in sum_hanchans.items()
                 ])
