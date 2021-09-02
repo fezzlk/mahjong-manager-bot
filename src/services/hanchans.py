@@ -117,7 +117,7 @@ class HanchansService:
                 return
             current.status = status
             logger.info(
-                f'{STATUS_LIST[status]}: id={current.id}'
+                f'{STATUS_LIST[status]} hanchan: id={current.id}'
             )
 
     def get(self, ids=None):
