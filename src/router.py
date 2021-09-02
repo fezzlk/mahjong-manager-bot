@@ -8,7 +8,6 @@ from services import (
     app_service,
     reply_service,
     rich_menu_service,
-    ocr_service,
     message_service,
 )
 from use_cases import (
@@ -17,6 +16,7 @@ from use_cases import (
     points_use_cases,
     calculate_use_cases,
     config_use_cases,
+    ocr_use_cases,
     matches_use_cases,
     hanchans_use_cases,
 )
@@ -79,12 +79,12 @@ class Router:
                 elif event.message.type == 'image':
                     self.imageMessage(event)
             elif event.type == 'follow':
-                user_use_cases.follow(event)
+                user_use_cases.follow()
             elif event.type == 'unfollow':
-                user_use_cases.unfollow(event)
+                user_use_cases.unfollow()
                 isEnabledReply = False
             elif event.type == 'join':
-                self.join(event)
+                room_use_cases.join()
             elif event.type == 'postback':
                 self.postback(event)
 
@@ -96,26 +96,15 @@ class Router:
             reply_service.reply(event)
         app_service.delete_req_info()
 
-    def join(self, event):
-        """join event"""
-        reply_service.add_message(
-            'こんにちは、今日は麻雀日和ですね。'
-        )
-        room_use_cases.register()
-
     def textMessage(self, event):
         """receive text message event"""
-        profile = line_bot_api.get_profile(
-            app_service.req_user_line_id
-        )
-        user_use_cases.find_or_create_by_profile(profile)
         if event.source.type == 'room':
             self.routing_for_room_by_text(event)
         elif event.source.type == 'user':
             self.routing_by_text(event)
         else:
             logger.info(
-                f'message.source.type: {event.source.type}'
+                f'error: message.source.type: {event.source.type}'
             )
             raise BaseException('this sender is not supported')
 
@@ -125,14 +114,7 @@ class Router:
             message_content = line_bot_api.get_message_content(
                 event.message.id
             )
-            ocr_service.run(message_content.content)
-            if ocr_service.isResultImage():
-                points_use_cases.add_by_ocr()
-            else:
-                logger.warning(
-                    'this image is not result of jantama'
-                )
-            ocr_service.delete_result()
+            ocr_use_cases.input_result_from_image(message_content.content)
 
     def postback(self, event):
         """postback event"""
