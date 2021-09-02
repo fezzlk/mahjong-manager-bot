@@ -7,8 +7,8 @@ from google.oauth2 import service_account
 from server import logger
 
 
-class OcrService:
-    """ocr service"""
+class OcrUseCases:
+    """ocr UseCases"""
 
     def __init__(self):
         self.result = None
