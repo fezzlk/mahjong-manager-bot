@@ -18,7 +18,7 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 class HanchansService:
     """Hanchans service"""
 
-    def add(self, raw_scores={}, room_id, current_match):
+    def add(self, raw_scores, room_id, current_match):
         with session_scope() as session:
             HanchansRepository.create(
                 session,

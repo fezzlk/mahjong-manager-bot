@@ -1,9 +1,6 @@
 """hanchans"""
 
 import json
-from repositories import session_scope
-from repositories.hanchans import HanchansRepository
-from server import logger
 from services import (
     app_service,
     matches_service,
