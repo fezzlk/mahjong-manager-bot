@@ -26,6 +26,17 @@ class RoomUseCases:
         # TODO: いる？
         self.modes = Modes
 
+    def join(self):
+        """join event"""
+        reply_service.add_message(
+            'こんにちは、今日は麻雀日和ですね。'
+        )
+        room_id = app_service.req_room_id
+        if room_id is None:
+            logger.warning('This request is not from room chat')
+            return
+        room_service.find_or_create(room_id)
+
     def register(self):
         room_id = app_service.req_room_id
         if room_id is None:

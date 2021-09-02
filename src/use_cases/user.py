@@ -1,9 +1,7 @@
 """user"""
 
 from enum import Enum
-from repositories import session_scope
-from repositories.users import UsersRepository
-from server import logger, line_bot_api
+from server import line_bot_api
 from services import (
     app_service,
     user_service,
@@ -36,7 +34,7 @@ class UserUseCases:
         """web"""
         user_service.delete(ids)
 
-    def follow(self, event):
+    def follow(self):
         """follow event"""
         profile = line_bot_api.get_profile(
             app_service.req_user_line_id
@@ -47,7 +45,7 @@ class UserUseCases:
             {user.name}さんの快適な麻雀生活をサポートします。')
         rich_menu_service.create_and_link(app_service.req_user_line_id)
 
-    def unfollow(self, event):
+    def unfollow(self):
         """unfollow event"""
         user_service.delete_by_user_id(
             app_service.req_user_line_id
@@ -62,6 +60,9 @@ class UserUseCases:
             )
             return
         reply_service.add_message(mode)
+
+    def chmod(self, user_id, mode):
+        user_service.chmod(user_id, mode)
 
     def set_zoom_id(self, zoom_id):
         user_id = app_service.req_user_line_id
