@@ -20,7 +20,8 @@ class PointsUseCases:
         """reply"""
 
         if result is None:
-            result = hanchans_service.get_current()
+            room_id = app_service.req_room_id
+            result = hanchans_service.get_current(room_id)
         points = json.loads(result.points)
         if len(points) == 0:
             reply_service.add_message(

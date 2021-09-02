@@ -41,8 +41,9 @@ class MatchesService:
 
     def add_result(self):
         """add result"""
+        room_id = app_service.req_room_id
         session = Session()
-        current_result = hanchans_service.get_current()
+        current_result = hanchans_service.get_current(room_id)
         current_match = self.get_or_add_current()
         result_ids = json.loads(current_match.result_ids)
         result_ids.append(str(current_result.id))

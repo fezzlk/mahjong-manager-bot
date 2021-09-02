@@ -23,11 +23,11 @@ class CalculateUseCases:
         """
         得点計算の準備および結果の格納
         """
-
+        room_id = app_service.req_room_id
         # points の取得(デフォルトでは引数 points が採用される)
         # 引数に points がない場合、現在 active な result (current)のポイントを計算対象にする
         if points is None:
-            current = hanchans_service.get_current()
+            current = hanchans_service.get_current(room_id)
             if current is None:
                 logger.error(
                     'current points is not found.'
@@ -61,7 +61,6 @@ class CalculateUseCases:
             return
 
         # config の取得(by target で撮っちゃって良い)
-        room_id = app_service.req_room_id
         # 計算の実行
         calculate_result = calculate_service.calculate(
             points=points,
