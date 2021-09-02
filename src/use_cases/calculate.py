@@ -6,10 +6,11 @@ from services import (
     app_service,
     user_service,
     reply_service,
-    results_service,
     matches_service,
     room_service,
-    config_service
+    config_service,
+    hanchans_service,
+    calculate_service,
 )
 
 
@@ -26,7 +27,7 @@ class CalculateUseCases:
         # points の取得(デフォルトでは引数 points が採用される)
         # 引数に points がない場合、現在 active な result (current)のポイントを計算対象にする
         if points is None:
-            current = results_service.get_current()
+            current = hanchans_service.get_current()
             if current is None:
                 logger.error(
                     'current points is not found.'
@@ -59,85 +60,30 @@ class CalculateUseCases:
             ])
             return
 
+        # config の取得(by target で撮っちゃって良い)
+        room_id = app_service.req_room_id
         # 計算の実行
-        calc_result = self.run_calculate(points, tobashita_player_id)
+        calculate_result = calculate_service.calculate(
+            points=points,
+            ranking_prize=[int(s) for s in config_service.get_by_key(room_id, '順位点').split(',')],
+            tobi_prize=int(config_service.get_by_key(room_id, '飛び賞')),
+            rounding_method=config_service.get_by_key(room_id, '端数計算方法'),
+            tobashita_player_id=tobashita_player_id,
+        )
 
         # その半荘の結果を更新
-        results_service.update_result(calc_result)
+        hanchans_service.update_result(calculate_result)
 
         # 総合結果に半荘結果を追加
         matches_service.add_result()
 
         # 結果の表示
-        results_service.reply_current_result()
+        hanchans_service.reply_current_result()
 
-        # はんちゃん結果をアーカイブ
-        results_service.archive()
+        # 一半荘の結果をアーカイブ
+        hanchans_service.archive()
 
         # ルームを待機モードにする
         room_service.chmod(
             room_service.modes.wait
         )
-
-    def run_calculate(self, points, tobashita_player_id=None):
-        """
-        得点計算
-        """
-
-        # 準備
-        room_id = app_service.req_room_id
-        sorted_points = sorted(
-            points.items(), key=lambda x: x[1], reverse=True)
-        sorted_prize = sorted(
-            [int(s) for s in config_service.get_by_key(
-                room_id,
-                '順位点').split(',')],
-            reverse=True,
-        )
-        tobi_prize = int(config_service.get_by_key(room_id, '飛び賞'))
-        # 計算方法合わせて点数調整用の padding を設定
-        calculate_method = config_service.get_by_key(room_id, '端数計算方法')
-        padding = 0
-        if calculate_method == '五捨六入':
-            padding = 400
-        elif calculate_method == '四捨五入':
-            padding = 500
-        elif calculate_method == '切り捨て':
-            padding = 0
-        elif calculate_method == '切り上げ':
-            padding = 900
-
-        # 素点計算
-        result = {}
-        tobasare_players = []
-        isTobi = not(tobashita_player_id is None or
-                     tobashita_player_id == '')
-        # 2~4位
-        for t in sorted_points[1:]:
-            player = t[0]
-            point = t[1]
-            # 点数がマイナスの場合、飛ばされたプレイヤーリストに追加する
-            if (point < 0):
-                tobasare_players.append(player)
-
-            # マイナス点の場合の端数処理を考慮するため、100000足して130(=(100000+30000)/1000)を引く
-            result[player] = int((point + 10000 + padding) / 1000) - 130
-
-        # 1位(他プレイヤーの点数合計×(-1))
-        result[sorted_points[0][0]] = -1 * sum(result.values())
-
-        # 順位点、飛び賞加算
-        for i, t in enumerate(sorted_points):
-            # 順位点
-            result[t[0]] += sorted_prize[i]
-            # 飛び賞
-            if isTobi:
-                if t[0] in tobasare_players:
-                    result[t[0]] -= tobi_prize
-                if t[0] == tobashita_player_id:
-                    result[t[0]] += tobi_prize * len(tobasare_players)
-                else:
-                    logger.warning(
-                        'tobashita_player_id is not matching'
-                    )
-        return result
