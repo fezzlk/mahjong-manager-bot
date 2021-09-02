@@ -4,14 +4,7 @@ import json
 from repositories import session_scope
 from repositories.hanchans import HanchansRepository
 from server import logger
-from services import (
-    app_service,
-    matches_service,
-    reply_service,
-    user_service,
-    message_service,
-    config_service,
-)
+
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
@@ -43,9 +36,6 @@ class HanchansService:
             target.status = 0
             logger.info(
                 f'delete: id={target_id} room_id={room_id}'
-            )
-            reply_service.add_message(
-                f'id={target_id}の結果を削除しました。'
             )
 
     def find_by_ids(self, ids):
@@ -101,7 +91,7 @@ class HanchansService:
             hanchan.raw_scores = json.dumps({})
 
     # update_converted_score
-    def update_hanchan(self, calculated_hanchan):
+    def update_hanchan(self, room_id, calculated_hanchan):
         with session_scope as session:
             hanchan = HanchansRepository.find_by_room_id_and_status(
                 session,
@@ -151,33 +141,8 @@ class HanchansService:
     def delete(self, ids):
         with session_scope as session:
             targets = HanchansRepository.find_by_ids(session, ids)
-
             for target in targets:
-                matches_service.remove_hanchan_id(
-                    target.match_id, target.id)
                 session.delete(target)
 
             logger.info(f'delete: id={ids}')
-
-    def migrate(self):
-        with session_scope as session:
-            targets = HanchansRepository.find_all(session)
-
-            for t in targets:
-                raw_scores = json.loads(t.raw_scores)
-
-                new_raw_scores = {}
-                for k, v in raw_scores.items():
-                    user_id = user_service.get_user_id_by_name(k)
-                    new_raw_scores[user_id] = v
-                t.raw_scores = json.dumps(new_raw_scores)
-
-                if t.converted_scores is not None:
-                    converted_scores = json.loads(t.converted_scores)
-
-                    new_converted_scores = {}
-                    for k, v in converted_scores.items():
-                        user_id = user_service.get_user_id_by_name(k)
-                        new_converted_scores[user_id] = v
-
-                    t.converted_scores = json.dumps(new_converted_scores)
+            return targets
