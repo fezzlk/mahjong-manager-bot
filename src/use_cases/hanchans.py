@@ -11,7 +11,9 @@ from services import (
     user_service,
     message_service,
     config_service,
+    hanchans_service,
 )
+
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
@@ -23,39 +25,18 @@ class HanchansUseCases:
 
         room_id = app_service.req_room_id
         current_match = matches_service.get_or_add_current()
-
-        with session_scope() as session:
-            HanchansRepository.create(
-                session,
-                room_id,
-                current_match.id,
-                raw_scores
-            )
-
-        logger.info(
-            f'create: room_id={room_id}'
-        )
+        hanchans_service.add(raw_scores, room_id, current_match)
 
     def delete_by_id(self, target_id):
-        """disabled target hanchan"""
         room_id = app_service.req_room_id
-        with session_scope() as session:
-            target = HanchansRepository.find_by_id_and_room_id(
-                session,
-                target_id,
-                room_id
-            )
-
-            target.status = 0
-            logger.info(
-                f'delete: id={target_id} room_id={room_id}'
-            )
-            reply_service.add_message(
-                f'id={target_id}の結果を削除しました。'
-            )
+        hanchans_service.delete_by_id(room_id, target_id)
+        reply_service.add_message(
+            f'id={target_id}の結果を削除しました。'
+        )
 
     def reply_current_hanchan(self):
-        hanchan = self.get_current()
+        room_id = app_service.req_room_id
+        hanchan = hanchans_service.get_current(room_id)
         converted_scores = json.loads(hanchan.converted_scores)
         sum_hanchans = matches_service.get_sum_hanchans()
         reply_service.add_message(
@@ -79,21 +60,18 @@ class HanchansUseCases:
         )
 
     def get_sum_hanchan_by_ids(self, ids):
-        with session_scope() as session:
-            hanchans = HanchansRepository.find_by_ids(session, ids)
-
-            sum_hanchans = {}
-            for r in hanchans:
-                converted_scores = json.loads(r.converted_scores)
-                for user_id, converted_score in converted_scores.items():
-                    if user_id not in sum_hanchans.keys():
-                        sum_hanchans[user_id] = 0
-                    sum_hanchans[user_id] += converted_score
-            return sum_hanchans
+        hanchans = hanchans_service.find_by_ids(ids)
+        sum_hanchans = {}
+        for r in hanchans:
+            converted_scores = json.loads(r.converted_scores)
+            for user_id, converted_score in converted_scores.items():
+                if user_id not in sum_hanchans.keys():
+                    sum_hanchans[user_id] = 0
+                sum_hanchans[user_id] += converted_score
+        return sum_hanchans
 
     def reply_by_ids(self, ids, date):
-        with session_scope() as session:
-            hanchans = HanchansRepository.find_by_ids(session, ids)
+        hanchans = hanchans_service.find_by_ids(ids)
 
         hanchans_list = []
         sum_hanchans = {}
@@ -138,179 +116,68 @@ class HanchansUseCases:
         is_required_sum=True,
         date=''
     ):
-        with session_scope as session:
-            hanchans = HanchansRepository.find_by_ids(session, ids)
+        hanchans = hanchans_service.find_by_ids(ids)
 
-            sum_hanchans = {}
-            for i in range(len(ids)):
-                converted_scores = json.loads(hanchans[i].converted_scores)
+        sum_hanchans = {}
+        for i in range(len(ids)):
+            converted_scores = json.loads(hanchans[i].converted_scores)
 
-                for user_id, converted_score in converted_scores.items():
-                    if user_id not in sum_hanchans.keys():
-                        sum_hanchans[user_id] = 0
-                    sum_hanchans[user_id] += converted_score
+            for user_id, converted_score in converted_scores.items():
+                if user_id not in sum_hanchans.keys():
+                    sum_hanchans[user_id] = 0
+                sum_hanchans[user_id] += converted_score
 
-            if is_required_sum:
-                reply_service.add_message(
-                    '\n'.join([
-                        f'{user_service.get_name_by_user_id(user_id)}: \
-                            {converted_score}'
-                        for user_id, converted_score in sum_hanchans.items()
-                    ])
-                )
-
-            key = 'レート'
-            room_id = app_service.req_room_id
+        if is_required_sum:
             reply_service.add_message(
-                '対戦ID: ' + str(match_id) + '\n' + date + '\n'.join([
+                '\n'.join([
                     f'{user_service.get_name_by_user_id(user_id)}: \
-                    {converted_score * int(config_service.get_by_key(room_id, key)[1]) * 10}円 \
-                    ({"+" if converted_score > 0 else ""}{converted_score})'
+                        {converted_score}'
                     for user_id, converted_score in sum_hanchans.items()
                 ])
             )
 
-    def get_current(self, room_id=None):
-        if room_id is None:
-            room_id = app_service.req_room_id
-
-        with session_scope as session:
-            return HanchansRepository.find_by_room_id_and_status(
-                session,
-                room_id,
-                1
-            )
+        key = 'レート'
+        room_id = app_service.req_room_id
+        reply_service.add_message(
+            '対戦ID: ' + str(match_id) + '\n' + date + '\n'.join([
+                f'{user_service.get_name_by_user_id(user_id)}: \
+                {converted_score * int(config_service.get_by_key(room_id, key)[1]) * 10}円 \
+                ({"+" if converted_score > 0 else ""}{converted_score})'
+                for user_id, converted_score in sum_hanchans.items()
+            ])
+        )
 
     def add_raw_score(self, user_id, raw_score):
         room_id = app_service.req_room_id
-
-        with session_scope as session:
-            hanchan = HanchansRepository.find_by_room_id_and_status(
-                session,
-                room_id,
-                1
-            )
-
-            raw_scores = json.loads(hanchan.raw_scores)
-            raw_scores[user_id] = raw_score
-            hanchan.raw_scores = json.dumps(raw_scores)
-            return raw_scores
+        return hanchans_service.add_raw_score(room_id, user_id, raw_score)
 
     def drop_raw_score(self, user_id):
         room_id = app_service.req_room_id
+        return hanchans_service.drop_raw_score(room_id, user_id)
 
-        with session_scope as session:
-            hanchan = HanchansRepository.find_by_room_id_and_status(
-                session,
-                room_id,
-                1
-            )
-
-            raw_scores = json.loads(hanchan.raw_scores)
-            if user_id in raw_scores.keys():
-                raw_scores.pop(user_id)
-
-            hanchan.raw_scores = json.dumps(raw_scores)
-            return raw_scores
-
+    # clear の方がいいのでは
     def reset_raw_scores(self):
         room_id = app_service.req_room_id
+        hanchans_service.reset_raw_scores(room_id)
 
-        with session_scope as session:
-            hanchan = HanchansRepository.find_by_room_id_and_status(
-                session,
-                room_id,
-                1
-            )
-
-            hanchan.raw_scores = json.dumps({})
-
+    # update_converted_score
     def update_hanchan(self, calculated_hanchan):
         room_id = app_service.req_room_id
-
-        with session_scope as session:
-            hanchan = HanchansRepository.find_by_room_id_and_status(
-                session,
-                room_id,
-                1
-            )
-
-            hanchan.converted_scores = json.dumps(calculated_hanchan)
-            logger.info(
-                f'update hanchan: id={hanchan.id}'
-            )
-
-    def change_status(self, status):
-        room_id = app_service.req_room_id
-        with session_scope as session:
-            current = HanchansRepository.find_by_room_id_and_status(
-                session,
-                room_id,
-                1
-            )
-
-            if current is None:
-                return
-            current.status = status
-            app_service.db.session.commit()
-            logger.info(
-                f'{STATUS_LIST[status]}: id={current.id}'
-            )
+        hanchans_service.update_hanchan(room_id, calculated_hanchan)
 
     def archive(self):
-        self.change_status(2)
+        room_id = app_service.req_room_id
+        self.change_status(room_id, 2)
 
     def disable(self):
-        self.change_status(0)
+        room_id = app_service.req_room_id
+        self.change_status(room_id, 0)
 
     def get(self, ids=None):
-        with session_scope as session:
-            if ids is None:
-                targets = HanchansRepository.find_all(session)
-            else:
-                targets = HanchansRepository.find_by_ids(session, ids)
-
-            for hanchan in targets:
-                if hanchan.raw_scores is not None:
-                    hanchan.raw_scores = json.loads(hanchan.raw_scores)
-
-                if hanchan.converted_scores is not None:
-                    hanchan.converted_scores = json.loads(
-                        hanchan.converted_scores
-                    )
-
-            return targets
+        return hanchans_service.get(ids)
 
     def delete(self, ids):
-        with session_scope as session:
-            targets = HanchansRepository.find_by_ids(session, ids)
-
-            for target in targets:
-                matches_service.remove_hanchan_id(
-                    target.match_id, target.id)
-                session.delete(target)
-
-            logger.info(f'delete: id={ids}')
+        hanchans_service.delete(ids)
 
     def migrate(self):
-        with session_scope as session:
-            targets = HanchansRepository.find_all(session)
-
-            for t in targets:
-                raw_scores = json.loads(t.raw_scores)
-
-                new_raw_scores = {}
-                for k, v in raw_scores.items():
-                    user_id = user_service.get_user_id_by_name(k)
-                    new_raw_scores[user_id] = v
-                t.raw_scores = json.dumps(new_raw_scores)
-
-                if t.converted_scores is not None:
-                    converted_scores = json.loads(t.converted_scores)
-
-                    new_converted_scores = {}
-                    for k, v in converted_scores.items():
-                        user_id = user_service.get_user_id_by_name(k)
-                        new_converted_scores[user_id] = v
-
-                    t.converted_scores = json.dumps(new_converted_scores)
+        hanchans_service.migrate()
