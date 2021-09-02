@@ -106,7 +106,7 @@ class Router:
     def textMessage(self, event):
         """receive text message event"""
         profile = line_bot_api.get_profile(
-            app_service.req_user_id
+            app_service.req_user_line_id
         )
         user_use_cases.find_or_create_by_profile(profile)
         if event.source.type == 'room':
@@ -163,7 +163,7 @@ class Router:
         """routing by text on each mode"""
         """wait mode"""
         reply_service.add_message(
-            message_service.get_wait_massage(app_service.req_user_id))
+            message_service.get_wait_massage(app_service.req_user_line_id))
 
         """if zoom url, register to room"""
         if '.zoom.us' in text:
@@ -178,7 +178,7 @@ class Router:
         # exit
         elif method == UCommands.exit.name:
             user_use_cases.chmod(
-                app_service.req_user_id,
+                app_service.req_user_line_id,
                 user_use_cases.modes.wait
             )
         # payment
@@ -190,7 +190,7 @@ class Router:
         # fortune
         elif method == UCommands.fortune.name:
             reply_service.add_message(
-                f'あなたの今日のラッキー牌は「{message_service.get_random_hai(app_service.req_user_id)}」です。'
+                f'あなたの今日のラッキー牌は「{message_service.get_random_hai(app_service.req_user_line_id)}」です。'
             )
         # history
         elif method == UCommands.history.name:
@@ -213,7 +213,7 @@ class Router:
     def routing_for_room_by_text(self, event):
         """routing by text"""
         profile = line_bot_api.get_profile(
-            app_service.req_user_id
+            app_service.req_user_line_id
         )
         user_use_cases.find_or_create_by_profile(profile)
 
@@ -306,7 +306,7 @@ class Router:
         # fortune
         elif method == RCommands.fortune.name:
             reply_service.add_message(
-                f'{user_use_cases.get_name_by_user_id()}さんの今日のラッキー牌は「{message_service.get_random_hai(app_service.req_user_id)}」です。'
+                f'{user_use_cases.get_name_by_user_id()}さんの今日のラッキー牌は「{message_service.get_random_hai(app_service.req_user_line_id)}」です。'
             )
         # others menu
         elif method == RCommands.others.name:

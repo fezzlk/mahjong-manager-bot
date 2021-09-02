@@ -44,7 +44,7 @@ class PointsService:
                     calculate_use_cases.calculate(points)
                 return
         else:
-            target_user_id = app_service.req_user_id
+            target_user_id = app_service.req_user_line_id
             point = text.replace(',', '')
         isMinus = False
         if point[0] == '-':

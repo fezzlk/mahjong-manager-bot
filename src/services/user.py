@@ -19,6 +19,11 @@ class UserService:
     def __init__(self):
         self.modes = Modes
 
+    def find_by_user_id(self, user_id):
+        with session_scope() as session:
+            user = UsersRepository.find_by_user_id(session, user_id)
+            return user
+
     def delete_by_user_id(self, user_id):
         """delete"""
         with session_scope() as session:

@@ -33,7 +33,7 @@ class ConfigUseCases:
         if app_service.req_room_id is not None:
             target_id = app_service.req_room_id
         else:
-            target_id = app_service.req_user_id
+            target_id = app_service.req_user_line_id
 
         configs = config_service.get_by_target(target_id)
 
