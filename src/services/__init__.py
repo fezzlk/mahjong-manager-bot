@@ -5,6 +5,7 @@ from .config import ConfigService
 from .hanchans import HanchansService
 from .matches import MatchesService
 from .message import MessageService
+from .ocr import OcrService
 from .points import PointsService
 from .reply import ReplyService
 from .rich import RichMenuService
@@ -17,6 +18,7 @@ config_service = ConfigService()
 hanchans_service = HanchansService()
 matches_service = MatchesService()
 message_service = MessageService()
+ocr_service = OcrService()
 points_service = PointsService()
 reply_service = ReplyService()
 rich_menu_service = RichMenuService()
