@@ -6,8 +6,10 @@ from services import (
     hanchans_service,
     reply_service,
     user_service,
-    calculate_service,
     ocr_service,
+)
+from use_cases import (
+    calculate_use_cases,
 )
 
 
@@ -39,7 +41,7 @@ class PointsUseCases:
                     target_user_id)
                 self.reply()
                 if len(points) == 4:
-                    calculate_service.calculate(points)
+                    calculate_use_cases.calculate(points)
                 return
         else:
             target_user_id = app_service.req_user_id
@@ -51,7 +53,7 @@ class PointsUseCases:
 
         if not point.isdigit():
             reply_service.add_message(
-                '点数は整数で入力してください。全員分の点数入力を終えた場合は _calc と送信してください。（中断したい場合は _exit)')
+                '点数は整数で入力してください。（中断したい場合は _exit)')
             return
 
         if isMinus:
@@ -64,7 +66,7 @@ class PointsUseCases:
         self.reply()
 
         if len(points) == 4:
-            calculate_service.calculate(points)
+            calculate_use_cases.calculate(points)
         elif len(points) > 4:
             reply_service.add_message(
                 '5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
@@ -81,6 +83,8 @@ class PointsUseCases:
         if results is None:
             return
 
-        res_message = "\n".join([f'{user}: {(point//100)*100}' for user, point in results.items()])
+        res_message = "\n".join([
+            f'{user}: {(point//100)*100}' for user, point in results.items()
+        ])
         reply_service.add_message(res_message)
         reply_service.add_submit_results_by_ocr_menu(results)

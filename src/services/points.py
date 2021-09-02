@@ -6,8 +6,10 @@ from services import (
     hanchans_service,
     reply_service,
     user_service,
-    calculate_service,
     ocr_service,
+)
+from use_cases import (
+    calculate_use_cases,
 )
 
 
@@ -39,7 +41,7 @@ class PointsService:
                     target_user_id)
                 self.reply()
                 if len(points) == 4:
-                    calculate_service.calculate(points)
+                    calculate_use_cases.calculate(points)
                 return
         else:
             target_user_id = app_service.req_user_id
@@ -64,7 +66,7 @@ class PointsService:
         self.reply()
 
         if len(points) == 4:
-            calculate_service.calculate(points)
+            calculate_use_cases.calculate(points)
         elif len(points) > 4:
             reply_service.add_message(
                 '5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
