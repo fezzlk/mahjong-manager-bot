@@ -23,3 +23,6 @@ class IUserUseCases(ABC):
     def chmod(self, user_id: str, mode: str):
         pass
 
+    @abstractmethod
+    def reply_zoom_id(self):
+        pass
