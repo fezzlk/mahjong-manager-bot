@@ -11,6 +11,7 @@ from services import (
     config_service,
     hanchans_service,
     calculate_service,
+    message_service,
 )
 
 
@@ -70,19 +71,44 @@ class CalculateUseCases:
             tobashita_player_id=tobashita_player_id,
         )
 
+        room_id = app_service.req_room_id
+
         # その半荘の結果を更新
-        hanchans_service.update_result(calculate_result)
+        hanchans_service.update_converted_score(room_id, calculate_result)
 
         # 総合結果に半荘結果を追加
-        matches_service.add_result()
+        current_result = hanchans_service.get_current(room_id)
+        matches_service.add_result(room_id, current_result.id)
 
         # 結果の表示
-        hanchans_service.reply_current_result()
+        hanchan = hanchans_service.get_current(room_id)
+        converted_scores = json.loads(hanchan.converted_scores)
+        sum_hanchans = matches_service.get_sum_hanchans()
+        reply_service.add_message(
+            '一半荘お疲れ様でした。結果を表示します。'
+        )
+        reply_service.add_message(
+            '\n'.join([
+                f'{user_service.get_name_by_user_id(r[0])}: \
+                {"+" if r[1] > 0 else ""}{r[1]} \
+                ({"+" if sum_hanchans[r[0]] > 0 else ""}{sum_hanchans[r[0]]})'
+                for r in sorted(
+                    converted_scores.items(),
+                    key=lambda x:x[1],
+                    reverse=True
+                )
+            ])
+        )
+
+        reply_service.add_message(
+            message_service.get_hanchan_message()
+        )
 
         # 一半荘の結果をアーカイブ
-        hanchans_service.archive()
+        hanchans_service.archive(room_id)
 
         # ルームを待機モードにする
         room_service.chmod(
-            room_service.modes.wait
+            room_id,
+            room_service.modes.wait,
         )
