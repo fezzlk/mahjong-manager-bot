@@ -7,6 +7,7 @@ from .message import MessageUseCases
 from .ocr import OcrUseCases
 from .points import PointsUseCases
 from .room import RoomUseCases
+from .reply import ReplyUseCases
 from .user import UserUseCases
 
 calculate_use_cases = CalculateUseCases()
@@ -17,4 +18,5 @@ message_use_cases = MessageUseCases()
 ocr_use_cases = OcrUseCases()
 points_use_cases = PointsUseCases()
 room_use_cases = RoomUseCases()
+reply_use_cases = ReplyUseCases()
 user_use_cases = UserUseCases()

@@ -7,8 +7,8 @@ from server import logger, line_bot_api
 from services import (
     app_service,
     reply_service,
-    rich_menu_service,
     message_service,
+    room_service,
 )
 from use_cases import (
     user_use_cases,
@@ -19,6 +19,7 @@ from use_cases import (
     ocr_use_cases,
     matches_use_cases,
     hanchans_use_cases,
+    reply_use_case,
 )
 
 
@@ -171,9 +172,7 @@ class Router:
             reply_service.add_message('分析機能は開発中です。')
         # fortune
         elif method == UCommands.fortune.name:
-            reply_service.add_message(
-                f'あなたの今日のラッキー牌は「{message_service.get_random_hai(app_service.req_user_line_id)}」です。'
-            )
+            reply_use_case.reply_fortune()
         # history
         elif method == UCommands.history.name:
             reply_service.add_message('対戦履歴機能は開発中です。')
@@ -182,23 +181,13 @@ class Router:
             reply_service.add_message('個人設定機能は開発中です。')
         # help
         elif method == UCommands.help.name:
-            reply_service.add_message('使い方は明日書きます。')
-            reply_service.add_message(
-                '\n'.join(['_' + e.name for e in UCommands])
-            )
+            reply_use_case.reply_user_help(UCommands)
         # github
         elif method == UCommands.github.name:
-            reply_service.add_message(
-                'https://github.com/bbladr/mahjong-manager-bot'
-            )
+            reply_use_case.reply_github_url()
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
-        profile = line_bot_api.get_profile(
-            app_service.req_user_line_id
-        )
-        user_use_cases.find_or_create_by_profile(profile)
-
         text = event.message.text
         if (text[0] == '_') & (len(text) > 1):
             method = text[1:].split()[0]
@@ -213,26 +202,19 @@ class Router:
                 return
 
         """routing by text on each mode"""
-        current_mode = room_use_cases.get_mode()
+        room_id = app_service.req_room_id
+        current_mode = room_service.get_mode(room_id)
         """input mode"""
-        if current_mode == room_use_cases.modes.input.value:
+        if current_mode == room_service.modes.input.value:
             points_use_cases.add_by_text(text)
             return
 
         """wait mode"""
         """if text is result, add result"""
+
         rows = [r for r in text.split('\n') if ':' in r]
         if len(rows) == 4:
-            points = {}
-            for r in rows:
-                col = r.split(':')
-                points[
-                    user_use_cases.get_user_id_by_name(col[0])
-                ] = int(col[1])
-            hanchans_use_cases.add(points)
-            calculate_use_cases.calculate(
-                points
-            )
+            hanchans_use_cases.create_and_calculate_from_text_rows(rows)
 
         """if zoom url, register to room"""
         if '.zoom.us' in text:
@@ -242,31 +224,22 @@ class Router:
         """routing by method"""
         # start menu
         if method == RCommands.start.name:
-            reply_service.add_start_menu()
+            reply_use_case.add_start_menu()
         # input
         elif method == RCommands.input.name:
-            hanchans_use_cases.add()
-            room_use_cases.chmod(
-                room_use_cases.modes.input
-            )
+            room_use_cases.input_mode()
         # mode
         elif method == RCommands.mode.name:
-            mode = room_use_cases.get_mode()
-            reply_service.add_message(mode)
+            room_use_cases.reply_mode()
         # exit
         elif method == RCommands.exit.name:
-            room_use_cases.chmod(
-                room_use_cases.modes.wait
-            )
+            room_use_cases.wait_mode()
         # help
         elif method == RCommands.help.name:
-            reply_service.add_message('使い方は明日書きます。')
-            reply_service.add_message(
-                '\n'.join(['_' + e.name for e in RCommands]))
+            reply_use_case.reply_room_help()
         # setting
         elif method == RCommands.setting.name:
-            config_use_cases.reply()
-            reply_service.add_settings_menu(body)
+            config_use_cases.reply_menu(body)
         # reset
         elif method == RCommands.reset.name:
             room_use_cases.reset_points()
@@ -287,12 +260,10 @@ class Router:
             matches_use_cases.finish()
         # fortune
         elif method == RCommands.fortune.name:
-            reply_service.add_message(
-                f'{user_use_cases.get_name_by_user_id()}さんの今日のラッキー牌は「{message_service.get_random_hai(app_service.req_user_line_id)}」です。'
-            )
+            reply_use_case.reply_fortune()
         # others menu
         elif method == RCommands.others.name:
-            reply_service.add_others_menu()
+            reply_use_case.add_others_menu()
         # matches
         elif method == RCommands.matches.name:
             matches_use_cases.reply()
@@ -302,11 +273,7 @@ class Router:
                 tobashita_player_id=body)
         # add results
         elif method == RCommands.add_result.name:
-            points = json.loads(body)
-            hanchans_use_cases.add(points)
-            calculate_use_cases.calculate(
-                points
-            )
+            hanchans_use_cases.add_points(json.loads(body))
         # update config
         elif method == RCommands.update_config.name:
             key = body.split(' ')[0]
@@ -335,9 +302,9 @@ class Router:
                     ]
                 args.remove('to')
             matches_use_cases.reply_sum_matches_by_ids(args)
-        # graphs
-        elif method == RCommands.graph.name:
-            matches_use_cases.plot()
+        # # graphs
+        # elif method == RCommands.graph.name:
+        #     matches_use_cases.plot()
 
 
 # def parse_int_list(args):

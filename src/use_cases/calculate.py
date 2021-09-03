@@ -13,7 +13,7 @@ from services import (
     calculate_service,
     message_service,
 )
-
+from use_cases import room_use_cases
 
 class CalculateUseCases:
     """
@@ -108,7 +108,6 @@ class CalculateUseCases:
         hanchans_service.archive(room_id)
 
         # ルームを待機モードにする
-        room_service.chmod(
-            room_id,
+        room_use_cases.chmod(
             room_service.modes.wait,
         )

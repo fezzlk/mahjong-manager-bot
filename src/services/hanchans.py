@@ -90,8 +90,7 @@ class HanchansService:
 
             hanchan.raw_scores = json.dumps({})
 
-    # update_converted_score
-    def update_hanchan(self, room_id, calculated_hanchan):
+    def update_converted_score(self, room_id, calculated_result):
         with session_scope as session:
             hanchan = HanchansRepository.find_by_room_id_and_status(
                 session,
@@ -99,7 +98,7 @@ class HanchansService:
                 1
             )
 
-            hanchan.converted_scores = json.dumps(calculated_hanchan)
+            hanchan.converted_scores = json.dumps(calculated_result)
             logger.info(
                 f'update hanchan: id={hanchan.id}'
             )
@@ -119,6 +118,12 @@ class HanchansService:
             logger.info(
                 f'{STATUS_LIST[status]} hanchan: id={current.id}'
             )
+
+    def archive(self, room_id):
+        self.change_status(room_id, 2)
+
+    def disable(self, room_id):
+        self.change_status(room_id, 0)
 
     def get(self, ids=None):
         with session_scope as session:

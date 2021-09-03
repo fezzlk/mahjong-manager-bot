@@ -29,11 +29,6 @@ class MatchesUseCases:
 
         return current
 
-    def add_result(self):
-        room_id = app_service.req_room_id
-        current_result = hanchans_service.get_current(room_id)
-        matches_service.add_result(room_id, current_result.id)
-
     def drop_result_by_number(self, i):
         """drop result"""
 

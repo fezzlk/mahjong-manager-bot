@@ -1,6 +1,5 @@
 """room"""
 
-from enum import Enum
 from server import logger
 from services import (
     reply_service,
@@ -12,19 +11,8 @@ from services import (
 )
 
 
-class Modes(Enum):
-    """mode"""
-
-    wait = 'wait'
-    input = 'input'
-
-
 class RoomUseCases:
     """room use cases"""
-
-    def __init__(self):
-        # TODO: いる？
-        self.modes = Modes
 
     def join(self):
         """join event"""
@@ -37,26 +25,19 @@ class RoomUseCases:
             return
         room_service.find_or_create(room_id)
 
-    def register(self):
-        room_id = app_service.req_room_id
-        if room_id is None:
-            logger.warning('This request is not from room chat')
-            return
-        room_service.find_or_create(room_id)
-
     def chmod(self, mode):
         room_id = app_service.req_room_id
         updated_mode = room_service.chmod(room_id, mode)
         if updated_mode is None:
             return
 
-        if updated_mode == self.modes.input:
+        if updated_mode == room_service.modes.input:
             reply_service.add_message(
                 f'第{matches_service.count_results()+1}回戦お疲れ様です。各自点数を入力してください。\
                 \n（同点の場合は上家が高くなるように数点追加してください）')
             return
         else:
-            hanchans_service.disable()
+            hanchans_service.disable(room_id)
 
         if updated_mode == self.modes.wait:
             reply_service.add_message(
@@ -65,7 +46,12 @@ class RoomUseCases:
 
     def get_mode(self):
         room_id = app_service.req_room_id
-        room_service.get_mode(room_id)
+        return room_service.get_mode(room_id)
+
+    def reply_mode(self):
+        room_id = app_service.req_room_id
+        mode = room_service.get_mode(room_id)
+        reply_service.add_message(mode)
 
     def get(self, ids=None):
         room_service.get(ids)
@@ -103,3 +89,16 @@ class RoomUseCases:
             return
 
         reply_service.add_message(result_zoom_url)
+
+    def input_mode(self):
+        hanchans_use_cases.add()
+        self.chmod(
+            room_service.modes.input
+        )
+
+    def wait_mode(self):
+        room_id = app_service.req_room_id
+        room_service.chmod(
+            room_id,
+            room_service.modes.input,
+        )

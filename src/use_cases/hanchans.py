@@ -10,6 +10,7 @@ from services import (
     config_service,
     hanchans_service,
 )
+from use_cases import calculate_use_cases, user_use_cases
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
@@ -29,31 +30,6 @@ class HanchansUseCases:
         hanchans_service.delete_by_id(room_id, target_id)
         reply_service.add_message(
             f'id={target_id}の結果を削除しました。'
-        )
-
-    def reply_current_hanchan(self):
-        room_id = app_service.req_room_id
-        hanchan = hanchans_service.get_current(room_id)
-        converted_scores = json.loads(hanchan.converted_scores)
-        sum_hanchans = matches_service.get_sum_hanchans()
-        reply_service.add_message(
-            '一半荘お疲れ様でした。結果を表示します。'
-        )
-        reply_service.add_message(
-            '\n'.join([
-                f'{user_service.get_name_by_user_id(r[0])}: \
-                {"+" if r[1] > 0 else ""}{r[1]} \
-                ({"+" if sum_hanchans[r[0]] > 0 else ""}{sum_hanchans[r[0]]})'
-                for r in sorted(
-                    converted_scores.items(),
-                    key=lambda x:x[1],
-                    reverse=True
-                )
-            ])
-        )
-
-        reply_service.add_message(
-            message_service.get_hanchan_message()
         )
 
     def get_sum_hanchan_by_ids(self, ids):
@@ -157,19 +133,6 @@ class HanchansUseCases:
         room_id = app_service.req_room_id
         hanchans_service.reset_raw_scores(room_id)
 
-    # update_converted_score
-    def update_hanchan(self, calculated_hanchan):
-        room_id = app_service.req_room_id
-        hanchans_service.update_hanchan(room_id, calculated_hanchan)
-
-    def archive(self):
-        room_id = app_service.req_room_id
-        self.change_status(room_id, 2)
-
-    def disable(self):
-        room_id = app_service.req_room_id
-        self.change_status(room_id, 0)
-
     def get(self, ids=None):
         return hanchans_service.get(ids)
 
@@ -201,3 +164,21 @@ class HanchansUseCases:
                     new_converted_scores[user_id] = v
 
                 t.converted_scores = json.dumps(new_converted_scores)
+
+    def create_and_calculate_from_text_rows(self, text_rows):
+        points = {}
+        for r in text_rows:
+            col = r.split(':')
+            points[
+                user_use_cases.get_user_id_by_name(col[0])
+            ] = int(col[1])
+        self.add(points)
+        calculate_use_cases.calculate(
+            points
+        )
+
+    def add_points(self, points):
+        self.add(points)
+        calculate_use_cases.calculate(
+            points
+        )

@@ -51,3 +51,7 @@ class ConfigUseCases:
 
     def delete(self, ids):
         config_service.delete(ids)
+
+    def reply_menu(self, body):
+        self.reply()
+        reply_service.add_settings_menu(body)
