@@ -70,7 +70,7 @@ class RoomUseCases:
                 return
 
             zoom_url = user.zoom_id
-        
+
         room_id = app_service.req_room_id
         result_zoom_url = room_service.set_zoom_url(room_id, zoom_url)
 
