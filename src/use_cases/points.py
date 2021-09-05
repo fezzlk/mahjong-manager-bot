@@ -6,7 +6,7 @@ from services import (
     hanchans_service,
     reply_service,
     user_service,
-    ocr_service,
+    points_service,
 )
 from use_cases import (
     calculate_use_cases,
@@ -27,16 +27,20 @@ class PointsUseCases:
             reply_service.add_message(
                 '点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
             return
-        res = [f'{user_service.get_name_by_user_id(user_id)}: {point}' for user_id, point in points.items()]
+        res = [
+            f'{user_service.get_name_by_user_id(user_id)}: {point}' for user_id, point in points.items()
+        ]
         reply_service.add_message("\n".join(res))
 
     def add_by_text(self, text):
         if text[0] == '@':
-            point, target_user = self.get_point_with_target_user(text[1:])
+            point, target_user = points_service.get_point_and_name_from_text(
+                text[1:]
+            )
             target_user_id = user_service.get_user_id_by_name(
                 target_user
             )
-            point = point.replace(',', '')
+
             if point == 'delete':
                 points = hanchans_service.drop_point(
                     target_user_id)
@@ -46,7 +50,11 @@ class PointsUseCases:
                 return
         else:
             target_user_id = app_service.req_user_line_id
-            point = text.replace(',', '')
+            point = text
+
+        point = point.replace(',', '')
+
+        # 入力した点数のバリデート（hack: '-' を含む場合数値として判断できないため一旦エスケープ）
         isMinus = False
         if point[0] == '-':
             point = point[1:]
@@ -71,10 +79,3 @@ class PointsUseCases:
         elif len(points) > 4:
             reply_service.add_message(
                 '5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
-
-    def get_point_with_target_user(self, text):
-        s = text.split()
-        if len(s) >= 2:
-            return s[-1], ' '.join(s[:-1])
-        elif len(s) == 1:
-            return 'delete', s[0]
