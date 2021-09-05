@@ -1,8 +1,5 @@
 """matches"""
 
-from repositories import session_scope
-from repositories.matches import MatchesRepository
-
 import json
 from server import logger
 from services import (
@@ -134,7 +131,7 @@ class MatchesUseCases:
         # room_id = 'R808c3c802d36f386290630fc6ba10f0c'
         # matches = session\
         # .query(Matches).filter(and_(
-        ## Matches.status == 2,
+        # Matches.status == 2,
         # Matches.room_id == room_id,
         # )).order_by(Matches.id.desc())\
         # .all()
