@@ -7,9 +7,8 @@ from server import logger, line_bot_api
 from services import (
     app_service,
     reply_service,
-    rich_menu_service,
-    ocr_service,
     message_service,
+    room_service,
 )
 from use_cases import (
     user_use_cases,
@@ -17,6 +16,7 @@ from use_cases import (
     points_use_cases,
     calculate_use_cases,
     config_use_cases,
+    ocr_use_cases,
     matches_use_cases,
     hanchans_use_cases,
 )
@@ -79,12 +79,12 @@ class Router:
                 elif event.message.type == 'image':
                     self.imageMessage(event)
             elif event.type == 'follow':
-                self.follow(event)
+                user_use_cases.follow()
             elif event.type == 'unfollow':
-                self.unfollow(event)
+                user_use_cases.unfollow()
                 isEnabledReply = False
             elif event.type == 'join':
-                self.join(event)
+                room_use_cases.join()
             elif event.type == 'postback':
                 self.postback(event)
 
@@ -96,37 +96,15 @@ class Router:
             reply_service.reply(event)
         app_service.delete_req_info()
 
-    def follow(self, event):
-        """follow event"""
-        user = user_use_cases.register()
-        reply_service.add_message(
-            f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
-            {user.name}さんの快適な麻雀生活をサポートします。')
-        rich_menu_service.create_and_link(app_service.req_user_id)
-
-    def unfollow(self, event):
-        """unfollow event"""
-        user_use_cases.delete_by_user_id(
-            app_service.req_user_id
-        )
-
-    def join(self, event):
-        """join event"""
-        reply_service.add_message(
-            'こんにちは、今日は麻雀日和ですね。'
-        )
-        room_use_cases.register()
-
     def textMessage(self, event):
         """receive text message event"""
-        user_use_cases.register()
         if event.source.type == 'room':
             self.routing_for_room_by_text(event)
         elif event.source.type == 'user':
             self.routing_by_text(event)
         else:
             logger.info(
-                f'message.source.type: {event.source.type}'
+                f'error: message.source.type: {event.source.type}'
             )
             raise BaseException('this sender is not supported')
 
@@ -136,14 +114,7 @@ class Router:
             message_content = line_bot_api.get_message_content(
                 event.message.id
             )
-            ocr_service.run(message_content.content)
-            if ocr_service.isResultImage():
-                points_use_cases.add_by_ocr()
-            else:
-                logger.warning(
-                    'this image is not result of jantama'
-                )
-            ocr_service.delete_result()
+            ocr_use_cases.input_result_from_image(message_content.content)
 
     def postback(self, event):
         """postback event"""
@@ -174,7 +145,7 @@ class Router:
         """routing by text on each mode"""
         """wait mode"""
         reply_service.add_message(
-            message_service.get_wait_massage(app_service.req_user_id))
+            message_service.get_wait_massage(app_service.req_user_line_id))
 
         """if zoom url, register to room"""
         if '.zoom.us' in text:
@@ -189,6 +160,7 @@ class Router:
         # exit
         elif method == UCommands.exit.name:
             user_use_cases.chmod(
+                app_service.req_user_line_id,
                 user_use_cases.modes.wait
             )
         # payment
@@ -199,9 +171,7 @@ class Router:
             reply_service.add_message('分析機能は開発中です。')
         # fortune
         elif method == UCommands.fortune.name:
-            reply_service.add_message(
-                f'あなたの今日のラッキー牌は「{message_service.get_random_hai(app_service.req_user_id)}」です。'
-            )
+            reply_use_case.reply_fortune()
         # history
         elif method == UCommands.history.name:
             reply_service.add_message('対戦履歴機能は開発中です。')
@@ -210,20 +180,13 @@ class Router:
             reply_service.add_message('個人設定機能は開発中です。')
         # help
         elif method == UCommands.help.name:
-            reply_service.add_message('使い方は明日書きます。')
-            reply_service.add_message(
-                '\n'.join(['_' + e.name for e in UCommands])
-            )
+            reply_use_case.reply_user_help(UCommands)
         # github
         elif method == UCommands.github.name:
-            reply_service.add_message(
-                'https://github.com/bbladr/mahjong-manager-bot'
-            )
+            reply_use_case.reply_github_url()
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
-        user_use_cases.register()
-
         text = event.message.text
         if (text[0] == '_') & (len(text) > 1):
             method = text[1:].split()[0]
@@ -238,14 +201,23 @@ class Router:
                 return
 
         """routing by text on each mode"""
-        current_mode = room_use_cases.get_mode()
+        room_id = app_service.req_room_id
+        current_mode = room_service.get_mode(room_id)
         """input mode"""
-        if current_mode == room_use_cases.modes.input.value:
-            points_use_cases.add_by_text(text)
+        if current_mode == room_service.modes.input.value:
+            points = points_use_cases.add_by_text(text)
+            points_use_cases.reply()
+            if len(points) == 4:
+                calculate_use_cases.calculate(points)
+            elif len(points) > 4:
+                reply_service.add_message(
+                    '5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
+
             return
 
         """wait mode"""
         """if text is result, add result"""
+
         rows = [r for r in text.split('\n') if ':' in r]
         if len(rows) == 4:
             points = {}
@@ -267,31 +239,22 @@ class Router:
         """routing by method"""
         # start menu
         if method == RCommands.start.name:
-            reply_service.add_start_menu()
+            reply_use_case.add_start_menu()
         # input
         elif method == RCommands.input.name:
-            hanchans_use_cases.add()
-            room_use_cases.chmod(
-                room_use_cases.modes.input
-            )
+            room_use_cases.input_mode()
         # mode
         elif method == RCommands.mode.name:
-            mode = room_use_cases.get_mode()
-            reply_service.add_message(mode)
+            room_use_cases.reply_mode()
         # exit
         elif method == RCommands.exit.name:
-            room_use_cases.chmod(
-                room_use_cases.modes.wait
-            )
+            room_use_cases.wait_mode()
         # help
         elif method == RCommands.help.name:
-            reply_service.add_message('使い方は明日書きます。')
-            reply_service.add_message(
-                '\n'.join(['_' + e.name for e in RCommands]))
+            reply_use_case.reply_room_help()
         # setting
         elif method == RCommands.setting.name:
-            config_use_cases.reply()
-            reply_service.add_settings_menu(body)
+            config_use_cases.reply_menu(body)
         # reset
         elif method == RCommands.reset.name:
             room_use_cases.reset_points()
@@ -312,12 +275,10 @@ class Router:
             matches_use_cases.finish()
         # fortune
         elif method == RCommands.fortune.name:
-            reply_service.add_message(
-                f'{user_use_cases.get_name_by_user_id()}さんの今日のラッキー牌は「{message_service.get_random_hai(app_service.req_user_id)}」です。'
-            )
+            reply_use_case.reply_fortune()
         # others menu
         elif method == RCommands.others.name:
-            reply_service.add_others_menu()
+            reply_use_case.add_others_menu()
         # matches
         elif method == RCommands.matches.name:
             matches_use_cases.reply()
@@ -360,9 +321,9 @@ class Router:
                     ]
                 args.remove('to')
             matches_use_cases.reply_sum_matches_by_ids(args)
-        # graphs
-        elif method == RCommands.graph.name:
-            matches_use_cases.plot()
+        # # graphs
+        # elif method == RCommands.graph.name:
+        #     matches_use_cases.plot()
 
 
 # def parse_int_list(args):

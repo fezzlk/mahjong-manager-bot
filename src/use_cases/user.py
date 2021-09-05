@@ -1,10 +1,13 @@
 """user"""
 
 from enum import Enum
-from repositories import session_scope
-from repositories.users import UsersRepository
-from server import logger, line_bot_api
-from services import app_service
+from server import line_bot_api
+from services import (
+    app_service,
+    user_service,
+    reply_service,
+    rich_menu_service,
+)
 
 
 class Modes(Enum):
@@ -19,145 +22,65 @@ class UserUseCases:
     def __init__(self):
         self.modes = Modes
 
-    def register(self):
-        """register"""
-        profile = line_bot_api.get_profile(
-            app_service.req_user_id
-        )
-
-        with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, profile.user_id)
-
-        if target is None:
-            target = self.create(profile.display_name, profile.user_id)
-
-        return target
-
-    def get_name_by_user_id(self, user_id=None):
-        if user_id is None:
-            user_id = self.services.app_service.req_user_id
-
-        try:
-            profile = line_bot_api.get_profile(
-                user_id)
-
-            return profile.display_name
-
-        except Exception:
-            with session_scope() as session:
-                target = UsersRepository.find_by_user_id(session, user_id)
-
-                if target is None:
-                    logger.warning(f'user({user_id}) is not found')
-                    return user_id
-                else:
-                    return target.name
-
-    def get_user_id_by_name(self, name):
-        with session_scope() as session:
-            target = UsersRepository.find_by_name(session, name)
-
-            if target is None:
-                logger.warning(f'user({name}) is not found')
-                return name
-
-            return target.user_id
-
-    def delete_by_user_id(self, user_id):
-        """delete"""
-        with session_scope() as session:
-            UsersRepository.delete_by_user_id(session, user_id)
-
-        logger.info(f'delete: {user_id}')
-
-    def chmod(self, mode):
-        user_id = self.services.app_service.req_user_id
-        if mode not in self.modes:
-            raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
-
-        with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, user_id)
-
-            if target is None:
-                logger.warning(f'user is not found: {user_id}')
-                self.services.reply_service.add_message(
-                    'ユーザーを認識できませんでした。当アカウントをブロック、ブロック解除してください'
-                )
-
-            target.mode = mode.value
-
-        logger.info(f'chmod: {user_id}: {mode}')
-
-    def get_mode(self):
-        user_id = self.services.app_service.req_user_id
-        with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, user_id)
-
-            if target is None:
-                logger.warning(f'user is not found: {user_id}')
-                self.services.reply_service.add_message(
-                    'ユーザーを認識できませんでした。当アカウントを一度ブロックし、ブロック解除してください'
-                )
-                return
-
-            return target.mode
-
-    def reply_mode(self):
-        self.services.reply_service.add_message(self.get_mode())
-
-    def get(self, ids=None):
-        with session_scope() as session:
-            if ids is None:
-                return UsersRepository.find_all(session)
-
-            return UsersRepository.find_by_ids(session, ids)
-
-    def delete(self, ids):
-        with session_scope() as session:
-            UsersRepository.delete_by_ids(session, ids)
-
-        logger.info(f'delete: id={ids}')
+    def get(self):
+        """web"""
+        user_service.get()
 
     def create(self, name, user_id):
-        with session_scope() as session:
-            new_user = UsersRepository.create(
-                session,
-                name,
-                user_id,
-                self.modes.wait.value
+        """web"""
+        user_service.create(name, user_id)
+
+    def delete(self, ids):
+        """web"""
+        user_service.delete(ids)
+
+    def follow(self):
+        """follow event"""
+        profile = line_bot_api.get_profile(
+            app_service.req_user_line_id
+        )
+        user = user_service.find_or_create_by_profile(profile)
+        reply_service.add_message(
+            f'こんにちは。\n麻雀対戦結果自動管理アカウントである Mahjong Manager は\
+            {user.name}さんの快適な麻雀生活をサポートします。')
+        rich_menu_service.create_and_link(app_service.req_user_line_id)
+
+    def unfollow(self):
+        """unfollow event"""
+        user_service.delete_by_user_id(
+            app_service.req_user_line_id
+        )
+
+    def reply_mode(self):
+        user_id = app_service.req_user_line_id
+        mode = user_service.get_mode(user_id)
+        if mode is None:
+            reply_service.add_message(
+                'ユーザーを認識できませんでした。当アカウントを一度ブロックし、ブロック解除してください。'
             )
-            logger.info(f'create: {new_user.user_id} {new_user.name}')
-            return new_user
+            return
+        reply_service.add_message(mode)
+
+    def chmod(self, user_id, mode):
+        user_service.chmod(user_id, mode)
 
     def set_zoom_id(self, zoom_id):
-        user_id = self.services.app_service.req_user_id
-        with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, user_id)
+        user_id = app_service.req_user_line_id
+        result = user_service(user_id, zoom_id)
 
-            if target is None:
-                logger.warning(f'set_zoom_url: user "{user_id}" is not found')
-                return
-
-            target.zoom_id = zoom_id
-
-            logger.info(f'set_user_url: {zoom_id} to {user_id}')
+        if result is None:
             self.services.reply_service.add_message(
-                'Zoom URL を登録しました。\nトークルームにて「_my_zoom」で呼び出すことができます。')
+                'Zoom URL の登録に失敗しました。')
+            return
+
+        self.services.reply_service.add_message(
+            'Zoom URL を登録しました。\nトークルームにて「_my_zoom」で呼び出すことができます。')
 
     def reply_zoom_id(self):
-        user_id = self.services.app_service.req_user_id
-
-        with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, user_id)
-
-            if target is None:
-                logger.warning(f'user_services: user "{user_id}" is not found')
-                return
-
-            if target.zoom_id is None:
-                self.services.reply_service.add_message(
-                    'Zoom URL が登録されていません。個人チャットの設定から登録してください。')
-                return
-
-            self.services.reply_service.add_message(target.zoom_id)
+        user_id = app_service.req_user_line_id
+        zoom_id = user_service.get_zoom_id(user_id)
+        if zoom_id is None:
+            self.services.reply_service.add_message(
+                'Zoom URL を取得できませんでした。')
             return
+        self.services.reply_service.add_message(zoom_id)

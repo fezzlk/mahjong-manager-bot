@@ -2,7 +2,10 @@
 api
 """
 
-from server import app, services
+from server import app
+from use_cases import (
+    hanchans_use_cases,
+)
 from db_setting import Engine
 from models import Results
 
@@ -15,7 +18,7 @@ def api_get_results():
         data: results list
     """
     Results.get_json(Engine)
-    data = services.results_service.get()
+    data = hanchans_use_cases.get()
     print(data)
     print(type(data))
     return data

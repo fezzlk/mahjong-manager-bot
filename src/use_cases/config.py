@@ -1,11 +1,9 @@
 """config"""
 
-from repositories import session_scope
-from repositories.configs import ConfigsRepository
-from server import logger
 from services import (
     app_service,
     reply_service,
+    config_service,
 )
 
 DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10', '-20']),
@@ -16,101 +14,44 @@ DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10'
 class ConfigUseCases:
     """config use cases"""
 
-    """
-    get all configs by ids
-    """
-    def get(self, ids=None):
-        # config.id を指定してなければ全ての config を取得
-        if ids is None:
-            with session_scope() as session:
-                return ConfigsRepository.find_all(session)
-
-        # id に合致する config を取得
-        with session_scope() as session:
-            return ConfigsRepository.find_by_ids(session, ids)
-
-        """key を元にリクエスト元ルームの config を返す
-        """
     def get_by_key(self, key):
+        """
+        key を元にリクエスト元ルームの config を返す
+        """
         # リクエスト元ルームIDの取得
         target_id = app_service.req_room_id
 
-        # デフォルトから変更されている config の取得
-        with session_scope() as session:
-            config = ConfigsRepository.find(session, target_id, key)
-
-        # 上記の結果何も返ってこなければデフォルトの config を返す
-        if config is None:
-            return DEFAULT_CONFIGS[key]
-
         # 取得した config を返す
-        return config.value
+        return config_service.get_by_key(target_id, key)
 
-        """リクエスト元(ユーザーorルーム)の全ての config を返す
+    def reply(self):
         """
-    def get_by_target(self):
+        リクエスト元(ユーザーorルーム)の全ての config を返信
+        """
+
         # リクエスト元ルームIDの取得（ルームからのリクエストでなければユーザーID)
         if app_service.req_room_id is not None:
             target_id = app_service.req_room_id
         else:
-            target_id = app_service.req_user_id
+            target_id = app_service.req_user_line_id
 
-        # デフォルト config から変更されている config を取得
-        with session_scope() as session:
-            customized_configs = ConfigsRepository.find_by_target_id(
-                session,
-                target_id
-            )
-
-            # デフォルト config をセット
-            configs = DEFAULT_CONFIGS
-
-            # 変更項目を更新
-            for customized_config in customized_configs:
-                configs[customized_config.key] = customized_config.value
-
-        return configs
-
-        """返信
-        """
-    def reply(self):
-        # 取得
-        configs = self.get_by_target()
+        configs = config_service.get_by_target(target_id)
 
         # 返信メッセージ用に変換&返信
         s = [f'{key}: {str(value)}' for key, value in configs.items()]
         reply_service.add_message('[設定]\n' + '\n'.join(s))
 
-        """更新
-        args:
-            key: config 名
-            value: 値
-        """
     def update(self, key, value):
-        # リクエスト元のルームIDの取得
+        """
+        リクエスト元のルームの設定更新
+        """
         target_id = app_service.req_room_id
-
-        with session_scope() as session:
-            # 既存の変更の削除
-            ConfigsRepository.delete(session, target_id, key)
-
-            # リクエストの value がデフォルト値と異なる場合はレコードを作成
-            if value != DEFAULT_CONFIGS[key]:
-                ConfigsRepository.create(session, target_id, key, value)
-
-        logger.info(
-            f'update:{key}:{value}:{target_id}'
-        )
+        config_service.update(target_id, key, value)
         reply_service.add_message(f'{key}を{value}に変更しました。')
 
-    """delete by id
-    """
     def delete(self, ids):
-        # 配列にサニタイズ
-        if type(ids) != list:
-            ids = [ids]
+        config_service.delete(ids)
 
-        with session_scope() as session:
-            ConfigsRepository.delete_by_ids(session, ids)
-
-        logger.info(f'delete: id={ids}')
+    def reply_menu(self, body):
+        self.reply()
+        reply_service.add_settings_menu(body)

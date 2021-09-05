@@ -8,7 +8,7 @@ from server import logger
 
 
 class OcrService:
-    """ocr service"""
+    """OCR Service"""
 
     def __init__(self):
         self.result = None

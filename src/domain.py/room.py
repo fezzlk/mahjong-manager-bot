@@ -8,5 +8,5 @@ class Room:
     id: int
     room_id: str
     zoom_url: str
-    mode: Column
+    mode: str
     users: [User]
