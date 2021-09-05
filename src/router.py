@@ -215,7 +215,7 @@ class Router:
         rows = [r for r in text.split('\n') if ':' in r]
         if len(rows) == 4:
             points = {}
-            for r in text_rows:
+            for r in rows:
                 col = r.split(':')
                 points[
                     user_use_cases.get_user_id_by_name(col[0])
