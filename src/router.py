@@ -206,7 +206,14 @@ class Router:
         current_mode = room_service.get_mode(room_id)
         """input mode"""
         if current_mode == room_service.modes.input.value:
-            points_use_cases.add_by_text(text)
+            points = points_use_cases.add_by_text(text)
+            points_use_cases.reply()
+            if len(points) == 4:
+                calculate_use_cases.calculate(points)
+            elif len(points) > 4:
+                reply_service.add_message(
+                    '5人以上入力されています。@{ユーザー名} で不要な入力を消してください。')
+
             return
 
         """wait mode"""
