@@ -40,12 +40,11 @@ class RCommands(Enum):
     """Commands for room"""
 
     start = 'start'
-    exit = 'exit'
+    exit = 'exit'  # danger(入力中の半荘データが disabled になる)
     input = 'input'
     mode = 'mode'
     help = 'help'
     setting = 'setting'
-    reset = 'reset'
     results = 'results'
     finish = 'finish'
     fortune = 'fortune'
@@ -255,9 +254,6 @@ class Router:
         # setting
         elif method == RCommands.setting.name:
             config_use_cases.reply_menu(body)
-        # reset
-        elif method == RCommands.reset.name:
-            room_use_cases.reset_points()
         # results
         elif method == RCommands.results.name:
             room_use_cases.reply_sum_results()
