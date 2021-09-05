@@ -27,7 +27,7 @@ class ReplyUseCases:
             '\n'.join(['_' + e.name for e in UCommands])
         )
 
-    def reply_room_help(self, UCommands):
+    def reply_room_help(self, RCommands):
         reply_service.add_message('使い方は明日書きます。')
         reply_service.add_message(
             '\n'.join(['_' + e.name for e in RCommands]))
