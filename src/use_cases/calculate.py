@@ -15,6 +15,7 @@ from services import (
 )
 from use_cases import room_use_cases
 
+
 class CalculateUseCases:
     """
     calculate points
@@ -54,7 +55,8 @@ class CalculateUseCases:
             return
 
         # 飛び賞が発生し、飛ばしたプレイヤーが未指定の場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
-        if (any(x < 0 for x in points.values())) & (tobashita_player_id is None):
+        if (any(x < 0 for x in points.values())) & (
+                tobashita_player_id is None):
             reply_service.add_tobi_menu([
                 {'id': p_id, 'name': user_service.get_name_by_user_id(p_id), }
                 for p_id in points.keys() if points[p_id] > 0
@@ -64,12 +66,12 @@ class CalculateUseCases:
         # config の取得(by target で撮っちゃって良い)
         # 計算の実行
         calculate_result = calculate_service.calculate(
-            points=points,
-            ranking_prize=[int(s) for s in config_service.get_by_key(room_id, '順位点').split(',')],
-            tobi_prize=int(config_service.get_by_key(room_id, '飛び賞')),
-            rounding_method=config_service.get_by_key(room_id, '端数計算方法'),
-            tobashita_player_id=tobashita_player_id,
-        )
+            points=points, ranking_prize=[
+                int(s) for s in config_service.get_by_key(
+                    room_id, '順位点').split(',')], tobi_prize=int(
+                config_service.get_by_key(
+                    room_id, '飛び賞')), rounding_method=config_service.get_by_key(
+                        room_id, '端数計算方法'), tobashita_player_id=tobashita_player_id, )
 
         room_id = app_service.req_room_id
 
@@ -108,6 +110,8 @@ class CalculateUseCases:
         hanchans_service.archive(room_id)
 
         # ルームを待機モードにする
-        room_use_cases.chmod(
-            room_service.modes.wait,
-        )
+        room_service.chmod(room_id, room_service.modes.wait)
+
+        reply_service.add_message(
+            '始める時は「_start」と入力してください。')
+        return

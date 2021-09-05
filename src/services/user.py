@@ -4,7 +4,6 @@ from enum import Enum
 from repositories import session_scope
 from repositories.users import UsersRepository
 from server import logger, line_bot_api
-from services import app_service
 
 
 class Modes(Enum):
