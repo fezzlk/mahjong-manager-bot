@@ -90,12 +90,6 @@ class RoomUseCases:
 
         reply_service.add_message(result_zoom_url)
 
-    def input_mode(self):
-        hanchans_use_cases.add()
-        self.chmod(
-            room_service.modes.input
-        )
-
     def wait_mode(self):
         room_id = app_service.req_room_id
         room_service.chmod(

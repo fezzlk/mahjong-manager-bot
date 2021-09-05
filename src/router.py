@@ -19,6 +19,7 @@ from use_cases import (
     ocr_use_cases,
     matches_use_cases,
     hanchans_use_cases,
+    reply_use_cases,
 )
 
 
@@ -170,7 +171,7 @@ class Router:
             reply_service.add_message('分析機能は開発中です。')
         # fortune
         elif method == UCommands.fortune.name:
-            reply_use_case.reply_fortune()
+            reply_use_cases.reply_fortune()
         # history
         elif method == UCommands.history.name:
             reply_service.add_message('対戦履歴機能は開発中です。')
@@ -179,10 +180,10 @@ class Router:
             reply_service.add_message('個人設定機能は開発中です。')
         # help
         elif method == UCommands.help.name:
-            reply_use_case.reply_user_help(UCommands)
+            reply_use_cases.reply_user_help(UCommands)
         # github
         elif method == UCommands.github.name:
-            reply_use_case.reply_github_url()
+            reply_use_cases.reply_github_url()
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
@@ -238,10 +239,13 @@ class Router:
         """routing by method"""
         # start menu
         if method == RCommands.start.name:
-            reply_use_case.add_start_menu()
+            reply_use_cases.add_start_menu()
         # input
         elif method == RCommands.input.name:
-            room_use_cases.input_mode()
+            hanchans_use_cases.add()
+            room_use_cases.chmod(
+                room_service.modes.input
+            )
         # mode
         elif method == RCommands.mode.name:
             room_use_cases.reply_mode()
@@ -250,7 +254,7 @@ class Router:
             room_use_cases.wait_mode()
         # help
         elif method == RCommands.help.name:
-            reply_use_case.reply_room_help()
+            reply_use_cases.reply_room_help()
         # setting
         elif method == RCommands.setting.name:
             config_use_cases.reply_menu(body)
@@ -271,10 +275,10 @@ class Router:
             matches_use_cases.finish()
         # fortune
         elif method == RCommands.fortune.name:
-            reply_use_case.reply_fortune()
+            reply_use_cases.reply_fortune()
         # others menu
         elif method == RCommands.others.name:
-            reply_use_case.add_others_menu()
+            reply_use_cases.add_others_menu()
         # matches
         elif method == RCommands.matches.name:
             matches_use_cases.reply()
