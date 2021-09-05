@@ -54,7 +54,7 @@ class MatchesUseCases:
                 return
             match = matches_service.get_current()
         else:
-            match = MatchesRepository.get(match_id)
+            match = matches_service.get(match_id)
 
         hanchans_service.reply_by_ids(
             json.loads(match.result_ids),
