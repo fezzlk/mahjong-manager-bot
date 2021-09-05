@@ -214,7 +214,16 @@ class Router:
 
         rows = [r for r in text.split('\n') if ':' in r]
         if len(rows) == 4:
-            hanchans_use_cases.create_and_calculate_from_text_rows(rows)
+            points = {}
+            for r in text_rows:
+                col = r.split(':')
+                points[
+                    user_use_cases.get_user_id_by_name(col[0])
+                ] = int(col[1])
+            hanchans_use_cases.add(points)
+            calculate_use_cases.calculate(
+                points
+            )
 
         """if zoom url, register to room"""
         if '.zoom.us' in text:
@@ -273,7 +282,11 @@ class Router:
                 tobashita_player_id=body)
         # add results
         elif method == RCommands.add_result.name:
-            hanchans_use_cases.add_points(json.loads(body))
+            points = json.loads(body)
+            hanchans_use_cases.add(points)
+            calculate_use_cases.calculate(
+                points
+            )
         # update config
         elif method == RCommands.update_config.name:
             key = body.split(' ')[0]

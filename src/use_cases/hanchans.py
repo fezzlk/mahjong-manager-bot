@@ -164,21 +164,3 @@ class HanchansUseCases:
                     new_converted_scores[user_id] = v
 
                 t.converted_scores = json.dumps(new_converted_scores)
-
-    def create_and_calculate_from_text_rows(self, text_rows):
-        points = {}
-        for r in text_rows:
-            col = r.split(':')
-            points[
-                user_use_cases.get_user_id_by_name(col[0])
-            ] = int(col[1])
-        self.add(points)
-        calculate_use_cases.calculate(
-            points
-        )
-
-    def add_points(self, points):
-        self.add(points)
-        calculate_use_cases.calculate(
-            points
-        )
