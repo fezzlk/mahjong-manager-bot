@@ -5,12 +5,6 @@ from repositories.matches import MatchesRepository
 
 import json
 from server import logger
-from services import (
-    app_service,
-    hanchans_service,
-    reply_service,
-
-)
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
@@ -42,16 +36,12 @@ class MatchesService:
 
         logger.info(f'update result of match: id={current_match.id}')
 
-    def drop_result_by_number(self, i):
-        """drop result"""
+    def update_hanchan_ids(self, result_ids):
         with session_scope():
             current = self.get_current()
-            result_ids = json.loads(current.result_ids)
-            hanchans_service.delete_by_id(result_ids[i - 1])
-            result_ids.pop(i - 1)
             current.result_ids = json.dumps(result_ids)
             logger.info(
-                f'delete result: match_id={current.id} result_id={i-1}'
+                f'update hanchan ids of match: match_id={current.id}'
             )
 
     def count_results(self):

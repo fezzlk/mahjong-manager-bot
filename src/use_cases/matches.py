@@ -37,8 +37,11 @@ class MatchesUseCases:
                 'まだ対戦結果がありません。'
             )
             return
-
-        matches_service.drop_result_by_number(i)
+        current = matches_service.get_current()
+        result_ids = json.loads(current.result_ids)
+        hanchans_service.delete_by_id(result_ids[i - 1])
+        result_ids.pop(i - 1)
+        matches_service.update_hanchan_ids(result_ids)
 
     def get_sum_results(self):
         current = matches_service.get_current()
@@ -89,7 +92,7 @@ class MatchesUseCases:
                 json.loads(match.result_ids),
                 match.id,
                 is_required_sum=False,
-                date=match.created_at.strftime('%Y-%m-%d')+'\n'
+                date=match.created_at.strftime('%Y-%m-%d') + '\n'
             )
 
     def get(self, target_ids=None):
