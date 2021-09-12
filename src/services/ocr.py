@@ -1,3 +1,4 @@
+# flake8: noqa: C901
 """ocr"""
 
 import json
@@ -19,8 +20,7 @@ class OcrService:
                 credentials_raw, strict=False
             )
             credentials = service_account.Credentials.from_service_account_info(
-                service_account_info
-            )
+                service_account_info)
             self.client = vision.ImageAnnotatorClient(credentials=credentials)
 
     def isResultImage(self):
@@ -129,7 +129,8 @@ class OcrService:
             for i in range(4):
                 range_x = target_x[i]
                 range_y = target_y[i]
-                if (x >= range_x[0]) & (x <= range_x[1]) & (y >= range_y[0]) & (y <= range_y[1]):
+                if (x >= range_x[0]) & (x <= range_x[1]) & (
+                        y >= range_y[0]) & (y <= range_y[1]):
                     target_name_parts[i].append(text.description)
                 if (x >= range_x[0]) & (x <= range_x[1])\
                         & (y >= range_y[1]) & (y <= range_y[2])\

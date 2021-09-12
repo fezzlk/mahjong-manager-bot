@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 """user"""
 
 from enum import Enum

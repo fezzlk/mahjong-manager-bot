@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 from dataclasses import dataclass
 import datetime
 
