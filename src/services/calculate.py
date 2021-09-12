@@ -1,3 +1,4 @@
+# flake8: noqa: C901
 """calculate"""
 
 from server import logger

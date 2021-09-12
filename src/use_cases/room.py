@@ -70,7 +70,7 @@ class RoomUseCases:
                 return
 
             zoom_url = user.zoom_id
-        
+
         room_id = app_service.req_room_id
         result_zoom_url = room_service.set_zoom_url(room_id, zoom_url)
 
@@ -89,12 +89,6 @@ class RoomUseCases:
             return
 
         reply_service.add_message(result_zoom_url)
-
-    def input_mode(self):
-        hanchans_use_cases.add()
-        self.chmod(
-            room_service.modes.input
-        )
 
     def wait_mode(self):
         room_id = app_service.req_room_id

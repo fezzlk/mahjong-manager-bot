@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 """hanchans"""
 
 import json
@@ -6,7 +7,6 @@ from services import (
     matches_service,
     reply_service,
     user_service,
-    message_service,
     config_service,
     hanchans_service,
 )

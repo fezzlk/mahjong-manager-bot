@@ -1,7 +1,5 @@
+# flake8: noqa: E999
 """matches"""
-
-from repositories import session_scope
-from repositories.matches import MatchesRepository
 
 import json
 from server import logger
@@ -57,7 +55,7 @@ class MatchesUseCases:
                 return
             match = matches_service.get_current()
         else:
-            match = MatchesRepository.get(match_id)
+            match = matches_service.get(match_id)
 
         hanchans_service.reply_by_ids(
             json.loads(match.result_ids),
@@ -134,7 +132,7 @@ class MatchesUseCases:
         # room_id = 'R808c3c802d36f386290630fc6ba10f0c'
         # matches = session\
         # .query(Matches).filter(and_(
-        ## Matches.status == 2,
+        # Matches.status == 2,
         # Matches.room_id == room_id,
         # )).order_by(Matches.id.desc())\
         # .all()

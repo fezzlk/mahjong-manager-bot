@@ -56,4 +56,4 @@ jobs:
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
         run: |
-          pytest ./tests/test.py
+          pytest ./src/tests/test.py

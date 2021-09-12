@@ -8,10 +8,6 @@ class IRoomUseCases(ABC):
         pass
 
     @abstractmethod
-    def input_mode(self):
-        pass
-
-    @abstractmethod
     def wait_mode(self):
         pass
 
@@ -34,4 +30,3 @@ class IRoomUseCases(ABC):
     @abstractmethod
     def set_zoom_url(self, zoom_id: str):
         pass
-

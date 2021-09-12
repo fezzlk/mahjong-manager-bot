@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 """matches"""
 
 from repositories import session_scope
