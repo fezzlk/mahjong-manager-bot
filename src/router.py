@@ -244,9 +244,7 @@ class Router:
         # input
         elif method == RCommands.input.name:
             hanchans_use_cases.add()
-            room_use_cases.chmod(
-                room_service.modes.input
-            )
+            room_use_cases.input_mode()
         # mode
         elif method == RCommands.mode.name:
             room_use_cases.reply_mode()
