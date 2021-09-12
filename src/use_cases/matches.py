@@ -14,19 +14,6 @@ from services import (
 class MatchesUseCases:
     """matches use cases"""
 
-    def get_current(self):
-        room_id = app_service.req_room_id
-        return matches_service.get_current(room_id)
-
-    def get_or_add_current(self):
-        room_id = app_service.req_room_id
-        current = matches_service.get_current(room_id)
-
-        if current is None:
-            current = matches_service.create(room_id)
-
-        return current
-
     def drop_result_by_number(self, i):
         """drop result"""
 
@@ -40,12 +27,6 @@ class MatchesUseCases:
         hanchans_service.delete_by_id(result_ids[i - 1])
         result_ids.pop(i - 1)
         matches_service.update_hanchan_ids(result_ids)
-
-    def get_sum_results(self):
-        current = matches_service.get_current()
-        return hanchans_service.get_sum_result_by_ids(
-            json.loads(current.result_ids)
-        )
 
     def reply_sum_results(self, match_id=None):
         if match_id is None:
@@ -95,9 +76,6 @@ class MatchesUseCases:
 
     def get(self, target_ids=None):
         matches_service.get(target_ids)
-
-    def remove_result_id(self, match_id, result_id):
-        matches_service.remove_result_id(match_id, result_id)
 
     def delete(self, target_ids):
         targets = matches_service.delete(target_ids)

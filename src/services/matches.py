@@ -13,10 +13,24 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 class MatchesService:
     """matches service"""
 
+    def get_or_add_current(self, room_id):
+        current = self.get_current(room_id)
+
+        if current is None:
+            current = self.create(room_id)
+
+        return current
+
     def get_current(self, room_id):
         with session_scope() as session:
             return MatchesRepository.find_by_room_id_and_status(
                 session, room_id, 1)
+
+    def get_sum_hanchans(self):
+        current = matches_service.get_current()
+        return hanchans_service.get_sum_result_by_ids(
+            json.loads(current.result_ids)
+        )
 
     def create(self, room_id):
         with session_scope() as session:
@@ -90,7 +104,7 @@ class MatchesService:
             else:
                 return MatchesRepository.find_by_ids(session, target_ids)
 
-    def remove_result_id(self, match_id, result_id):
+    def remove_hanchan_id(self, match_id, result_id):
         with session_scope as session:
             match = MatchesRepository.find_by_ids(session, match_id)
             result_ids = json.loads(match.result_ids)
