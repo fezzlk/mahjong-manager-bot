@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 """ocr"""
 
 from server import logger
