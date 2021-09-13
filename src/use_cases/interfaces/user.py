@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 from abc import ABC, abstractmethod
 
 
@@ -25,4 +26,16 @@ class IUserUseCases(ABC):
 
     @abstractmethod
     def reply_zoom_id(self):
+        pass
+
+    @abstractmethod
+    def get(self):
+        pass
+
+    @abstractmethod
+    def create(self, name: str, user_id: str):
+        pass
+
+    @abstractmethod
+    def delete(self, ids: list):
         pass

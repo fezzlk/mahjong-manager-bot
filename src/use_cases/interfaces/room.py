@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 from abc import ABC, abstractmethod
 
 
@@ -9,6 +10,10 @@ class IRoomUseCases(ABC):
 
     @abstractmethod
     def wait_mode(self):
+        pass
+
+    @abstractmethod
+    def input_mode(self):
         pass
 
     @abstractmethod
@@ -29,4 +34,12 @@ class IRoomUseCases(ABC):
 
     @abstractmethod
     def set_zoom_url(self, zoom_id: str):
+        pass
+
+    @abstractmethod
+    def get(self, ids: list):
+        pass
+
+    @abstractmethod
+    def delete(self, ids: list):
         pass

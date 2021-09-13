@@ -2,14 +2,10 @@
 from abc import ABC, abstractmethod
 
 
-class IConfigUseCases(ABC):
+class IHanchanUseCases(ABC):
 
     @abstractmethod
-    def reply_menu(self):
-        pass
-
-    @abstractmethod
-    def update(self, key: str, value: str):
+    def add(self, points=dict):
         pass
 
     @abstractmethod
@@ -18,4 +14,8 @@ class IConfigUseCases(ABC):
 
     @abstractmethod
     def delete(self, ids: list):
+        pass
+
+    @abstractmethod
+    def migrate(self):
         pass

@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 from abc import ABC, abstractmethod
 
 
@@ -20,5 +21,17 @@ class IMatchesUseCases(ABC):
         pass
 
     @abstractmethod
+    def reply_sum_results(self, match_id: int):
+        pass
+
+    @abstractmethod
     def reply_sum_matches_by_ids(self, args: list):
+        pass
+
+    @abstractmethod
+    def get(self, target_ids: list):
+        pass
+
+    @abstractmethod
+    def delete(self, target_ids: list):
         pass

@@ -80,8 +80,7 @@ class HanchansService:
             hanchan.raw_scores = json.dumps(raw_scores)
             return raw_scores
 
-    # clear の方がいいのでは
-    def reset_raw_scores(self, room_id):
+    def clear_raw_scores(self, room_id):
         with session_scope as session:
             hanchan = HanchansRepository.find_by_room_id_and_status(
                 session,

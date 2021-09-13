@@ -14,19 +14,6 @@ from services import (
 class MatchesUseCases:
     """matches use cases"""
 
-    def get_current(self):
-        room_id = app_service.req_room_id
-        return matches_service.get_current(room_id)
-
-    def get_or_add_current(self):
-        room_id = app_service.req_room_id
-        current = matches_service.get_current(room_id)
-
-        if current is None:
-            current = matches_service.create(room_id)
-
-        return current
-
     def drop_result_by_number(self, i):
         """drop result"""
 
@@ -37,15 +24,13 @@ class MatchesUseCases:
             return
         current = matches_service.get_current()
         result_ids = json.loads(current.result_ids)
-        hanchans_service.delete_by_id(result_ids[i - 1])
+        room_id = app_service.req_room_id
+        hanchans_service.delete_by_id(room_id, result_ids[i - 1])
+        reply_service.add_message(
+            f'id={target_id}の結果を削除しました。'
+        )
         result_ids.pop(i - 1)
         matches_service.update_hanchan_ids(result_ids)
-
-    def get_sum_results(self):
-        current = matches_service.get_current()
-        return hanchans_service.get_sum_result_by_ids(
-            json.loads(current.result_ids)
-        )
 
     def reply_sum_results(self, match_id=None):
         if match_id is None:
@@ -57,9 +42,44 @@ class MatchesUseCases:
         else:
             match = matches_service.get(match_id)
 
-        hanchans_service.reply_by_ids(
-            json.loads(match.result_ids),
-            date=match.created_at.strftime('%Y-%m-%d') + '\n',
+        ids = json.loads(match.result_ids)
+        date = match.created_at.strftime('%Y-%m-%d') + '\n',
+        hanchans = hanchans_service.find_by_ids(ids)
+
+        hanchans_list = []
+        sum_hanchans = {}
+
+        for i in range(len(ids)):
+            converted_scores = json.loads(hanchans[i].converted_scores)
+            hanchans_list.append(
+                f'第{i+1}回\n' + '\n'.join([
+                    f'{user_service.get_name_by_user_id(r[0])}: \
+                        {"+" if r[1] > 0 else ""}{r[1]}'
+                    for r in sorted(
+                        converted_scores.items(),
+                        key=lambda x:x[1],
+                        reverse=True
+                    )
+                ])
+            )
+
+            for user_id, converted_score in converted_scores.items():
+                if user_id not in sum_hanchans.keys():
+                    sum_hanchans[user_id] = 0
+
+                sum_hanchans[user_id] += converted_score
+
+        reply_service.add_message('\n\n'.join(hanchans_list))
+        reply_service.add_message(
+            '総計\n' + date + '\n'.join([
+                f'{user_service.get_name_by_user_id(r[0])}: \
+                    {"+" if r[1] > 0 else ""}{r[1]}'
+                for r in sorted(
+                    sum_hanchans.items(),
+                    key=lambda x:x[1],
+                    reverse=True
+                )
+            ])
         )
 
     def finish(self):
@@ -68,7 +88,7 @@ class MatchesUseCases:
                 'まだ対戦結果がありません。')
             return
         current = matches_service.get_current()
-        hanchans_service.reply_sum_and_money_by_ids(
+        self.reply_sum_and_money_by_ids(
             json.loads(current.result_ids),
             current.id,
         )
@@ -86,7 +106,7 @@ class MatchesUseCases:
         reply_service.add_message(
             '最近の4試合の結果を表示します。詳細は「_match <ID>」')
         for match in matches[:4]:
-            hanchans_service.reply_sum_and_money_by_ids(
+            self.reply_sum_and_money_by_ids(
                 json.loads(match.result_ids),
                 match.id,
                 is_required_sum=False,
@@ -95,9 +115,6 @@ class MatchesUseCases:
 
     def get(self, target_ids=None):
         matches_service.get(target_ids)
-
-    def remove_result_id(self, match_id, result_id):
-        matches_service.remove_result_id(match_id, result_id)
 
     def delete(self, target_ids):
         targets = matches_service.delete(target_ids)
@@ -121,12 +138,49 @@ class MatchesUseCases:
         result_ids = []
         for match in matches:
             result_ids += json.loads(match.result_ids)
-        hanchans_service.reply_sum_and_money_by_ids(
+        self.reply_sum_and_money_by_ids(
             result_ids,
             ','.join(formatted_id_list),
             is_required_sum=False,
         )
 
+    def reply_sum_and_money_by_ids(
+        self,
+        ids,
+        match_id,
+        is_required_sum=True,
+        date=''
+    ):
+        hanchans = hanchans_service.find_by_ids(ids)
+
+        sum_hanchans = {}
+        for i in range(len(ids)):
+            converted_scores = json.loads(hanchans[i].converted_scores)
+
+            for user_id, converted_score in converted_scores.items():
+                if user_id not in sum_hanchans.keys():
+                    sum_hanchans[user_id] = 0
+                sum_hanchans[user_id] += converted_score
+
+        if is_required_sum:
+            reply_service.add_message(
+                '\n'.join([
+                    f'{user_service.get_name_by_user_id(user_id)}: \
+                        {converted_score}'
+                    for user_id, converted_score in sum_hanchans.items()
+                ])
+            )
+
+        key = 'レート'
+        room_id = app_service.req_room_id
+        reply_service.add_message(
+            '対戦ID: ' + str(match_id) + '\n' + date + '\n'.join([
+                f'{user_service.get_name_by_user_id(user_id)}: \
+                {converted_score * int(config_service.get_by_key(room_id, key)[1]) * 10}円 \
+                ({"+" if converted_score > 0 else ""}{converted_score})'
+                for user_id, converted_score in sum_hanchans.items()
+            ])
+        )
     # def plot(self):
         # room_id = app_service.req_room_id¥
         # room_id = 'R808c3c802d36f386290630fc6ba10f0c'

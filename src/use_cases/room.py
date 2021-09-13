@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 """room"""
 
 from server import logger
@@ -24,29 +25,6 @@ class RoomUseCases:
             logger.warning('This request is not from room chat')
             return
         room_service.find_or_create(room_id)
-
-    def chmod(self, mode):
-        room_id = app_service.req_room_id
-        updated_mode = room_service.chmod(room_id, mode)
-        if updated_mode is None:
-            return
-
-        if updated_mode == room_service.modes.input:
-            reply_service.add_message(
-                f'第{matches_service.count_results()+1}回戦お疲れ様です。各自点数を入力してください。\
-                \n（同点の場合は上家が高くなるように数点追加してください）')
-            return
-        else:
-            hanchans_service.disable(room_id)
-
-        if updated_mode == self.modes.wait:
-            reply_service.add_message(
-                '始める時は「_start」と入力してください。')
-            return
-
-    def get_mode(self):
-        room_id = app_service.req_room_id
-        return room_service.get_mode(room_id)
 
     def reply_mode(self):
         room_id = app_service.req_room_id
@@ -92,7 +70,21 @@ class RoomUseCases:
 
     def wait_mode(self):
         room_id = app_service.req_room_id
+        hanchans_service.disable(room_id)
         room_service.chmod(
+            room_id,
+            room_service.modes.wait,
+        )
+        reply_service.add_message(
+            '始める時は「_start」と入力してください。')
+
+    def input_mode(self):
+        room_id = app_service.req_room_id
+        updated_mode = room_service.chmod(
             room_id,
             room_service.modes.input,
         )
+        reply_service.add_message(
+            f'第{matches_service.count_results()+1}回戦お疲れ様です。各自点数を入力してください。\
+            \n（同点の場合は上家が高くなるように数点追加してください）')
+        return
