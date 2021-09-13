@@ -1,18 +1,20 @@
+# flake8: noqa
 
-# import os
-# import json
-# from flask import Flask
-# from services import Services
-# from router import Router
-# from db_setting import Base, Engine
-# app = Flask(__name__)
+import os
+import server
 
-# services = Services(app)
-# router = Router(services)
-
-# Base.metadata.create_all(bind=Engine)
+from repositories import session_scope
+from repositories.configs import ConfigsRepository
 
 
+def test_config_repository_find():
+    with session_scope() as session:
+        result = ConfigsRepository.find(
+            session,
+            target_id=os.environ["TEST_USER_ID"],
+            key='飛び賞',
+        )
+    assert result is None
 # class Event:
 #     def __init__(
 #             self,
