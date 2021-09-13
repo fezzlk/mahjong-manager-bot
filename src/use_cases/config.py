@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 """config"""
 
 from services import (
@@ -14,21 +15,21 @@ DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10'
 class ConfigUseCases:
     """config use cases"""
 
-    def get_by_key(self, key):
+    def update(self, key, value):
         """
-        key を元にリクエスト元ルームの config を返す
+        リクエスト元のルームの設定更新
         """
-        # リクエスト元ルームIDの取得
         target_id = app_service.req_room_id
+        config_service.update(target_id, key, value)
+        reply_service.add_message(f'{key}を{value}に変更しました。')
 
-        # 取得した config を返す
-        return config_service.get_by_key(target_id, key)
+    def get(self, ids):
+        config_service.get(ids)
 
-    def reply(self):
-        """
-        リクエスト元(ユーザーorルーム)の全ての config を返信
-        """
+    def delete(self, ids):
+        config_service.delete(ids)
 
+    def reply_menu(self, body):
         # リクエスト元ルームIDの取得（ルームからのリクエストでなければユーザーID)
         if app_service.req_room_id is not None:
             target_id = app_service.req_room_id
@@ -41,17 +42,4 @@ class ConfigUseCases:
         s = [f'{key}: {str(value)}' for key, value in configs.items()]
         reply_service.add_message('[設定]\n' + '\n'.join(s))
 
-    def update(self, key, value):
-        """
-        リクエスト元のルームの設定更新
-        """
-        target_id = app_service.req_room_id
-        config_service.update(target_id, key, value)
-        reply_service.add_message(f'{key}を{value}に変更しました。')
-
-    def delete(self, ids):
-        config_service.delete(ids)
-
-    def reply_menu(self, body):
-        self.reply()
         reply_service.add_settings_menu(body)
