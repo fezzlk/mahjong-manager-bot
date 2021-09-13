@@ -26,12 +26,6 @@ class MatchesService:
             return MatchesRepository.find_by_room_id_and_status(
                 session, room_id, 1)
 
-    def get_sum_hanchans(self):
-        current = matches_service.get_current()
-        return hanchans_service.get_sum_result_by_ids(
-            json.loads(current.result_ids)
-        )
-
     def create(self, room_id):
         with session_scope() as session:
             match = MatchesRepository.create(session, room_id)
