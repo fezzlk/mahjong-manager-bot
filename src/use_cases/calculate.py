@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 """calculate"""
 
 import json
@@ -84,7 +85,11 @@ class CalculateUseCases:
         # 結果の表示
         hanchan = hanchans_service.get_current(room_id)
         converted_scores = json.loads(hanchan.converted_scores)
-        sum_hanchans = matches_service.get_sum_hanchans()
+        current_match = matches_service.get_current()
+        sum_hanchans = hanchans_service.get_sum_hanchan_by_ids(
+            json.loads(current_match.result_ids)
+        )
+
         reply_service.add_message(
             '一半荘お疲れ様でした。結果を表示します。'
         )

@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 from abc import ABC, abstractmethod
 
 
