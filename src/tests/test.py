@@ -19,7 +19,7 @@ def test_db_health_check():
         output = str(e)
         is_database_working = False
 
-    return is_database_working, output
+    assert is_database_working
 
 
 # def test_config_repository_create():
