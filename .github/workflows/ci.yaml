@@ -77,6 +77,10 @@ jobs:
       - name: Build server
         env:
           FLASK_APP: src/server
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
+          YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
         run: |
           flask run
 
