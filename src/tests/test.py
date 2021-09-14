@@ -2,7 +2,7 @@
 
 import os
 import server
-from db_setting import Base, Session
+from db_setting import Base, Engin, Session
 session = Session()
 Base.metadata.create_all(bind=Engine)
 
