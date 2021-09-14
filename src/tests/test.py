@@ -11,7 +11,6 @@ session = Session()
 
 def test_db_health_check():
     is_database_working = True
-    output = 'database is ok'
 
     try:
         # to check database we will execute raw query
@@ -23,6 +22,19 @@ def test_db_health_check():
     assert is_database_working
 
 
+def test_get_all_users():
+    is_database_working = True
+
+    try:
+        # to check database we will execute raw query
+        result = session.execute('SELECT * FROM USERS')
+        print(result)
+    except Exception as e:
+        print(str(e))
+        is_database_working = False
+
+    assert is_database_working
+
 # def test_config_repository_create():
 #     with session_scope() as session:
 #         result = ConfigsRepository.create(
@@ -32,6 +44,7 @@ def test_db_health_check():
 #             value='10',
 #         )
 #     assert result is None
+
 # class Event:
 #     def __init__(
 #             self,
