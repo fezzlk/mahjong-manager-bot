@@ -7,15 +7,30 @@ from repositories import session_scope
 from repositories.configs import ConfigsRepository
 
 
-def test_config_repository_create():
-    with session_scope() as session:
-        result = ConfigsRepository.create(
-            session,
-            target_id=os.environ["TEST_USER_ID"],
-            key='飛び賞',
-            value='10',
-        )
-    assert result is None
+def test_db_health_check():
+    is_database_working = True
+    output = 'database is ok'
+
+    try:
+        # to check database we will execute raw query
+        session = DatabaseSession.get_database_session()
+        session.execute('SELECT 1')
+    except Exception as e:
+        output = str(e)
+        is_database_working = False
+
+    return is_database_working, output
+
+
+# def test_config_repository_create():
+#     with session_scope() as session:
+#         result = ConfigsRepository.create(
+#             session,
+#             target_id=os.environ["TEST_USER_ID"],
+#             key='飛び賞',
+#             value='10',
+#         )
+#     assert result is None
 # class Event:
 #     def __init__(
 #             self,
