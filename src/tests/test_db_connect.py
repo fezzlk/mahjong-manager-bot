@@ -1,13 +1,5 @@
-# flake8: noqa
-
-import os
-import server
-from db_setting import Base, Engine, Session
+from db_setting import Session
 session = Session()
-Base.metadata.create_all(bind=Engine)
-
-# from repositories import session_scope
-# from repositories.configs import ConfigsRepository
 
 
 def test_db_health_check():
@@ -21,30 +13,6 @@ def test_db_health_check():
         is_database_working = False
 
     assert is_database_working
-
-
-def test_get_all_users():
-    is_database_working = True
-
-    try:
-        # to check database we will execute raw query
-        result = session.execute('SELECT * FROM USERS')
-        print(result)
-    except Exception as e:
-        print(str(e))
-        is_database_working = False
-
-    assert is_database_working
-
-# def test_config_repository_create():
-#     with session_scope() as session:
-#         result = ConfigsRepository.create(
-#             session,
-#             target_id=os.environ["TEST_USER_ID"],
-#             key='飛び賞',
-#             value='10',
-#         )
-#     assert result is None
 
 # class Event:
 #     def __init__(
