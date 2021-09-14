@@ -2,9 +2,11 @@
 
 import os
 import server
+from db_setting import Session
+session = Session()
 
-from repositories import session_scope
-from repositories.configs import ConfigsRepository
+# from repositories import session_scope
+# from repositories.configs import ConfigsRepository
 
 
 def test_db_health_check():
@@ -13,10 +15,9 @@ def test_db_health_check():
 
     try:
         # to check database we will execute raw query
-        session = DatabaseSession.get_database_session()
         session.execute('SELECT 1')
     except Exception as e:
-        output = str(e)
+        print(str(e))
         is_database_working = False
 
     assert is_database_working
