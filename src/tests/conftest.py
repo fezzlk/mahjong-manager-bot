@@ -10,6 +10,4 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from db_setting import Base, Engine, Session
-session = Session()
-Base.metadata.create_all(bind=Engine)
 
