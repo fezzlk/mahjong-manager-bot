@@ -2,8 +2,9 @@
 
 import os
 import server
-from db_setting import Session
+from db_setting import Base, Session
 session = Session()
+Base.metadata.create_all(bind=Engine)
 
 # from repositories import session_scope
 # from repositories.configs import ConfigsRepository
