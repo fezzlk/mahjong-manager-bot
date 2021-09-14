@@ -7,12 +7,13 @@ from repositories import session_scope
 from repositories.configs import ConfigsRepository
 
 
-def test_config_repository_find():
+def test_config_repository_create():
     with session_scope() as session:
-        result = ConfigsRepository.find(
+        result = ConfigsRepository.create(
             session,
             target_id=os.environ["TEST_USER_ID"],
             key='飛び賞',
+            value='10',
         )
     assert result is None
 # class Event:
