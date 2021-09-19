@@ -45,11 +45,21 @@ class ConfigRepository:
         ]
 
     def find_by_target_id(session, target_id):
-        return session\
+        records = session\
             .query(Configs)\
             .filter(Configs.target_id == target_id)\
             .order_by(Configs.id)\
             .all()
+
+        return [
+            Config(
+                target_id=record.target_id,
+                key=record.key,
+                value=record.value,
+                _id=record.id,
+            )
+            for record in records
+        ]
 
     def find_by_ids(session, ids):
         # 配列にサニタイズ
