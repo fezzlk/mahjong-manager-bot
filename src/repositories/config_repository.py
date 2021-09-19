@@ -10,7 +10,7 @@ from sqlalchemy import and_
 class ConfigRepository:
 
     def find_one_by_target_id_and_key(session, target_id, key):
-        config = session\
+        record = session\
             .query(Configs)\
             .filter(and_(
                 Configs.target_id == target_id,
@@ -18,18 +18,31 @@ class ConfigRepository:
             ))\
             .first()
 
+        if record is None:
+            return None
+
         return Config(
-            config.target_id,
-            config.key,
-            config.value,
-            config.id,
+            target_id=record.target_id,
+            key=record.key,
+            value=record.value,
+            _id=record.id,
         )
 
     def find_all(session):
-        return session\
+        records = session\
             .query(Configs)\
             .order_by(Configs.id)\
             .all()
+
+        return [
+            Config(
+                target_id=record.target_id,
+                key=record.key,
+                value=record.value,
+                _id=record.id,
+            )
+            for record in records
+        ]
 
     def find_by_target_id(session, target_id):
         return session\
