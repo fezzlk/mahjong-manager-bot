@@ -34,9 +34,9 @@ def test_hit():
 def test_not_hit():
     # Arrange
     with session_scope() as session:
-        dummy_configs_in_db = generate_dummy_config_list()
+        dummy_configs = generate_dummy_config_list()[1:3]
 
-        for dummy_config in dummy_configs_in_db[1:3]:
+        for dummy_config in dummy_configs:
             ConfigRepository.create(
                 session,
                 dummy_config,

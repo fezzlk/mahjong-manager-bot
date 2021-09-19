@@ -7,24 +7,27 @@ from domains.config import Config
 session = Session()
 
 
-def test_success_find_records():
+def test_hit_records():
     # Arrange
     with session_scope() as session:
-        dummy_configs = generate_dummy_config_list()
+        dummy_configs = generate_dummy_config_list()[:6]
         for dummyConfig in dummy_configs:
             ConfigRepository.create(
                 session,
                 dummyConfig,
             )
+    target_configs = generate_dummy_config_list()[:2]
+    target_id = target_configs[0].target_id
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_all(
+        result = ConfigRepository.find_by_target_id(
             session,
+            target_id,
         )
 
     # Assert
-        assert len(result) == len(dummy_configs)
+        assert len(result) == len(target_configs)
         for i in range(len(result)):
             assert isinstance(result[i], Config)
             assert result[i].target_id == dummy_configs[i].target_id
@@ -32,14 +35,22 @@ def test_success_find_records():
             assert result[i].value == dummy_configs[i].value
 
 
-def test_success_find_0_record():
+def test_hit_0_record():
     # Arrange
-    # Do nothing
+    with session_scope() as session:
+        dummy_configs = generate_dummy_config_list()[:5]
+        for dummyConfig in dummy_configs:
+            ConfigRepository.create(
+                session,
+                dummyConfig,
+            )
+    target_id = generate_dummy_config_list()[5].target_id
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_all(
+        result = ConfigRepository.find_by_target_id(
             session,
+            target_id,
         )
 
     # Assert
