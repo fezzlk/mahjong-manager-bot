@@ -1,15 +1,19 @@
 # flake8: noqa: E999
+from enum import Enum
 from dataclasses import dataclass
 
-from domains.user import User
+
+class RoomMode(Enum):
+    wait = 'wait'
+    input = 'input'
 
 
-@dataclass(frozen)
+@dataclass()
 class Room:
     _id: int
     line_room_id: str
     zoom_url: str
-    mode: str
+    mode: RoomMode
     users: list
 
     def __init__(

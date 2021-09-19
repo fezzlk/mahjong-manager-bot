@@ -1,5 +1,10 @@
 # flake8: noqa: E999
+from enum import Enum
 from dataclasses import dataclass
+
+class UserMode(Enum):
+    wait = 'wait'
+
 
 @dataclass()
 class User:
@@ -7,20 +12,20 @@ class User:
     name: str
     line_user_id: str
     zoom_url: str
-    mode: str
+    mode: UserMode
     jantama_name: str
     matches: list
     rooms: list
 
     def __init__(
-        name: str
-        line_user_id: str
-        zoom_url: str
-        mode: str
-        jantama_name: str
-        matches: list
-        rooms: list
-        _id: int = None
+        self,
+        name: str,
+        line_user_id: str,
+        zoom_url: str,
+        mode: UserMode,
+        jantama_name: str,
+        matches: list,
+        _id: int = None,
     ):
         self._id = _id
         self.name = name
@@ -29,7 +34,6 @@ class User:
         self.mode = mode
         self.jantama_name = jantama_name
         self.matches = matches
-        self.rooms = rooms
 
 # TODO: 値オブジェクト化
 # name: LINE account name
@@ -43,5 +47,3 @@ class User:
 # jantama_name は雀魂のアカウント名
 
 # matches: Match[]
-
-# rooms: Room[](不要)
