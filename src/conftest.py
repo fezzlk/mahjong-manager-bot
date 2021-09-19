@@ -10,4 +10,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from db_setting import Base, Engine, Session
+import pytest
 
+@pytest.fixture(scope='function', autouse=True)
+def reset_db():
+    print("DB reset")
+    Base.metadata.drop_all(bind=Engine)
+    Base.metadata.create_all(bind=Engine)
