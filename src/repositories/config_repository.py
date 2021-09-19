@@ -3,19 +3,27 @@ configs repository
 """
 
 from models import Configs
+from domains.config import Config
 from sqlalchemy import and_
 
 
-class ConfigsRepository:
+class ConfigRepository:
 
-    def find(session, target_id, key):
-        return session\
+    def find_one_by_target_id_and_key(session, target_id, key):
+        config = session\
             .query(Configs)\
             .filter(and_(
                 Configs.target_id == target_id,
                 Configs.key == key,
             ))\
             .first()
+
+        return Config(
+            config.target_id,
+            config.key,
+            config.value,
+            config.id,
+        )
 
     def find_all(session):
         return session\
@@ -41,13 +49,13 @@ class ConfigsRepository:
             .order_by(Configs.id)\
             .all()
 
-    def create(session, target_id, key, value):
-        config = Configs(
-            target_id=target_id,
-            key=key,
-            value=value,
+    def create(session, config):
+        record = Configs(
+            target_id=config.target_id,
+            key=config.key,
+            value=config.value,
         )
-        session.add(config)
+        session.add(record)
 
     def delete(session, target_id, key):
         session\
