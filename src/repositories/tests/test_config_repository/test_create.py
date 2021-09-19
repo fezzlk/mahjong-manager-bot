@@ -7,15 +7,15 @@ session = Session()
 
 
 def test_success():
+    # Arrange
     with session_scope() as session:
-        # Arrange
         dummyConfig = generate_dummy_config()
 
-        # Act
+    # Act
         ConfigRepository.create(
             session,
             dummyConfig,
         )
 
-        # Assert
-        # Do nothing
+    # Assert
+    # Do nothing
