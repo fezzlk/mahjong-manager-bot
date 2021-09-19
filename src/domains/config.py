@@ -9,7 +9,13 @@ class Config:
     key: str
     value: str
 
-    def __init__(self, target_id, key, value, _id = None):
+    def __init__(
+        self,
+        target_id: str,
+        key: str,
+        value: str,
+        _id = None
+    ):
         self._id = _id
         self.target_id = target_id
         self.key = key

@@ -4,12 +4,28 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Hanchan:
-    id: int
-    room_id: str # -> line_room_id
+    _id: int
+    line_room_id: str
     raw_scores: str
     converted_scores: str
     match_id: int
     status: int
+
+    def __init__(
+        self,
+        line_room_id: str,
+        raw_scores: str,
+        converted_scores: str,
+        match_id: int,
+        status: int,
+        _id: int = None,
+    ):
+        self._id = _id
+        self.line_room_id = line_room_id
+        self.raw_scores = raw_scores
+        self.converted_scores = converted_scores
+        self.match_id = match_id
+        self.status = status
 
 # TODO: 値オブジェクト化
 # line_room_id は対戦結果が投稿された LINE Room ID, Rから始まる

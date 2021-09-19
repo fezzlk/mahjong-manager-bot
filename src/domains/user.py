@@ -1,20 +1,35 @@
 # flake8: noqa: E999
 from dataclasses import dataclass
 
-from domains.match import Match
-from domains.room import Room
-
-
-@dataclass(frozen=True)
+@dataclass()
 class User:
-    id: int
+    _id: int
     name: str
-    user_id: str # -> line_user_id
-    zoom_id: str # -> zoom_url 
+    line_user_id: str
+    zoom_url: str
     mode: str
     jantama_name: str
-    matches: [Match]
-    rooms: [Room]
+    matches: list
+    rooms: list
+
+    def __init__(
+        name: str
+        line_user_id: str
+        zoom_url: str
+        mode: str
+        jantama_name: str
+        matches: list
+        rooms: list
+        _id: int = None
+    ):
+        self._id = _id
+        self.name = name
+        self.line_user_id = line_user_id
+        self.zoom_url = zoom_url
+        self.mode = mode
+        self.jantama_name = jantama_name
+        self.matches = matches
+        self.rooms = rooms
 
 # TODO: 値オブジェクト化
 # name: LINE account name
@@ -26,3 +41,7 @@ class User:
 # mode: Enum
 
 # jantama_name は雀魂のアカウント名
+
+# matches: Match[]
+
+# rooms: Room[](不要)

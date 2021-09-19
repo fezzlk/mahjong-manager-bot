@@ -4,13 +4,27 @@ from dataclasses import dataclass
 from domains.user import User
 
 
-@dataclass(frozen=True)
+@dataclass(frozen)
 class Room:
-    id: int
-    room_id: str # -> line_room_id
+    _id: int
+    line_room_id: str
     zoom_url: str
     mode: str
-    users: [User]
+    users: list
+
+    def __init__(
+        self,
+        line_room_id: str,
+        zoom_url: str,
+        mode: str,
+        users: list,
+        _id = None,
+    ):
+        self._id = _id
+        self.line_room_id = line_room_id
+        self.zoom_url = zoom_url
+        self.mode = mode
+        self.users = users
 
 # TODO: 値オブジェクト化
 # line_room_id は LINE Room ID, Rから始まる
@@ -19,4 +33,4 @@ class Room:
 
 # mode: Enum
 
-# users: その LINE Room の参加者(不要)
+# users: User[], その LINE Room の参加者(不要)

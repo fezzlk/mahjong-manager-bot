@@ -5,14 +5,30 @@ import datetime
 from domains.user import User
 
 
-@dataclass(frozen=True)
+@dataclass()
 class Match:
-    id: int
-    room_id: str # -> line_room_id
+    _id: int
+    line_room_id: str
     result_ids: str
-    users: [User]
+    users: list
     status: int
     create_at: datetime.date
+
+    def __init__(
+        self,
+        line_room_id: str,
+        result_ids: str,
+        users: list,
+        status: int,
+        create_at: datetime.date,
+        _id: int = None,
+    ):
+        self._id = _id
+        self.line_room_id = line_room_id
+        self.result_ids = result_ids
+        self.users = users
+        self.status = status
+        self.create_at = create_at
 
 # TODO: 値オブジェクト化
 # line_room_id は対戦結果が投稿された LINE Room ID, Rから始まる
@@ -21,6 +37,6 @@ class Match:
 
 # status は Enum(0: disabled, 1: active, 2: archived)
 
-# users は対戦参加ユーザーの配列
+# users: User[] 対戦参加ユーザーの配列
 
 # create_at は対戦開始日
