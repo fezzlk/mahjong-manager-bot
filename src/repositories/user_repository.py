@@ -17,6 +17,9 @@ class UserRepository:
             .filter(Users.user_id == user_id)\
             .first()
 
+        if record is None:
+            return None
+
         return User(
             name=record.name,
             line_user_id=record.user_id,
