@@ -24,7 +24,7 @@ class User:
         zoom_url: str,
         mode: UserMode,
         jantama_name: str,
-        matches: list,
+        matches: list = [],
         _id: int = None,
     ):
         self._id = _id
