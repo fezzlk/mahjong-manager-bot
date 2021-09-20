@@ -8,7 +8,7 @@ from domains.room import Room
 session = Session()
 
 
-def test_hit_records():
+def test_hit_1_record():
     # Arrange
     dummy_rooms = generate_dummy_room_list()[:3]
     with session_scope() as session:

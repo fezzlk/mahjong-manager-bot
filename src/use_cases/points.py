@@ -35,16 +35,16 @@ class PointsUseCases:
             point, target_user = points_service.get_point_and_name_from_text(
                 text[1:]
             )
-            target_user_id = user_service.get_user_id_by_name(
+            target_line_user_id = user_service.get_user_id_by_name(
                 target_user
             )
 
             if point == 'delete':
                 points = hanchans_service.drop_point(
-                    target_user_id)
+                    target_line_user_id)
                 return points
         else:
-            target_user_id = app_service.req_user_line_id
+            target_line_user_id = app_service.req_user_line_id
             point = text
 
         point = point.replace(',', '')
@@ -64,7 +64,7 @@ class PointsUseCases:
             point = '-' + point
 
         points = hanchans_service.add_point(
-            target_user_id,
+            target_line_user_id,
             int(point),
         )
 

@@ -47,13 +47,13 @@ def test_hit_with_an_id_as_not_list():
                 dummy_user,
             )
     target_user = generate_dummy_user_list()[2]
-    target_user_id = target_user._id
+    target_line_user_id = target_user._id
 
     # Act
     with session_scope() as session:
         result = UserRepository.find_by_ids(
             session,
-            target_user_id,
+            target_line_user_id,
         )
 
     # Assert

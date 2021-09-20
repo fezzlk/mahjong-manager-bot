@@ -53,13 +53,13 @@ def test_hit_with_an_id_as_not_list():
             )
     other_users = dummy_users[:2]
     target_user = dummy_users[2]
-    target_user_id = target_user._id
+    target_line_user_id = target_user._id
 
     # Act
     with session_scope() as session:
         result = UserRepository.delete_by_ids(
             session,
-            target_user_id,
+            target_line_user_id,
         )
 
     # Assert
