@@ -9,12 +9,12 @@ session = Session()
 def test_success():
     # Arrange
     with session_scope() as session:
-        dummyConfig = generate_dummy_config()
+        dummy_config = generate_dummy_config()
 
     # Act
         ConfigRepository.create(
             session,
-            dummyConfig,
+            dummy_config,
         )
 
     # Assert
@@ -23,6 +23,6 @@ def test_success():
             session,
         )
         assert len(result) == 1
-        assert result[0].target_id == dummyConfig.target_id
-        assert result[0].key == dummyConfig.key
-        assert result[0].value == dummyConfig.value
+        assert result[0].target_id == dummy_config.target_id
+        assert result[0].key == dummy_config.key
+        assert result[0].value == dummy_config.value
