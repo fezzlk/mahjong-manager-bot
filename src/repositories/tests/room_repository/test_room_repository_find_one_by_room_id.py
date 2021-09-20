@@ -1,3 +1,4 @@
+import pytest
 from tests.dummies import generate_dummy_room_list
 from db_setting import Session
 from repositories import session_scope
@@ -7,7 +8,7 @@ from domains.room import Room
 session = Session()
 
 
-def test_hit_records():
+def test_hit_1_record():
     # Arrange
     dummy_rooms = generate_dummy_room_list()[:3]
     with session_scope() as session:
@@ -53,3 +54,19 @@ def test_hit_0_record():
 
     # Assert
         assert result is None
+
+
+def test_NG_with_room_id_none():
+    with pytest.raises(ValueError):
+        # Arrange
+        # Do nothing
+
+        # Act
+        with session_scope() as session:
+            RoomRepository.find_one_by_room_id(
+                session,
+                None,
+            )
+
+        # Assert
+        # Do nothing

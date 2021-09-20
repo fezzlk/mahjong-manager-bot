@@ -9,6 +9,9 @@ from domains.room import Room, RoomMode
 class RoomRepository:
 
     def find_one_by_room_id(session, room_id):
+        if room_id is None:
+            raise ValueError
+
         record = session\
             .query(Rooms)\
             .filter(Rooms.room_id == room_id)\

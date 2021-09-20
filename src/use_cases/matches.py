@@ -53,7 +53,7 @@ class MatchesUseCases:
             converted_scores = json.loads(hanchans[i].converted_scores)
             hanchans_list.append(
                 f'第{i+1}回\n' + '\n'.join([
-                    f'{user_service.get_name_by_user_id(r[0])}: \
+                    f'{user_service.get_name_by_line_user_id(r[0])}: \
                         {"+" if r[1] > 0 else ""}{r[1]}'
                     for r in sorted(
                         converted_scores.items(),
@@ -72,7 +72,7 @@ class MatchesUseCases:
         reply_service.add_message('\n\n'.join(hanchans_list))
         reply_service.add_message(
             '総計\n' + date + '\n'.join([
-                f'{user_service.get_name_by_user_id(r[0])}: \
+                f'{user_service.get_name_by_line_user_id(r[0])}: \
                     {"+" if r[1] > 0 else ""}{r[1]}'
                 for r in sorted(
                     sum_hanchans.items(),
@@ -165,7 +165,7 @@ class MatchesUseCases:
         if is_required_sum:
             reply_service.add_message(
                 '\n'.join([
-                    f'{user_service.get_name_by_user_id(user_id)}: \
+                    f'{user_service.get_name_by_line_user_id(user_id)}: \
                         {converted_score}'
                     for user_id, converted_score in sum_hanchans.items()
                 ])
@@ -175,7 +175,7 @@ class MatchesUseCases:
         room_id = app_service.req_room_id
         reply_service.add_message(
             '対戦ID: ' + str(match_id) + '\n' + date + '\n'.join([
-                f'{user_service.get_name_by_user_id(user_id)}: \
+                f'{user_service.get_name_by_line_user_id(user_id)}: \
                 {converted_score * int(config_service.get_by_key(room_id, key)[1]) * 10}円 \
                 ({"+" if converted_score > 0 else ""}{converted_score})'
                 for user_id, converted_score in sum_hanchans.items()

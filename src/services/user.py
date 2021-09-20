@@ -3,9 +3,9 @@
 
 from enum import Enum
 from repositories import session_scope
-from repositories.users import UsersRepository
+from repositories.user_repository import UserRepository
 from server import logger, line_bot_api
-
+from domains.user import User, UserMode
 
 class Modes(Enum):
     """mode"""
@@ -19,22 +19,22 @@ class UserService:
     def __init__(self):
         self.modes = Modes
 
-    def find_by_user_id(self, user_id):
+    def find_one_by_line_user_id(self, user_id):
         with session_scope() as session:
-            user = UsersRepository.find_by_user_id(session, user_id)
+            user = UsersRepository.find_one_by_line_user_id(session, user_id)
             return user
 
-    def delete_by_user_id(self, user_id):
+    def delete_one_by_line_user_id(self, user_id):
         """delete"""
         with session_scope() as session:
-            UsersRepository.delete_by_user_id(session, user_id)
+            UsersRepository.delete_one_by_line_user_id(session, user_id)
 
         logger.info(f'delete: {user_id}')
 
     def find_or_create_by_profile(self, profile):
         """find or create by receiving message"""
         with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, profile.user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, profile.user_id)
 
         if target is None:
             target = self.create(profile.display_name, profile.user_id)
@@ -43,11 +43,16 @@ class UserService:
 
     def create(self, name, user_id):
         with session_scope() as session:
-            new_user = UsersRepository.create(
+            new_user = User(
+                name=name,
+                line_user_id=user_id,
+                zoom_url=None,
+                mode=UserMode.wait,
+                jantama_name=None,
+            )
+            UsersRepository.create(
                 session,
-                name,
-                user_id,
-                self.modes.wait.value
+                new_user,
             )
             logger.info(f'create: {new_user.user_id} {new_user.name}')
             return new_user
@@ -65,7 +70,7 @@ class UserService:
 
             return UsersRepository.find_by_ids(session, ids)
 
-    def get_name_by_user_id(self, user_id):
+    def get_name_by_line_user_id(self, user_id):
         try:
             profile = line_bot_api.get_profile(
                 user_id)
@@ -74,7 +79,7 @@ class UserService:
 
         except Exception:
             with session_scope() as session:
-                target = UsersRepository.find_by_user_id(session, user_id)
+                target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
                 if target is None:
                     logger.warning(f'user({user_id}) is not found')
@@ -84,7 +89,7 @@ class UserService:
 
     def get_user_id_by_name(self, name):
         with session_scope() as session:
-            target = UsersRepository.find_by_name(session, name)
+            target = UsersRepository.find_one_by_name(session, name)
 
             if target is None:
                 logger.warning(f'user({name}) is not found')
@@ -97,7 +102,7 @@ class UserService:
             raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user is not found: {user_id}')
@@ -111,7 +116,7 @@ class UserService:
 
     def get_mode(self, user_id):
         with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user is not found: {user_id}')
@@ -121,7 +126,7 @@ class UserService:
 
     def set_zoom_id(self, user_id, zoom_id):
         with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'set_zoom_url: user "{user_id}" is not found')
@@ -133,7 +138,7 @@ class UserService:
 
     def get_zoom_id(self, user_id):
         with session_scope() as session:
-            target = UsersRepository.find_by_user_id(session, user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user_services: user "{user_id}" is not found')

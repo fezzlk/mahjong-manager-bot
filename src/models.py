@@ -52,8 +52,9 @@ class Users(Base):
         back_populates="users"
     )
 
-    def __init__(self, name, user_id, mode, jantama_name=''):
+    def __init__(self, name, user_id, mode, zoom_id=None, jantama_name=None):
         self.name = name
+        self.zoom_id = zoom_id
         self.jantama_name = jantama_name
         self.user_id = user_id
         self.mode = mode

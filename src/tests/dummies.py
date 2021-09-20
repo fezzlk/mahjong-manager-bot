@@ -87,6 +87,16 @@ def generate_dummy_user_list():
             matches=[],
             _id=3,
         ),
+        # same name _id=3
+        User(
+            name="test user3",
+            line_user_id="U0123456789abcdefghijklmnopqrstu4",
+            zoom_url="https://us00web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
+            mode=UserMode.wait,
+            jantama_name="jantama user4",
+            matches=[],
+            _id=4,
+        ),
     ]
 
 
