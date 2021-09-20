@@ -77,17 +77,16 @@ class Rooms(Base):
     room_id = Column(String(255), nullable=False) # unique
     zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
-    users = relationship(
+    users = relationship( # 廃止
         "Users",
         secondary=association_table_user_room,
         back_populates="rooms"
     )
 
-    def __init__(self, room_id, mode, zoom_url, users):
+    def __init__(self, room_id, mode, zoom_url):
         self.room_id = room_id
         self.mode = mode
         self.zoom_url = zoom_url
-        self.users = users
 
     @staticmethod
     def add_column(engine, column_name):

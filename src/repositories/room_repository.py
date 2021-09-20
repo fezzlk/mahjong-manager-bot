@@ -3,7 +3,7 @@ rooms repository
 """
 
 from models import Rooms
-from domains.room import Room
+from domains.room import Room, RoomMode
 
 
 class RoomRepository:
@@ -18,7 +18,6 @@ class RoomRepository:
             line_room_id=record.line_room_id,
             zoom_url=record.zoom_url,
             mode=record.mode,
-            users=record.users,
             _id=record.id,
         )
 
@@ -38,7 +37,6 @@ class RoomRepository:
                 line_room_id=record.line_room_id,
                 zoom_url=record.zoom_url,
                 mode=record.mode,
-                users=record.users,
                 _id=record.id,
             )
             for record in records
@@ -52,10 +50,9 @@ class RoomRepository:
 
         return [
             Room(
-                line_room_id=record.line_room_id,
+                line_room_id=record.room_id,
                 zoom_url=record.zoom_url,
-                mode=record.mode,
-                users=record.users,
+                mode=RoomMode[record.mode],
                 _id=record.id,
             )
             for record in records
@@ -63,10 +60,9 @@ class RoomRepository:
 
     def create(session, new_room):
         record = Rooms(
-            line_room_id=new_room.room_id,
+            room_id=new_room.line_room_id,
+            mode=new_room.mode.value,
             zoom_url=new_room.zoom_url,
-            mode=new_room.mode,
-            users=new_room.users,
         )
         session.add(record)
 

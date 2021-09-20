@@ -96,22 +96,19 @@ def generate_dummy_room_list():
         Room(
             line_room_id="R0123456789abcdefghijklmnopqrstu1",
             zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode,
-            users=[],
+            mode=RoomMode.wait,
             _id=1,
         ),
         Room(
             line_room_id="R0123456789abcdefghijklmnopqrstu2",
             zoom_url="https://us01web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode,
-            users=[],
+            mode=RoomMode.wait,
             _id=2,
         ),
         Room(
             line_room_id="R0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us01web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode,
-            users=[],
+            mode=RoomMode.wait,
             _id=3,
         ),
     ]
