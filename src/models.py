@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 """models"""
 
 # from marshmallow import Schema, fields
@@ -36,10 +37,10 @@ class Users(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
-    user_id = Column(String(255), nullable=False)
+    user_id = Column(String(255), nullable=False) # unique
     zoom_id = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
-    jantama_name = Column(String(255), nullable=True)
+    jantama_name = Column(String(255), nullable=True) # unique
     matches = relationship(
         "Matches",
         secondary=association_table_user_match,
@@ -73,18 +74,19 @@ class Rooms(Base):
     __tablename__ = 'rooms'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_id = Column(String(255), nullable=False)
+    room_id = Column(String(255), nullable=False) # unique
     zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
-    users = relationship(
+    users = relationship( # 廃止
         "Users",
         secondary=association_table_user_room,
         back_populates="rooms"
     )
 
-    def __init__(self, room_id, mode):
+    def __init__(self, room_id, mode, zoom_url):
         self.room_id = room_id
         self.mode = mode
+        self.zoom_url = zoom_url
 
     @staticmethod
     def add_column(engine, column_name):

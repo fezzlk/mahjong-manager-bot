@@ -2,6 +2,9 @@ from domains.config import Config
 from domains.user import User, UserMode
 from domains.room import Room, RoomMode
 
+# list 内の既存のインスタンスは変更禁止、追加のみ可能
+# 使用側では find_all などの特殊な場合を除いて [:3] などを使い追加に影響しないようにする
+
 
 def generate_dummy_config():
     return generate_dummy_config_list()[0]
@@ -96,22 +99,19 @@ def generate_dummy_room_list():
         Room(
             line_room_id="R0123456789abcdefghijklmnopqrstu1",
             zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode,
-            users=[],
+            mode=RoomMode.wait,
             _id=1,
         ),
         Room(
             line_room_id="R0123456789abcdefghijklmnopqrstu2",
             zoom_url="https://us01web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode,
-            users=[],
+            mode=RoomMode.wait,
             _id=2,
         ),
         Room(
             line_room_id="R0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us01web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode,
-            users=[],
+            mode=RoomMode.wait,
             _id=3,
         ),
     ]

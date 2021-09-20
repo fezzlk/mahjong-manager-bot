@@ -11,24 +11,21 @@ class RoomMode(Enum):
 @dataclass()
 class Room:
     _id: int
-    line_room_id: str
+    line_room_id: str # unique
     zoom_url: str
     mode: RoomMode
-    users: list
 
     def __init__(
         self,
         line_room_id: str,
-        zoom_url: str,
         mode: str,
-        users: list,
+        zoom_url: str = None,
         _id = None,
     ):
         self._id = _id
         self.line_room_id = line_room_id
-        self.zoom_url = zoom_url
         self.mode = mode
-        self.users = users
+        self.zoom_url = zoom_url
 
 # TODO: 値オブジェクト化
 # line_room_id は LINE Room ID, Rから始まる

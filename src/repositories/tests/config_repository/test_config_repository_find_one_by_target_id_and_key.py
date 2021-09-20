@@ -1,6 +1,5 @@
-
 import pytest
-from tests.dummies import generate_dummy_config_list
+from tests.dummies import generate_dummy_config, generate_dummy_config_list
 from db_setting import Session
 from repositories import session_scope
 from repositories.config_repository import ConfigRepository
@@ -9,37 +8,52 @@ from domains.config import Config
 session = Session()
 
 
-def test_success():
+def test_hit():
     # Arrange
-    dummy_configs = generate_dummy_config_list()[:6]
     with session_scope() as session:
-        for dummyConfig in dummy_configs:
-            ConfigRepository.create(
-                session,
-                dummyConfig,
-            )
-    other_configs = dummy_configs[:5]
-    target_config = dummy_configs[5]
+        dummy_config = generate_dummy_config()
+        ConfigRepository.create(
+            session,
+            dummy_config,
+        )
 
     # Act
     with session_scope() as session:
-        ConfigRepository.delete_by_target_id_and_key(
+        result = ConfigRepository.find_one_by_target_id_and_key(
+            session,
+            dummy_config.target_id,
+            dummy_config.key,
+        )
+
+    # Assert
+        assert isinstance(result, Config)
+        assert result.target_id == dummy_config.target_id
+        assert result.key == dummy_config.key
+        assert result.value == dummy_config.value
+
+
+def test_not_hit():
+    # Arrange
+    with session_scope() as session:
+        dummy_configs = generate_dummy_config_list()[1:3]
+
+        for dummy_config in dummy_configs:
+            ConfigRepository.create(
+                session,
+                dummy_config,
+            )
+    target_config = generate_dummy_config_list()[0]
+
+    # Act
+    with session_scope() as session:
+        result = ConfigRepository.find_one_by_target_id_and_key(
             session,
             target_config.target_id,
             target_config.key,
         )
 
     # Assert
-    with session_scope() as session:
-        result = ConfigRepository.find_all(
-            session,
-        )
-        assert len(result) == len(other_configs)
-        for i in range(len(result)):
-            assert isinstance(result[i], Config)
-            assert result[i].target_id == other_configs[i].target_id
-            assert result[i].key == other_configs[i].key
-            assert result[i].value == other_configs[i].value
+        assert result is None
 
 
 def test_NG_with_target_id_none():

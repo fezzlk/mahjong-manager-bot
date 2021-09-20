@@ -11,10 +11,10 @@ def test_hit_records():
     # Arrange
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:6]
-        for dummyConfig in dummy_configs:
+        for dummy_config in dummy_configs:
             ConfigRepository.create(
                 session,
-                dummyConfig,
+                dummy_config,
             )
     target_configs = generate_dummy_config_list()[:2]
     target_id = target_configs[0].target_id
@@ -39,10 +39,10 @@ def test_hit_0_record():
     # Arrange
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:5]
-        for dummyConfig in dummy_configs:
+        for dummy_config in dummy_configs:
             ConfigRepository.create(
                 session,
-                dummyConfig,
+                dummy_config,
             )
     target_id = generate_dummy_config_list()[5].target_id
 

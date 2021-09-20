@@ -11,10 +11,10 @@ def test_hit_with_ids():
     # Arrange
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:3]
-        for dummyConfig in dummy_configs:
+        for dummy_config in dummy_configs:
             ConfigRepository.create(
                 session,
-                dummyConfig,
+                dummy_config,
             )
     target_configs = generate_dummy_config_list()[1:3]
     ids = [target_config._id for target_config in target_configs]
@@ -39,10 +39,10 @@ def test_hit_with_an_id_as_not_list():
     # Arrange
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:3]
-        for dummyConfig in dummy_configs:
+        for dummy_config in dummy_configs:
             ConfigRepository.create(
                 session,
-                dummyConfig,
+                dummy_config,
             )
     target_config = generate_dummy_config_list()[2]
     target_config_id = target_config._id
@@ -65,10 +65,10 @@ def test_hit_0_record():
     # Arrange
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:3]
-        for dummyConfig in dummy_configs:
+        for dummy_config in dummy_configs:
             ConfigRepository.create(
                 session,
-                dummyConfig,
+                dummy_config,
             )
     target_configs = generate_dummy_config_list()[3:6]
     ids = [target_config._id for target_config in target_configs]

@@ -87,11 +87,11 @@ class ConfigRepository:
             for record in records
         ]
 
-    def create(session, config):
+    def create(session, new_config):
         record = Configs(
-            target_id=config.target_id,
-            key=config.key,
-            value=config.value,
+            target_id=new_config.target_id,
+            key=new_config.key,
+            value=new_config.value,
         )
         session.add(record)
 
