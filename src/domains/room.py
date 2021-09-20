@@ -11,7 +11,7 @@ class RoomMode(Enum):
 @dataclass()
 class Room:
     _id: int
-    line_room_id: str
+    line_room_id: str # unique
     zoom_url: str
     mode: RoomMode
     users: list

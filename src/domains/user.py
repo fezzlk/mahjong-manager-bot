@@ -10,7 +10,7 @@ class UserMode(Enum):
 class User:
     _id: int
     name: str
-    line_user_id: str
+    line_user_id: str # unique
     zoom_url: str
     mode: UserMode
     jantama_name: str
