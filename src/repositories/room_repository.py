@@ -15,9 +15,9 @@ class RoomRepository:
             .first()
 
         return Room(
-            line_room_id=record.line_room_id,
+            line_room_id=record.room_id,
             zoom_url=record.zoom_url,
-            mode=record.mode,
+            mode=RoomMode[record.mode],
             _id=record.id,
         )
 
@@ -34,9 +34,9 @@ class RoomRepository:
 
         return [
             Room(
-                line_room_id=record.line_room_id,
+                line_room_id=record.room_id,
                 zoom_url=record.zoom_url,
-                mode=record.mode,
+                mode=RoomMode[record.mode],
                 _id=record.id,
             )
             for record in records
