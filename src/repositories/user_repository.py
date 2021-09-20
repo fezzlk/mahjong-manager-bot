@@ -37,6 +37,9 @@ class UserRepository:
             .filter(Users.name == name)\
             .all()
 
+        if len(records) == 0:
+            return None
+
         if len(records) > 1:
             # logger を使う
             print("warning: find multi users by name")
