@@ -5,11 +5,16 @@ configs repository
 from models import Configs
 from domains.config import Config
 from sqlalchemy import and_
+from server import logger
 
 
 class ConfigRepository:
 
     def find_one_by_target_id_and_key(session, target_id, key):
+        if target_id is None or key is None:
+            logger.error('Invalid args error: target_id and key are not None')
+            raise ValueError
+
         record = session\
             .query(Configs)\
             .filter(and_(
@@ -66,11 +71,21 @@ class ConfigRepository:
         if type(ids) != list:
             ids = [ids]
 
-        return session\
+        records = session\
             .query(Configs)\
             .filter(Configs.id.in_(ids))\
             .order_by(Configs.id)\
             .all()
+
+        return [
+            Config(
+                target_id=record.target_id,
+                key=record.key,
+                value=record.value,
+                _id=record.id,
+            )
+            for record in records
+        ]
 
     def create(session, config):
         record = Configs(
@@ -80,7 +95,11 @@ class ConfigRepository:
         )
         session.add(record)
 
-    def delete(session, target_id, key):
+    def delete_by_target_id_and_key(session, target_id, key):
+        if target_id is None or key is None:
+            logger.error('Invalid args error: target_id and key are not None')
+            raise ValueError
+
         session\
             .query(Configs)\
             .filter(and_(
@@ -90,6 +109,10 @@ class ConfigRepository:
             .delete()
 
     def delete_by_ids(session, ids):
+        # 配列にサニタイズ
+        if type(ids) != list:
+            ids = [ids]
+
         session\
             .query(Configs)\
             .filter(Configs.id.in_(ids))\

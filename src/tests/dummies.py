@@ -16,31 +16,37 @@ def generate_dummy_config_list():
             target_id=users[0].line_user_id,
             key='飛び賞',
             value='10',
+            _id=1,
         ),
         Config(
             target_id=users[0].line_user_id,
             key='レート',
             value='2',
+            _id=2,
         ),
         Config(
             target_id=users[1].line_user_id,
             key='飛び賞',
             value='10',
+            _id=3,
         ),
         Config(
             target_id=rooms[0].line_room_id,
             key='飛び賞',
             value='10',
+            _id=4,
         ),
         Config(
             target_id=rooms[0].line_room_id,
             key='レート',
             value='2',
+            _id=5,
         ),
         Config(
             target_id=rooms[1].line_room_id,
             key='飛び賞',
             value='10',
+            _id=6,
         ),
     ]
 
@@ -58,6 +64,7 @@ def generate_dummy_user_list():
             mode=UserMode.wait,
             jantama_name="jantama user1",
             matches=[],
+            _id=1,
         ),
         User(
             name="test user2",
@@ -66,6 +73,7 @@ def generate_dummy_user_list():
             mode=UserMode.wait,
             jantama_name="jantama user2",
             matches=[],
+            _id=2,
         ),
         User(
             name="test user3",
@@ -74,6 +82,7 @@ def generate_dummy_user_list():
             mode=UserMode.wait,
             jantama_name="jantama user3",
             matches=[],
+            _id=3,
         ),
     ]
 
@@ -89,17 +98,20 @@ def generate_dummy_room_list():
             zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=RoomMode,
             users=[],
+            _id=1,
         ),
         Room(
             line_room_id="R0123456789abcdefghijklmnopqrstu2",
             zoom_url="https://us01web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=RoomMode,
             users=[],
+            _id=2,
         ),
         Room(
             line_room_id="R0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us01web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=RoomMode,
             users=[],
+            _id=3,
         ),
     ]
