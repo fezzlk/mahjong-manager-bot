@@ -8,10 +8,10 @@ session = Session()
 
 def test_success():
     # Arrange
-    with session_scope() as session:
-        dummy_config = generate_dummy_config()
+    dummy_config = generate_dummy_config()
 
     # Act
+    with session_scope() as session:
         ConfigRepository.create(
             session,
             dummy_config,
