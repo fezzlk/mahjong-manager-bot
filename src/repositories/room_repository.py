@@ -14,6 +14,9 @@ class RoomRepository:
             .filter(Rooms.room_id == room_id)\
             .first()
 
+        if record is None:
+            return None
+
         return Room(
             line_room_id=record.room_id,
             zoom_url=record.zoom_url,
