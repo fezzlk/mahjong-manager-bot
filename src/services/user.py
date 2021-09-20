@@ -19,22 +19,22 @@ class UserService:
     def __init__(self):
         self.modes = Modes
 
-    def find_one_by_user_id(self, user_id):
+    def find_one_by_line_user_id(self, user_id):
         with session_scope() as session:
-            user = UsersRepository.find_one_by_user_id(session, user_id)
+            user = UsersRepository.find_one_by_line_user_id(session, user_id)
             return user
 
-    def delete_by_user_id(self, user_id):
+    def delete_by_line_user_id(self, user_id):
         """delete"""
         with session_scope() as session:
-            UsersRepository.delete_by_user_id(session, user_id)
+            UsersRepository.delete_by_line_user_id(session, user_id)
 
         logger.info(f'delete: {user_id}')
 
     def find_or_create_by_profile(self, profile):
         """find or create by receiving message"""
         with session_scope() as session:
-            target = UsersRepository.find_one_by_user_id(session, profile.user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, profile.user_id)
 
         if target is None:
             target = self.create(profile.display_name, profile.user_id)
@@ -70,7 +70,7 @@ class UserService:
 
             return UsersRepository.find_by_ids(session, ids)
 
-    def get_name_by_user_id(self, user_id):
+    def get_name_by_line_user_id(self, user_id):
         try:
             profile = line_bot_api.get_profile(
                 user_id)
@@ -79,7 +79,7 @@ class UserService:
 
         except Exception:
             with session_scope() as session:
-                target = UsersRepository.find_one_by_user_id(session, user_id)
+                target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
                 if target is None:
                     logger.warning(f'user({user_id}) is not found')
@@ -102,7 +102,7 @@ class UserService:
             raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
-            target = UsersRepository.find_one_by_user_id(session, user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user is not found: {user_id}')
@@ -116,7 +116,7 @@ class UserService:
 
     def get_mode(self, user_id):
         with session_scope() as session:
-            target = UsersRepository.find_one_by_user_id(session, user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user is not found: {user_id}')
@@ -126,7 +126,7 @@ class UserService:
 
     def set_zoom_id(self, user_id, zoom_id):
         with session_scope() as session:
-            target = UsersRepository.find_one_by_user_id(session, user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'set_zoom_url: user "{user_id}" is not found')
@@ -138,7 +138,7 @@ class UserService:
 
     def get_zoom_id(self, user_id):
         with session_scope() as session:
-            target = UsersRepository.find_one_by_user_id(session, user_id)
+            target = UsersRepository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user_services: user "{user_id}" is not found')

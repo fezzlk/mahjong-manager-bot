@@ -8,7 +8,7 @@ from domains.user import User, UserMode
 
 class UserRepository:
 
-    def find_one_by_user_id(session, user_id):
+    def find_one_by_line_user_id(session, user_id):
         if user_id is None:
             raise ValueError
 
@@ -95,7 +95,7 @@ class UserRepository:
         )
         session.add(record)
 
-    def delete_by_user_id(session, user_id):
+    def deletefind_one_by_line_user_id(session, user_id):
         if user_id is None:
             raise ValueError
 

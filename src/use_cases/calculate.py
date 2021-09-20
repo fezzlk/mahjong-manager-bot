@@ -58,7 +58,7 @@ class CalculateUseCases:
         if (any(x < 0 for x in points.values())) & (
                 tobashita_player_id is None):
             reply_service.add_tobi_menu([
-                {'id': p_id, 'name': user_service.get_name_by_user_id(p_id), }
+                {'id': p_id, 'name': user_service.get_name_by_line_user_id(p_id), }
                 for p_id in points.keys() if points[p_id] > 0
             ])
             return
@@ -102,7 +102,7 @@ class CalculateUseCases:
         )
         reply_service.add_message(
             '\n'.join([
-                f'{user_service.get_name_by_user_id(r[0])}: \
+                f'{user_service.get_name_by_line_user_id(r[0])}: \
                 {"+" if r[1] > 0 else ""}{r[1]} \
                 ({"+" if sum_hanchans[r[0]] > 0 else ""}{sum_hanchans[r[0]]})'
                 for r in sorted(

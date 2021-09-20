@@ -40,7 +40,7 @@ class RoomUseCases:
     def set_zoom_url(self, zoom_url=None):
         if zoom_url is None:
             user_id = app_service.req_user_line_id
-            user = user_service.find_by_user_id(user_id)
+            user = user_service.find_by_line_user_id(user_id)
 
             if user is None:
                 logger.warning(

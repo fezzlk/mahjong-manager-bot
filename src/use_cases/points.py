@@ -26,7 +26,7 @@ class PointsUseCases:
                 '点数を入力してください。「@{ユーザー名} {点数}」でユーザーを指定して入力することもできます。')
             return
         res = [
-            f'{user_service.get_name_by_user_id(user_id)}: {point}' for user_id, point in points.items()
+            f'{user_service.get_name_by_line_user_id(user_id)}: {point}' for user_id, point in points.items()
         ]
         reply_service.add_message("\n".join(res))
 
