@@ -2,7 +2,8 @@
 """config"""
 
 from repositories import session_scope
-from repositories.configs import ConfigsRepository
+from repositories.config_repository import ConfigRepository
+from domains.config import Config
 from server import logger
 
 DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10', '-20']),
@@ -17,16 +18,16 @@ class ConfigService:
         # config.id を指定してなければ全ての config を取得
         if ids is None:
             with session_scope() as session:
-                return ConfigsRepository.find_all(session)
+                return ConfigRepository.find_all(session)
 
         # id に合致する config を取得
         with session_scope() as session:
-            return ConfigsRepository.find_by_ids(session, ids)
+            return ConfigRepository.find_by_ids(session, ids)
 
     def get_by_key(self, target_id, key):
         # デフォルトから変更されている config の取得
         with session_scope() as session:
-            config = ConfigsRepository.find(session, target_id, key)
+            config = ConfigRepository.find_one_by_target_id_and_key(session, target_id, key)
 
         # 上記の結果何も返ってこなければデフォルトの config を返す
         if config is None:
@@ -38,7 +39,7 @@ class ConfigService:
     def get_by_target(self, target_id):
         # デフォルト config から変更されている config を取得
         with session_scope() as session:
-            customized_configs = ConfigsRepository.find_by_target_id(
+            customized_configs = ConfigRepository.find_by_target_id(
                 session,
                 target_id
             )
@@ -60,11 +61,16 @@ class ConfigService:
         """
         with session_scope() as session:
             # 既存の変更の削除
-            ConfigsRepository.delete(session, target_id, key)
+            ConfigRepository.delete_by_target_id_and_key(session, target_id, key)
 
             # リクエストの value がデフォルト値と異なる場合はレコードを作成
             if value != DEFAULT_CONFIGS[key]:
-                ConfigsRepository.create(session, target_id, key, value)
+                new_config = Config(
+                    target_id,
+                    key,
+                    value,
+                )
+                ConfigRepository.create(session, new_config)
 
         logger.info(
             f'update:{key}:{value}:{target_id}'
@@ -76,6 +82,6 @@ class ConfigService:
             ids = [ids]
 
         with session_scope() as session:
-            ConfigsRepository.delete_by_ids(session, ids)
+            ConfigRepository.delete_by_ids(session, ids)
 
         logger.info(f'delete: id={ids}')

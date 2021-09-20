@@ -1,17 +1,18 @@
+from db_setting import Session
+session = Session()
 
-# import os
-# import json
-# from flask import Flask
-# from services import Services
-# from router import Router
-# from db_setting import Base, Engine
-# app = Flask(__name__)
 
-# services = Services(app)
-# router = Router(services)
+def test_db_health_check():
+    is_database_working = True
 
-# Base.metadata.create_all(bind=Engine)
+    try:
+        # to check database we will execute raw query
+        session.execute('SELECT 1')
+    except Exception as e:
+        print(str(e))
+        is_database_working = False
 
+    assert is_database_working
 
 # class Event:
 #     def __init__(

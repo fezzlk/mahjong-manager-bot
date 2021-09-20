@@ -3,7 +3,83 @@ name: Python package
 on: [push]
 
 jobs:
-  build:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+      - name: Lint with flake8
+        run: |
+          # Python 構文エラーまたは未定義の名前がある場合はビルドを停止する
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zeroはすべてのエラーを警告として扱う。 GitHubのエディタの幅は127文字
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  # build:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       python-version: [3.7]
+
+  #   services:
+  #     db:
+  #       image: postgres
+  #       env:
+  #         POSTGRES_DB: postgres
+  #         POSTGRES_USER: postgres
+  #         POSTGRES_PASSWORD: postgres
+  #       ports:
+  #         - 5432:5432
+
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up Python ${{ matrix.python-version }}
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: ${{ matrix.python-version }}
+  #     - name: Cache pip
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/.cache/pip
+  #         # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
+  #         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-pip-
+  #           ${{ runner.os }}-
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install -r requirements.txt
+  #     - name: Build server
+  #       env:
+  #         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+  #         YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
+  #         YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
+  #         DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+  #       run: |
+  #         flask run
+
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,23 +113,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest
-          pip install pytest-cov
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Lint with flake8
-        run: |
-          # Python 構文エラーまたは未定義の名前がある場合はビルドを停止する
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zeroはすべてのエラーを警告として扱う。 GitHubのエディタの幅は127文字
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          pip install pytest pytest-cov
+          pip install -r requirements.txt
       - name: Test with pytest
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          TEST_ROOM_ID: ${{ secrets.TEST_ROOM_ID }}
-          TEST_USER_ID: ${{ secrets.TEST_USER_ID }}
-          TEST_USER_IDS: ${{ secrets.TEST_USER_IDS }}
           YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
         run: |
-          pytest ./src/tests/test.py
+          pytest --cov=src src/
