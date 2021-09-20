@@ -61,7 +61,7 @@ class ConfigService:
         """
         with session_scope() as session:
             # 既存の変更の削除
-            ConfigRepository.delete(session, target_id, key)
+            ConfigRepository.delete_by_target_id_and_key(session, target_id, key)
 
             # リクエストの value がデフォルト値と異なる場合はレコードを作成
             if value != DEFAULT_CONFIGS[key]:
