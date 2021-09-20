@@ -14,6 +14,5 @@ import pytest
 
 @pytest.fixture(scope='function', autouse=True)
 def reset_db():
-    print("DB reset")
     Base.metadata.drop_all(bind=Engine)
     Base.metadata.create_all(bind=Engine)
