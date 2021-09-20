@@ -1,19 +1,19 @@
 """
-configs repository
+config repository
 """
 
 from models import Configs
 from domains.config import Config
 from sqlalchemy import and_
-from server import logger
 
 
 class ConfigRepository:
 
     def find_one_by_target_id_and_key(session, target_id, key):
         if target_id is None or key is None:
-            logger.error('Invalid args error: target_id and key are not None')
-            raise ValueError
+            raise ValueError(
+                'Invalid args error: target_id and key are not None'
+            )
 
         record = session\
             .query(Configs)\
@@ -97,8 +97,9 @@ class ConfigRepository:
 
     def delete_by_target_id_and_key(session, target_id, key):
         if target_id is None or key is None:
-            logger.error('Invalid args error: target_id and key are not None')
-            raise ValueError
+            raise ValueError(
+                'Invalid args error: target_id and key are not None'
+            )
 
         session\
             .query(Configs)\
