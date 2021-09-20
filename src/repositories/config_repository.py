@@ -11,9 +11,7 @@ class ConfigRepository:
 
     def find_one_by_target_id_and_key(session, target_id, key):
         if target_id is None or key is None:
-            raise ValueError(
-                'Invalid args error: target_id and key are not None'
-            )
+            raise ValueError
 
         record = session\
             .query(Configs)\
@@ -97,9 +95,7 @@ class ConfigRepository:
 
     def delete_by_target_id_and_key(session, target_id, key):
         if target_id is None or key is None:
-            raise ValueError(
-                'Invalid args error: target_id and key are not None'
-            )
+            raise ValueError
 
         session\
             .query(Configs)\
