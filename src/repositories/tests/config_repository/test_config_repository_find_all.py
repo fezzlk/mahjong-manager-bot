@@ -11,10 +11,10 @@ def test_success_find_records():
     # Arrange
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()
-        for dummyConfig in dummy_configs:
+        for dummy_config in dummy_configs:
             ConfigRepository.create(
                 session,
-                dummyConfig,
+                dummy_config,
             )
 
     # Act

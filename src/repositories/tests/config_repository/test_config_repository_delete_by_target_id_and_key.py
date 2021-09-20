@@ -13,10 +13,10 @@ def test_success():
     # Arrange
     dummy_configs = generate_dummy_config_list()[:6]
     with session_scope() as session:
-        for dummyConfig in dummy_configs:
+        for dummy_config in dummy_configs:
             ConfigRepository.create(
                 session,
-                dummyConfig,
+                dummy_config,
             )
     other_configs = dummy_configs[:5]
     target_config = dummy_configs[5]

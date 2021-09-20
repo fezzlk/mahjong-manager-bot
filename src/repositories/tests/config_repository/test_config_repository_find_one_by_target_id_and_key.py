@@ -11,25 +11,25 @@ session = Session()
 def test_hit():
     # Arrange
     with session_scope() as session:
-        dummyConfig = generate_dummy_config()
+        dummy_config = generate_dummy_config()
         ConfigRepository.create(
             session,
-            dummyConfig,
+            dummy_config,
         )
 
     # Act
     with session_scope() as session:
         result = ConfigRepository.find_one_by_target_id_and_key(
             session,
-            dummyConfig.target_id,
-            dummyConfig.key,
+            dummy_config.target_id,
+            dummy_config.key,
         )
 
     # Assert
         assert isinstance(result, Config)
-        assert result.target_id == dummyConfig.target_id
-        assert result.key == dummyConfig.key
-        assert result.value == dummyConfig.value
+        assert result.target_id == dummy_config.target_id
+        assert result.key == dummy_config.key
+        assert result.value == dummy_config.value
 
 
 def test_not_hit():
