@@ -95,7 +95,7 @@ class UserRepository:
         )
         session.add(record)
 
-    def deletefind_one_by_line_user_id(session, user_id):
+    def delete_one_by_line_user_id(session, user_id):
         if user_id is None:
             raise ValueError
 

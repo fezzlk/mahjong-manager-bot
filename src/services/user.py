@@ -24,10 +24,10 @@ class UserService:
             user = UsersRepository.find_one_by_line_user_id(session, user_id)
             return user
 
-    def delete_by_line_user_id(self, user_id):
+    def delete_one_by_line_user_id(self, user_id):
         """delete"""
         with session_scope() as session:
-            UsersRepository.delete_by_line_user_id(session, user_id)
+            UsersRepository.delete_one_by_line_user_id(session, user_id)
 
         logger.info(f'delete: {user_id}')
 

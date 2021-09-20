@@ -48,7 +48,7 @@ class UserUseCases:
 
     def unfollow(self):
         """unfollow event"""
-        user_service.delete_by_line_user_id(
+        user_service.delete_one_by_line_user_id(
             app_service.req_user_line_id
         )
 
