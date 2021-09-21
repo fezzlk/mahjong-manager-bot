@@ -3,8 +3,8 @@ import pytest
 from tests.dummies import generate_dummy_config_list
 from db_setting import Session
 from repositories import session_scope
-from repositories.config_repository import ConfigRepository
-from domains.config import Config
+from repositories.ConfigRepository import ConfigRepository
+from domains.Config import Config
 
 session = Session()
 

@@ -1,6 +1,6 @@
-from domains.config import Config
-from domains.user import User, UserMode
-from domains.room import Room, RoomMode
+from domains.Config import Config
+from domains.User import User, UserMode
+from domains.Room import Room, RoomMode
 
 # list 内の既存のインスタンスは変更禁止、追加のみ可能
 # 使用側では find_all などの特殊な場合を除いて [:3] などを使い追加に影響しないようにする

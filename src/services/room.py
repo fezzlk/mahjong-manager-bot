@@ -1,8 +1,8 @@
 # flake8: noqa: E999
 from enum import Enum
-from domains.room import Room, RoomMode
+from domains.Room import Room, RoomMode
 from repositories import session_scope
-from repositories.room_repository import RoomRepository
+from repositories.RoomRepository import RoomRepository
 from server import logger
 
 

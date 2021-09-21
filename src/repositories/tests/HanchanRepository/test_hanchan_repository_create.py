@@ -1,7 +1,7 @@
 from tests.dummies import generate_dummy_room
 from db_setting import Session
 from repositories import session_scope
-from repositories.room_repository import RoomRepository
+from repositories.RoomRepository import RoomRepository
 
 session = Session()
 

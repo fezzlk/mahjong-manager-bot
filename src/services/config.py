@@ -2,8 +2,8 @@
 """config"""
 
 from repositories import session_scope
-from repositories.config_repository import ConfigRepository
-from domains.config import Config
+from repositories.ConfigRepository import ConfigRepository
+from domains.Config import Config
 from server import logger
 
 DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10', '-20']),
