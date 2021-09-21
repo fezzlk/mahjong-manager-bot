@@ -2,7 +2,7 @@
 """matches"""
 
 from repositories import session_scope
-from repositories.matches import MatchesRepository
+from repositories.MatchRepository import MatchesRepository
 
 import json
 from server import logger
@@ -23,7 +23,7 @@ class MatchesService:
 
     def get_current(self, room_id):
         with session_scope() as session:
-            return MatchesRepository.find_by_room_id_and_status(
+            return MatchesRepository.find_one_by_line_room_id_and_status(
                 session, room_id, 1)
 
     def create(self, room_id):
@@ -64,7 +64,7 @@ class MatchesService:
 
     def update_status(self, room_id, status):
         with session_scope as session:
-            current = MatchesRepository.find_by_room_id_and_status(
+            current = MatchesRepository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
                 1

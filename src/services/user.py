@@ -3,7 +3,7 @@
 
 from enum import Enum
 from repositories import session_scope
-from repositories.user_repository import UserRepository
+from repositories.UserRepository import UserRepository
 from server import logger, line_bot_api
 from domains.user import User, UserMode
 

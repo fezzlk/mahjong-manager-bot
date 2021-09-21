@@ -2,7 +2,7 @@
 """config"""
 
 from repositories import session_scope
-from repositories.config_repository import ConfigRepository
+from repositories.ConfigRepository import ConfigRepository
 from domains.config import Config
 from server import logger
 
