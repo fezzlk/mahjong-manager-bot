@@ -3,7 +3,7 @@ config repository
 """
 
 from models import Configs
-from domains.config import Config
+from domains.Config import Config
 from sqlalchemy import and_
 
 

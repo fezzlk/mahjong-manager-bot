@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 import datetime
 
-from domains.user import User
+from domains.User import User
 
 
 @dataclass()

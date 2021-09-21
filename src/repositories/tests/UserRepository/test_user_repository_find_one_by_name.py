@@ -3,7 +3,7 @@ from tests.dummies import generate_dummy_user_list
 from db_setting import Session
 from repositories import session_scope
 from repositories.UserRepository import UserRepository
-from domains.user import User
+from domains.User import User
 
 session = Session()
 

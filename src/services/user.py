@@ -5,7 +5,7 @@ from enum import Enum
 from repositories import session_scope
 from repositories.UserRepository import UserRepository
 from server import logger, line_bot_api
-from domains.user import User, UserMode
+from domains.User import User, UserMode
 
 class Modes(Enum):
     """mode"""

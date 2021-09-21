@@ -2,7 +2,7 @@ from tests.dummies import generate_dummy_room_list
 from db_setting import Session
 from repositories import session_scope
 from repositories.RoomRepository import RoomRepository
-from domains.room import Room
+from domains.Room import Room
 
 session = Session()
 

@@ -3,7 +3,7 @@ users repository
 """
 
 from models import Users
-from domains.user import User, UserMode
+from domains.User import User, UserMode
 
 
 class UserRepository:

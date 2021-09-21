@@ -3,7 +3,7 @@ rooms repository
 """
 
 from models import Rooms
-from domains.room import Room, RoomMode
+from domains.Room import Room, RoomMode
 
 
 class RoomRepository:

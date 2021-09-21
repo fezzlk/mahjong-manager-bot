@@ -3,7 +3,7 @@ from tests.dummies import generate_dummy_config, generate_dummy_config_list
 from db_setting import Session
 from repositories import session_scope
 from repositories.ConfigRepository import ConfigRepository
-from domains.config import Config
+from domains.Config import Config
 
 session = Session()
 
