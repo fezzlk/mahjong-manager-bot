@@ -20,7 +20,7 @@ class MatchesRepository:
             .order_by(Matches.id)\
             .all()
 
-    def find_by_room_id_and_status(session, room_id, status):
+    def find_one_by_line_room_id_and_status(session, room_id, status):
         return session\
             .query(Matches).filter(and_(
                 Matches.room_id == room_id,
