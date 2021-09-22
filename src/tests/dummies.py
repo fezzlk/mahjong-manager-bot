@@ -1,6 +1,9 @@
 from domains.Config import Config
 from domains.User import User, UserMode
 from domains.Room import Room, RoomMode
+from domains.Hanchan import Hanchan
+from domains.Match import Match
+
 
 # list 内の既存のインスタンスは変更禁止、追加のみ可能
 # 使用側では find_all などの特殊な場合を除いて [:3] などを使い追加に影響しないようにする
@@ -123,5 +126,94 @@ def generate_dummy_room_list():
             zoom_url="https://us01web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=RoomMode.wait,
             _id=3,
+        ),
+    ]
+
+
+def generate_dummy_hanchan():
+    return generate_dummy_hanchan_list()[0]
+
+
+def generate_dummy_hanchan_list():
+    rooms = generate_dummy_room_list()
+    
+    return [
+        Hanchan(
+            line_room_id=rooms[0].line_room_id,
+            raw_scores={},
+            converted_scores={},
+            match_id=1,
+            status=1,
+            _id=1,
+        ),
+        Hanchan(
+            line_room_id=rooms[0].line_room_id,
+            raw_scores={},
+            converted_scores={},
+            match_id=1,
+            status=2,
+            _id=2,
+        ),
+        Hanchan(
+            line_room_id=rooms[0].line_room_id,
+            raw_scores={},
+            converted_scores={},
+            match_id=1,
+            status=0,
+            _id=3,
+        ),
+        Hanchan(
+            line_room_id=rooms[0].line_room_id,
+            raw_scores={},
+            converted_scores={},
+            match_id=2,
+            status=1,
+            _id=4,
+        ),
+    ]
+
+
+def generate_dummy_match():
+    return generate_dummy_match_list()[0]
+
+
+def generate_dummy_match_list():
+    rooms = generate_dummy_room_list()
+
+    return [
+        Match(
+            line_room_id=rooms[0].line_room_id,
+            hanchan_ids=[],
+            users=[],
+            status=1,
+            _id=1,
+        ),
+        Match(
+            line_room_id=rooms[0].line_room_id,
+            hanchan_ids=[],
+            users=[],
+            status=2,
+            _id=2,
+        ),
+        Match(
+            line_room_id=rooms[0].line_room_id,
+            hanchan_ids=[],
+            users=[],
+            status=0,
+            _id=3,
+        ),
+        Match(
+            line_room_id=rooms[0].line_room_id,
+            hanchan_ids=[],
+            users=[],
+            status=0,
+            _id=4,
+        ),
+        Match(
+            line_room_id=rooms[1].line_room_id,
+            hanchan_ids=[],
+            users=[],
+            status=0,
+            _id=5,
         ),
     ]

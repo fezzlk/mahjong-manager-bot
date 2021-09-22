@@ -199,10 +199,10 @@ class Matches(Base):
     created_at = Column(DateTime, nullable=False,
                         server_default=current_timestamp())
 
-    def __init__(self, room_id):
-        self.room_id = room_id
-        self.result_ids = json.dumps([])
-        self.status = 1
+    def __init__(self, line_room_id, hanchan_ids, status):
+        self.room_id = line_room_id
+        self.result_ids = hanchan_ids
+        self.status = status
 
     @staticmethod
     def add_column(engine, column_name):

@@ -2,8 +2,8 @@
 """matches"""
 
 from repositories import session_scope
-from repositories.MatchRepository import MatchesRepository
-
+from repositories.MatchRepository import MatchRepository
+from domains.Match import Match
 import json
 from server import logger
 
@@ -23,14 +23,19 @@ class MatchesService:
 
     def get_current(self, room_id):
         with session_scope() as session:
-            return MatchesRepository.find_one_by_line_room_id_and_status(
+            return MatchRepository.find_one_by_line_room_id_and_status(
                 session, room_id, 1)
 
-    def create(self, room_id):
+    def create(self, line_room_id):
         with session_scope() as session:
-            match = MatchesRepository.create(session, room_id)
+            new_match = Match(
+                line_room_id=line_room_id,
+                hanchan_ids=json.loads([]),
+                status=1,
+            )
+            match = MatchRepository.create(session, new_match)
 
-            logger.info(f'create match: to room "{room_id}"')
+            logger.info(f'create match: to room "{line_room_id}"')
             return match
 
     def add_result(self, room_id, result_id):
@@ -64,7 +69,7 @@ class MatchesService:
 
     def update_status(self, room_id, status):
         with session_scope as session:
-            current = MatchesRepository.find_one_by_line_room_id_and_status(
+            current = MatchRepository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
                 1
@@ -85,7 +90,7 @@ class MatchesService:
 
     def get_archived(self, room_id):
         with session_scope as session:
-            matches = MatchesRepository.find_many_by_room_id_and_status(
+            matches = MatchRepository.find_many_by_room_id_and_status(
                 session, room_id, 2)
             if len(matches) == 0:
                 return None
@@ -94,13 +99,13 @@ class MatchesService:
     def get(self, target_ids):
         with session_scope as session:
             if target_ids is None:
-                return MatchesRepository.find_all(session)
+                return MatchRepository.find_all(session)
             else:
-                return MatchesRepository.find_by_ids(session, target_ids)
+                return MatchRepository.find_by_ids(session, target_ids)
 
     def remove_hanchan_id(self, match_id, result_id):
         with session_scope as session:
-            match = MatchesRepository.find_by_ids(session, match_id)
+            match = MatchRepository.find_by_ids(session, match_id)
             result_ids = json.loads(match.result_ids)
             if result_id in result_ids:
                 result_ids.remove(result_id)
@@ -108,7 +113,7 @@ class MatchesService:
 
     def delete(self, target_ids):
         with session_scope as session:
-            targets = MatchesRepository.find_by_ids(session, target_ids)
+            targets = MatchRepository.find_by_ids(session, target_ids)
             for target in targets:
                 session.delete(target)
             logger.info(f'delete: id={target_ids}')

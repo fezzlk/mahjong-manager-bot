@@ -2,20 +2,20 @@
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass()
 class Hanchan:
     _id: int
     line_room_id: str
-    raw_scores: str
-    converted_scores: str
+    raw_scores: dict
+    converted_scores: dict
     match_id: int
     status: int
 
     def __init__(
         self,
         line_room_id: str,
-        raw_scores: str,
-        converted_scores: str,
+        raw_scores: dict,
+        converted_scores: dict,
         match_id: int,
         status: int,
         _id: int = None,
