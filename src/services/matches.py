@@ -30,8 +30,7 @@ class MatchesService:
         with session_scope() as session:
             new_match = Match(
                 line_room_id=line_room_id,
-                result_ids=json.loads([]),
-                users=[],
+                hanchan_ids=json.loads([]),
                 status=1,
             )
             match = MatchRepository.create(session, new_match)

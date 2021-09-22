@@ -28,7 +28,7 @@ class MatchRepository:
                 result_ids=json.loads(record.result_ids),
                 users=record.users,
                 status=record.status,
-                create_at=record.create_at,
+                created_at=record.created_at,
             )
             for record in records
         ]
@@ -52,7 +52,7 @@ class MatchRepository:
             result_ids=json.loads(record.result_ids),
             users=record.users,
             status=record.status,
-            create_at=record.create_at,
+            created_at=record.created_at,
         )
 
     def find_many_by_room_id_and_status(session, line_room_id, status):
@@ -72,16 +72,15 @@ class MatchRepository:
                 result_ids=json.loads(record.result_ids),
                 users=record.users,
                 status=record.status,
-                create_at=record.create_at,
+                created_at=record.created_at,
             )
             for record in records
         ]
 
     def create(session, new_match):
         record = Matches(
-            room_id=new_match.line_room_id,
-            result_ids=json.dumps(new_match.result_ids),
-            users=new_match.users,
+            line_room_id=new_match.line_room_id,
+            hanchan_ids=json.dumps(new_match.hanchan_ids),
             status=new_match.status,
         )
 
@@ -96,10 +95,10 @@ class MatchRepository:
         return [
             Match(
                 line_room_id=record.room_id,
-                result_ids=json.loads(record.result_ids),
+                hanchan_ids=json.loads(record.result_ids),
                 users=record.users,
                 status=record.status,
-                create_at=record.create_at,
+                created_at=record.created_at,
             )
             for record in records
         ]
