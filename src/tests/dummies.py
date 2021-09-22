@@ -202,4 +202,18 @@ def generate_dummy_match_list():
             status=0,
             _id=3,
         ),
+        Match(
+            line_room_id=rooms[0].line_room_id,
+            hanchan_ids=[],
+            users=[],
+            status=0,
+            _id=4,
+        ),
+        Match(
+            line_room_id=rooms[1].line_room_id,
+            hanchan_ids=[],
+            users=[],
+            status=0,
+            _id=5,
+        ),
     ]

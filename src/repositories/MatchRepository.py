@@ -69,7 +69,7 @@ class MatchRepository:
         return [
             Match(
                 line_room_id=record.room_id,
-                result_ids=json.loads(record.result_ids),
+                hanchan_ids=json.loads(record.result_ids),
                 users=record.users,
                 status=record.status,
                 created_at=record.created_at,
