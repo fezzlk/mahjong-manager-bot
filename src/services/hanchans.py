@@ -3,7 +3,7 @@
 
 import json
 from repositories import session_scope
-from repositories.HanchanRepository import HanchansRepository
+from repositories.HanchanRepository import HanchanRepository
 from server import logger
 from domains.Hanchan import Hanchan
 

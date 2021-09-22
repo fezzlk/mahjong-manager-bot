@@ -20,7 +20,7 @@ class Match:
         result_ids: str,
         users: list,
         status: int,
-        create_at: datetime.date,
+        create_at: datetime.date = None,
         _id: int = None,
     ):
         self._id = _id
