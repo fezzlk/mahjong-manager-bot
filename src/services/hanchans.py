@@ -5,7 +5,7 @@ import json
 from repositories import session_scope
 from repositories.HanchanRepository import HanchansRepository
 from server import logger
-from domains.hanchan import Hanchan
+from domains.Hanchan import Hanchan
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 

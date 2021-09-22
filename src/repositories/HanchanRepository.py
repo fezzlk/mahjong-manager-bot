@@ -5,7 +5,8 @@ hanchans repository
 
 from models import Hanchans
 from sqlalchemy import and_, desc
-from domains.hanchan import Hanchan
+from domains.Hanchan import Hanchan
+import json
 
 
 class HanchanRepository:
@@ -27,8 +28,8 @@ class HanchanRepository:
 
         return Hanchan(
             line_room_id=record.room_id,
-            raw_scores=record.raw_scores,
-            converted_scores=record.converted_scores,
+            raw_scores=json.loads(record.raw_scores),
+            converted_scores=json.loads(record.converted_scores),
             match_id=record.match_id,
             status=record.status,
         )
@@ -50,8 +51,8 @@ class HanchanRepository:
 
         return Hanchan(
             line_room_id=record.room_id,
-            raw_scores=record.raw_scores,
-            converted_scores=record.converted_scores,
+            raw_scores=json.loads(record.raw_scores),
+            converted_scores=json.loads(record.converted_scores),
             match_id=record.match_id,
             status=record.status,
         )
@@ -71,8 +72,8 @@ class HanchanRepository:
         return [
             Hanchan(
                 line_room_id=record.room_id,
-                raw_scores=record.raw_scores,
-                converted_scores=record.converted_scores,
+                raw_scores=json.loads(record.raw_scores),
+                converted_scores=json.loads(record.converted_scores),
                 match_id=record.match_id,
                 status=record.status,
             )
@@ -88,8 +89,8 @@ class HanchanRepository:
         return [
             Hanchan(
                 line_room_id=record.room_id,
-                raw_scores=record.raw_scores,
-                converted_scores=record.converted_scores,
+                raw_scores=json.loads(record.raw_scores),
+                converted_scores=json.loads(record.converted_scores),
                 match_id=record.match_id,
                 status=record.status,
             )
@@ -98,10 +99,10 @@ class HanchanRepository:
 
     def create(session, new_hanchan):
         hanchan = Hanchans(
-            room_id=new_hanchan.room_id,
+            room_id=new_hanchan.line_room_id,
             match_id=new_hanchan.match_id,
-            raw_scores=new_hanchan.raw_scores,
-            converted_scores=new_hanchan.converted_scores,
+            raw_scores=json.dumps(new_hanchan.raw_scores),
+            converted_scores=json.dumps(new_hanchan.converted_scores),
             status=new_hanchan.status,
         )
         session.add(hanchan)

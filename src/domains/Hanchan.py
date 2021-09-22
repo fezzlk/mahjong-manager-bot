@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass()
 class Hanchan:
     _id: int
     line_room_id: str
