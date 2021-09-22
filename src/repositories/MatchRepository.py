@@ -48,8 +48,8 @@ class MatchRepository:
             return None
 
         return Match(
-            line_room_id=record.line_room_id,
-            result_ids=json.loads(record.result_ids),
+            line_room_id=record.room_id,
+            hanchan_ids=json.loads(record.result_ids),
             users=record.users,
             status=record.status,
             created_at=record.created_at,
