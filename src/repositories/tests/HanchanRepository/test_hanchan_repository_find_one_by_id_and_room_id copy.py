@@ -29,10 +29,10 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_one_by_line_room_id_and_status(
+        result = HanchanRepository.find_one_by_id_and_line_room_id(
             session=session,
+            target_id=target_hanchan._id,
             line_room_id=target_hanchan.line_room_id,
-            status=target_hanchan.status,
         )
 
     # Assert
@@ -44,37 +44,7 @@ def test_hit_1_record():
         assert result.status == target_hanchan.status
 
 
-def test_hit_0_record_with_not_exist_line_room_id():
-    # Arrange
-    with session_scope() as session:
-        dummy_matches = generate_dummy_match_list()[:3]
-        for dummy_match in dummy_matches:
-            MatchRepository.create(
-                session,
-                dummy_match,
-            )
-    dummy_hanchans = generate_dummy_hanchan_list()[:4]
-    with session_scope() as session:
-        for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
-                session,
-                dummy_hanchan,
-            )
-    target_hanchan = generate_dummy_hanchan_list()[4]
-
-    # Act
-    with session_scope() as session:
-        result = HanchanRepository.find_one_by_line_room_id_and_status(
-            session=session,
-            line_room_id=target_hanchan.line_room_id,
-            status=target_hanchan.status,
-        )
-
-    # Assert
-        assert result is None
-
-
-def test_hit_0_record_with_not_exist_status():
+def test_hit_0_record_with_not_exist_id():
     # Arrange
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()[:3]
@@ -90,14 +60,44 @@ def test_hit_0_record_with_not_exist_status():
                 session,
                 dummy_hanchan,
             )
-    target_hanchan = generate_dummy_hanchan_list()[2]
+    target_hanchan = generate_dummy_hanchan_list()[3]
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_one_by_line_room_id_and_status(
+        result = HanchanRepository.find_one_by_id_and_line_room_id(
             session=session,
+            target_id=target_hanchan._id,
             line_room_id=target_hanchan.line_room_id,
-            status=target_hanchan.status,
+        )
+
+    # Assert
+        assert result is None
+
+
+def test_hit_0_record_with_not_exist_line_room_id():
+    # Arrange
+    with session_scope() as session:
+        dummy_matches = generate_dummy_match_list()[:3]
+        for dummy_match in dummy_matches:
+            MatchRepository.create(
+                session,
+                dummy_match,
+            )
+    dummy_hanchans = generate_dummy_hanchan_list()[:2]
+    with session_scope() as session:
+        for dummy_hanchan in dummy_hanchans:
+            HanchanRepository.create(
+                session,
+                dummy_hanchan,
+            )
+    target_hanchan = generate_dummy_hanchan_list()[4]
+
+    # Act
+    with session_scope() as session:
+        result = HanchanRepository.find_one_by_id_and_line_room_id(
+            session=session,
+            target_id=target_hanchan._id,
+            line_room_id=target_hanchan.line_room_id,
         )
 
     # Assert
@@ -125,10 +125,10 @@ def test_NG_with_id_none():
 
         # Act
         with session_scope() as session:
-            HanchanRepository.find_one_by_line_room_id_and_status(
+            HanchanRepository.find_one_by_id_and_line_room_id(
                 session=session,
-                line_room_id=None,
-                status=target_hanchan.status,
+                target_id=None,
+                line_room_id=target_hanchan.line_room_id,
             )
 
         # Assert
@@ -156,10 +156,10 @@ def test_NG_with_line_room_id_none():
 
         # Act
         with session_scope() as session:
-            HanchanRepository.find_one_by_line_room_id_and_status(
+            HanchanRepository.find_one_by_id_and_line_room_id(
                 session=session,
-                line_room_id=target_hanchan.line_room_id,
-                status=None
+                target_id=target_hanchan._id,
+                line_room_id=None,
             )
 
         # Assert
