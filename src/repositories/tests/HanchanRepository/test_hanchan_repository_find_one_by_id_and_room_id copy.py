@@ -74,7 +74,7 @@ def test_hit_0_record_with_not_exist_id():
         assert result is None
 
 
-def test_hit_0_record_with_not_exist_line_roomid():
+def test_hit_0_record_with_not_exist_line_room_id():
     # Arrange
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()[:3]
@@ -126,7 +126,7 @@ def test_NG_with_id_none():
         # Act
         with session_scope() as session:
             HanchanRepository.find_one_by_id_and_line_room_id(
-                session,
+                session=session,
                 target_id=None,
                 line_room_id=target_hanchan.line_room_id,
             )
@@ -157,7 +157,7 @@ def test_NG_with_line_room_id_none():
         # Act
         with session_scope() as session:
             HanchanRepository.find_one_by_id_and_line_room_id(
-                session,
+                session=session,
                 target_id=target_hanchan._id,
                 line_room_id=None,
             )
