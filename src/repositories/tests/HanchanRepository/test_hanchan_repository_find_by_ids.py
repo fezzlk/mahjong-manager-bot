@@ -11,7 +11,7 @@ session = Session()
 def test_hit_with_ids():
     # Arrange
     with session_scope() as session:
-        dummy_matches = generate_dummy_match_list()
+        dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
             MatchRepository.create(
                 session,
@@ -48,7 +48,7 @@ def test_hit_with_ids():
 def test_hit_with_an_id_as_not_list():
     # Arrange
     with session_scope() as session:
-        dummy_matches = generate_dummy_match_list()
+        dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
             MatchRepository.create(
                 session,
@@ -83,7 +83,7 @@ def test_hit_with_an_id_as_not_list():
 def test_hit_0_record():
     # Arrange
     with session_scope() as session:
-        dummy_matches = generate_dummy_match_list()
+        dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
             MatchRepository.create(
                 session,

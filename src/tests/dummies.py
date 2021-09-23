@@ -170,6 +170,15 @@ def generate_dummy_hanchan_list():
             status=1,
             _id=4,
         ),
+        Hanchan(
+            line_room_id=rooms[1].line_room_id,
+            raw_scores={},
+            converted_scores={},
+            match_id=5,
+            status=1,
+            # same the other's id
+            _id=4,
+        ),
     ]
 
 
