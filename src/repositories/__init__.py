@@ -8,6 +8,7 @@ from .MatchRepository import MatchRepository
 
 config_repository = ConfigRepository()
 user_repository = UserRepository()
+hanchan_repository = HanchanRepository()
 match_repository = MatchRepository()
 
 
