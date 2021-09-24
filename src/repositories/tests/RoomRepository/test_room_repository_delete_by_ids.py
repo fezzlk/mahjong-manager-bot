@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_room_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.RoomRepository import RoomRepository
+from repositories import session_scope, room_repository
 from domains.Room import Room
 
 session = Session()
@@ -12,7 +11,7 @@ def test_hit_with_ids():
     dummy_rooms = generate_dummy_room_list()[:3]
     with session_scope() as session:
         for dummy_room in dummy_rooms:
-            RoomRepository.create(
+            room_repository.create(
                 session,
                 dummy_room,
             )
@@ -22,14 +21,14 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        RoomRepository.delete_by_ids(
+        room_repository.delete_by_ids(
             session,
             ids,
         )
 
     # Assert
     with session_scope() as session:
-        result = RoomRepository.find_all(
+        result = room_repository.find_all(
             session,
         )
         assert len(result) == len(other_rooms)
@@ -45,7 +44,7 @@ def test_hit_with_an_id_as_not_list():
     dummy_rooms = generate_dummy_room_list()[:3]
     with session_scope() as session:
         for dummy_room in dummy_rooms:
-            RoomRepository.create(
+            room_repository.create(
                 session,
                 dummy_room,
             )
@@ -55,14 +54,14 @@ def test_hit_with_an_id_as_not_list():
 
     # Act
     with session_scope() as session:
-        result = RoomRepository.delete_by_ids(
+        result = room_repository.delete_by_ids(
             session,
             target_room_id,
         )
 
     # Assert
     with session_scope() as session:
-        result = RoomRepository.find_all(
+        result = room_repository.find_all(
             session,
         )
         assert len(result) == len(other_rooms)
@@ -78,7 +77,7 @@ def test_hit_0_record():
     with session_scope() as session:
         dummy_rooms = generate_dummy_room_list()[:3]
         for dummy_room in dummy_rooms:
-            RoomRepository.create(
+            room_repository.create(
                 session,
                 dummy_room,
             )
@@ -87,14 +86,14 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = RoomRepository.delete_by_ids(
+        result = room_repository.delete_by_ids(
             session,
             ids,
         )
 
     # Assert
     with session_scope() as session:
-        result = RoomRepository.find_all(
+        result = room_repository.find_all(
             session,
         )
         assert len(result) == len(dummy_rooms)

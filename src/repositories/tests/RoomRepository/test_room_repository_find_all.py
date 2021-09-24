@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_room_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.RoomRepository import RoomRepository
+from repositories import session_scope, room_repository
 from domains.Room import Room
 
 session = Session()
@@ -12,14 +11,14 @@ def test_success_find_records():
     with session_scope() as session:
         dummy_rooms = generate_dummy_room_list()
         for dummy_room in dummy_rooms:
-            RoomRepository.create(
+            room_repository.create(
                 session,
                 dummy_room,
             )
 
     # Act
     with session_scope() as session:
-        result = RoomRepository.find_all(
+        result = room_repository.find_all(
             session,
         )
 
@@ -38,7 +37,7 @@ def test_success_find_0_record():
 
     # Act
     with session_scope() as session:
-        result = RoomRepository.find_all(
+        result = room_repository.find_all(
             session,
         )
 

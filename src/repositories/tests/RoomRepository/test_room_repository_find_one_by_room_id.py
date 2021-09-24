@@ -1,8 +1,7 @@
 import pytest
 from tests.dummies import generate_dummy_room_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.RoomRepository import RoomRepository
+from repositories import session_scope, room_repository
 from domains.Room import Room
 
 session = Session()
@@ -13,7 +12,7 @@ def test_hit_1_record():
     dummy_rooms = generate_dummy_room_list()[:3]
     with session_scope() as session:
         for dummy_room in dummy_rooms:
-            RoomRepository.create(
+            room_repository.create(
                 session,
                 dummy_room,
             )
@@ -22,7 +21,7 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        result = RoomRepository.find_one_by_room_id(
+        result = room_repository.find_one_by_room_id(
             session,
             target_line_room_id,
         )
@@ -39,7 +38,7 @@ def test_hit_0_record():
     dummy_rooms = generate_dummy_room_list()[1:3]
     with session_scope() as session:
         for dummy_room in dummy_rooms:
-            RoomRepository.create(
+            room_repository.create(
                 session,
                 dummy_room,
             )
@@ -47,7 +46,7 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = RoomRepository.find_one_by_room_id(
+        result = room_repository.find_one_by_room_id(
             session,
             room_id=target_line_room_id,
         )
@@ -63,7 +62,7 @@ def test_NG_with_room_id_none():
 
         # Act
         with session_scope() as session:
-            RoomRepository.find_one_by_room_id(
+            room_repository.find_one_by_room_id(
                 session,
                 None,
             )
