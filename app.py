@@ -3,7 +3,7 @@ Application root
 If '$ flask run' is executed, this file is call at first.
 """
 import os
-
+import json
 import set_local_env  # for local dev env
 
 from db_setting import Engine
@@ -153,7 +153,6 @@ def get_hanchans():
         data=data
     )
 
-
 @app.route('/hanchans/create', methods=['POST'])
 def create_hanchans():
     return redirect(url_for('get_hanchans'))
@@ -179,7 +178,6 @@ def get_results():
         data=data
     )
 
-
 @app.route('/results/create', methods=['POST'])
 def create_results():
     return redirect(url_for('get_results'))
@@ -204,7 +202,6 @@ def get_matches():
         input_keys=input_keys,
         data=data
     )
-
 
 @app.route('/matches/create', methods=['POST'])
 def create_matches():
@@ -248,15 +245,78 @@ def delete_configs():
 api
 """
 
+@app.route('/_api/users')
+def api_get_users():
+    records = services.user_service.get()
+    res = {'users': []}
+    if len(records) == 0:
+        return res
+    for record in records:
+        user = record.__dict__
+        user.pop('_sa_instance_state')
+        res['users'].append(user)
+    return res
+
+@app.route('/_api/rooms')
+def api_get_rooms():
+    records = services.room_service.get()
+    res = {'rooms': []}
+    if len(records) == 0:
+        return res
+    for record in records:
+        room = record.__dict__
+        room.pop('_sa_instance_state')
+        res['rooms'].append(room)
+    return res
+
+
+@app.route('/_api/hanchans')
+def api_get_hanchans():
+    records = services.hanchans_service.get()
+    res = {'hanchans': []}
+    if len(records) == 0:
+        return res
+    for record in records:
+        hanchan = record.__dict__
+        hanchan.pop('_sa_instance_state')
+        res['hanchans'].append(hanchan)
+    return res
 
 @app.route('/_api/results')
 def api_get_results():
-    # Results.get_json(Engine)
-    # data = services.results_service.get()
-    # print(data)
-    # print(type(data))
-    # return redirect(url_for('get_configs'))
-    return 'hoge'
+    records = services.results_service.get()
+    res = {'results': []}
+    if len(records) == 0:
+        return res
+    for record in records:
+        result = record.__dict__
+        result.pop('_sa_instance_state')
+        res['results'].append(result)
+    return res
+
+@app.route('/_api/matches')
+def api_get_matches():
+    records = services.matches_service.get()
+    res = {'matches': []}
+    if len(records) == 0:
+        return res
+    for record in records:
+        match = record.__dict__
+        match.pop('_sa_instance_state')
+        res['matches'].append(match)
+    return res
+
+@app.route('/_api/configs')
+def api_get_configs():
+    records = services.config_service.get()
+    res = {'configs': []}
+    if len(records) == 0:
+        return res
+    for record in records:
+        config = record.__dict__
+        config.pop('_sa_instance_state')
+        res['configs'].append(config)
+    return res
 
 
 """
