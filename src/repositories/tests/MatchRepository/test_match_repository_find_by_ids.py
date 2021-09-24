@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, match_repository
 from domains.Match import Match
 
 session = Session()
@@ -12,7 +11,7 @@ def test_hit_with_ids():
     with session_scope() as session:
         dummy_matchs = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -21,7 +20,7 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_by_ids(
+        result = match_repository.find_by_ids(
             session,
             ids,
         )
@@ -41,7 +40,7 @@ def test_hit_with_an_id_as_not_list():
     with session_scope() as session:
         dummy_matchs = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -50,7 +49,7 @@ def test_hit_with_an_id_as_not_list():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_by_ids(
+        result = match_repository.find_by_ids(
             session,
             target_match_id,
         )
@@ -68,7 +67,7 @@ def test_hit_0_record():
     with session_scope() as session:
         dummy_matchs = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -77,7 +76,7 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_by_ids(
+        result = match_repository.find_by_ids(
             session,
             ids,
         )

@@ -1,8 +1,7 @@
 import pytest
 from tests.dummies import generate_dummy_hanchan_list, generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope, hanchan_repository
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, hanchan_repository, match_repository
 from domains.Hanchan import Hanchan
 
 session = Session()
@@ -13,7 +12,7 @@ def test_hit_1_record():
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -48,7 +47,7 @@ def test_hit_0_record_with_not_exist_line_room_id():
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -78,7 +77,7 @@ def test_hit_0_record_with_not_exist_status():
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -109,7 +108,7 @@ def test_NG_with_id_none():
         with session_scope() as session:
             dummy_matches = generate_dummy_match_list()[:3]
             for dummy_match in dummy_matches:
-                MatchRepository.create(
+                match_repository.create(
                     session,
                     dummy_match,
                 )
@@ -140,7 +139,7 @@ def test_NG_with_line_room_id_none():
         with session_scope() as session:
             dummy_matches = generate_dummy_match_list()[:3]
             for dummy_match in dummy_matches:
-                MatchRepository.create(
+                match_repository.create(
                     session,
                     dummy_match,
                 )

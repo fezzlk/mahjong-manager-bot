@@ -1,8 +1,7 @@
 import pytest
 from tests.dummies import generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, match_repository
 from domains.Match import Match
 
 session = Session()
@@ -13,7 +12,7 @@ def test_hit_records():
     dummy_matchs = generate_dummy_match_list()[:4]
     with session_scope() as session:
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -21,7 +20,7 @@ def test_hit_records():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_many_by_room_id_and_status(
+        result = match_repository.find_many_by_room_id_and_status(
             session,
             target_matches[0].line_room_id,
             target_matches[0].status,
@@ -42,7 +41,7 @@ def test_hit_0_record_with_not_exist_line_room_id():
     with session_scope() as session:
         dummy_matchs = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -50,7 +49,7 @@ def test_hit_0_record_with_not_exist_line_room_id():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_many_by_room_id_and_status(
+        result = match_repository.find_many_by_room_id_and_status(
             session=session,
             line_room_id=target_match.line_room_id,
             status=target_match.status,
@@ -65,7 +64,7 @@ def test_hit_0_record_with_not_exist_status():
     with session_scope() as session:
         dummy_matchs = generate_dummy_match_list()[:2]
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -73,7 +72,7 @@ def test_hit_0_record_with_not_exist_status():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_many_by_room_id_and_status(
+        result = match_repository.find_many_by_room_id_and_status(
             session=session,
             line_room_id=target_match.line_room_id,
             status=target_match.status,
@@ -90,7 +89,7 @@ def test_NG_with_line_room_id_none():
 
         # Act
         with session_scope() as session:
-            MatchRepository.find_many_by_room_id_and_status(
+            match_repository.find_many_by_room_id_and_status(
                 session=session,
                 line_room_id=None,
                 status=target_match.status,
@@ -107,7 +106,7 @@ def test_NG_with_status_none():
 
         # Act
         with session_scope() as session:
-            MatchRepository.find_many_by_room_id_and_status(
+            match_repository.find_many_by_room_id_and_status(
                 session=session,
                 line_room_id=None,
                 status=target_match.status,

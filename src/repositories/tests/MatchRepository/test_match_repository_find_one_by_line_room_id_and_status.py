@@ -1,8 +1,7 @@
 import pytest
 from tests.dummies import generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, match_repository
 from domains.Match import Match
 
 session = Session()
@@ -13,7 +12,7 @@ def test_hit_1_record():
     dummy_matchs = generate_dummy_match_list()[:3]
     with session_scope() as session:
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -21,7 +20,7 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_one_by_line_room_id_and_status(
+        result = match_repository.find_one_by_line_room_id_and_status(
             session=session,
             line_room_id=target_match.line_room_id,
             status=target_match.status,
@@ -40,7 +39,7 @@ def test_hit_0_record():
     dummy_matchs = generate_dummy_match_list()[1:3]
     with session_scope() as session:
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
@@ -48,7 +47,7 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_one_by_line_room_id_and_status(
+        result = match_repository.find_one_by_line_room_id_and_status(
             session=session,
             line_room_id=target_match.line_room_id,
             status=target_match.status,
@@ -65,7 +64,7 @@ def test_NG_with_line_room_id_none():
 
         # Act
         with session_scope() as session:
-            MatchRepository.find_one_by_line_room_id_and_status(
+            match_repository.find_one_by_line_room_id_and_status(
                 session=session,
                 line_room_id=None,
                 status=target_match.status,
@@ -82,7 +81,7 @@ def test_NG_with_status_none():
 
         # Act
         with session_scope() as session:
-            MatchRepository.find_one_by_line_room_id_and_status(
+            match_repository.find_one_by_line_room_id_and_status(
                 session=session,
                 line_room_id=None,
                 status=target_match.status,

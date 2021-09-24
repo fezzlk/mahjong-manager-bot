@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_hanchan, generate_dummy_match
 from db_setting import Session
-from repositories import session_scope, hanchan_repository
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, hanchan_repository, match_repository
 
 session = Session()
 
@@ -11,7 +10,7 @@ def test_success():
     dummy_hanchan = generate_dummy_hanchan()
     dummy_match = generate_dummy_match()
     with session_scope() as session:
-        MatchRepository.create(
+        match_repository.create(
             session,
             dummy_match,
         )
