@@ -1,6 +1,10 @@
 from contextlib import contextmanager
 from db_setting import Session
 
+from .ConfigRepository import ConfigRepository
+
+config_repository = ConfigRepository()
+
 
 @contextmanager
 def session_scope():

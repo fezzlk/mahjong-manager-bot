@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_config_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.ConfigRepository import ConfigRepository
+from repositories import session_scope, config_repository
 from domains.Config import Config
 
 session = Session()
@@ -12,7 +11,7 @@ def test_hit_with_ids():
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:3]
         for dummy_config in dummy_configs:
-            ConfigRepository.create(
+            config_repository.create(
                 session,
                 dummy_config,
             )
@@ -21,7 +20,7 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_by_ids(
+        result = config_repository.find_by_ids(
             session,
             ids,
         )
@@ -40,7 +39,7 @@ def test_hit_with_an_id_as_not_list():
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:3]
         for dummy_config in dummy_configs:
-            ConfigRepository.create(
+            config_repository.create(
                 session,
                 dummy_config,
             )
@@ -49,7 +48,7 @@ def test_hit_with_an_id_as_not_list():
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_by_ids(
+        result = config_repository.find_by_ids(
             session,
             target_config_id,
         )
@@ -66,7 +65,7 @@ def test_hit_0_record():
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:3]
         for dummy_config in dummy_configs:
-            ConfigRepository.create(
+            config_repository.create(
                 session,
                 dummy_config,
             )
@@ -75,7 +74,7 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_by_ids(
+        result = config_repository.find_by_ids(
             session,
             ids,
         )

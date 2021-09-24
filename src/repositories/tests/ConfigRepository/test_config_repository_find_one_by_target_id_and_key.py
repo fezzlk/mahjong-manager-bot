@@ -1,8 +1,7 @@
 import pytest
 from tests.dummies import generate_dummy_config, generate_dummy_config_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.ConfigRepository import ConfigRepository
+from repositories import session_scope, config_repository
 from domains.Config import Config
 
 session = Session()
@@ -12,14 +11,14 @@ def test_hit():
     # Arrange
     with session_scope() as session:
         dummy_config = generate_dummy_config()
-        ConfigRepository.create(
+        config_repository.create(
             session,
             dummy_config,
         )
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_one_by_target_id_and_key(
+        result = config_repository.find_one_by_target_id_and_key(
             session,
             dummy_config.target_id,
             dummy_config.key,
@@ -38,7 +37,7 @@ def test_not_hit():
         dummy_configs = generate_dummy_config_list()[1:3]
 
         for dummy_config in dummy_configs:
-            ConfigRepository.create(
+            config_repository.create(
                 session,
                 dummy_config,
             )
@@ -46,7 +45,7 @@ def test_not_hit():
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_one_by_target_id_and_key(
+        result = config_repository.find_one_by_target_id_and_key(
             session,
             target_config.target_id,
             target_config.key,
@@ -63,7 +62,7 @@ def test_NG_with_target_id_none():
 
         # Act
         with session_scope() as session:
-            ConfigRepository.find_one_by_target_id_and_key(
+            config_repository.find_one_by_target_id_and_key(
                 session,
                 None,
                 target_config.key,
@@ -80,7 +79,7 @@ def test_NG_with_key_none():
 
         # Act
         with session_scope() as session:
-            ConfigRepository.find_one_by_target_id_and_key(
+            config_repository.find_one_by_target_id_and_key(
                 session,
                 target_config.target_id,
                 None,
