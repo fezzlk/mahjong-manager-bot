@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_user_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.UserRepository import UserRepository
+from repositories import session_scope, user_repository
 from domains.User import User
 
 session = Session()
@@ -12,14 +11,14 @@ def test_success_find_records():
     with session_scope() as session:
         dummy_users = generate_dummy_user_list()
         for dummy_user in dummy_users:
-            UserRepository.create(
+            user_repository.create(
                 session,
                 dummy_user,
             )
 
     # Act
     with session_scope() as session:
-        result = UserRepository.find_all(
+        result = user_repository.find_all(
             session,
         )
 
@@ -40,7 +39,7 @@ def test_success_find_0_record():
 
     # Act
     with session_scope() as session:
-        result = UserRepository.find_all(
+        result = user_repository.find_all(
             session,
         )
 

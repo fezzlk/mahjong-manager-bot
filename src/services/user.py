@@ -2,8 +2,7 @@
 """user"""
 
 from enum import Enum
-from repositories import session_scope
-from repositories.UserRepository import UserRepository
+from repositories import session_scope, user_repository
 from server import logger, line_bot_api
 from domains.User import User, UserMode
 

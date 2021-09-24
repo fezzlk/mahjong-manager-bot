@@ -2,8 +2,10 @@ from contextlib import contextmanager
 from db_setting import Session
 
 from .ConfigRepository import ConfigRepository
+from .UserRepository import UserRepository
 
 config_repository = ConfigRepository()
+user_repository = UserRepository()
 
 
 @contextmanager
