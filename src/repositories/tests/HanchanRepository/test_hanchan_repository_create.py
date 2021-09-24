@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_hanchan, generate_dummy_match
 from db_setting import Session
-from repositories import session_scope
-from repositories.HanchanRepository import HanchanRepository
+from repositories import session_scope, hanchan_repository
 from repositories.MatchRepository import MatchRepository
 
 session = Session()
@@ -19,14 +18,14 @@ def test_success():
 
     # Act
     with session_scope() as session:
-        HanchanRepository.create(
+        hanchan_repository.create(
             session,
             dummy_hanchan,
         )
 
     # Assert
     with session_scope() as session:
-        result = HanchanRepository.find_all(
+        result = hanchan_repository.find_all(
             session,
         )
         assert len(result) == 1

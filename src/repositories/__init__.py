@@ -3,9 +3,11 @@ from db_setting import Session
 
 from .ConfigRepository import ConfigRepository
 from .UserRepository import UserRepository
+from .HanchanRepository import HanchanRepository
 
 config_repository = ConfigRepository()
 user_repository = UserRepository()
+hanchan_repository = HanchanRepository()
 
 
 @contextmanager

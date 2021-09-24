@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_hanchan_list, generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.HanchanRepository import HanchanRepository
+from repositories import session_scope, hanchan_repository
 from repositories.MatchRepository import MatchRepository
 from domains.Hanchan import Hanchan
 
@@ -20,7 +19,7 @@ def test_hit_with_ids():
     with session_scope() as session:
         dummy_hanchans = generate_dummy_hanchan_list()[:3]
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
@@ -29,7 +28,7 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_by_ids(
+        result = hanchan_repository.find_by_ids(
             session,
             ids,
         )
@@ -57,7 +56,7 @@ def test_hit_with_an_id_as_not_list():
     with session_scope() as session:
         dummy_hanchans = generate_dummy_hanchan_list()[:3]
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
@@ -66,7 +65,7 @@ def test_hit_with_an_id_as_not_list():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_by_ids(
+        result = hanchan_repository.find_by_ids(
             session,
             target_hanchan_id,
         )
@@ -92,7 +91,7 @@ def test_hit_0_record():
     with session_scope() as session:
         dummy_hanchans = generate_dummy_hanchan_list()[:3]
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
@@ -100,7 +99,7 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_by_ids(
+        result = hanchan_repository.find_by_ids(
             session,
             ids,
         )
