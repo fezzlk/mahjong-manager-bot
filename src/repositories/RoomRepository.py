@@ -8,7 +8,7 @@ from domains.Room import Room, RoomMode
 
 class RoomRepository:
 
-    def find_one_by_room_id(session, room_id):
+    def find_one_by_room_id(self, session, room_id):
         if room_id is None:
             raise ValueError
 
@@ -27,7 +27,7 @@ class RoomRepository:
             _id=record.id,
         )
 
-    def find_by_ids(session, ids):
+    def find_by_ids(self, session, ids):
         # 配列にサニタイズ
         if type(ids) != list:
             ids = [ids]
@@ -48,7 +48,7 @@ class RoomRepository:
             for record in records
         ]
 
-    def find_all(session):
+    def find_all(self, session):
         records = session\
             .query(Rooms)\
             .order_by(Rooms.id)\
@@ -64,7 +64,7 @@ class RoomRepository:
             for record in records
         ]
 
-    def create(session, new_room):
+    def create(self, session, new_room):
         record = Rooms(
             room_id=new_room.line_room_id,
             mode=new_room.mode.value,
@@ -72,7 +72,7 @@ class RoomRepository:
         )
         session.add(record)
 
-    def delete_by_ids(session, ids):
+    def delete_by_ids(self, session, ids):
         # 配列をサニタイズ
         if type(ids) != list:
             ids = [ids]

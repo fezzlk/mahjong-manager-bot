@@ -11,7 +11,7 @@ import json
 
 class HanchanRepository:
 
-    def find_one_by_id_and_line_room_id(session, target_id, line_room_id):
+    def find_one_by_id_and_line_room_id(self, session, target_id, line_room_id):
         if target_id is None or line_room_id is None:
             raise ValueError
 
@@ -34,7 +34,7 @@ class HanchanRepository:
             status=record.status,
         )
 
-    def find_one_by_line_room_id_and_status(session, line_room_id, status):
+    def find_one_by_line_room_id_and_status(self, session, line_room_id, status):
         if status is None or line_room_id is None:
             raise ValueError
 
@@ -57,7 +57,7 @@ class HanchanRepository:
             status=record.status,
         )
 
-    def find_by_ids(session, ids):
+    def find_by_ids(self, session, ids):
         # 配列をサニタイズ
         if type(ids) != list:
             ids = [ids]
@@ -80,7 +80,7 @@ class HanchanRepository:
             for record in records
         ]
 
-    def find_all(session):
+    def find_all(self, session):
         records = session\
             .query(Hanchans)\
             .order_by(Hanchans.id)\
@@ -97,7 +97,7 @@ class HanchanRepository:
             for record in records
         ]
 
-    def create(session, new_hanchan):
+    def create(self, session, new_hanchan):
         hanchan = Hanchans(
             room_id=new_hanchan.line_room_id,
             match_id=new_hanchan.match_id,
@@ -107,7 +107,7 @@ class HanchanRepository:
         )
         session.add(hanchan)
 
-    def delete_by_ids(session, ids):
+    def delete_by_ids(self, session, ids):
         # 配列をサニタイズ
         if type(ids) != list:
             ids = [ids]
