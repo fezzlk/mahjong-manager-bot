@@ -146,7 +146,7 @@ class Router:
         """routing by text on each mode"""
         """wait mode"""
         reply_service.add_message(
-            message_service.get_wait_massage(request_info_service.req_user_line_id))
+            message_service.get_wait_massage(request_info_service.req_line_user_id))
 
         """if zoom url, register to room"""
         if '.zoom.us' in text:
@@ -161,7 +161,7 @@ class Router:
         # exit
         elif method == UCommands.exit.name:
             user_use_cases.chmod(
-                request_info_service.req_user_line_id,
+                request_info_service.req_line_user_id,
                 user_use_cases.modes.wait
             )
         # payment
@@ -202,7 +202,7 @@ class Router:
                 return
 
         """routing by text on each mode"""
-        room_id = request_info_service.req_room_id
+        room_id = request_info_service.req_line_room_id
         current_mode = room_service.get_mode(room_id)
         """input mode"""
         if current_mode == room_service.modes.input.value:

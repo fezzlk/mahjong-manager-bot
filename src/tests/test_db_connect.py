@@ -14,41 +14,6 @@ def test_db_health_check():
 
     assert is_database_working
 
-# class Event:
-#     def __init__(
-#             self,
-#             data,
-#             req_user='a',
-#             message_type='text',
-#             event_type='message',
-#             source_type='room'):
-#         self.type = event_type
-#         self.source = Source(req_user, source_type)
-#         if self.type == 'message':
-#             self.message = Message(data, message_type)
-#         if self.type == 'postback':
-#             self.postback == Postback(data)
-
-
-# class Source:
-#     def __init__(self, req_user='a', source_type='room'):
-#         test_user_ids = json.loads(os.environ["TEST_USER_IDS"])
-#         self.type = source_type
-#         self.user_id = test_user_ids[req_user]
-#         if source_type == 'room':
-#             self.room_id = os.environ["TEST_ROOM_ID"]
-
-
-# class Message:
-#     def __init__(self, text, message_type='text'):
-#         self.type = message_type
-#         self.text = text
-
-
-# class Postback:
-#     def __init__(self, data=''):
-#         self.data = data
-
 
 # def test_recieve_message():
 #     from models import Users
