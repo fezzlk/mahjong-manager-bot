@@ -6,7 +6,7 @@ from services import (
     reply_service,
     room_service,
     matches_service,
-    app_service,
+    request_info_service,
     hanchans_service,
     user_service,
 )
@@ -20,14 +20,14 @@ class RoomUseCases:
         reply_service.add_message(
             'こんにちは、今日は麻雀日和ですね。'
         )
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_room_id
         if room_id is None:
             logger.warning('This request is not from room chat')
             return
         room_service.find_or_create(room_id)
 
     def reply_mode(self):
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_room_id
         mode = room_service.get_mode(room_id)
         reply_service.add_message(mode)
 
@@ -39,7 +39,7 @@ class RoomUseCases:
 
     def set_zoom_url(self, zoom_url=None):
         if zoom_url is None:
-            user_id = app_service.req_user_line_id
+            user_id = request_info_service.req_user_line_id
             user = user_service.find_by_line_user_id(user_id)
 
             if user is None:
@@ -49,7 +49,7 @@ class RoomUseCases:
 
             zoom_url = user.zoom_id
 
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_room_id
         result_zoom_url = room_service.set_zoom_url(room_id, zoom_url)
 
         if result_zoom_url is None:
@@ -59,7 +59,7 @@ class RoomUseCases:
             'Zoom URL を登録しました。\n「_zoom」で呼び出すことができます。')
 
     def reply_zoom_url(self):
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_room_id
         result_zoom_url = room_service.get_zoom_url(room_id)
 
         if result_zoom_url is None:
@@ -69,7 +69,7 @@ class RoomUseCases:
         reply_service.add_message(result_zoom_url)
 
     def wait_mode(self):
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_room_id
         hanchans_service.disable(room_id)
         room_service.chmod(
             room_id,
@@ -79,7 +79,7 @@ class RoomUseCases:
             '始める時は「_start」と入力してください。')
 
     def input_mode(self):
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_room_id
         updated_mode = room_service.chmod(
             room_id,
             room_service.modes.input,

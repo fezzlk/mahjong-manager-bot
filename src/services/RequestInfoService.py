@@ -1,5 +1,5 @@
-class AppService:
-    """AppService
+class RequestInfoService:
+    """RequestInfoService
     メッセージ送信元の LINE ユーザー ID, トークルーム ID を管理
     """
 

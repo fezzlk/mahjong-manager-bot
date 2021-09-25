@@ -58,9 +58,9 @@ def test_db_health_check():
 #         user_id='user_id',
 #         mode=services.user_service.modes.wait.value,
 #     )
-#     services.app_service.db.session.add(new_user)
-#     services.app_service.db.session.commit()
-#     services.app_service.logger.info(f'create: {new_user.user_id} {new_user.name}')
+#     services.request_info_service.db.session.add(new_user)
+#     services.request_info_service.db.session.commit()
+#     services.request_info_service.logger.info(f'create: {new_user.user_id} {new_user.name}')
 #     print('hogehoge', new_user.name)
 
 #     users = services.user_service.get()
