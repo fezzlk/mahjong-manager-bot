@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_config_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.ConfigRepository import ConfigRepository
+from repositories import session_scope, config_repository
 from domains.Config import Config
 
 session = Session()
@@ -12,14 +11,14 @@ def test_success_find_records():
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()
         for dummy_config in dummy_configs:
-            ConfigRepository.create(
+            config_repository.create(
                 session,
                 dummy_config,
             )
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_all(
+        result = config_repository.find_all(
             session,
         )
 
@@ -38,7 +37,7 @@ def test_success_find_0_record():
 
     # Act
     with session_scope() as session:
-        result = ConfigRepository.find_all(
+        result = config_repository.find_all(
             session,
         )
 

@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_room
 from db_setting import Session
-from repositories import session_scope
-from repositories.RoomRepository import RoomRepository
+from repositories import session_scope, room_repository
 
 session = Session()
 
@@ -12,14 +11,14 @@ def test_success():
 
     # Act
     with session_scope() as session:
-        RoomRepository.create(
+        room_repository.create(
             session,
             dummy_room,
         )
 
     # Assert
     with session_scope() as session:
-        result = RoomRepository.find_all(
+        result = room_repository.find_all(
             session,
         )
         assert len(result) == 1

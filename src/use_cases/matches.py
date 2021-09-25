@@ -4,7 +4,7 @@
 import json
 from server import logger
 from services import (
-    app_service,
+    request_info_service,
     hanchans_service,
     reply_service,
     matches_service,
@@ -24,7 +24,7 @@ class MatchesUseCases:
             return
         current = matches_service.get_current()
         result_ids = json.loads(current.result_ids)
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_line_room_id
         hanchans_service.delete_by_id(room_id, result_ids[i - 1])
         reply_service.add_message(
             f'id={target_id}の結果を削除しました。'
@@ -95,7 +95,7 @@ class MatchesUseCases:
         matches_service.archive()
 
     def reply(self):
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_line_room_id
         matches = matches_service.get_archived(room_id)
         if matches is None:
             reply_service.add_message(
@@ -172,7 +172,7 @@ class MatchesUseCases:
             )
 
         key = 'レート'
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_line_room_id
         reply_service.add_message(
             '対戦ID: ' + str(match_id) + '\n' + date + '\n'.join([
                 f'{user_service.get_name_by_line_user_id(user_id)}: \
@@ -182,7 +182,7 @@ class MatchesUseCases:
             ])
         )
     # def plot(self):
-        # room_id = app_service.req_room_id¥
+        # room_id = request_info_service.req_line_room_id¥
         # room_id = 'R808c3c802d36f386290630fc6ba10f0c'
         # matches = session\
         # .query(Matches).filter(and_(

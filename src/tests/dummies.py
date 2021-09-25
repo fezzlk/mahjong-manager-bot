@@ -226,3 +226,90 @@ def generate_dummy_match_list():
             _id=5,
         ),
     ]
+
+
+def generate_dummy_request():
+    return generate_dummy_match_list()[0]
+
+
+def generate_dummy_follow_event():
+    return Event(
+        event_type='follow',
+        source_type='user',
+        user_id=generate_dummy_user().line_user_id,
+    )
+
+
+def generate_dummy_text_message_event_from_user():
+    return Event(
+        event_type='message',
+        source_type='user',
+        user_id=generate_dummy_user().line_user_id,
+        message_type='text',
+        text='dummy_text',
+    )
+
+
+def generate_dummy_text_message_event_from_room():
+    return Event(
+        event_type='message',
+        source_type='room',
+        user_id=generate_dummy_user().line_user_id,
+        room_id=generate_dummy_room().line_room_id,
+        message_type='text',
+        text='dummy_text',
+    )
+
+
+# LINE messaging API に合わせるためフィールド名はキャメルケースにしている
+class Event:
+    def __init__(
+        self,
+        event_type='message',
+        source_type='user',
+        user_id=generate_dummy_user().line_user_id,
+        room_id=generate_dummy_room().line_room_id,
+        message_type='text',
+        text='dummy_text',
+        postback_data='dummy_postback_data',
+        mode='active',
+    ):
+        self.type = event_type
+        self.replyToken = 'dummy_reply_token'
+        self.source = Source(user_id=user_id, source_type=source_type, room_id=room_id)
+        self.mode = mode
+        if self.type == 'message':
+            self.message = Message(text=text, message_type=message_type)
+        if self.type == 'postback':
+            self.postback == Postback(data=postback_data)
+
+
+class Source:
+    def __init__(
+        self,
+        user_id=generate_dummy_user().line_user_id,
+        source_type='user',
+        room_id=generate_dummy_room().line_room_id,
+    ):
+        self.type = source_type
+        self.user_id = user_id
+
+        if source_type == 'room':
+            dummy_room = generate_dummy_room()
+            self.room_id = dummy_room.line_room_id
+
+
+class Message:
+    def __init__(self, text='dummy_text', message_type='text'):
+        self.type = message_type
+        self.id = 'dummy_message_id'
+
+        if message_type == 'image':
+            self.contentProvider = {'type': 'line'}
+        elif message_type == 'text':
+            self.text = text
+
+
+class Postback:
+    def __init__(self, data=''):
+        self.data = data

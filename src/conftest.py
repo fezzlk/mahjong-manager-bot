@@ -12,6 +12,8 @@ load_dotenv()
 from db_setting import Base, Engine, Session
 import pytest
 
+import server
+
 @pytest.fixture(scope='function', autouse=True)
 def reset_db():
     Base.metadata.drop_all(bind=Engine)

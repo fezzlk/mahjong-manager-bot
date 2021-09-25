@@ -4,7 +4,7 @@
 import json
 from server import logger
 from services import (
-    app_service,
+    request_info_service,
     user_service,
     reply_service,
     matches_service,
@@ -25,7 +25,7 @@ class CalculateUseCases:
         """
         得点計算の準備および結果の格納
         """
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_line_room_id
         # points の取得(デフォルトでは引数 points が採用される)
         # 引数に points がない場合、現在 active な result (current)のポイントを計算対象にする
         if points is None:
@@ -73,7 +73,7 @@ class CalculateUseCases:
                     room_id, '飛び賞')), rounding_method=config_service.get_by_key(
                         room_id, '端数計算方法'), tobashita_player_id=tobashita_player_id, )
 
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_line_room_id
 
         # その半荘の結果を更新
         hanchans_service.update_converted_score(room_id, calculate_result)

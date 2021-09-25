@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_config
 from db_setting import Session
-from repositories import session_scope
-from repositories.ConfigRepository import ConfigRepository
+from repositories import session_scope, config_repository
 
 session = Session()
 
@@ -12,14 +11,14 @@ def test_success():
 
     # Act
     with session_scope() as session:
-        ConfigRepository.create(
+        config_repository.create(
             session,
             dummy_config,
         )
 
     # Assert
     with session_scope() as session:
-        result = ConfigRepository.find_all(
+        result = config_repository.find_all(
             session,
         )
         assert len(result) == 1

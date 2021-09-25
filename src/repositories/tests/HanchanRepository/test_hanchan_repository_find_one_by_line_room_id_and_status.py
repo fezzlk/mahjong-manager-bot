@@ -1,9 +1,7 @@
 import pytest
 from tests.dummies import generate_dummy_hanchan_list, generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.HanchanRepository import HanchanRepository
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, hanchan_repository, match_repository
 from domains.Hanchan import Hanchan
 
 session = Session()
@@ -14,14 +12,14 @@ def test_hit_1_record():
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
     dummy_hanchans = generate_dummy_hanchan_list()[:3]
     with session_scope() as session:
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
@@ -29,7 +27,7 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_one_by_line_room_id_and_status(
+        result = hanchan_repository.find_one_by_line_room_id_and_status(
             session=session,
             line_room_id=target_hanchan.line_room_id,
             status=target_hanchan.status,
@@ -49,14 +47,14 @@ def test_hit_0_record_with_not_exist_line_room_id():
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
     dummy_hanchans = generate_dummy_hanchan_list()[:4]
     with session_scope() as session:
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
@@ -64,7 +62,7 @@ def test_hit_0_record_with_not_exist_line_room_id():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_one_by_line_room_id_and_status(
+        result = hanchan_repository.find_one_by_line_room_id_and_status(
             session=session,
             line_room_id=target_hanchan.line_room_id,
             status=target_hanchan.status,
@@ -79,14 +77,14 @@ def test_hit_0_record_with_not_exist_status():
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()[:3]
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
     dummy_hanchans = generate_dummy_hanchan_list()[:2]
     with session_scope() as session:
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
@@ -94,7 +92,7 @@ def test_hit_0_record_with_not_exist_status():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_one_by_line_room_id_and_status(
+        result = hanchan_repository.find_one_by_line_room_id_and_status(
             session=session,
             line_room_id=target_hanchan.line_room_id,
             status=target_hanchan.status,
@@ -110,14 +108,14 @@ def test_NG_with_id_none():
         with session_scope() as session:
             dummy_matches = generate_dummy_match_list()[:3]
             for dummy_match in dummy_matches:
-                MatchRepository.create(
+                match_repository.create(
                     session,
                     dummy_match,
                 )
         dummy_hanchans = generate_dummy_hanchan_list()[:3]
         with session_scope() as session:
             for dummy_hanchan in dummy_hanchans:
-                HanchanRepository.create(
+                hanchan_repository.create(
                     session,
                     dummy_hanchan,
                 )
@@ -125,7 +123,7 @@ def test_NG_with_id_none():
 
         # Act
         with session_scope() as session:
-            HanchanRepository.find_one_by_line_room_id_and_status(
+            hanchan_repository.find_one_by_line_room_id_and_status(
                 session=session,
                 line_room_id=None,
                 status=target_hanchan.status,
@@ -141,14 +139,14 @@ def test_NG_with_line_room_id_none():
         with session_scope() as session:
             dummy_matches = generate_dummy_match_list()[:3]
             for dummy_match in dummy_matches:
-                MatchRepository.create(
+                match_repository.create(
                     session,
                     dummy_match,
                 )
         dummy_hanchans = generate_dummy_hanchan_list()[:3]
         with session_scope() as session:
             for dummy_hanchan in dummy_hanchans:
-                HanchanRepository.create(
+                hanchan_repository.create(
                     session,
                     dummy_hanchan,
                 )
@@ -156,7 +154,7 @@ def test_NG_with_line_room_id_none():
 
         # Act
         with session_scope() as session:
-            HanchanRepository.find_one_by_line_room_id_and_status(
+            hanchan_repository.find_one_by_line_room_id_and_status(
                 session=session,
                 line_room_id=target_hanchan.line_room_id,
                 status=None

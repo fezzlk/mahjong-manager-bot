@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, match_repository
 from domains.Match import Match
 
 session = Session()
@@ -12,14 +11,14 @@ def test_success_find_records():
     with session_scope() as session:
         dummy_matchs = generate_dummy_match_list()
         for dummy_match in dummy_matchs:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_all(
+        result = match_repository.find_all(
             session,
         )
 
@@ -39,7 +38,7 @@ def test_success_find_0_record():
 
     # Act
     with session_scope() as session:
-        result = MatchRepository.find_all(
+        result = match_repository.find_all(
             session,
         )
 

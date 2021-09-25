@@ -3,7 +3,7 @@
 
 import json
 from services import (
-    app_service,
+    request_info_service,
     matches_service,
     reply_service,
     user_service,
@@ -20,7 +20,7 @@ class HanchansUseCases:
     def add(self, raw_scores={}):
         """add"""
 
-        room_id = app_service.req_room_id
+        room_id = request_info_service.req_line_room_id
         current_match = matches_service.get_or_add_current(room_id)
         hanchans_service.add(raw_scores, room_id, current_match)
 

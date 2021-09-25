@@ -9,7 +9,7 @@ from sqlalchemy import and_
 
 class ConfigRepository:
 
-    def find_one_by_target_id_and_key(session, target_id, key):
+    def find_one_by_target_id_and_key(self, session, target_id, key):
         if target_id is None or key is None:
             raise ValueError
 
@@ -31,7 +31,7 @@ class ConfigRepository:
             _id=record.id,
         )
 
-    def find_all(session):
+    def find_all(self, session):
         records = session\
             .query(Configs)\
             .order_by(Configs.id)\
@@ -47,7 +47,7 @@ class ConfigRepository:
             for record in records
         ]
 
-    def find_by_target_id(session, target_id):
+    def find_by_target_id(self, session, target_id):
         records = session\
             .query(Configs)\
             .filter(Configs.target_id == target_id)\
@@ -64,7 +64,7 @@ class ConfigRepository:
             for record in records
         ]
 
-    def find_by_ids(session, ids):
+    def find_by_ids(self, session, ids):
         # 配列にサニタイズ
         if type(ids) != list:
             ids = [ids]
@@ -85,7 +85,7 @@ class ConfigRepository:
             for record in records
         ]
 
-    def create(session, new_config):
+    def create(self, session, new_config):
         record = Configs(
             target_id=new_config.target_id,
             key=new_config.key,
@@ -93,7 +93,7 @@ class ConfigRepository:
         )
         session.add(record)
 
-    def delete_by_target_id_and_key(session, target_id, key):
+    def delete_by_target_id_and_key(self, session, target_id, key):
         if target_id is None or key is None:
             raise ValueError
 
@@ -105,7 +105,7 @@ class ConfigRepository:
             ))\
             .delete()
 
-    def delete_by_ids(session, ids):
+    def delete_by_ids(self, session, ids):
         # 配列にサニタイズ
         if type(ids) != list:
             ids = [ids]

@@ -1,8 +1,7 @@
 # flake8: noqa: E999
 from enum import Enum
 from domains.Room import Room, RoomMode
-from repositories import session_scope
-from repositories.RoomRepository import RoomRepository
+from repositories import session_scope, room_repository
 from server import logger
 
 
@@ -21,7 +20,7 @@ class RoomService:
 
     def find_or_create(self, room_id):
         with session_scope() as session:
-            room = RoomRepository.find_one_by_room_id(session, room_id)
+            room = room_repository.find_one_by_room_id(session, room_id)
 
             if room is None:
                 new_room = Room(
@@ -30,7 +29,7 @@ class RoomService:
                     mode=RoomMode.wait.value,
                     users=[],
                 )
-                room = RoomRepository.create(new_room)
+                room = room_repository.create(new_room)
                 logger.info(f'create room: {room_id}')
 
             return room
@@ -43,7 +42,7 @@ class RoomService:
             return None
 
         with session_scope() as session:
-            target = RoomRepository.find_one_by_room_id(session, room_id)
+            target = room_repository.find_one_by_room_id(session, room_id)
 
             if target is None:
                 logger.warning(
@@ -56,7 +55,7 @@ class RoomService:
 
     def get_mode(self, room_id):
         with session_scope() as session:
-            target = RoomRepository.find_one_by_room_id(session, room_id)
+            target = room_repository.find_one_by_room_id(session, room_id)
 
             if target is None:
                 logger.warning(
@@ -70,19 +69,19 @@ class RoomService:
     def get(self, ids=None):
         with session_scope() as session:
             if ids is None:
-                return RoomRepository.find_all(session)
+                return room_repository.find_all(session)
 
-            return RoomRepository.find_by_ids(session, ids)
+            return room_repository.find_by_ids(session, ids)
 
     def delete(self, ids):
         with session_scope() as session:
-            RoomRepository.delete_by_ids(session, ids)
+            room_repository.delete_by_ids(session, ids)
 
         logger.info(f'delete: id={ids}')
 
     def set_zoom_url(self, room_id, zoom_url):
         with session_scope() as session:
-            target = RoomRepository.find_one_by_room_id(session, room_id)
+            target = room_repository.find_one_by_room_id(session, room_id)
 
             if target is None:
                 logger.warning(
@@ -96,7 +95,7 @@ class RoomService:
 
     def get_zoom_url(self, room_id):
         with session_scope() as session:
-            target = RoomRepository.find_one_by_room_id(session, room_id)
+            target = room_repository.find_one_by_room_id(session, room_id)
 
             if target is None:
                 logger.warning(

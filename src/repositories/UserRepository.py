@@ -8,7 +8,7 @@ from domains.User import User, UserMode
 
 class UserRepository:
 
-    def find_one_by_line_user_id(session, user_id):
+    def find_one_by_line_user_id(self, session, user_id):
         if user_id is None:
             raise ValueError
 
@@ -28,7 +28,7 @@ class UserRepository:
             jantama_name=record.jantama_name,
         )
 
-    def find_one_by_name(session, name):
+    def find_one_by_name(self, session, name):
         if name is None:
             raise ValueError
 
@@ -52,7 +52,7 @@ class UserRepository:
             jantama_name=records[0].jantama_name,
         )
 
-    def find_by_ids(session, ids):
+    def find_by_ids(self, session, ids):
         # 配列にサニタイズ
         if type(ids) != list:
             ids = [ids]
@@ -74,7 +74,7 @@ class UserRepository:
             for record in records
         ]
 
-    def find_all(session):
+    def find_all(self, session):
         records = session\
             .query(Users)\
             .order_by(Users.id)\
@@ -91,7 +91,7 @@ class UserRepository:
             for record in records
         ]
 
-    def create(session, new_user):
+    def create(self, session, new_user):
         record = Users(
             name=new_user.name,
             user_id=new_user.line_user_id,
@@ -101,7 +101,7 @@ class UserRepository:
         )
         session.add(record)
 
-    def delete_one_by_line_user_id(session, user_id):
+    def delete_one_by_line_user_id(self, session, user_id):
         if user_id is None:
             raise ValueError
 
@@ -110,7 +110,7 @@ class UserRepository:
             .filter(Users.user_id == user_id)\
             .delete()
 
-    def delete_by_ids(session, ids):
+    def delete_by_ids(self, session, ids):
         # 配列にサニタイズ
         if type(ids) != list:
             ids = [ids]

@@ -2,7 +2,7 @@
 """config"""
 
 from services import (
-    app_service,
+    request_info_service,
     reply_service,
     config_service,
 )
@@ -19,7 +19,7 @@ class ConfigUseCases:
         """
         リクエスト元のルームの設定更新
         """
-        target_id = app_service.req_room_id
+        target_id = request_info_service.req_line_room_id
         config_service.update(target_id, key, value)
         reply_service.add_message(f'{key}を{value}に変更しました。')
 
@@ -31,10 +31,10 @@ class ConfigUseCases:
 
     def reply_menu(self, body):
         # リクエスト元ルームIDの取得（ルームからのリクエストでなければユーザーID)
-        if app_service.req_room_id is not None:
-            target_id = app_service.req_room_id
+        if request_info_service.req_line_room_id is not None:
+            target_id = request_info_service.req_line_room_id
         else:
-            target_id = app_service.req_user_line_id
+            target_id = request_info_service.req_line_user_id
 
         configs = config_service.get_by_target(target_id)
 

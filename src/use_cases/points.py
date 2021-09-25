@@ -3,7 +3,7 @@
 
 import json
 from services import (
-    app_service,
+    request_info_service,
     hanchans_service,
     reply_service,
     user_service,
@@ -18,7 +18,7 @@ class PointsUseCases:
         """reply"""
 
         if result is None:
-            room_id = app_service.req_room_id
+            room_id = request_info_service.req_line_room_id
             result = hanchans_service.get_current(room_id)
         points = json.loads(result.points)
         if len(points) == 0:
@@ -44,7 +44,7 @@ class PointsUseCases:
                     target_line_user_id)
                 return points
         else:
-            target_line_user_id = app_service.req_user_line_id
+            target_line_user_id = request_info_service.req_line_user_id
             point = text
 
         point = point.replace(',', '')

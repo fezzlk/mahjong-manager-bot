@@ -1,5 +1,5 @@
 """services"""
-from .app import AppService
+from .RequestInfoService import RequestInfoService
 from .calculate import CalculateService
 from .config import ConfigService
 from .hanchans import HanchansService
@@ -12,7 +12,7 @@ from .rich import RichMenuService
 from .room import RoomService
 from .user import UserService
 
-app_service = AppService()
+request_info_service = RequestInfoService()
 calculate_service = CalculateService()
 config_service = ConfigService()
 hanchans_service = HanchansService()

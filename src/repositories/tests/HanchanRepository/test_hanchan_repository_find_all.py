@@ -1,8 +1,6 @@
 from tests.dummies import generate_dummy_hanchan_list, generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.HanchanRepository import HanchanRepository
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, hanchan_repository, match_repository
 from domains.Hanchan import Hanchan
 
 session = Session()
@@ -13,21 +11,21 @@ def test_success_find_records():
     with session_scope() as session:
         dummy_matches = generate_dummy_match_list()
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
     with session_scope() as session:
         dummy_hanchans = generate_dummy_hanchan_list()
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_all(
+        result = hanchan_repository.find_all(
             session,
         )
 
@@ -48,7 +46,7 @@ def test_success_find_0_record():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.find_all(
+        result = hanchan_repository.find_all(
             session,
         )
 

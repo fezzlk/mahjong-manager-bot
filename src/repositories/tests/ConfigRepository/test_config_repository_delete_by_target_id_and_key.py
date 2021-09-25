@@ -2,8 +2,7 @@
 import pytest
 from tests.dummies import generate_dummy_config_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.ConfigRepository import ConfigRepository
+from repositories import session_scope, config_repository
 from domains.Config import Config
 
 session = Session()
@@ -14,7 +13,7 @@ def test_success():
     dummy_configs = generate_dummy_config_list()[:6]
     with session_scope() as session:
         for dummy_config in dummy_configs:
-            ConfigRepository.create(
+            config_repository.create(
                 session,
                 dummy_config,
             )
@@ -23,7 +22,7 @@ def test_success():
 
     # Act
     with session_scope() as session:
-        ConfigRepository.delete_by_target_id_and_key(
+        config_repository.delete_by_target_id_and_key(
             session,
             target_config.target_id,
             target_config.key,
@@ -31,7 +30,7 @@ def test_success():
 
     # Assert
     with session_scope() as session:
-        result = ConfigRepository.find_all(
+        result = config_repository.find_all(
             session,
         )
         assert len(result) == len(other_configs)
@@ -49,7 +48,7 @@ def test_NG_with_target_id_none():
 
         # Act
         with session_scope() as session:
-            ConfigRepository.find_one_by_target_id_and_key(
+            config_repository.find_one_by_target_id_and_key(
                 session,
                 None,
                 target_config.key,
@@ -66,7 +65,7 @@ def test_NG_with_key_none():
 
         # Act
         with session_scope() as session:
-            ConfigRepository.find_one_by_target_id_and_key(
+            config_repository.find_one_by_target_id_and_key(
                 session,
                 target_config.target_id,
                 None,

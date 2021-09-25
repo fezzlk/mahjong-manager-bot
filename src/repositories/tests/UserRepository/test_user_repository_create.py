@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_user
 from db_setting import Session
-from repositories import session_scope
-from repositories.UserRepository import UserRepository
+from repositories import session_scope, user_repository
 
 session = Session()
 
@@ -12,14 +11,14 @@ def test_success():
 
     # Act
     with session_scope() as session:
-        UserRepository.create(
+        user_repository.create(
             session,
             dummy_user,
         )
 
     # Assert
     with session_scope() as session:
-        result = UserRepository.find_all(
+        result = user_repository.find_all(
             session,
         )
         assert len(result) == 1

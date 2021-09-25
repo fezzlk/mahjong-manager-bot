@@ -2,8 +2,7 @@
 """hanchans"""
 
 import json
-from repositories import session_scope
-from repositories.HanchanRepository import HanchanRepository
+from repositories import session_scope, hanchan_repository
 from server import logger
 from domains.Hanchan import Hanchan
 
@@ -22,7 +21,7 @@ class HanchansService:
             status=1,
         )
         with session_scope() as session:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 new_hanchan,
             )
@@ -34,7 +33,7 @@ class HanchansService:
     def delete_by_id(self, room_id, target_id):
         """disabled target hanchan"""
         with session_scope() as session:
-            target = HanchanRepository.find_one_by_id_and_line_room_id(
+            target = hanchan_repository.find_one_by_id_and_line_room_id(
                 session,
                 target_id,
                 room_id
@@ -47,11 +46,11 @@ class HanchansService:
 
     def find_by_ids(self, ids):
         with session_scope() as session:
-            return HanchanRepository.find_by_ids(session, ids)
+            return hanchan_repository.find_by_ids(session, ids)
 
     def get_current(self, room_id):
         with session_scope as session:
-            return HanchanRepository.find_one_by_line_room_id_and_status(
+            return hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
                 1
@@ -60,7 +59,7 @@ class HanchansService:
     # 関数名検討
     def add_raw_score(self, room_id, user_id, raw_score):
         with session_scope as session:
-            hanchan = HanchanRepository.find_one_by_line_room_id_and_status(
+            hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
                 1
@@ -73,7 +72,7 @@ class HanchansService:
 
     def drop_raw_score(self, room_id, user_id):
         with session_scope as session:
-            hanchan = HanchanRepository.find_one_by_line_room_id_and_status(
+            hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
                 1
@@ -88,7 +87,7 @@ class HanchansService:
 
     def clear_raw_scores(self, room_id):
         with session_scope as session:
-            hanchan = HanchanRepository.find_one_by_line_room_id_and_status(
+            hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
                 1
@@ -98,7 +97,7 @@ class HanchansService:
 
     def update_converted_score(self, room_id, calculated_result):
         with session_scope as session:
-            hanchan = HanchanRepository.find_one_by_line_room_id_and_status(
+            hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
                 1
@@ -112,7 +111,7 @@ class HanchansService:
     # update_status
     def change_status(self, room_id, status):
         with session_scope as session:
-            current = HanchanRepository.find_one_by_line_room_id_and_status(
+            current = hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
                 1
@@ -134,9 +133,9 @@ class HanchansService:
     def get(self, ids=None):
         with session_scope as session:
             if ids is None:
-                targets = HanchanRepository.find_all(session)
+                targets = hanchan_repository.find_all(session)
             else:
-                targets = HanchanRepository.find_by_ids(session, ids)
+                targets = hanchan_repository.find_by_ids(session, ids)
 
             for hanchan in targets:
                 if hanchan.raw_scores is not None:
@@ -151,7 +150,7 @@ class HanchansService:
 
     def delete(self, ids):
         with session_scope as session:
-            targets = HanchanRepository.find_by_ids(session, ids)
+            targets = hanchan_repository.find_by_ids(session, ids)
             for target in targets:
                 session.delete(target)
 

@@ -1,8 +1,6 @@
 from tests.dummies import generate_dummy_hanchan_list, generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope
-from repositories.HanchanRepository import HanchanRepository
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, hanchan_repository, match_repository
 from domains.Hanchan import Hanchan
 
 session = Session()
@@ -13,14 +11,14 @@ def test_hit_with_ids():
     dummy_matches = generate_dummy_match_list()[:3]
     with session_scope() as session:
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
     dummy_hanchans = generate_dummy_hanchan_list()[:3]
     with session_scope() as session:
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
@@ -30,14 +28,14 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        HanchanRepository.delete_by_ids(
+        hanchan_repository.delete_by_ids(
             session,
             ids,
         )
 
     # Assert
     with session_scope() as session:
-        result = HanchanRepository.find_all(
+        result = hanchan_repository.find_all(
             session,
         )
         assert len(result) == len(other_hanchans)
@@ -55,14 +53,14 @@ def test_hit_with_an_id_as_not_list():
     dummy_matches = generate_dummy_match_list()[:3]
     with session_scope() as session:
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
     dummy_hanchans = generate_dummy_hanchan_list()[:3]
     with session_scope() as session:
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
@@ -72,14 +70,14 @@ def test_hit_with_an_id_as_not_list():
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.delete_by_ids(
+        result = hanchan_repository.delete_by_ids(
             session,
             target_hanchan_id,
         )
 
     # Assert
     with session_scope() as session:
-        result = HanchanRepository.find_all(
+        result = hanchan_repository.find_all(
             session,
         )
         assert len(result) == len(other_hanchans)
@@ -97,28 +95,28 @@ def test_hit_0_record():
     dummy_matches = generate_dummy_match_list()[:3]
     with session_scope() as session:
         for dummy_match in dummy_matches:
-            MatchRepository.create(
+            match_repository.create(
                 session,
                 dummy_match,
             )
     with session_scope() as session:
         dummy_hanchans = generate_dummy_hanchan_list()[:3]
         for dummy_hanchan in dummy_hanchans:
-            HanchanRepository.create(
+            hanchan_repository.create(
                 session,
                 dummy_hanchan,
             )
 
     # Act
     with session_scope() as session:
-        result = HanchanRepository.delete_by_ids(
+        result = hanchan_repository.delete_by_ids(
             session,
             [4, 5],
         )
 
     # Assert
     with session_scope() as session:
-        result = HanchanRepository.find_all(
+        result = hanchan_repository.find_all(
             session,
         )
         assert len(result) == len(dummy_hanchans)

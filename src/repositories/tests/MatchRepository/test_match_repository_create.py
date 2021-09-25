@@ -1,7 +1,6 @@
 from tests.dummies import generate_dummy_match
 from db_setting import Session
-from repositories import session_scope
-from repositories.MatchRepository import MatchRepository
+from repositories import session_scope, match_repository
 
 session = Session()
 
@@ -12,14 +11,14 @@ def test_success():
 
     # Act
     with session_scope() as session:
-        MatchRepository.create(
+        match_repository.create(
             session,
             dummy_match,
         )
 
     # Assert
     with session_scope() as session:
-        result = MatchRepository.find_all(
+        result = match_repository.find_all(
             session,
         )
         assert len(result) == 1
