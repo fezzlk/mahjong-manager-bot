@@ -4,7 +4,7 @@ from .calculate import CalculateService
 from .config import ConfigService
 from .hanchans import HanchansService
 from .matches import MatchesService
-from .message import MessageService
+from .MessageService import MessageService
 from .ocr import OcrService
 from .points import PointsService
 from .reply import ReplyService
