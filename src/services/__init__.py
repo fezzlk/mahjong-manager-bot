@@ -10,7 +10,7 @@ from .points import PointsService
 from .reply import ReplyService
 from .rich import RichMenuService
 from .room import RoomService
-from .user import UserService
+from .UserService import UserService
 
 request_info_service = RequestInfoService()
 calculate_service = CalculateService()
