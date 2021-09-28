@@ -100,6 +100,15 @@ def generate_dummy_user_list():
             matches=[],
             _id=4,
         ),
+        User(
+            name="test user5",
+            line_user_id="dummy_user_id",
+            zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
+            mode=UserMode.wait,
+            jantama_name="jantama user5",
+            matches=[],
+            _id=5,
+        ),
     ]
 
 
@@ -261,7 +270,24 @@ def generate_dummy_text_message_event_from_room():
     )
 
 
+def generate_dummy_profile():
+    return Profile(
+        display_name='dummy_display_name',
+        user_id='dummy_user_id',
+    )
+
+
 # LINE messaging API に合わせるためフィールド名はキャメルケースにしている
+class Profile:
+    def __init__(
+        self,
+        display_name='dummy_display_name',
+        user_id='dummy_user_id'
+    ):
+        self.display_name = display_name
+        self.user_id = user_id
+
+
 class Event:
     def __init__(
         self,

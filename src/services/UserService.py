@@ -6,34 +6,25 @@ from repositories import session_scope, user_repository
 from server import logger, line_bot_api
 from domains.User import User, UserMode
 
-class Modes(Enum):
-    """mode"""
-
-    wait = 'wait'
-
-
 class UserService:
     """user service"""
 
-    def __init__(self):
-        self.modes = Modes
-
     def find_one_by_line_user_id(self, user_id):
         with session_scope() as session:
-            user = UsersRepository.find_one_by_line_user_id(session, user_id)
+            user = user_repository.find_one_by_line_user_id(session, user_id)
             return user
 
     def delete_one_by_line_user_id(self, user_id):
         """delete"""
         with session_scope() as session:
-            UsersRepository.delete_one_by_line_user_id(session, user_id)
+            user_repository.delete_one_by_line_user_id(session, user_id)
 
         logger.info(f'delete: {user_id}')
 
     def find_or_create_by_profile(self, profile):
         """find or create by receiving message"""
         with session_scope() as session:
-            target = UsersRepository.find_one_by_line_user_id(session, profile.user_id)
+            target = user_repository.find_one_by_line_user_id(session, profile.user_id)
 
         if target is None:
             target = self.create(profile.display_name, profile.user_id)
@@ -49,25 +40,25 @@ class UserService:
                 mode=UserMode.wait,
                 jantama_name=None,
             )
-            UsersRepository.create(
+            user_repository.create(
                 session,
                 new_user,
             )
-            logger.info(f'create: {new_user.user_id} {new_user.name}')
+            logger.info(f'create: {new_user.line_user_id} {new_user.name}')
             return new_user
 
     def delete(self, ids):
         with session_scope() as session:
-            UsersRepository.delete_by_ids(session, ids)
+            user_repository.delete_by_ids(session, ids)
 
         logger.info(f'delete: id={ids}')
 
     def get(self, ids=None):
         with session_scope() as session:
             if ids is None:
-                return UsersRepository.find_all(session)
+                return user_repository.find_all(session)
 
-            return UsersRepository.find_by_ids(session, ids)
+            return user_repository.find_by_ids(session, ids)
 
     def get_name_by_line_user_id(self, user_id):
         try:
@@ -78,7 +69,7 @@ class UserService:
 
         except Exception:
             with session_scope() as session:
-                target = UsersRepository.find_one_by_line_user_id(session, user_id)
+                target = user_repository.find_one_by_line_user_id(session, user_id)
 
                 if target is None:
                     logger.warning(f'user({user_id}) is not found')
@@ -88,7 +79,7 @@ class UserService:
 
     def get_user_id_by_name(self, name):
         with session_scope() as session:
-            target = UsersRepository.find_one_by_name(session, name)
+            target = user_repository.find_one_by_name(session, name)
 
             if target is None:
                 logger.warning(f'user({name}) is not found')
@@ -101,7 +92,7 @@ class UserService:
             raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
-            target = UsersRepository.find_one_by_line_user_id(session, user_id)
+            target = user_repository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user is not found: {user_id}')
@@ -113,9 +104,12 @@ class UserService:
 
         logger.info(f'chmod: {user_id}: {mode}')
 
+    def wait_mode(self, user_id):
+        self.chmod(user_id, UserMode.wait)
+
     def get_mode(self, user_id):
         with session_scope() as session:
-            target = UsersRepository.find_one_by_line_user_id(session, user_id)
+            target = user_repository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user is not found: {user_id}')
@@ -125,7 +119,7 @@ class UserService:
 
     def set_zoom_id(self, user_id, zoom_id):
         with session_scope() as session:
-            target = UsersRepository.find_one_by_line_user_id(session, user_id)
+            target = user_repository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'set_zoom_url: user "{user_id}" is not found')
@@ -137,7 +131,7 @@ class UserService:
 
     def get_zoom_id(self, user_id):
         with session_scope() as session:
-            target = UsersRepository.find_one_by_line_user_id(session, user_id)
+            target = user_repository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
                 logger.warning(f'user_services: user "{user_id}" is not found')
