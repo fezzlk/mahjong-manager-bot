@@ -8,7 +8,7 @@ from .MessageService import MessageService
 from .ocr import OcrService
 from .points import PointsService
 from .reply import ReplyService
-from .rich import RichMenuService
+from .RichMenuService import RichMenuService
 from .room import RoomService
 from .UserService import UserService
 

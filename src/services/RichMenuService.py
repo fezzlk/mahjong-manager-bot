@@ -13,14 +13,14 @@ from server import line_bot_api
 
 class RichMenuService:
 
-    def create_and_link(self, user_id):
-        rich_menu_id = self.create_personal_menu()
+    def create_and_link(self, line_user_id):
+        rich_menu_id = self._create_personal_menu()
 
         line_bot_api.link_rich_menu_to_user(
-            user_id, rich_menu_id
+            line_user_id, rich_menu_id
         )
 
-    def create_personal_menu(self):
+    def _create_personal_menu(self):
         rich_menu_to_create = RichMenu(
             size=RichMenuSize(width=2500, height=1100),
             selected=False,
@@ -81,7 +81,7 @@ class RichMenuService:
         rich_menu_id = line_bot_api.create_rich_menu(
             rich_menu=rich_menu_to_create
         )
-        file_path = './static/images/rich/personal.png'
+        file_path = 'src/static/images/rich/personal.png'
         content_type = 'Image/png'
         with open(file_path, 'rb') as f:
             line_bot_api.set_rich_menu_image(
