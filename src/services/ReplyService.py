@@ -1,3 +1,4 @@
+# flake8: noqa: E999
 from linebot.models import (
     TextSendMessage,
     TemplateSendMessage,

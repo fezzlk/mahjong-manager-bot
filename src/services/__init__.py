@@ -7,7 +7,7 @@ from .matches import MatchesService
 from .MessageService import MessageService
 from .ocr import OcrService
 from .points import PointsService
-from .reply import ReplyService
+from .ReplyService import ReplyService
 from .RichMenuService import RichMenuService
 from .room import RoomService
 from .UserService import UserService
