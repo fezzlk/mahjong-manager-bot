@@ -26,7 +26,6 @@ def test_success_messages():
 
     # Act
     for i in range(len(dummy_texts)):
-        print(i)
         reply_service.add_message(dummy_texts[i])
 
     # Assert

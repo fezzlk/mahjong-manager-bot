@@ -277,6 +277,15 @@ def generate_dummy_profile():
     )
 
 
+def generate_dummy_points():
+    return {
+        'dummy_user1': 10000,
+        'dummy_user2': 20000,
+        'dummy_user3': 30000,
+        'dummy_user4': 40000,
+    }
+
+
 # LINE messaging API に合わせるためフィールド名はキャメルケースにしている
 class Profile:
     def __init__(
