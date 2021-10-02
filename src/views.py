@@ -4,7 +4,8 @@ views
 
 from flask import request, abort, render_template, url_for, redirect
 from linebot import exceptions
-from db_setting import Base, Engine
+from db_setting import Engine
+from models import Base
 from server import app, handler, logger
 from models import Results, Hanchans
 from use_cases import (

@@ -1,4 +1,4 @@
-from tests.dummies import generate_dummy_match
+from tests.dummies import generate_dummy_match_list
 from db_setting import Session
 from repositories import session_scope, match_repository
 
@@ -7,7 +7,7 @@ session = Session()
 
 def test_success():
     # Arrange
-    dummy_match = generate_dummy_match()
+    dummy_match = generate_dummy_match_list()[0]
 
     # Act
     with session_scope() as session:

@@ -9,7 +9,7 @@ from .ocr import OcrService
 from .points import PointsService
 from .ReplyService import ReplyService
 from .RichMenuService import RichMenuService
-from .room import RoomService
+from .RoomService import RoomService
 from .UserService import UserService
 
 request_info_service = RequestInfoService()

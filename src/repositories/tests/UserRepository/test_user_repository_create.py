@@ -1,4 +1,4 @@
-from tests.dummies import generate_dummy_user
+from tests.dummies import generate_dummy_user_list
 from db_setting import Session
 from repositories import session_scope, user_repository
 
@@ -7,7 +7,7 @@ session = Session()
 
 def test_success():
     # Arrange
-    dummy_user = generate_dummy_user()
+    dummy_user = generate_dummy_user_list()[0]
 
     # Act
     with session_scope() as session:
