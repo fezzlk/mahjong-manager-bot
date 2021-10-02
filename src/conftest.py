@@ -9,7 +9,8 @@ sys.path.append("/src")
 from dotenv import load_dotenv
 load_dotenv()
 
-from db_setting import Base, Engine, Session
+from db_setting import Engine, Session
+from models import Base
 import pytest
 
 import server

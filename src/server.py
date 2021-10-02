@@ -20,7 +20,8 @@ handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])
 
 from messaging_api_setting import line_bot_api
 
-from db_setting import Base, Engine
+from db_setting import Engine
+from models import Base
 Base.metadata.create_all(bind=Engine)
 
 from router import Router
