@@ -124,6 +124,13 @@ def generate_dummy_room_list():
             mode=RoomMode.wait,
             _id=3,
         ),
+        # same line room id 3
+        Room(
+            line_room_id="R0123456789abcdefghijklmnopqrstu3",
+            zoom_url="https://us01web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
+            mode=RoomMode.input,
+            _id=4,
+        ),
     ]
 
 

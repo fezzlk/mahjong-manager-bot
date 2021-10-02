@@ -23,6 +23,7 @@ from use_cases import (
     reply_use_cases,
     follow_use_case,
     unfollow_use_case,
+    join_room_use_case,
 )
 
 
@@ -87,7 +88,7 @@ class Router:
                 unfollow_use_case.execute()
                 isEnabledReply = False
             elif event.type == 'join':
-                room_use_cases.join()
+                join_room_use_case.execute()
             elif event.type == 'postback':
                 self.postback(event)
 
