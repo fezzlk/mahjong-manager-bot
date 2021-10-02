@@ -5,7 +5,7 @@ from use_cases import JoinRoomUseCase
 from services import (
     request_info_service,
 )
-from repositories import session_scope, RoomRepository
+from repositories import session_scope, room_repository
 
 
 def test_execute(mocker):
@@ -20,5 +20,5 @@ def test_execute(mocker):
 
     # Assert
     with session_scope() as session:
-        result = RoomRepository.find_all(session)
-        assert len(result) == 0
+        result = room_repository.find_all(session)
+        assert len(result) == 1
