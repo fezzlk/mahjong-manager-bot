@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   postgres:
-    image: postgres:14
+    image: postgres:11.2
     container_name: postgres
     ports:
       - 5432:5432
@@ -9,13 +9,13 @@ services:
       - ./docker/postgres/init.d:/docker-entrypoint-initdb.d
       - ./docker/postgres/pgdata:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
       POSTGRES_DB: mahjongDB
     hostname: postgres
     restart: always
-    user: postgres
+    user: root
 
   pgadmin4:
     image: dpage/pgadmin4:4.2
