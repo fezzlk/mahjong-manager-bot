@@ -1,4 +1,4 @@
-from tests.dummies import generate_dummy_room
+from tests.dummies import generate_dummy_room_list
 from db_setting import Session
 from repositories import session_scope, room_repository
 
@@ -7,7 +7,7 @@ session = Session()
 
 def test_success():
     # Arrange
-    dummy_room = generate_dummy_room()
+    dummy_room = generate_dummy_room_list()[0]
 
     # Act
     with session_scope() as session:

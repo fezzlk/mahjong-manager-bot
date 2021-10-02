@@ -9,10 +9,6 @@ from domains.Match import Match
 # 使用側では find_all などの特殊な場合を除いて [:3] などを使い追加に影響しないようにする
 
 
-def generate_dummy_config():
-    return generate_dummy_config_list()[0]
-
-
 def generate_dummy_config_list():
     users = generate_dummy_user_list()
     rooms = generate_dummy_room_list()
@@ -55,10 +51,6 @@ def generate_dummy_config_list():
             _id=6,
         ),
     ]
-
-
-def generate_dummy_user():
-    return generate_dummy_user_list()[0]
 
 
 def generate_dummy_user_list():
@@ -112,10 +104,6 @@ def generate_dummy_user_list():
     ]
 
 
-def generate_dummy_room():
-    return generate_dummy_room_list()[0]
-
-
 def generate_dummy_room_list():
     return [
         Room(
@@ -139,13 +127,9 @@ def generate_dummy_room_list():
     ]
 
 
-def generate_dummy_hanchan():
-    return generate_dummy_hanchan_list()[0]
-
-
 def generate_dummy_hanchan_list():
     rooms = generate_dummy_room_list()
-    
+
     return [
         Hanchan(
             line_room_id=rooms[0].line_room_id,
@@ -191,10 +175,6 @@ def generate_dummy_hanchan_list():
     ]
 
 
-def generate_dummy_match():
-    return generate_dummy_match_list()[0]
-
-
 def generate_dummy_match_list():
     rooms = generate_dummy_room_list()
 
@@ -237,15 +217,11 @@ def generate_dummy_match_list():
     ]
 
 
-def generate_dummy_request():
-    return generate_dummy_match_list()[0]
-
-
 def generate_dummy_follow_event():
     return Event(
         event_type='follow',
         source_type='user',
-        user_id=generate_dummy_user().line_user_id,
+        user_id=generate_dummy_user_list()[0].line_user_id,
     )
 
 
@@ -253,7 +229,7 @@ def generate_dummy_text_message_event_from_user():
     return Event(
         event_type='message',
         source_type='user',
-        user_id=generate_dummy_user().line_user_id,
+        user_id=generate_dummy_user_list()[0].line_user_id,
         message_type='text',
         text='dummy_text',
     )
@@ -263,8 +239,8 @@ def generate_dummy_text_message_event_from_room():
     return Event(
         event_type='message',
         source_type='room',
-        user_id=generate_dummy_user().line_user_id,
-        room_id=generate_dummy_room().line_room_id,
+        user_id=generate_dummy_user_list()[0].line_user_id,
+        room_id=generate_dummy_room_list()[0].line_room_id,
         message_type='text',
         text='dummy_text',
     )
@@ -302,8 +278,8 @@ class Event:
         self,
         event_type='message',
         source_type='user',
-        user_id=generate_dummy_user().line_user_id,
-        room_id=generate_dummy_room().line_room_id,
+        user_id=generate_dummy_user_list()[0].line_user_id,
+        room_id=generate_dummy_room_list()[0].line_room_id,
         message_type='text',
         text='dummy_text',
         postback_data='dummy_postback_data',
@@ -322,15 +298,15 @@ class Event:
 class Source:
     def __init__(
         self,
-        user_id=generate_dummy_user().line_user_id,
+        user_id=generate_dummy_user_list()[0].line_user_id,
         source_type='user',
-        room_id=generate_dummy_room().line_room_id,
+        room_id=generate_dummy_room_list()[0].line_room_id,
     ):
         self.type = source_type
         self.user_id = user_id
 
         if source_type == 'room':
-            dummy_room = generate_dummy_room()
+            dummy_room = generate_dummy_room_list()[0]
             self.room_id = dummy_room.line_room_id
 
 

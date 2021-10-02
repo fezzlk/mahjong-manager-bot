@@ -1,5 +1,5 @@
 import pytest
-from tests.dummies import generate_dummy_config, generate_dummy_config_list
+from tests.dummies import generate_dummy_config_list
 from db_setting import Session
 from repositories import session_scope, config_repository
 from domains.Config import Config
@@ -10,7 +10,7 @@ session = Session()
 def test_hit():
     # Arrange
     with session_scope() as session:
-        dummy_config = generate_dummy_config()
+        dummy_config = generate_dummy_config_list()[0]
         config_repository.create(
             session,
             dummy_config,
