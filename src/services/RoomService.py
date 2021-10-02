@@ -23,13 +23,12 @@ class RoomService:
             room = room_repository.find_one_by_room_id(session, room_id)
 
             if room is None:
-                new_room = Room(
+                room = Room(
                     line_room_id=room_id,
                     zoom_url=None,
-                    mode=RoomMode.wait.value,
-                    users=[],
+                    mode=RoomMode.wait,
                 )
-                room = room_repository.create(new_room)
+                room_repository.create(session, room)
                 logger.info(f'create room: {room_id}')
 
             return room

@@ -233,6 +233,15 @@ def generate_dummy_unfollow_event():
     )
 
 
+def generate_dummy_join_event():
+    return Event(
+        event_type='join',
+        source_type='room',
+        user_id=generate_dummy_user_list()[0].line_user_id,
+        room_id=generate_dummy_room_list()[0].line_room_id,
+    )
+
+
 def generate_dummy_text_message_event_from_user():
     return Event(
         event_type='message',
