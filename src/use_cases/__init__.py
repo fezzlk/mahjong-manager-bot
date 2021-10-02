@@ -9,8 +9,10 @@ from .room import RoomUseCases
 from .reply import ReplyUseCases
 from .user import UserUseCases
 from .FollowUseCase import FollowUseCase
+from .UnfollowUseCase import UnfollowUseCase
 
 follow_use_case = FollowUseCase()
+unfollow_use_case = UnfollowUseCase()
 calculate_use_cases = CalculateUseCases()
 config_use_cases = ConfigUseCases()
 hanchans_use_cases = HanchansUseCases()

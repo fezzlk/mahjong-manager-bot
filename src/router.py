@@ -21,6 +21,8 @@ from use_cases import (
     matches_use_cases,
     hanchans_use_cases,
     reply_use_cases,
+    follow_use_case,
+    unfollow_use_case,
 )
 
 
@@ -80,9 +82,9 @@ class Router:
                 elif event.message.type == 'image':
                     self.imageMessage(event)
             elif event.type == 'follow':
-                user_use_cases.follow()
+                follow_use_case.execute()
             elif event.type == 'unfollow':
-                user_use_cases.unfollow()
+                unfollow_use_case.execute()
                 isEnabledReply = False
             elif event.type == 'join':
                 room_use_cases.join()
