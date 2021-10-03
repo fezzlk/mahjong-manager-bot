@@ -29,7 +29,7 @@ from use_cases import (
     room_quit_use_case,
     match_finish_use_case,
 )
-
+from domains.Room import RoomMode
 
 class UCommands(Enum):
     """Commands for personal user"""
@@ -107,7 +107,7 @@ class Router:
     def textMessage(self, event):
         print(event)
         """receive text message event"""
-        if event.source.type == 'room':
+        if event.source.type == 'room' or event.source.type == 'group':
             self.routing_for_room_by_text(event)
         elif event.source.type == 'user':
             self.routing_by_text(event)
@@ -115,11 +115,11 @@ class Router:
             logger.info(
                 f'error: message.source.type: {event.source.type}'
             )
-            raise BaseException('this sender is not supported')
+            raise BaseException('this source type is not supported')
 
     def imageMessage(self, event):
         """receive image message event"""
-        if event.source.type == 'room':
+        if event.source.type == 'room' or event.source.type == 'group':
             message_content = line_bot_api.get_message_content(
                 event.message.id
             )
@@ -131,7 +131,7 @@ class Router:
         text = event.postback.data
         method = text[1:].split()[0]
         body = text[len(method) + 2:]
-        if event.source.type == 'room':
+        if event.source.type == 'room' or event.source.type == 'group':
             self.routing_for_room_by_method(method, body)
         elif event.source.type == 'user':
             self.routing_by_method(method, body)
@@ -213,7 +213,7 @@ class Router:
         room_id = request_info_service.req_line_room_id
         current_mode = room_service.get_mode(room_id)
         """input mode"""
-        if current_mode.value == room_service.modes.input.value:
+        if current_mode.value == RoomMode.input.value:
             points = add_point_by_text_use_case.execute(text)
             points_use_cases.reply()
             if len(points) == 4:

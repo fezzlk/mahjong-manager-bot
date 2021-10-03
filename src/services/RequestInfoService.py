@@ -4,9 +4,10 @@ class RequestInfoService:
     """
 
     def __init__(self):
-        # 送信元の LINE ユーザー ID, トークルーム ID
+        # 送信元の LINE ユーザー ID, トークルーム ID, グループ ID
         self.req_line_user_id = None
         self.req_line_room_id = None
+        self.req_line_group_id = None
 
     """
     メッセージ送信元情報のセット
@@ -15,6 +16,8 @@ class RequestInfoService:
         self.req_line_user_id = event.source.user_id
         if event.source.type == 'room':
             self.req_line_room_id = event.source.room_id
+        if event.source.type == 'group':
+            self.req_line_room_id = event.source.group_id
 
     """
     メッセージ送信元情報の削除
@@ -23,3 +26,4 @@ class RequestInfoService:
     def delete_req_info(self):
         self.req_line_user_id = None
         self.req_line_room_id = None
+        self.req_line_group_id = None
