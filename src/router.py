@@ -24,6 +24,10 @@ from use_cases import (
     follow_use_case,
     unfollow_use_case,
     join_room_use_case,
+    add_point_by_text_use_case,
+    start_input_use_case,
+    room_quit_use_case,
+    match_finish_use_case,
 )
 
 
@@ -101,6 +105,7 @@ class Router:
         request_info_service.delete_req_info()
 
     def textMessage(self, event):
+        print(event)
         """receive text message event"""
         if event.source.type == 'room':
             self.routing_for_room_by_text(event)
@@ -118,7 +123,7 @@ class Router:
             message_content = line_bot_api.get_message_content(
                 event.message.id
             )
-            ocr_use_cases.input_result_from_image(message_content.content)
+            # ocr_use_cases.input_result_from_image(message_content.content)
 
     def postback(self, event):
         """postback event"""
@@ -151,9 +156,9 @@ class Router:
         reply_service.add_message(
             message_service.get_wait_massage(request_info_service.req_line_user_id))
 
-        """if zoom url, register to room"""
-        if '.zoom.us' in text:
-            user_use_cases.set_zoom_id(text)
+        # """if zoom url, register to room"""
+        # if '.zoom.us' in text:
+        #     user_use_cases.set_zoom_id(text)
 
     def routing_by_method(self, method, body):
         """routing by method for personal chat"""
@@ -208,8 +213,8 @@ class Router:
         room_id = request_info_service.req_line_room_id
         current_mode = room_service.get_mode(room_id)
         """input mode"""
-        if current_mode == room_service.modes.input.value:
-            points = points_use_cases.add_by_text(text)
+        if current_mode.value == room_service.modes.input.value:
+            points = add_point_by_text_use_case.execute(text)
             points_use_cases.reply()
             if len(points) == 4:
                 calculate_use_cases.calculate(points)
@@ -219,71 +224,70 @@ class Router:
 
             return
 
-        """wait mode"""
-        """if text is result, add result"""
+        # """wait mode"""
+        # """if text is result, add result"""
 
-        rows = [r for r in text.split('\n') if ':' in r]
-        if len(rows) == 4:
-            points = {}
-            for r in rows:
-                col = r.split(':')
-                points[
-                    user_use_cases.get_user_id_by_name(col[0])
-                ] = int(col[1])
-            hanchans_use_cases.add(points)
-            calculate_use_cases.calculate(
-                points
-            )
+        # rows = [r for r in text.split('\n') if ':' in r]
+        # if len(rows) == 4:
+        #     points = {}
+        #     for r in rows:
+        #         col = r.split(':')
+        #         points[
+        #             user_use_cases.get_user_id_by_name(col[0])
+        #         ] = int(col[1])
+        #     hanchans_use_cases.add(points)
+        #     calculate_use_cases.calculate(
+        #         points
+        #     )
 
-        """if zoom url, register to room"""
-        if '.zoom.us' in text:
-            room_use_cases.set_zoom_url(text)
+        # """if zoom url, register to room"""
+        # if '.zoom.us' in text:
+        #     room_use_cases.set_zoom_url(text)
 
     def routing_for_room_by_method(self, method, body):
         """routing by method"""
-        # start menu
-        if method == RCommands.start.name:
-            reply_use_cases.add_start_menu()
         # input
-        elif method == RCommands.input.name:
-            hanchans_use_cases.add()
-            room_use_cases.input_mode()
+        if method == RCommands.input.name:
+            start_input_use_case.execute()
+        # start menu
+        # elif method == RCommands.start.name:
+        #     reply_use_cases.add_start_menu()
         # mode
-        elif method == RCommands.mode.name:
-            room_use_cases.reply_mode()
+        # elif method == RCommands.mode.name:
+        #     room_use_cases.reply_mode()
         # exit
         elif method == RCommands.exit.name:
-            room_use_cases.wait_mode()
+            room_quit_use_case.execute()
         # help
         elif method == RCommands.help.name:
             reply_use_cases.reply_room_help()
         # setting
-        elif method == RCommands.setting.name:
-            config_use_cases.reply_menu(body)
+        # elif method == RCommands.setting.name:
+        #     config_use_cases.reply_menu(body)
         # results
-        elif method == RCommands.results.name:
-            room_use_cases.reply_sum_results()
+        # elif method == RCommands.results.name:
+        #     room_use_cases.reply_sum_results()
         # results by match id
-        elif method == RCommands.match.name:
-            matches_use_cases.reply_sum_results(body)
+        # elif method == RCommands.match.name:
+        #     matches_use_cases.reply_sum_results(body)
         # drop
-        elif method == RCommands.drop.name:
-            matches_use_cases.drop_result_by_number(int(body))
+        # elif method == RCommands.drop.name:
+        #     matches_use_cases.drop_result_by_number(int(body))
         # drop match
-        elif method == RCommands.drop_m.name:
-            matches_use_cases.disable()
+        # elif method == RCommands.drop_m.name:
+        #     matches_use_cases.disable()
         # finish
         elif method == RCommands.finish.name:
-            matches_use_cases.finish()
-        # fortune
-        elif method == RCommands.fortune.name:
-            reply_use_cases.reply_fortune()
+            match_finish_use_case.execute()
+        # # fortune
+        # elif method == RCommands.fortune.name:
+        #     reply_use_cases.reply_fortune()
         # others menu
-        elif method == RCommands.others.name:
-            reply_use_cases.add_others_menu()
-        # matches
-        elif method == RCommands.matches.name:
-            matches_use_cases.reply()
+        # elif method == RCommands.others.name:
+        #     reply_use_cases.add_others_menu()
+        # # matches
+        # elif method == RCommands.matches.name:
+        #     matches_use_cases.reply()
         # tobi
         elif method == RCommands.tobi.name:
             calculate_use_cases.calculate(
