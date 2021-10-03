@@ -54,6 +54,7 @@ class RoomService:
 
     def get_mode(self, room_id):
         with session_scope() as session:
+            # find にし、複数件ヒットした場合にはエラーを返す
             target = room_repository.find_one_by_room_id(session, room_id)
 
             if target is None:
