@@ -16,7 +16,8 @@ class MatchesService:
         current = self.get_current(room_id)
 
         if current is None:
-            current = self.create(room_id)
+            self.create(room_id)
+            current = self.get_current(room_id)
 
         return current
 
@@ -29,7 +30,7 @@ class MatchesService:
         with session_scope() as session:
             new_match = Match(
                 line_room_id=line_room_id,
-                hanchan_ids=json.loads([]),
+                hanchan_ids=json.dumps([]),
                 status=1,
             )
             match = match_repository.create(session, new_match)
@@ -49,22 +50,22 @@ class MatchesService:
 
         logger.info(f'update result of match: id={current_match.id}')
 
-    def update_hanchan_ids(self, result_ids):
+    def update_hanchan_ids(self, result_ids, room_id):
         with session_scope():
-            current = self.get_current()
+            current = self.get_current(room_id)
             current.result_ids = json.dumps(result_ids)
             logger.info(
                 f'update hanchan ids of match: match_id={current.id}'
             )
 
-    def count_results(self):
-        current = self.get_current()
+    def count_results(self, room_id):
+        current = self.get_current(room_id)
         if current is None:
             logger.warning(
                 'current match is not found'
             )
             return 0
-        return len(json.loads(current.result_ids))
+        return len(json.loads(current.hanchan_ids))
 
     def update_status(self, room_id, status):
         with session_scope as session:

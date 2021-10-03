@@ -17,7 +17,7 @@ class HanchansService:
             line_room_id=room_id,
             raw_scores=raw_scores,
             converted_scores='',
-            match_id=current_match.id,
+            match_id=current_match._id,
             status=1,
         )
         with session_scope() as session:

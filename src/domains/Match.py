@@ -18,8 +18,8 @@ class Match:
         self,
         line_room_id: str,
         hanchan_ids: str,
-        users: list,
         status: int,
+        users: list = [],
         created_at: datetime.date = None,
         _id: int = None,
     ):
