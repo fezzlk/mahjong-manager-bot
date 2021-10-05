@@ -11,7 +11,12 @@ import json
 
 class HanchanRepository:
 
-    def find_one_by_id_and_line_room_id(self, session, target_id, line_room_id):
+    def find_one_by_id_and_line_room_id(
+        self,
+        session,
+        target_id,
+        line_room_id,
+    ):
         if target_id is None or line_room_id is None:
             raise ValueError
 
@@ -68,7 +73,7 @@ class HanchanRepository:
             .filter(Hanchans.id.in_([int(s) for s in ids]))\
             .order_by(Hanchans.id)\
             .all()
-            
+
         return [
             Hanchan(
                 line_room_id=record.room_id,
@@ -116,3 +121,30 @@ class HanchanRepository:
             .query(Hanchans)\
             .filter(Hanchans.id.in_(ids))\
             .delete(synchronize_session=False)
+
+    def update_raw_score_of_user_by_room_id(
+        self,
+        session,
+        line_room_id,
+        line_user_id,
+        raw_score,
+    ):
+        if line_room_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Hanchans).filter(and_(
+                Hanchans.room_id == line_room_id,
+                Hanchans.status == 1,
+            ))\
+            .order_by(desc(Hanchans.id))\
+            .first()
+
+        if record is None:
+            return None
+
+        raw_scores = json.loads(record.raw_scores)
+        raw_scores[line_user_id] = raw_score
+        record.raw_scores = json.dumps(raw_scores)
+
+        return raw_scores

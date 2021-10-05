@@ -7,7 +7,7 @@ from services import (
     room_service,
     matches_service,
     request_info_service,
-    hanchans_service,
+    hanchan_service,
     user_service,
 )
 
@@ -70,7 +70,7 @@ class RoomUseCases:
 
     def wait_mode(self):
         room_id = request_info_service.req_line_room_id
-        hanchans_service.disable(room_id)
+        hanchan_service.disable(room_id)
         room_service.chmod(
             room_id,
             room_service.modes.wait,

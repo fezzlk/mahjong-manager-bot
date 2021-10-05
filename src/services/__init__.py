@@ -2,7 +2,7 @@
 from .RequestInfoService import RequestInfoService
 from .calculate import CalculateService
 from .config import ConfigService
-from .hanchans import HanchansService
+from .HanchanService import HanchanService
 from .matches import MatchesService
 from .MessageService import MessageService
 from .ocr import OcrService
@@ -15,7 +15,7 @@ from .UserService import UserService
 request_info_service = RequestInfoService()
 calculate_service = CalculateService()
 config_service = ConfigService()
-hanchans_service = HanchansService()
+hanchan_service = HanchanService()
 matches_service = MatchesService()
 message_service = MessageService()
 ocr_service = OcrService()

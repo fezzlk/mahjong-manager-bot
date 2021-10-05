@@ -3,7 +3,7 @@ from services import (
     request_info_service,
     reply_service,
     user_service,
-    hanchans_service,
+    hanchan_service,
     matches_service,
     config_service,
 )
@@ -22,7 +22,7 @@ class MatchFinishUseCase:
         ids = json.loads(current.result_ids)
         match_id = current.id
 
-        hanchans = hanchans_service.find_by_ids(ids)
+        hanchans = hanchan_service.find_by_ids(ids)
 
         sum_hanchans = {}
         for i in range(len(ids)):

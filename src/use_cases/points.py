@@ -4,7 +4,7 @@
 import json
 from services import (
     request_info_service,
-    hanchans_service,
+    hanchan_service,
     reply_service,
     user_service,
     points_service,
@@ -19,7 +19,7 @@ class PointsUseCases:
 
         if result is None:
             room_id = request_info_service.req_line_room_id
-            result = hanchans_service.get_current(room_id)
+            result = hanchan_service.get_current(room_id)
         points = json.loads(result.points)
         if len(points) == 0:
             reply_service.add_message(
@@ -40,7 +40,7 @@ class PointsUseCases:
             )
 
             if point == 'delete':
-                points = hanchans_service.drop_point(
+                points = hanchan_service.drop_point(
                     target_line_user_id)
                 return points
         else:
@@ -63,7 +63,7 @@ class PointsUseCases:
         if isMinus:
             point = '-' + point
 
-        points = hanchans_service.add_point(
+        points = hanchan_service.add_point(
             target_line_user_id,
             int(point),
         )

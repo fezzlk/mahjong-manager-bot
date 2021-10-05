@@ -5,7 +5,7 @@ import json
 from server import logger
 from services import (
     request_info_service,
-    hanchans_service,
+    hanchan_service,
     reply_service,
     matches_service,
 )
@@ -25,7 +25,7 @@ class MatchesUseCases:
         current = matches_service.get_current()
         result_ids = json.loads(current.result_ids)
         room_id = request_info_service.req_line_room_id
-        hanchans_service.delete_by_id(room_id, result_ids[i - 1])
+        hanchan_service.delete_by_id(room_id, result_ids[i - 1])
         reply_service.add_message(
             f'id={target_id}の結果を削除しました。'
         )
@@ -44,7 +44,7 @@ class MatchesUseCases:
 
         ids = json.loads(match.result_ids)
         date = match.created_at.strftime('%Y-%m-%d') + '\n',
-        hanchans = hanchans_service.find_by_ids(ids)
+        hanchans = hanchan_service.find_by_ids(ids)
 
         hanchans_list = []
         sum_hanchans = {}
@@ -119,7 +119,7 @@ class MatchesUseCases:
     def delete(self, target_ids):
         targets = matches_service.delete(target_ids)
         for target in targets:
-            hanchans_service.delete(
+            hanchan_service.delete(
                 json.loads(target.result_ids)
             )
         logger.info(f'delete match: id={target_ids}')
@@ -151,7 +151,7 @@ class MatchesUseCases:
         is_required_sum=True,
         date=''
     ):
-        hanchans = hanchans_service.find_by_ids(ids)
+        hanchans = hanchan_service.find_by_ids(ids)
 
         sum_hanchans = {}
         for i in range(len(ids)):

@@ -10,7 +10,7 @@ from services import (
     matches_service,
     room_service,
     config_service,
-    hanchans_service,
+    hanchan_service,
     calculate_service,
     message_service,
 )
@@ -29,7 +29,7 @@ class CalculateUseCases:
         # points の取得(デフォルトでは引数 points が採用される)
         # 引数に points がない場合、現在 active な result (current)のポイントを計算対象にする
         if points is None:
-            current = hanchans_service.get_current(room_id)
+            current = hanchan_service.get_current(room_id)
             if current is None:
                 logger.error(
                     'current points is not found.'
@@ -76,17 +76,17 @@ class CalculateUseCases:
         room_id = request_info_service.req_line_room_id
 
         # その半荘の結果を更新
-        hanchans_service.update_converted_score(room_id, calculate_result)
+        hanchan_service.update_converted_score(room_id, calculate_result)
 
         # 総合結果に半荘結果を追加
-        current_result = hanchans_service.get_current(room_id)
+        current_result = hanchan_service.get_current(room_id)
         matches_service.add_result(room_id, current_result.id)
 
         # 結果の表示
-        hanchan = hanchans_service.get_current(room_id)
+        hanchan = hanchan_service.get_current(room_id)
         converted_scores = json.loads(hanchan.converted_scores)
         current_match = matches_service.get_current()
-        hanchans = hanchans_service.find_by_ids(
+        hanchans = hanchan_service.find_by_ids(
             json.loads(current_match.result_ids)
         )
         sum_hanchans = {}
@@ -118,7 +118,7 @@ class CalculateUseCases:
         )
 
         # 一半荘の結果をアーカイブ
-        hanchans_service.archive(room_id)
+        hanchan_service.archive(room_id)
 
         # ルームを待機モードにする
         room_service.chmod(room_id, room_service.modes.wait)

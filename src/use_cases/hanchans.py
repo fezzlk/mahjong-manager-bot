@@ -8,7 +8,7 @@ from services import (
     reply_service,
     user_service,
     config_service,
-    hanchans_service,
+    hanchan_service,
 )
 
 STATUS_LIST = ['disabled', 'active', 'archived']
@@ -22,20 +22,20 @@ class HanchansUseCases:
 
         room_id = request_info_service.req_line_room_id
         current_match = matches_service.get_or_add_current(room_id)
-        hanchans_service.add(raw_scores, room_id, current_match)
+        hanchan_service.add(raw_scores, room_id, current_match)
 
     def get(self, ids=None):
-        return hanchans_service.get(ids)
+        return hanchan_service.get(ids)
 
     def delete(self, ids):
-        deleted_hanchans = hanchans_service.delete(ids)
+        deleted_hanchans = hanchan_service.delete(ids)
         for deleted_hanchan in deleted_hanchans:
             matches_service.remove_hanchan_id(
                 deleted_hanchan.match_id, deleted_hanchan.id
             )
 
     def migrate(self):
-        targets = hanchans_service.get()
+        targets = hanchan_service.get()
 
         for t in targets:
             raw_scores = json.loads(t.raw_scores)

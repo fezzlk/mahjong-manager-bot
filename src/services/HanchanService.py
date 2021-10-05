@@ -9,7 +9,7 @@ from domains.Hanchan import Hanchan
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
-class HanchansService:
+class HanchanService:
     """Hanchans service"""
 
     def add(self, raw_scores, room_id, current_match):
@@ -57,17 +57,16 @@ class HanchansService:
             )
 
     # 関数名検討
-    def add_raw_score(self, room_id, user_id, raw_score):
+    def add_raw_score(self, line_room_id, line_user_id, raw_score):
         with session_scope as session:
-            hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
-                session,
-                room_id,
-                1
+            hanchan = hanchan_repository.update_raw_score_of_user_by_room_id(
+                session=session,
+                line_room_id=line_room_id,
+                line_user_id=line_user_id,
+                raw_score=raw_score,
             )
 
-            raw_scores = json.loads(hanchan.raw_scores)
-            raw_scores[user_id] = raw_score
-            hanchan.raw_scores = json.dumps(raw_scores)
+
             return raw_scores
 
     def drop_raw_score(self, room_id, user_id):

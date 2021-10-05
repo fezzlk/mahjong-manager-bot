@@ -146,7 +146,7 @@ def create_hanchans():
 @app.route('/hanchans/delete', methods=['POST'])
 def delete_hanchans():
     # target_id = request.args.get('target_id')
-    # hanchans_service.delete(int(target_id))
+    # hanchan_service.delete(int(target_id))
     return redirect(url_for('get_hanchans'))
 
 
