@@ -81,3 +81,24 @@ class RoomRepository:
             .query(Rooms)\
             .filter(Rooms.id.in_(ids))\
             .delete(synchronize_session=False)
+
+    def update_one_mode_by_line_room_id(self, session, line_room_id, mode):
+        if line_room_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Rooms)\
+            .filter(Rooms.room_id == line_room_id)\
+            .first()
+
+        if record is None:
+            return None
+
+        record.mode = mode.value
+
+        return Room(
+            line_room_id=record.room_id,
+            zoom_url=record.zoom_url,
+            mode=RoomMode[record.mode],
+            _id=record.id,
+        )

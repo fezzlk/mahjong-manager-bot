@@ -5,18 +5,8 @@ from repositories import session_scope, room_repository
 from server import logger
 
 
-class Modes(Enum):
-    """mode"""
-
-    wait = 'wait'
-    input = 'input'
-
-
 class RoomService:
     """room service"""
-
-    def __init__(self):
-        self.modes = Modes
 
     def find_or_create(self, room_id):
         with session_scope() as session:
@@ -33,24 +23,23 @@ class RoomService:
 
             return room
 
-    def chmod(self, room_id, mode):
-        if mode not in self.modes:
+    def chmod(self, line_room_id, mode):
+        if mode not in RoomMode:
             logger.warning(
                 'failed to change mode: unexpected mode request received.'
             )
             return None
 
         with session_scope() as session:
-            target = room_repository.find_one_by_room_id(session, room_id)
-
-            if target is None:
+            record = room_repository.update_one_mode_by_line_room_id(session, line_room_id, mode)
+            
+            if record is None:
                 logger.warning(
                     'failed to change mode: room is not found'
                 )
                 return None
 
-            target.mode = mode.value
-            return target.mode
+            return record.mode
 
     def get_mode(self, room_id):
         with session_scope() as session:
