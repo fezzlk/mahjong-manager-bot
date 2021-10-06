@@ -59,13 +59,12 @@ class HanchanService:
     # 関数名検討
     def add_raw_score(self, line_room_id, line_user_id, raw_score):
         with session_scope as session:
-            hanchan = hanchan_repository.update_raw_score_of_user_by_room_id(
+            raw_scores = hanchan_repository.update_raw_score_of_user_by_room_id(
                 session=session,
                 line_room_id=line_room_id,
                 line_user_id=line_user_id,
                 raw_score=raw_score,
             )
-
 
             return raw_scores
 
