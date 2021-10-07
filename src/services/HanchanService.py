@@ -58,7 +58,7 @@ class HanchanService:
 
     # 関数名検討
     def add_raw_score(self, line_room_id, line_user_id, raw_score):
-        with session_scope as session:
+        with session_scope() as session:
             raw_scores = hanchan_repository.update_raw_score_of_user_by_room_id(
                 session=session,
                 line_room_id=line_room_id,
@@ -68,23 +68,19 @@ class HanchanService:
 
             return raw_scores
 
-    def drop_raw_score(self, room_id, user_id):
-        with session_scope as session:
-            hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
-                session,
-                room_id,
-                1
+    def drop_raw_score(self, line_room_id, line_user_id):
+        with session_scope() as session:
+            raw_scores = hanchan_repository.update_raw_score_of_user_by_room_id(
+                session=session,
+                line_room_id=line_room_id,
+                line_user_id=line_user_id,
+                raw_score=None,
             )
-
-            raw_scores = json.loads(hanchan.raw_scores)
-            if user_id in raw_scores.keys():
-                raw_scores.pop(user_id)
-
-            hanchan.raw_scores = json.dumps(raw_scores)
+            
             return raw_scores
 
     def clear_raw_scores(self, room_id):
-        with session_scope as session:
+        with session_scope() as session:
             hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
@@ -94,7 +90,7 @@ class HanchanService:
             hanchan.raw_scores = json.dumps({})
 
     def update_converted_score(self, room_id, calculated_result):
-        with session_scope as session:
+        with session_scope() as session:
             hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
@@ -108,7 +104,7 @@ class HanchanService:
 
     # update_status
     def change_status(self, room_id, status):
-        with session_scope as session:
+        with session_scope() as session:
             current = hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 room_id,
@@ -129,7 +125,7 @@ class HanchanService:
         self.change_status(room_id, 0)
 
     def get(self, ids=None):
-        with session_scope as session:
+        with session_scope() as session:
             if ids is None:
                 targets = hanchan_repository.find_all(session)
             else:
@@ -147,7 +143,7 @@ class HanchanService:
             return targets
 
     def delete(self, ids):
-        with session_scope as session:
+        with session_scope() as session:
             targets = hanchan_repository.find_by_ids(session, ids)
             for target in targets:
                 session.delete(target)

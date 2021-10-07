@@ -127,7 +127,7 @@ class HanchanRepository:
         session,
         line_room_id,
         line_user_id,
-        raw_score,
+        raw_score=None,
     ):
         if line_room_id is None:
             raise ValueError
@@ -144,7 +144,10 @@ class HanchanRepository:
             return None
 
         raw_scores = json.loads(record.raw_scores)
-        raw_scores[line_user_id] = raw_score
+        if raw_score is None:
+            raw_scores.pop(line_user_id)
+        else:
+            raw_scores[line_user_id] = raw_score
         record.raw_scores = json.dumps(raw_scores)
 
         return raw_scores
