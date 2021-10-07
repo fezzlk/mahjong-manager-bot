@@ -5,7 +5,13 @@ from services import (
     points_service,
     user_service,
     hanchan_service,
+    calculate_service,
+    config_service,
+    match_service,
+    room_service,
+    message_service,
 )
+import json
 
 
 class AddPointByTextUseCase:
@@ -100,7 +106,7 @@ class AddPointByTextUseCase:
 
             # config の取得(by target で撮っちゃって良い)
             # 計算の実行
-            calculate_result = calculate_service.calculate(
+            calculate_result = calculate_service.run_calculate(
                 points=points, ranking_prize=[
                     int(s) for s in config_service.get_by_key(
                         line_room_id, '順位点').split(',')], tobi_prize=int(
@@ -108,18 +114,17 @@ class AddPointByTextUseCase:
                         line_room_id, '飛び賞')), rounding_method=config_service.get_by_key(
                             line_room_id, '端数計算方法'), tobashita_player_id=tobashita_player_id, )
 
-
             # その半荘の結果を更新
-            hanchan_service.update_converted_score(room_id, calculate_result)
+            hanchan_service.update_converted_score(line_room_id, calculate_result)
 
             # 総合結果に半荘結果を追加
             current_result = hanchan_service.get_current(line_room_id)
-            matches_service.add_result(line_room_id, current_result.id)
+            match_service.add_result(line_room_id, current_result.id)
 
             # 結果の表示
             hanchan = hanchan_service.get_current(line_room_id)
             converted_scores = json.loads(hanchan.converted_scores)
-            current_match = matches_service.get_current()
+            current_match = match_service.get_current()
             hanchans = hanchan_service.find_by_ids(
                 json.loads(current_match.result_ids)
             )

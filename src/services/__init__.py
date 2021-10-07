@@ -1,9 +1,9 @@
 """services"""
 from .RequestInfoService import RequestInfoService
-from .calculate import CalculateService
-from .config import ConfigService
+from .CalculateService import CalculateService
+from .ConfigService import ConfigService
 from .HanchanService import HanchanService
-from .matches import MatchesService
+from .MatchService import MatchService
 from .MessageService import MessageService
 from .ocr import OcrService
 from .points import PointsService
@@ -16,7 +16,7 @@ request_info_service = RequestInfoService()
 calculate_service = CalculateService()
 config_service = ConfigService()
 hanchan_service = HanchanService()
-matches_service = MatchesService()
+match_service = MatchService()
 message_service = MessageService()
 ocr_service = OcrService()
 points_service = PointsService()
