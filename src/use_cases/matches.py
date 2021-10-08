@@ -7,7 +7,7 @@ from services import (
     request_info_service,
     hanchan_service,
     reply_service,
-    matches_service,
+    match_service,
 )
 
 
@@ -17,12 +17,12 @@ class MatchesUseCases:
     def drop_result_by_number(self, i):
         """drop result"""
 
-        if matches_service.count_results() == 0:
+        if match_service.count_results() == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
             return
-        current = matches_service.get_current()
+        current = match_service.get_current()
         result_ids = json.loads(current.result_ids)
         room_id = request_info_service.req_line_room_id
         hanchan_service.delete_by_id(room_id, result_ids[i - 1])
@@ -30,17 +30,17 @@ class MatchesUseCases:
             f'id={target_id}の結果を削除しました。'
         )
         result_ids.pop(i - 1)
-        matches_service.update_hanchan_ids(result_ids)
+        match_service.update_hanchan_ids(result_ids)
 
     def reply_sum_results(self, match_id=None):
         if match_id is None:
-            if matches_service.count_results() == 0:
+            if match_service.count_results() == 0:
                 reply_service.add_message(
                     'まだ対戦結果がありません。')
                 return
-            match = matches_service.get_current()
+            match = match_service.get_current()
         else:
-            match = matches_service.get(match_id)
+            match = match_service.get(match_id)
 
         ids = json.loads(match.result_ids)
         date = match.created_at.strftime('%Y-%m-%d') + '\n',
@@ -83,20 +83,20 @@ class MatchesUseCases:
         )
 
     def finish(self):
-        if matches_service.count_results() == 0:
+        if match_service.count_results() == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。')
             return
-        current = matches_service.get_current()
+        current = match_service.get_current()
         self.reply_sum_and_money_by_ids(
             json.loads(current.result_ids),
             current.id,
         )
-        matches_service.archive()
+        match_service.archive()
 
     def reply(self):
         room_id = request_info_service.req_line_room_id
-        matches = matches_service.get_archived(room_id)
+        matches = match_service.get_archived(room_id)
         if matches is None:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
@@ -114,10 +114,10 @@ class MatchesUseCases:
             )
 
     def get(self, target_ids=None):
-        matches_service.get(target_ids)
+        match_service.get(target_ids)
 
     def delete(self, target_ids):
-        targets = matches_service.delete(target_ids)
+        targets = match_service.delete(target_ids)
         for target in targets:
             hanchan_service.delete(
                 json.loads(target.result_ids)
@@ -126,7 +126,7 @@ class MatchesUseCases:
 
     def reply_sum_matches_by_ids(self, ids):
         formatted_id_list = sorted(list(set(ids)))
-        matches = matches_service.get(ids)
+        matches = match_service.get(ids)
         if len(matches) == 0:
             reply_service.add_message(
                 '該当する対戦結果がありません。'

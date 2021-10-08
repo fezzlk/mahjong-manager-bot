@@ -7,7 +7,7 @@ from services import (
     request_info_service,
     user_service,
     reply_service,
-    matches_service,
+    match_service,
     room_service,
     config_service,
     hanchan_service,
@@ -80,12 +80,12 @@ class CalculateUseCases:
 
         # 総合結果に半荘結果を追加
         current_result = hanchan_service.get_current(room_id)
-        matches_service.add_result(room_id, current_result.id)
+        match_service.add_result(room_id, current_result.id)
 
         # 結果の表示
         hanchan = hanchan_service.get_current(room_id)
         converted_scores = json.loads(hanchan.converted_scores)
-        current_match = matches_service.get_current()
+        current_match = match_service.get_current()
         hanchans = hanchan_service.find_by_ids(
             json.loads(current_match.result_ids)
         )

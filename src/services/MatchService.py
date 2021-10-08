@@ -9,8 +9,8 @@ from server import logger
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
-class MatchesService:
-    """matches service"""
+class MatchService:
+    """match service"""
 
     def get_or_add_current(self, room_id):
         current = self.get_current(room_id)

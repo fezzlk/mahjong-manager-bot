@@ -4,7 +4,7 @@ from services import (
     reply_service,
     user_service,
     hanchan_service,
-    matches_service,
+    match_service,
     config_service,
 )
 import json
@@ -13,11 +13,11 @@ import json
 class MatchFinishUseCase:
 
     def execute(self, text):
-        if matches_service.count_results() == 0:
+        if match_service.count_results() == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。')
             return
-        current = matches_service.get_current()
+        current = match_service.get_current()
 
         ids = json.loads(current.result_ids)
         match_id = current.id
@@ -51,4 +51,4 @@ class MatchFinishUseCase:
                 for user_id, converted_score in sum_hanchans.items()
             ])
         )
-        matches_service.archive()
+        match_service.archive()
