@@ -153,3 +153,27 @@ class HanchanRepository:
         record.raw_scores = json.dumps(raw_scores)
 
         return raw_scores
+
+    def update_status_by_line_room_id(
+        self,
+        session,
+        line_room_id,
+        status,
+    ):
+        if line_room_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Hanchans).filter(and_(
+                Hanchans.room_id == line_room_id,
+                Hanchans.status == 1,
+            ))\
+            .order_by(desc(Hanchans.id))\
+            .first()
+
+        if record is None:
+            return None
+
+        record.status = status
+
+        return status

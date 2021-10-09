@@ -106,18 +106,15 @@ class HanchanService:
     # update_status
     def change_status(self, room_id, status):
         with session_scope() as session:
-            current = hanchan_repository.find_one_by_line_room_id_and_status(
+            hanchan_repository.update_status_by_line_room_id(
                 session,
                 room_id,
-                1
+                status,
             )
 
-            if current is None:
-                return
-            current.status = status
-            logger.info(
-                f'{STATUS_LIST[status]} hanchan: id={current.id}'
-            )
+            # logger.info(
+            #     f'{STATUS_LIST[status]} hanchan: id={current.id}'
+            # )
 
     def archive(self, room_id):
         self.change_status(room_id, 2)
