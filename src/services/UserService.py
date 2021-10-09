@@ -87,22 +87,18 @@ class UserService:
 
             return target.user_id
 
-    def chmod(self, user_id, mode):
+    def chmod(self, line_user_id, mode):
         if mode not in self.modes:
             raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(session, user_id)
+            user_repository.update_one_mode_by_line_room_id(
+                session=session,
+                line_user_id=line_user_id,
+                mode=mode,
+            )
 
-            if target is None:
-                logger.warning(f'user is not found: {user_id}')
-                self.services.reply_service.add_message(
-                    'ユーザーを認識できませんでした。当アカウントをブロック、ブロック解除してください'
-                )
-
-            target.mode = mode.value
-
-        logger.info(f'chmod: {user_id}: {mode}')
+        logger.info(f'chmod: {line_user_id}: {mode.value}')
 
     def wait_mode(self, user_id):
         self.chmod(user_id, UserMode.wait)
@@ -117,17 +113,17 @@ class UserService:
 
             return target.mode
 
-    def set_zoom_id(self, user_id, zoom_id):
+    def set_zoom_id(self, line_user_id, zoom_url):
         with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(session, user_id)
+            user_repository.update_one_zoom_id_by_line_room_id(
+                session=session, 
+                line_user_id=line_user_id,
+                zoom_url=zoom_url,
+            )
 
-            if target is None:
-                logger.warning(f'set_zoom_url: user "{user_id}" is not found')
-                return None
-
-            target.zoom_id = zoom_id
-        logger.info(f'set_user_url: {zoom_id} to {user_id}')
-        return zoom_id
+        logger.info(f'set_user_url: {zoom_url} to {line_user_id}')
+        
+        return zoom_url
 
     def get_zoom_id(self, user_id):
         with session_scope() as session:

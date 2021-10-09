@@ -119,3 +119,47 @@ class UserRepository:
             .query(Users)\
             .filter(Users.id.in_(ids))\
             .delete(synchronize_session=False)
+
+    def update_one_mode_by_line_room_id(self, session, line_user_id, mode):
+        if line_user_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Users)\
+            .filter(Users.user_id == line_user_id)\
+            .first()
+
+        if record is None:
+            return None
+
+        record.mode = mode.value
+
+        return User(
+            name=record.name,
+            line_user_id=record.user_id,
+            zoom_url=record.zoom_id,
+            mode=UserMode[record.mode],
+            jantama_name=record.jantama_name,
+        )
+
+    def update_one_zoom_id_by_line_room_id(self, session, line_user_id, zoom_url):
+        if line_user_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Users)\
+            .filter(Users.user_id == line_user_id)\
+            .first()
+
+        if record is None:
+            return None
+
+        record.zoom_id = zoom_url
+
+        return User(
+            name=record.name,
+            line_user_id=record.user_id,
+            zoom_url=record.zoom_id,
+            mode=UserMode[record.mode],
+            jantama_name=record.jantama_name,
+        )
