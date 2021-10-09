@@ -79,15 +79,16 @@ class HanchanService:
             
             return raw_scores
 
-    def clear_raw_scores(self, room_id):
+    def clear_raw_scores(self, line_room_id):
         with session_scope() as session:
-            hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
-                session,
-                room_id,
-                1
+            raw_scores = hanchan_repository.update_raw_score_of_user_by_room_id(
+                session=session,
+                line_room_id=line_room_id,
+                line_user_id=None,
+                raw_score=None,
             )
 
-            hanchan.raw_scores = json.dumps({})
+            return raw_scores
 
     def update_converted_score(self, room_id, calculated_result):
         with session_scope() as session:

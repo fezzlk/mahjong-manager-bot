@@ -144,7 +144,9 @@ class HanchanRepository:
             return None
 
         raw_scores = json.loads(record.raw_scores)
-        if raw_score is None:
+        if line_user_id is None:
+            raw_scores = {}
+        elif raw_score is None:
             raw_scores.pop(line_user_id)
         else:
             raw_scores[line_user_id] = raw_score
