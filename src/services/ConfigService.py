@@ -54,6 +54,7 @@ class ConfigService:
 
     def update(self, target_id, key, value):
         """更新
+        description: レコード自体の更新は行わなず、新たなレコードに作り直す（デフォルト値の場合にレコードを作らないようにするため）
         args:
             key: config 名
             value: 値
