@@ -13,8 +13,8 @@ class CalculateService:
         self,
         points,
         ranking_prize,
-        tobi_prize,
-        rounding_method,
+        tobi_prize=0,
+        rounding_method=None,
         tobashita_player_id=None,
     ):
         """

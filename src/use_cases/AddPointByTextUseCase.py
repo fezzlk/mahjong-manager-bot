@@ -107,12 +107,12 @@ class AddPointByTextUseCase:
             # config の取得(by target で撮っちゃって良い)
             # 計算の実行
             calculate_result = calculate_service.run_calculate(
-                points=points, ranking_prize=[
-                    int(s) for s in config_service.get_by_key(
-                        line_room_id, '順位点').split(',')], tobi_prize=int(
-                    config_service.get_by_key(
-                        line_room_id, '飛び賞')), rounding_method=config_service.get_by_key(
-                            line_room_id, '端数計算方法'), tobashita_player_id=tobashita_player_id, )
+                points=points,
+                ranking_prize=[
+                    int(s) for s in config_service.get_by_key(line_room_id, '順位点').split(',')
+                ],
+                rounding_method=config_service.get_by_key(line_room_id, '端数計算方法'),
+            )
 
             # その半荘の結果を更新
             hanchan_service.update_converted_score(line_room_id, calculate_result)
