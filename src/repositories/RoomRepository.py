@@ -102,3 +102,29 @@ class RoomRepository:
             mode=RoomMode[record.mode],
             _id=record.id,
         )
+
+    def update_one_zoom_url_by_line_room_id(
+        self,
+        session,
+        line_room_id,
+        zoom_url,
+    ):
+        if line_room_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Rooms)\
+            .filter(Rooms.room_id == line_room_id)\
+            .first()
+
+        if record is None:
+            return None
+
+        record.zoom_url = zoom_url
+
+        return Room(
+            line_room_id=record.room_id,
+            zoom_url=record.zoom_url,
+            mode=RoomMode[record.mode],
+            _id=record.id,
+        )

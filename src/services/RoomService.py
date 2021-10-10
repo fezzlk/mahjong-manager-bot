@@ -70,14 +70,12 @@ class RoomService:
 
     def set_zoom_url(self, room_id, zoom_url):
         with session_scope() as session:
-            target = room_repository.find_one_by_room_id(session, room_id)
+            record = room_repository.update_one_zoom_url_by_line_room_id(session, room_id)
 
-            if target is None:
+            if record is None:
                 logger.warning(
                     f'fail to set zoom url: room "{room_id}" is not found')
                 return None
-
-            target.zoom_url = zoom_url
 
             logger.info(f'set_zoom_url: {zoom_url} to {room_id}')
             return zoom_url
