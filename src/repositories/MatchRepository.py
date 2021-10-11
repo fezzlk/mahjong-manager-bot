@@ -24,6 +24,7 @@ class MatchRepository:
 
         return [
             Match(
+                _id=record.id,
                 line_room_id=record.room_id,
                 hanchan_ids=json.loads(record.result_ids),
                 users=record.users,
@@ -33,7 +34,12 @@ class MatchRepository:
             for record in records
         ]
 
-    def find_one_by_line_room_id_and_status(self, session, line_room_id, status):
+    def find_one_by_line_room_id_and_status(
+        self,
+        session,
+        line_room_id,
+        status,
+    ):
         if line_room_id is None or status is None:
             raise ValueError
 
@@ -48,6 +54,7 @@ class MatchRepository:
             return None
 
         return Match(
+            _id=record.id,
             line_room_id=record.room_id,
             hanchan_ids=json.loads(record.result_ids),
             users=record.users,
@@ -68,6 +75,7 @@ class MatchRepository:
 
         return [
             Match(
+                _id=record.id,
                 line_room_id=record.room_id,
                 hanchan_ids=json.loads(record.result_ids),
                 users=record.users,
@@ -94,6 +102,7 @@ class MatchRepository:
 
         return [
             Match(
+                _id=record.id,
                 line_room_id=record.room_id,
                 hanchan_ids=json.loads(record.result_ids),
                 users=record.users,
@@ -102,3 +111,35 @@ class MatchRepository:
             )
             for record in records
         ]
+
+    def add_hanchan_id_by_line_room_id(
+        self,
+        session,
+        line_room_id,
+        hanchan_id,
+    ):
+        if line_room_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Matches).filter(and_(
+                Matches.room_id == line_room_id,
+                Matches.status == 1,
+            )).order_by(Matches.id.desc())\
+            .first()
+
+        if record is None:
+            return None
+
+        hanchan_ids = json.loads(record.result_ids)
+        hanchan_ids.append(str(hanchan_id))
+        record.result_ids = json.dumps(list(set(hanchan_ids)))
+
+        return Match(
+            _id=record.id,
+            line_room_id=record.room_id,
+            hanchan_ids=hanchan_ids,
+            users=record.users,
+            status=record.status,
+            created_at=record.created_at,
+        )

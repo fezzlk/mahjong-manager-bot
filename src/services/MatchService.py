@@ -12,12 +12,12 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 class MatchService:
     """match service"""
 
-    def get_or_add_current(self, room_id):
-        current = self.get_current(room_id)
+    def get_or_create_current(self, line_room_id):
+        current = self.get_current(line_room_id)
 
         if current is None:
-            self.create(room_id)
-            current = self.get_current(room_id)
+            self.create(line_room_id)
+            current = self.get_current(line_room_id)
 
         return current
 
@@ -30,7 +30,7 @@ class MatchService:
         with session_scope() as session:
             new_match = Match(
                 line_room_id=line_room_id,
-                hanchan_ids=json.dumps([]),
+                hanchan_ids=[],
                 status=1,
             )
             match = match_repository.create(session, new_match)
@@ -38,17 +38,17 @@ class MatchService:
             logger.info(f'create match: to room "{line_room_id}"')
             return match
 
-    def add_result(self, room_id, result_id):
-        with session_scope():
-            current_match = self.get_current(room_id)
-            if current_match is None:
-                current_match = self.create(room_id)
+    def add_hanchan_id(self, line_room_id, hanchan_id):
+        with session_scope() as session:
+            record = match_repository.add_hanchan_id_by_line_room_id(
+                session=session,
+                line_room_id=line_room_id,
+                hanchan_id=hanchan_id,
+            )
 
-            result_ids = json.loads(current_match.result_ids)
-            result_ids.append(str(result_id))
-            current_match.result_ids = json.dumps(result_ids)
+            logger.info(f'update result of match: id={record._id}')
 
-        logger.info(f'update result of match: id={current_match.id}')
+            return record
 
     def update_hanchan_ids(self, result_ids, room_id):
         with session_scope():
