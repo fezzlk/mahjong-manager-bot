@@ -143,3 +143,33 @@ class MatchRepository:
             status=record.status,
             created_at=record.created_at,
         )
+
+    def update_one_status_by_line_room_id(
+        self,
+        session,
+        line_room_id,
+        status,
+    ):
+        if line_room_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Matches).filter(and_(
+                Matches.room_id == line_room_id,
+                Matches.status == 1,
+            )).order_by(Matches.id.desc())\
+            .first()
+
+        if record is None:
+            return None
+
+        record.status = status
+
+        return Match(
+            _id=record.id,
+            line_room_id=record.room_id,
+            hanchan_ids=json.loads(record.result_ids),
+            users=record.users,
+            status=record.status,
+            created_at=record.created_at,
+        )
