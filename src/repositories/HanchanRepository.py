@@ -177,3 +177,34 @@ class HanchanRepository:
         record.status = status
 
         return status
+
+    def update_one_converted_score_by_line_room_id(
+        self,
+        session,
+        line_room_id,
+        converted_scores,
+    ):
+        if line_room_id is None:
+            raise ValueError
+
+        record = session\
+            .query(Hanchans).filter(and_(
+                Hanchans.room_id == line_room_id,
+                Hanchans.status == 1,
+            ))\
+            .order_by(desc(Hanchans.id))\
+            .first()
+
+        if record is None:
+            return None
+
+        record.converted_scores = json.dumps(converted_scores)
+
+        return Hanchan(
+            _id=record.id,
+            line_room_id=record.room_id,
+            raw_scores=json.loads(record.raw_scores),
+            converted_scores=json.loads(record.converted_scores),
+            match_id=record.match_id,
+            status=record.status,
+        )

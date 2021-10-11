@@ -48,11 +48,11 @@ class HanchanService:
         with session_scope() as session:
             return hanchan_repository.find_by_ids(session, ids)
 
-    def get_current(self, room_id):
+    def get_current(self, line_room_id):
         with session_scope as session:
             return hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
-                room_id,
+                line_room_id,
                 1
             )
 
@@ -90,18 +90,19 @@ class HanchanService:
 
             return raw_scores
 
-    def update_converted_score(self, room_id, calculated_result):
+    def update_converted_score(self, line_room_id, converted_scores):
         with session_scope() as session:
-            hanchan = hanchan_repository.find_one_by_line_room_id_and_status(
-                session,
-                room_id,
-                1
+            record = hanchan_repository.update_one_converted_score_by_line_room_id(
+                session=session,
+                line_room_id=line_room_id,
+                converted_scores=converted_scores,
             )
 
-            hanchan.converted_scores = json.dumps(calculated_result)
-            logger.info(
-                f'update hanchan: id={hanchan.id}'
-            )
+            # logger.info(
+            #     f'update hanchan: id={hanchan.id}'
+            # )
+
+            return record
 
     # update_status
     def change_status(self, room_id, status):
