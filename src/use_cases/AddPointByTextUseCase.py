@@ -11,7 +11,7 @@ from services import (
     room_service,
     message_service,
 )
-import json
+from domains.Room import RoomMode
 
 
 class AddPointByTextUseCase:
@@ -115,22 +115,19 @@ class AddPointByTextUseCase:
             )
 
             # その半荘の結果を更新
-            hanchan_service.update_converted_score(line_room_id, calculate_result)
+            current_hanchan = hanchan_service.update_converted_score(line_room_id, calculate_result)
 
             # 総合結果に半荘結果を追加
-            current_result = hanchan_service.get_current(line_room_id)
-            match_service.add_result(line_room_id, current_result.id)
+            current_match = match_service.add_hanchan_id(line_room_id, current_hanchan._id)
 
             # 結果の表示
-            hanchan = hanchan_service.get_current(line_room_id)
-            converted_scores = json.loads(hanchan.converted_scores)
-            current_match = match_service.get_current()
+            converted_scores = current_hanchan.converted_scores
             hanchans = hanchan_service.find_by_ids(
-                json.loads(current_match.result_ids)
+                current_match.hanchan_ids,
             )
             sum_hanchans = {}
             for r in hanchans:
-                converted_scores = json.loads(r.converted_scores)
+                converted_scores = r.converted_scores
                 for user_id, converted_score in converted_scores.items():
                     if user_id not in sum_hanchans.keys():
                         sum_hanchans[user_id] = 0
@@ -153,17 +150,18 @@ class AddPointByTextUseCase:
             )
 
             reply_service.add_message(
-                message_service.get_hanchan_message()
+                message_service.get_finish_hanchan_message()
             )
 
             # 一半荘の結果をアーカイブ
             hanchan_service.archive(line_room_id)
 
             # ルームを待機モードにする
-            room_service.chmod(line_room_id, room_service.modes.wait)
+            room_service.chmod(line_room_id, RoomMode.wait)
 
             reply_service.add_message(
-                '始める時は「_start」と入力してください。')
+                '始める時は「_start」と入力してください。'
+            )
 
         elif len(points) > 4:
             reply_service.add_message(

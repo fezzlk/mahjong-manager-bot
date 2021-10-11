@@ -22,7 +22,7 @@ wait_messages = [
     'テンパイ即リー',
 ]
 
-result_messages = [
+finish_hanchan_messages = [
     '今回の結果に一喜一憂せず次の戦いに望んでください。',
     '次の半荘で役満が出る予感...',
     '今回の反省点を次に活かしましょう',
@@ -42,20 +42,8 @@ class MessageService:
 
         return random.choice(HAI)
 
-    def get_wait_massage(self, user_id):
-        now = datetime.datetime.now()
-        random.seed(
-            int(now.minute) +
-            int(re.sub("\\D", "", user_id))
-        )
-
+    def get_wait_massage(self):
         return random.choice(wait_messages)
 
-    def get_result_message(self, user_id):
-        now = datetime.datetime.now()
-        random.seed(
-            int(now.minute) +
-            int(re.sub("\\D", "", user_id))
-        )
-
-        return random.choice(result_messages)
+    def get_finish_hanchan_message(self):
+        return random.choice(finish_hanchan_messages)
