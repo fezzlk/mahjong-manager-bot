@@ -12,43 +12,45 @@ import json
 
 class MatchFinishUseCase:
 
-    def execute(self, text):
-        if match_service.count_results() == 0:
+    def execute(self):
+        line_room_id = request_info_service.req_line_room_id
+        if match_service.count_results(line_room_id) == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。')
             return
-        current = match_service.get_current()
 
-        ids = json.loads(current.result_ids)
-        match_id = current.id
+        current = match_service.get_current(line_room_id)
+
+        ids = current.hanchan_ids
+        match_id = current._id
 
         hanchans = hanchan_service.find_by_ids(ids)
 
         sum_hanchans = {}
         for i in range(len(ids)):
-            converted_scores = json.loads(hanchans[i].converted_scores)
+            converted_scores = hanchans[i].converted_scores
 
-            for user_id, converted_score in converted_scores.items():
-                if user_id not in sum_hanchans.keys():
-                    sum_hanchans[user_id] = 0
-                sum_hanchans[user_id] += converted_score
+            for line_user_id, converted_score in converted_scores.items():
+                if line_user_id not in sum_hanchans.keys():
+                    sum_hanchans[line_user_id] = 0
+                sum_hanchans[line_user_id] += converted_score
 
         reply_service.add_message(
             '\n'.join([
-                f'{user_service.get_name_by_line_user_id(user_id)}: \
+                f'{user_service.get_name_by_line_user_id(line_user_id)}: \
                     {converted_score}'
-                for user_id, converted_score in sum_hanchans.items()
+                for line_user_id, converted_score in sum_hanchans.items()
             ])
         )
 
         key = 'レート'
-        room_id = request_info_service.req_line_room_id
         reply_service.add_message(
             '対戦ID: ' + str(match_id) + '\n'.join([
-                f'{user_service.get_name_by_line_user_id(user_id)}: \
-                {converted_score * int(config_service.get_by_key(room_id, key)[1]) * 10}円 \
+                f'{user_service.get_name_by_line_user_id(line_user_id)}: \
+                {converted_score * int(config_service.get_by_key(line_room_id, key)[1]) * 10}円 \
                 ({"+" if converted_score > 0 else ""}{converted_score})'
-                for user_id, converted_score in sum_hanchans.items()
+                for line_user_id, converted_score in sum_hanchans.items()
             ])
         )
-        match_service.archive()
+
+        match_service.archive(line_room_id)
