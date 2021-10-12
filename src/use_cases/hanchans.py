@@ -22,7 +22,7 @@ class HanchansUseCases:
 
         room_id = request_info_service.req_line_room_id
         current_match = match_service.get_or_add_current(room_id)
-        hanchan_service.add(raw_scores, room_id, current_match)
+        hanchan_service.create(raw_scores, room_id, current_match)
 
     def get(self, ids=None):
         return hanchan_service.get(ids)

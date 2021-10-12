@@ -63,7 +63,7 @@ class PointsUseCases:
         if isMinus:
             point = '-' + point
 
-        points = hanchan_service.add_point(
+        points = hanchan_service.create_point(
             target_line_user_id,
             int(point),
         )

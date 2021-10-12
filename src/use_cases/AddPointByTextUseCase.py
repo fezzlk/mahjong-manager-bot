@@ -61,7 +61,7 @@ class AddPointByTextUseCase:
         if isMinus:
             point = '-' + point
 
-        points = hanchan_service.add_raw_score(
+        points = hanchan_service.create_raw_score(
             line_room_id=line_room_id,
             line_user_id=target_line_user_id,
             raw_score=int(point),

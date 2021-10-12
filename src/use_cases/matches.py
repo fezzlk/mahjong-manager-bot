@@ -25,7 +25,7 @@ class MatchesUseCases:
         current = match_service.get_current()
         result_ids = json.loads(current.result_ids)
         room_id = request_info_service.req_line_room_id
-        hanchan_service.delete_by_id(room_id, result_ids[i - 1])
+        hanchan_service.disabled_by_id(room_id, result_ids[i - 1])
         reply_service.add_message(
             f'id={target_id}の結果を削除しました。'
         )

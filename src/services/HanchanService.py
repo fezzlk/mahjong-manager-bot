@@ -12,7 +12,7 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 class HanchanService:
     """Hanchans service"""
 
-    def add(self, raw_scores, room_id, current_match):
+    def create(self, raw_scores, room_id, current_match):
         new_hanchan = Hanchan(
             line_room_id=room_id,
             raw_scores=raw_scores,
@@ -30,18 +30,18 @@ class HanchanService:
             f'create hanchan: to room "{room_id}"'
         )
 
-    def delete_by_id(self, room_id, target_id):
+    def disabled_by_id(self, line_room_id, hanchan_id):
         """disabled target hanchan"""
         with session_scope() as session:
-            target = hanchan_repository.find_one_by_id_and_line_room_id(
+            hanchan_repository.update_status_by_id_and_line_room_id(
                 session,
-                target_id,
-                room_id
+                hanchan_id=hanchan_id,
+                line_room_id=line_room_id,
+                status=0,
             )
 
-            target.status = 0
             logger.info(
-                f'delete: id={target_id} room_id={room_id}'
+                f'disabled: id={hanchan_id}'
             )
 
     def find_by_ids(self, ids):
@@ -56,66 +56,66 @@ class HanchanService:
                 1
             )
 
-    # 関数名検討
     def add_raw_score(self, line_room_id, line_user_id, raw_score):
         with session_scope() as session:
-            raw_scores = hanchan_repository.update_raw_score_of_user_by_room_id(
+            hanchan = hanchan_repository.update_raw_score_of_user_by_room_id(
                 session=session,
                 line_room_id=line_room_id,
                 line_user_id=line_user_id,
                 raw_score=raw_score,
             )
 
-            return raw_scores
+            return hanchan
 
     def drop_raw_score(self, line_room_id, line_user_id):
         with session_scope() as session:
-            raw_scores = hanchan_repository.update_raw_score_of_user_by_room_id(
+            hanchan = hanchan_repository.update_raw_score_of_user_by_room_id(
                 session=session,
                 line_room_id=line_room_id,
                 line_user_id=line_user_id,
                 raw_score=None,
             )
             
-            return raw_scores
+            return hanchan
 
     def clear_raw_scores(self, line_room_id):
         with session_scope() as session:
-            raw_scores = hanchan_repository.update_raw_score_of_user_by_room_id(
+            record = hanchan_repository.update_raw_score_of_user_by_room_id(
                 session=session,
                 line_room_id=line_room_id,
                 line_user_id=None,
                 raw_score=None,
             )
 
-            return raw_scores
+            return record
 
     def update_converted_score(self, line_room_id, converted_scores):
         with session_scope() as session:
-            record = hanchan_repository.update_one_converted_score_by_line_room_id(
+            hanchan = hanchan_repository.update_one_converted_score_by_line_room_id(
                 session=session,
                 line_room_id=line_room_id,
                 converted_scores=converted_scores,
             )
 
-            # logger.info(
-            #     f'update hanchan: id={hanchan.id}'
-            # )
+            logger.info(
+                f'update hanchan: id={record._id}'
+            )
 
-            return record
+            return hanchan
 
-    # update_status
     def change_status(self, room_id, status):
         with session_scope() as session:
-            hanchan_repository.update_status_by_line_room_id(
+            hanchan = hanchan_repository.update_status_by_line_room_id(
                 session,
                 room_id,
                 status,
             )
 
-            # logger.info(
-            #     f'{STATUS_LIST[status]} hanchan: id={current.id}'
-            # )
+            logger.info(
+                f'{STATUS_LIST[status]} hanchan: id={hanchan._id}'
+            )
+
+            return hanchan
 
     def archive(self, room_id):
         self.change_status(room_id, 2)

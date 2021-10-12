@@ -19,7 +19,7 @@ class StartInputUseCase:
             return
             
         current_match = match_service.get_or_create_current(line_room_id)
-        hanchan_service.add({}, line_room_id, current_match)
+        hanchan_service.create({}, line_room_id, current_match)
 
         room_service.chmod(
             line_room_id,
