@@ -67,10 +67,10 @@ class CalculateUseCases:
         # 計算の実行
         calculate_result = calculate_service.calculate(
             points=points, ranking_prize=[
-                int(s) for s in config_service.get_by_key(
+                int(s) for s in config_service.get_value_by_key(
                     room_id, '順位点').split(',')], tobi_prize=int(
-                config_service.get_by_key(
-                    room_id, '飛び賞')), rounding_method=config_service.get_by_key(
+                config_service.get_value_by_key(
+                    room_id, '飛び賞')), rounding_method=config_service.get_value_by_key(
                         room_id, '端数計算方法'), tobashita_player_id=tobashita_player_id, )
 
         room_id = request_info_service.req_line_room_id

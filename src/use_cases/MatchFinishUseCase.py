@@ -46,7 +46,7 @@ class MatchFinishUseCase:
         reply_service.add_message(
             '対戦ID: ' + str(match_id) + '\n'.join([
                 f'{user_service.get_name_by_line_user_id(line_user_id)}: \
-                {converted_score * int(config_service.get_by_key(line_room_id, key)[1]) * 10}円 \
+                {converted_score * int(config_service.get_value_by_key(line_room_id, key)[1]) * 10}円 \
                 ({"+" if converted_score > 0 else ""}{converted_score})'
                 for line_user_id, converted_score in sum_hanchans.items()
             ])

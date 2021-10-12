@@ -109,9 +109,9 @@ class AddPointByTextUseCase:
             calculate_result = calculate_service.run_calculate(
                 points=points,
                 ranking_prize=[
-                    int(s) for s in config_service.get_by_key(line_room_id, '順位点').split(',')
+                    int(s) for s in config_service.get_value_by_key(line_room_id, '順位点').split(',')
                 ],
-                rounding_method=config_service.get_by_key(line_room_id, '端数計算方法'),
+                rounding_method=config_service.get_value_by_key(line_room_id, '端数計算方法'),
             )
 
             # その半荘の結果を更新

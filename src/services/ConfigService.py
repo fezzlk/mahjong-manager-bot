@@ -14,16 +14,15 @@ class ConfigService:
     """config service"""
 
     def get(self, ids=None):
-        # config.id を指定してなければ全ての config を取得
-        if ids is None:
-            with session_scope() as session:
+        with session_scope() as session:
+            # config.id を指定してなければ全ての config を取得
+            if ids is None:
                 return config_repository.find_all(session)
 
-        # id に合致する config を取得
-        with session_scope() as session:
+            # id に合致する config を取得
             return config_repository.find_by_ids(session, ids)
 
-    def get_by_key(self, target_id, key):
+    def get_value_by_key(self, target_id, key):
         # デフォルトから変更されている config の取得
         with session_scope() as session:
             config = config_repository.find_one_by_target_id_and_key(session, target_id, key)
