@@ -10,9 +10,6 @@ from sqlalchemy import and_
 class ConfigRepository:
 
     def find_one_by_target_id_and_key(self, session, target_id, key):
-        if target_id is None or key is None:
-            raise ValueError
-
         record = session\
             .query(Configs)\
             .filter(and_(
@@ -94,9 +91,6 @@ class ConfigRepository:
         session.add(record)
 
     def delete_by_target_id_and_key(self, session, target_id, key):
-        if target_id is None or key is None:
-            raise ValueError
-
         session\
             .query(Configs)\
             .filter(and_(
