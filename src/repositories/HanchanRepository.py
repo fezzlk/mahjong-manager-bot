@@ -39,7 +39,12 @@ class HanchanRepository:
             status=record.status,
         )
 
-    def find_one_by_line_room_id_and_status(self, session, line_room_id, status):
+    def find_one_by_line_room_id_and_status(
+        self,
+        session,
+        line_room_id,
+        status
+    ):
         if status is None or line_room_id is None:
             raise ValueError
 
@@ -152,7 +157,13 @@ class HanchanRepository:
             raw_scores[line_user_id] = raw_score
         record.raw_scores = json.dumps(raw_scores)
 
-        return raw_scores
+        return Hanchan(
+            line_room_id=record.room_id,
+            raw_scores=json.loads(record.raw_scores),
+            converted_scores=json.loads(record.converted_scores),
+            match_id=record.match_id,
+            status=record.status,
+        )
 
     def update_status_by_line_room_id(
         self,
@@ -160,9 +171,6 @@ class HanchanRepository:
         line_room_id,
         status,
     ):
-        if line_room_id is None:
-            raise ValueError
-
         record = session\
             .query(Hanchans).filter(and_(
                 Hanchans.room_id == line_room_id,
@@ -176,7 +184,42 @@ class HanchanRepository:
 
         record.status = status
 
-        return status
+        return Hanchan(
+            line_room_id=record.room_id,
+            raw_scores=json.loads(record.raw_scores),
+            converted_scores=json.loads(record.converted_scores),
+            match_id=record.match_id,
+            status=record.status,
+        )
+
+    def update_status_by_id_and_line_room_id(
+        self,
+        session,
+        hanchan_id,
+        line_room_id,
+        status,
+    ):
+        record = session\
+            .query(Hanchans).filter(and_(
+                Hanchans.id == hanchan_id,
+                Hanchans.room_id == line_room_id,
+                Hanchans.status == 1,
+            ))\
+            .order_by(desc(Hanchans.id))\
+            .first()
+
+        if record is None:
+            return None
+
+        record.status = status
+
+        return Hanchan(
+            line_room_id=record.room_id,
+            raw_scores=json.loads(record.raw_scores),
+            converted_scores=json.loads(record.converted_scores),
+            match_id=record.match_id,
+            status=record.status,
+        )
 
     def update_one_converted_score_by_line_room_id(
         self,
@@ -184,9 +227,6 @@ class HanchanRepository:
         line_room_id,
         converted_scores,
     ):
-        if line_room_id is None:
-            raise ValueError
-
         record = session\
             .query(Hanchans).filter(and_(
                 Hanchans.room_id == line_room_id,
