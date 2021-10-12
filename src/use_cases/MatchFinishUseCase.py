@@ -7,7 +7,6 @@ from services import (
     match_service,
     config_service,
 )
-import json
 
 
 class MatchFinishUseCase:
