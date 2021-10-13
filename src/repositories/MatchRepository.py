@@ -40,9 +40,6 @@ class MatchRepository:
         line_room_id,
         status,
     ):
-        if line_room_id is None or status is None:
-            raise ValueError
-
         record = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -63,9 +60,6 @@ class MatchRepository:
         )
 
     def find_many_by_room_id_and_status(self, session, line_room_id, status):
-        if line_room_id is None or status is None:
-            raise ValueError
-
         records = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -118,9 +112,6 @@ class MatchRepository:
         line_room_id,
         hanchan_id,
     ):
-        if line_room_id is None:
-            raise ValueError
-
         record = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -150,9 +141,6 @@ class MatchRepository:
         line_room_id,
         status,
     ):
-        if line_room_id is None:
-            raise ValueError
-
         record = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -164,6 +152,62 @@ class MatchRepository:
             return None
 
         record.status = status
+
+        return Match(
+            _id=record.id,
+            line_room_id=record.room_id,
+            hanchan_ids=json.loads(record.result_ids),
+            users=record.users,
+            status=record.status,
+            created_at=record.created_at,
+        )
+
+    def update_one_hanchan_ids_by_line_room_id(
+        self,
+        session,
+        line_room_id,
+        hanchan_ids,
+    ):
+        record = session\
+            .query(Matches).filter(and_(
+                Matches.room_id == line_room_id,
+                Matches.status == 1,
+            )).order_by(Matches.id.desc())\
+            .first()
+
+        if record is None:
+            return None
+
+        record.hanchan_ids = json.dumps(hanchan_ids)
+
+        return Match(
+            _id=record.id,
+            line_room_id=record.room_id,
+            hanchan_ids=json.loads(record.result_ids),
+            users=record.users,
+            status=record.status,
+            created_at=record.created_at,
+        )
+
+    def remove_hanchan_id_by_id(
+        self,
+        session,
+        match_id,
+        hanchan_id,
+    ):
+        record = session\
+            .query(Matches).filter(and_(
+                Matches.id == match_id,
+            )).order_by(Matches.id.desc())\
+            .first()
+
+        if record is None:
+            return None
+
+        hanchan_ids = json.loads(record.result_ids)
+        if hanchan_id in hanchan_ids:
+            hanchan_ids.remove(hanchan_id)
+        record.hanchan_ids = json.dumps(hanchan_ids)
 
         return Match(
             _id=record.id,

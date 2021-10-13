@@ -36,10 +36,10 @@ class MatchService:
                 hanchan_ids=[],
                 status=1,
             )
-            match = match_repository.create(session, new_match)
+            match_repository.create(session, new_match)
 
-            logger.info(f'create match: to room "{line_room_id}"')
-            return match
+            logger.info(f'create match: room "{line_room_id}"')
+            return new_match
 
     def add_hanchan_id(self, line_room_id, hanchan_id):
         with session_scope() as session:
@@ -53,16 +53,20 @@ class MatchService:
 
             return record
 
-    def update_hanchan_ids(self, result_ids, room_id):
-        with session_scope():
-            current = self.get_current(room_id)
-            current.result_ids = json.dumps(result_ids)
+    def update_hanchan_ids(self, hanchan_ids, line_room_id):
+        with session_scope() as session:
+            match = match_repository.update_one_hanchan_ids_by_line_room_id(
+                session=session,
+                line_room_id=line_room_id,
+                hanchan_ids=hanchan_ids,
+            )
             logger.info(
                 f'update hanchan ids of match: match_id={current.id}'
             )
+            return match
 
-    def count_results(self, room_id):
-        current = self.get_current(room_id)
+    def count_results(self, line_room_id):
+        current = self.get_current(line_room_id)
         if current is None:
             logger.warning(
                 'current match is not found'
@@ -105,13 +109,15 @@ class MatchService:
             else:
                 return match_repository.find_by_ids(session, target_ids)
 
-    def remove_hanchan_id(self, match_id, result_id):
+    def remove_hanchan_id(self, match_id, hanchan_id):
         with session_scope() as session:
-            match = match_repository.find_by_ids(session, match_id)
-            result_ids = json.loads(match.result_ids)
-            if result_id in result_ids:
-                result_ids.remove(result_id)
-            match.result_ids = json.dumps(result_ids)
+            match = match_repository.remove_hanchan_id_by_id(
+                session=session,
+                match_id=match_id,
+                hanchan_id=hanchan_id,
+            )
+
+            return match
 
     def delete(self, target_ids):
         with session_scope() as session:
