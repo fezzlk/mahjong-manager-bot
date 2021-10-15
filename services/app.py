@@ -31,6 +31,8 @@ class AppService:
         self.req_user_id = event.source.user_id
         if event.source.type == 'room':
             self.req_room_id = event.source.room_id
+        if event.source.type == 'group':
+            self.req_line_room_id = event.source.group_id
 
     def delete_req_info(self):
         """delete request info"""
