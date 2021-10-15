@@ -102,7 +102,7 @@ class Router:
     def textMessage(self, event):
         """receive text message event"""
         self.services.user_service.register()
-        if event.source.type == 'room':
+        if event.source.type == 'room' or event.source.type == 'group':
             self.routing_for_room_by_text(event)
         elif event.source.type == 'user':
             self.routing_by_text(event)
@@ -112,7 +112,7 @@ class Router:
 
     def imageMessage(self, event):
         """receive image message event"""
-        if event.source.type == 'room':
+        if event.source.type == 'room' or event.source.type == 'group':
             message_content = self.services.app_service.line_bot_api.get_message_content(
                 event.message.id
             )
@@ -131,7 +131,7 @@ class Router:
         text = event.postback.data
         method = text[1:].split()[0]
         body = text[len(method)+2:]
-        if event.source.type == 'room':
+        if event.source.type == 'room' or event.source.type == 'group':
             self.routing_for_room_by_method(method, body)
         elif event.source.type == 'user':
             self.routing_by_method(method, body)
