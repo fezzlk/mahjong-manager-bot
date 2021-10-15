@@ -39,7 +39,7 @@ class RoomService:
                 )
                 return None
 
-            return record.mode
+            return record
 
     def get_mode(self, room_id):
         with session_scope() as session:
