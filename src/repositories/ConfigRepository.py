@@ -5,9 +5,10 @@ config repository
 from models import Configs
 from domains.Config import Config
 from sqlalchemy import and_
+from .interfaces.IConfigRepository import IConfigRepository
 
 
-class ConfigRepository:
+class ConfigRepository(IConfigRepository):
 
     def find_one_by_target_id_and_key(self, session, target_id, key):
         record = session\
