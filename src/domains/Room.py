@@ -28,7 +28,7 @@ class Room:
         self.zoom_url = zoom_url
 
 # TODO: 値オブジェクト化
-# line_room_id は LINE Room ID, Rから始まる
+# line_room_id は LINE Room ID または LINE Group ID, R or Gから始まる
 
 # zoom_url: url
 

@@ -22,8 +22,8 @@ class Config:
         self.value = value
 
 # TODO: 値オブジェクト化
-# target_id は LINE の　ユーザーID or Room ID 
-# 接頭辞は U or R
+# target_id は LINE の　ユーザーID or Room ID or Group ID 
+# 接頭辞は U or R or G
 
 # key は Enum
 
