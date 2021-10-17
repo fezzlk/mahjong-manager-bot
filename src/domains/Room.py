@@ -10,7 +10,8 @@ class RoomMode(Enum):
 @dataclass()
 class Room:
     _id: int
-    line_room_id: str # unique
+    # line_room_id is unique
+    line_room_id: str
     zoom_url: str
     mode: RoomMode
 
@@ -19,7 +20,7 @@ class Room:
         line_room_id: str,
         mode: str,
         zoom_url: str = None,
-        _id = None,
+        _id=None,
     ):
         self._id = _id
         self.line_room_id = line_room_id

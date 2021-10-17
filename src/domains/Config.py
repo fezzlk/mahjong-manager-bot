@@ -13,7 +13,7 @@ class Config:
         target_id: str,
         key: str,
         value: str,
-        _id = None
+        _id=None,
     ):
         self._id = _id
         self.target_id = target_id
@@ -21,7 +21,7 @@ class Config:
         self.value = value
 
 # TODO: 値オブジェクト化
-# target_id は LINE の　ユーザーID or Room ID or Group ID 
+# target_id は LINE の　ユーザーID or Room ID or Group ID
 # 接頭辞は U or R or G
 
 # key は Enum

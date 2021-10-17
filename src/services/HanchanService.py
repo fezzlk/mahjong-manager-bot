@@ -74,7 +74,7 @@ class HanchanService:
                 line_user_id=line_user_id,
                 raw_score=None,
             )
-            
+
             return hanchan
 
     def clear_raw_scores(self, line_room_id):
@@ -97,7 +97,7 @@ class HanchanService:
             )
 
             logger.info(
-                f'update hanchan: id={record._id}'
+                f'update hanchan: id={hanchan._id}'
             )
 
             return hanchan

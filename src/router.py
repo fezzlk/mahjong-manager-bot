@@ -3,7 +3,7 @@
 from enum import Enum
 import json
 
-from server import logger, line_bot_api
+from server import logger
 from services import (
     request_info_service,
     reply_service,
@@ -13,10 +13,8 @@ from services import (
 from use_cases import (
     user_use_cases,
     room_use_cases,
-    points_use_cases,
     calculate_use_cases,
     config_use_cases,
-    ocr_use_cases,
     matches_use_cases,
     hanchans_use_cases,
     reply_use_cases,
@@ -29,6 +27,7 @@ from use_cases import (
     match_finish_use_case,
 )
 from domains.Room import RoomMode
+
 
 class UCommands(Enum):
     """Commands for personal user"""
@@ -116,12 +115,12 @@ class Router:
             )
             raise BaseException('this source type is not supported')
 
-    def imageMessage(self, event):
-        """receive image message event"""
-        if event.source.type == 'room' or event.source.type == 'group':
-            message_content = line_bot_api.get_message_content(
-                event.message.id
-            )
+    # def imageMessage(self, event):
+    #     """receive image message event"""
+        # if event.source.type == 'room' or event.source.type == 'group':
+            # message_content = line_bot_api.get_message_content(
+            #     event.message.id
+            # )
             # ocr_use_cases.input_result_from_image(message_content.content)
 
     def postback(self, event):
@@ -153,7 +152,10 @@ class Router:
         """routing by text on each mode"""
         """wait mode"""
         reply_service.add_message(
-            message_service.get_wait_massage(request_info_service.req_line_user_id))
+            message_service.get_wait_massage(
+                request_info_service.req_line_user_id
+            )
+        )
 
         # """if zoom url, register to room"""
         # if '.zoom.us' in text:

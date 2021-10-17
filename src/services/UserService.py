@@ -1,9 +1,9 @@
 """user"""
 
-from enum import Enum
 from repositories import session_scope, user_repository
 from server import logger, line_bot_api
 from domains.User import User, UserMode
+
 
 class UserService:
     """user service"""
@@ -23,7 +23,10 @@ class UserService:
     def find_or_create_by_profile(self, profile):
         """find or create by receiving message"""
         with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(session, profile.user_id)
+            target = user_repository.find_one_by_line_user_id(
+                session,
+                profile.user_id
+            )
 
         if target is None:
             target = self.create(profile.display_name, profile.user_id)
@@ -68,7 +71,10 @@ class UserService:
 
         except Exception:
             with session_scope() as session:
-                target = user_repository.find_one_by_line_user_id(session, user_id)
+                target = user_repository.find_one_by_line_user_id(
+                    session,
+                    user_id
+                )
 
                 if target is None:
                     logger.warning(f'user({user_id}) is not found')
@@ -115,13 +121,12 @@ class UserService:
     def set_zoom_id(self, line_user_id, zoom_url):
         with session_scope() as session:
             user_repository.update_one_zoom_id_by_line_room_id(
-                session=session, 
+                session=session,
                 line_user_id=line_user_id,
                 zoom_url=zoom_url,
             )
 
         logger.info(f'set_user_url: {zoom_url} to {line_user_id}')
-        
         return zoom_url
 
     def get_zoom_id(self, user_id):

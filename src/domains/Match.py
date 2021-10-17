@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 import datetime
 
-from domains.User import User
-
 
 @dataclass()
 class Match:

@@ -2,7 +2,6 @@
 
 from repositories import session_scope, match_repository
 from domains.Match import Match
-import json
 from server import logger
 
 STATUS_LIST = ['disabled', 'active', 'archived']
@@ -60,7 +59,7 @@ class MatchService:
                 hanchan_ids=hanchan_ids,
             )
             logger.info(
-                f'update hanchan ids of match: match_id={current.id}'
+                f'update hanchan ids of match: match_id={match.id}'
             )
             return match
 

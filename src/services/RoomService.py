@@ -1,4 +1,3 @@
-from enum import Enum
 from domains.Room import Room, RoomMode
 from repositories import session_scope, room_repository
 from server import logger
@@ -30,8 +29,11 @@ class RoomService:
             return None
 
         with session_scope() as session:
-            record = room_repository.update_one_mode_by_line_room_id(session, line_room_id, mode)
-            
+            record = room_repository.update_one_mode_by_line_room_id(
+                session,
+                line_room_id,
+                mode
+            )
             if record is None:
                 logger.warning(
                     'failed to change mode: room is not found'

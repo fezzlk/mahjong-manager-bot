@@ -36,10 +36,12 @@ class Users(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255), nullable=False)
-    user_id = Column(String(255), nullable=False) # unique
+    # user_id is unique
+    user_id = Column(String(255), nullable=False)
     zoom_id = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
-    jantama_name = Column(String(255), nullable=True) # unique
+    # jantama_name is unique
+    jantama_name = Column(String(255), nullable=True)
     matches = relationship(
         "Matches",
         secondary=association_table_user_match,
@@ -74,10 +76,11 @@ class Rooms(Base):
     __tablename__ = 'rooms'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_id = Column(String(255), nullable=False) # unique
+    # room_id is unique
+    room_id = Column(String(255), nullable=False)
     zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
-    users = relationship( # 廃止
+    users = relationship(
         "Users",
         secondary=association_table_user_room,
         back_populates="rooms"
@@ -156,7 +159,15 @@ class Hanchans(Base):
     # 2: archive
     status = Column(Integer, nullable=False)
 
-    # def __init__(self, id, room_id, match_id, raw_scores={}, converted_scores, status):
+    # def __init__(
+    #     self,
+    #     id,
+    #     room_id,
+    #     match_id,
+    #     raw_scores={},
+    #     converted_scores,
+    #     status
+    # ):
     #     self.id = id
     #     self.room_id = room_id
     #     self.raw_scores = json.dumps(raw_scores)

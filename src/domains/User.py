@@ -1,6 +1,7 @@
 from enum import Enum
 from dataclasses import dataclass
 
+
 class UserMode(Enum):
     wait = 'wait'
 
@@ -9,7 +10,8 @@ class UserMode(Enum):
 class User:
     _id: int
     name: str
-    line_user_id: str # unique
+    # line_user_id is unique
+    line_user_id: str
     zoom_url: str
     mode: UserMode
     jantama_name: str
