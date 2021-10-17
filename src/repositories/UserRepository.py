@@ -142,7 +142,12 @@ class UserRepository:
             jantama_name=record.jantama_name,
         )
 
-    def update_one_zoom_id_by_line_room_id(self, session, line_user_id, zoom_url):
+    def update_one_zoom_id_by_line_room_id(
+        self,
+        session,
+        line_user_id,
+        zoom_url,
+    ):
         if line_user_id is None:
             raise ValueError
 
