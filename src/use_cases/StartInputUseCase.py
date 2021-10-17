@@ -1,4 +1,3 @@
-# flake8: noqa: E999
 from services import (
     request_info_service,
     reply_service,

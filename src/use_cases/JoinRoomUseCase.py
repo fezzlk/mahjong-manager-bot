@@ -1,4 +1,3 @@
-# flake8: noqa: E999
 from server import line_bot_api, logger
 from services import (
     request_info_service,

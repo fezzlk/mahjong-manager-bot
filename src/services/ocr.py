@@ -1,4 +1,3 @@
-# flake8: noqa: C901
 """ocr"""
 
 import json
