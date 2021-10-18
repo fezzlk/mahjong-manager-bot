@@ -4,17 +4,19 @@ users repository
 
 from models import Users
 from domains.User import User, UserMode
+from sqlalchemy.orm.session import Session as BaseSession
 
 
 class UserRepository:
 
-    def find_one_by_line_user_id(self, session, user_id):
-        if user_id is None:
-            raise ValueError
-
+    def find_one_by_line_user_id(
+        self,
+        session: BaseSession,
+        line_user_id: str,
+    ) -> User:
         record = session\
             .query(Users)\
-            .filter(Users.user_id == user_id)\
+            .filter(Users.user_id == line_user_id)\
             .first()
 
         if record is None:
@@ -28,7 +30,11 @@ class UserRepository:
             jantama_name=record.jantama_name,
         )
 
-    def find_one_by_name(self, session, name):
+    def find_one_by_name(
+        self,
+        session: BaseSession,
+        name: str,
+    ) -> User:
         if name is None:
             raise ValueError
 
@@ -52,7 +58,11 @@ class UserRepository:
             jantama_name=records[0].jantama_name,
         )
 
-    def find_by_ids(self, session, ids):
+    def find_by_ids(
+        self,
+        session: BaseSession,
+        ids: list,
+    ) -> list:
         # 配列にサニタイズ
         if type(ids) != list:
             ids = [ids]
@@ -74,7 +84,10 @@ class UserRepository:
             for record in records
         ]
 
-    def find_all(self, session):
+    def find_all(
+        self,
+        session: BaseSession,
+    ) -> list:
         records = session\
             .query(Users)\
             .order_by(Users.id)\
@@ -91,7 +104,11 @@ class UserRepository:
             for record in records
         ]
 
-    def create(self, session, new_user):
+    def create(
+        self,
+        session: BaseSession,
+        new_user: User,
+    ) -> None:
         record = Users(
             name=new_user.name,
             user_id=new_user.line_user_id,
@@ -101,16 +118,21 @@ class UserRepository:
         )
         session.add(record)
 
-    def delete_one_by_line_user_id(self, session, user_id):
-        if user_id is None:
-            raise ValueError
-
+    def delete_one_by_line_user_id(
+        self,
+        session: BaseSession,
+        line_user_id: str,
+    ) -> None:
         session\
             .query(Users)\
-            .filter(Users.user_id == user_id)\
+            .filter(Users.user_id == line_user_id)\
             .delete()
 
-    def delete_by_ids(self, session, ids):
+    def delete_by_ids(
+        self,
+        session: BaseSession,
+        ids: list,
+    ) -> None:
         # 配列にサニタイズ
         if type(ids) != list:
             ids = [ids]
@@ -120,7 +142,12 @@ class UserRepository:
             .filter(Users.id.in_(ids))\
             .delete(synchronize_session=False)
 
-    def update_one_mode_by_line_room_id(self, session, line_user_id, mode):
+    def update_one_mode_by_line_room_id(
+        self,
+        session: BaseSession,
+        line_user_id: str,
+        mode: UserMode,
+    ) -> User:
         if line_user_id is None:
             raise ValueError
 
@@ -144,10 +171,10 @@ class UserRepository:
 
     def update_one_zoom_id_by_line_room_id(
         self,
-        session,
-        line_user_id,
-        zoom_url,
-    ):
+        session: BaseSession,
+        line_user_id: str,
+        zoom_url: str,
+    ) -> User:
         if line_user_id is None:
             raise ValueError
 

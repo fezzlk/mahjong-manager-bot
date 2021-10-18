@@ -6,12 +6,17 @@ matches repository
 from models import Matches
 from sqlalchemy import and_
 from domains.Match import Match
+from sqlalchemy.orm.session import Session as BaseSession
 import json
 
 
 class MatchRepository:
 
-    def find_by_ids(self, session, ids):
+    def find_by_ids(
+        self,
+        session: BaseSession,
+        ids: list,
+    ) -> list:
         # 配列をサニタイズ
         if type(ids) != list:
             ids = [ids]
@@ -36,10 +41,10 @@ class MatchRepository:
 
     def find_one_by_line_room_id_and_status(
         self,
-        session,
-        line_room_id,
-        status,
-    ):
+        session: BaseSession,
+        line_room_id: str,
+        status: int,
+    ) -> Match:
         record = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -59,7 +64,12 @@ class MatchRepository:
             created_at=record.created_at,
         )
 
-    def find_many_by_room_id_and_status(self, session, line_room_id, status):
+    def find_many_by_room_id_and_status(
+        self,
+        session: BaseSession,
+        line_room_id: str,
+        status: int
+    ) -> list:
         records = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -79,7 +89,11 @@ class MatchRepository:
             for record in records
         ]
 
-    def create(self, session, new_match):
+    def create(
+        self,
+        session: BaseSession,
+        new_match: Match,
+    ) -> None:
         record = Matches(
             line_room_id=new_match.line_room_id,
             hanchan_ids=json.dumps(new_match.hanchan_ids),
@@ -88,7 +102,10 @@ class MatchRepository:
 
         session.add(record)
 
-    def find_all(self, session):
+    def find_all(
+        self,
+        session: BaseSession,
+    ) -> list:
         records = session\
             .query(Matches)\
             .order_by(Matches.id)\
@@ -108,10 +125,10 @@ class MatchRepository:
 
     def add_hanchan_id_by_line_room_id(
         self,
-        session,
-        line_room_id,
-        hanchan_id,
-    ):
+        session: BaseSession,
+        line_room_id: str,
+        hanchan_id: int,
+    ) -> Match:
         record = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -137,10 +154,10 @@ class MatchRepository:
 
     def update_one_status_by_line_room_id(
         self,
-        session,
-        line_room_id,
-        status,
-    ):
+        session: BaseSession,
+        line_room_id: str,
+        status: int,
+    ) -> Match:
         record = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -164,10 +181,10 @@ class MatchRepository:
 
     def update_one_hanchan_ids_by_line_room_id(
         self,
-        session,
-        line_room_id,
-        hanchan_ids,
-    ):
+        session: BaseSession,
+        line_room_id: str,
+        hanchan_ids: list,
+    ) -> Match:
         record = session\
             .query(Matches).filter(and_(
                 Matches.room_id == line_room_id,
@@ -191,10 +208,10 @@ class MatchRepository:
 
     def remove_hanchan_id_by_id(
         self,
-        session,
-        match_id,
-        hanchan_id,
-    ):
+        session: BaseSession,
+        match_id: int,
+        hanchan_id: int,
+    ) -> Match:
         record = session\
             .query(Matches).filter(and_(
                 Matches.id == match_id,
