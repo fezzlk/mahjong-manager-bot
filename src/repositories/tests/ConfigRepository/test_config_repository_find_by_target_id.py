@@ -1,9 +1,6 @@
 from tests.dummies import generate_dummy_config_list
-from db_setting import Session
 from repositories import session_scope, config_repository
 from domains.Config import Config
-
-session = Session()
 
 
 def test_hit_records():
@@ -12,8 +9,8 @@ def test_hit_records():
         dummy_configs = generate_dummy_config_list()[:6]
         for dummy_config in dummy_configs:
             config_repository.create(
-                session,
-                dummy_config,
+                session=session,
+                new_config=dummy_config,
             )
     target_configs = generate_dummy_config_list()[:2]
     target_id = target_configs[0].target_id
@@ -21,8 +18,8 @@ def test_hit_records():
     # Act
     with session_scope() as session:
         result = config_repository.find_by_target_id(
-            session,
-            target_id,
+            session=session,
+            target_id=target_id,
         )
 
     # Assert
@@ -40,16 +37,16 @@ def test_hit_0_record():
         dummy_configs = generate_dummy_config_list()[:5]
         for dummy_config in dummy_configs:
             config_repository.create(
-                session,
-                dummy_config,
+                session=session,
+                new_config=dummy_config,
             )
     target_id = generate_dummy_config_list()[5].target_id
 
     # Act
     with session_scope() as session:
         result = config_repository.find_by_target_id(
-            session,
-            target_id,
+            session=session,
+            target_id=target_id,
         )
 
     # Assert

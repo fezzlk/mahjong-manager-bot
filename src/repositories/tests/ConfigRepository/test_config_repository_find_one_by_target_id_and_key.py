@@ -1,10 +1,6 @@
-import pytest
 from tests.dummies import generate_dummy_config_list
-from db_setting import Session
 from repositories import session_scope, config_repository
 from domains.Config import Config
-
-session = Session()
 
 
 def test_hit():
@@ -12,16 +8,16 @@ def test_hit():
     with session_scope() as session:
         dummy_config = generate_dummy_config_list()[0]
         config_repository.create(
-            session,
-            dummy_config,
+            session=session,
+            new_config=dummy_config,
         )
 
     # Act
     with session_scope() as session:
         result = config_repository.find_one_by_target_id_and_key(
-            session,
-            dummy_config.target_id,
-            dummy_config.key,
+            session=session,
+            target_id=dummy_config.target_id,
+            key=dummy_config.key,
         )
 
     # Assert
@@ -38,17 +34,17 @@ def test_not_hit():
 
         for dummy_config in dummy_configs:
             config_repository.create(
-                session,
-                dummy_config,
+                session=session,
+                new_config=dummy_config,
             )
     target_config = generate_dummy_config_list()[0]
 
     # Act
     with session_scope() as session:
         result = config_repository.find_one_by_target_id_and_key(
-            session,
-            target_config.target_id,
-            target_config.key,
+            session=session,
+            target_id=target_config.target_id,
+            key=target_config.key,
         )
 
     # Assert

@@ -1,11 +1,6 @@
-
-import pytest
 from tests.dummies import generate_dummy_config_list
-from db_setting import Session
 from repositories import session_scope, config_repository
 from domains.Config import Config
-
-session = Session()
 
 
 def test_success():
@@ -14,8 +9,8 @@ def test_success():
     with session_scope() as session:
         for dummy_config in dummy_configs:
             config_repository.create(
-                session,
-                dummy_config,
+                session=session,
+                new_config=dummy_config,
             )
     other_configs = dummy_configs[:5]
     target_config = dummy_configs[5]
@@ -23,15 +18,15 @@ def test_success():
     # Act
     with session_scope() as session:
         config_repository.delete_by_target_id_and_key(
-            session,
-            target_config.target_id,
-            target_config.key,
+            session=session,
+            targer_id=target_config.target_id,
+            key=target_config.key,
         )
 
     # Assert
     with session_scope() as session:
         result = config_repository.find_all(
-            session,
+            session=session,
         )
         assert len(result) == len(other_configs)
         for i in range(len(result)):
