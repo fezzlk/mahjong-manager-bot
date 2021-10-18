@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from db_setting import Session
+from sqlalchemy.orm.session import Session as BaseSession
 
 from .ConfigRepository import ConfigRepository
 from .UserRepository import UserRepository
@@ -16,7 +17,7 @@ room_repository = RoomRepository()
 
 @contextmanager
 def session_scope():
-    session = Session()
+    session: BaseSession = Session()
 
     try:
         yield session  # with as での呼び出し元に session を渡す
