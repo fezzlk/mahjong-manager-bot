@@ -1,13 +1,9 @@
-import pytest
 from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from db_setting import Session
 from repositories import session_scope, hanchan_repository, match_repository
 from domains.Hanchan import Hanchan
-
-session = Session()
 
 
 def test_hit_1_record():
@@ -103,65 +99,3 @@ def test_hit_0_record_with_not_exist_line_room_id():
 
     # Assert
         assert result is None
-
-
-def test_NG_with_id_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        with session_scope() as session:
-            dummy_matches = generate_dummy_match_list()[:3]
-            for dummy_match in dummy_matches:
-                match_repository.create(
-                    session,
-                    dummy_match,
-                )
-        dummy_hanchans = generate_dummy_hanchan_list()[:3]
-        with session_scope() as session:
-            for dummy_hanchan in dummy_hanchans:
-                hanchan_repository.create(
-                    session,
-                    dummy_hanchan,
-                )
-        target_hanchan = dummy_hanchans[0]
-
-        # Act
-        with session_scope() as session:
-            hanchan_repository.find_one_by_id_and_line_room_id(
-                session=session,
-                target_id=None,
-                line_room_id=target_hanchan.line_room_id,
-            )
-
-        # Assert
-        # Do nothing
-
-
-def test_NG_with_line_room_id_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        with session_scope() as session:
-            dummy_matches = generate_dummy_match_list()[:3]
-            for dummy_match in dummy_matches:
-                match_repository.create(
-                    session,
-                    dummy_match,
-                )
-        dummy_hanchans = generate_dummy_hanchan_list()[:3]
-        with session_scope() as session:
-            for dummy_hanchan in dummy_hanchans:
-                hanchan_repository.create(
-                    session,
-                    dummy_hanchan,
-                )
-        target_hanchan = dummy_hanchans[0]
-
-        # Act
-        with session_scope() as session:
-            hanchan_repository.find_one_by_id_and_line_room_id(
-                session=session,
-                target_id=target_hanchan._id,
-                line_room_id=None,
-            )
-
-        # Assert
-        # Do nothing
