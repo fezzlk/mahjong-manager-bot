@@ -81,36 +81,3 @@ def test_hit_0_record_with_not_exist_status():
     # Assert
         assert len(result) == 0
 
-
-def test_NG_with_line_room_id_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        target_match = generate_dummy_match_list()[0]
-
-        # Act
-        with session_scope() as session:
-            match_repository.find_many_by_room_id_and_status(
-                session=session,
-                line_room_id=None,
-                status=target_match.status,
-            )
-
-        # Assert
-        # Do nothing
-
-
-def test_NG_with_status_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        target_match = generate_dummy_match_list()[0]
-
-        # Act
-        with session_scope() as session:
-            match_repository.find_many_by_room_id_and_status(
-                session=session,
-                line_room_id=None,
-                status=target_match.status,
-            )
-
-        # Assert
-        # Do nothing

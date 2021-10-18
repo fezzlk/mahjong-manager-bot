@@ -39,37 +39,3 @@ def test_success():
             assert result[i].target_id == other_configs[i].target_id
             assert result[i].key == other_configs[i].key
             assert result[i].value == other_configs[i].value
-
-
-def test_NG_with_target_id_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        target_config = generate_dummy_config_list()[0]
-
-        # Act
-        with session_scope() as session:
-            config_repository.find_one_by_target_id_and_key(
-                session,
-                None,
-                target_config.key,
-            )
-
-        # Assert
-        # Do nothing
-
-
-def test_NG_with_key_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        target_config = generate_dummy_config_list()[0]
-
-        # Act
-        with session_scope() as session:
-            config_repository.find_one_by_target_id_and_key(
-                session,
-                target_config.target_id,
-                None,
-            )
-
-        # Assert
-        # Do nothing

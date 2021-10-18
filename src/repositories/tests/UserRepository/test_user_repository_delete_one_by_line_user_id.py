@@ -72,19 +72,3 @@ def test_hit_0_record():
             assert result[i].zoom_url == dummy_users[i].zoom_url
             assert result[i].mode == dummy_users[i].mode
             assert result[i].jantama_name == dummy_users[i].jantama_name
-
-
-def test_NG_with_line_user_id_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        # Do nothing
-
-        # Act
-        with session_scope() as session:
-            user_repository.delete_one_by_line_user_id(
-                session,
-                None,
-            )
-
-        # Assert
-        # Do nothing

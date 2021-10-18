@@ -55,37 +55,3 @@ def test_hit_0_record():
 
     # Assert
         assert result is None
-
-
-def test_NG_with_line_room_id_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        target_match = generate_dummy_match_list()[0]
-
-        # Act
-        with session_scope() as session:
-            match_repository.find_one_by_line_room_id_and_status(
-                session=session,
-                line_room_id=None,
-                status=target_match.status,
-            )
-
-        # Assert
-        # Do nothing
-
-
-def test_NG_with_status_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        target_match = generate_dummy_match_list()[0]
-
-        # Act
-        with session_scope() as session:
-            match_repository.find_one_by_line_room_id_and_status(
-                session=session,
-                line_room_id=None,
-                status=target_match.status,
-            )
-
-        # Assert
-        # Do nothing

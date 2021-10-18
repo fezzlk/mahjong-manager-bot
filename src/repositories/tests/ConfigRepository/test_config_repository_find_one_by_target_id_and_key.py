@@ -53,37 +53,3 @@ def test_not_hit():
 
     # Assert
         assert result is None
-
-
-def test_NG_with_target_id_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        target_config = generate_dummy_config_list()[0]
-
-        # Act
-        with session_scope() as session:
-            config_repository.find_one_by_target_id_and_key(
-                session,
-                None,
-                target_config.key,
-            )
-
-        # Assert
-        # Do nothing
-
-
-def test_NG_with_key_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        target_config = generate_dummy_config_list()[0]
-
-        # Act
-        with session_scope() as session:
-            config_repository.find_one_by_target_id_and_key(
-                session,
-                target_config.target_id,
-                None,
-            )
-
-        # Assert
-        # Do nothing
