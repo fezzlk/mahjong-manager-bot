@@ -17,7 +17,7 @@ class MatchService(IMatchService):
 
         return current
 
-    def get_current(self, line_room_id):
+    def get_current(self, line_room_id: str) -> Match:
         with session_scope() as session:
             return match_repository.find_one_by_line_room_id_and_status(
                 session=session,
@@ -65,7 +65,7 @@ class MatchService(IMatchService):
             )
             return match
 
-    def count_results(self, line_room_id):
+    def count_results(self, line_room_id: str) -> int:
         current = self.get_current(line_room_id)
         if current is None:
             logger.warning(
@@ -74,7 +74,11 @@ class MatchService(IMatchService):
             return 0
         return len(current.hanchan_ids)
 
-    def update_status(self, line_room_id, status):
+    def update_status(
+        self,
+        line_room_id: str,
+        status: int,
+    ) -> Match:
         with session_scope() as session:
             record = match_repository.update_one_status_by_line_room_id(
                 session,
@@ -88,10 +92,10 @@ class MatchService(IMatchService):
 
             return record
 
-    def archive(self, line_room_id):
+    def archive(self, line_room_id: str) -> Match:
         return self.update_status(line_room_id, 2)
 
-    def disable(self, line_room_id):
+    def disable(self, line_room_id: str) -> Match:
         return self.update_status(line_room_id, 0)
 
     def get_archived(self, room_id):
