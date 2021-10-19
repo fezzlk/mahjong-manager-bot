@@ -5,7 +5,7 @@ from services import (
 )
 
 
-class ReplyUserModeUseCase:
+class ChangeUserModeUseCase:
 
     def execute(
         self,
