@@ -19,7 +19,7 @@ def test_success():
     with session_scope() as session:
         config_repository.delete_by_target_id_and_key(
             session=session,
-            targer_id=target_config.target_id,
+            target_id=target_config.target_id,
             key=target_config.key,
         )
 
