@@ -1,42 +1,49 @@
 from .user.FollowUseCase import FollowUseCase
-from .user.GetUsersForWebUseCase import GetUsersForWebUseCase
 from .user.UnfollowUseCase import UnfollowUseCase
+from .user.ChangeUserModeUseCase import ChangeUserModeUseCase
+from .user.SetZoomUrlToUserUseCase import SetZoomUrlToUserUseCase
+from .user.ReplyUserHelpUseCase import ReplyUserHelpUseCase
+from .user.ReplyUserModeUseCase import ReplyUserModeUseCase
+from .user.ReplyFortuneUseCase import ReplyFortuneUseCase
+from .user.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
+from .user.GetUsersForWebUseCase import GetUsersForWebUseCase
+from .user.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 
 from .group.JoinRoomUseCase import JoinRoomUseCase
+from .group.RoomQuitUseCase import RoomQuitUseCase
+from .group.SetZoomUrlToRoomUseCase import SetZoomUrlToRoomUseCase
+from .group.SetMyZoomUrlToRoomUseCase import SetMyZoomUrlToRoomUseCase
+from .group.ReplyRoomHelpUseCase import ReplyRoomHelpUseCase
+from .group.ReplyRoomSettingsMenuUseCase import ReplyRoomSettingsMenuUseCase
+from .group.ReplyStartMenuUseCase import ReplyStartMenuUseCase
+from .group.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
+from .group.ReplyRoomModeUseCase import ReplyRoomModeUseCase
+from .group.ReplyRoomZoomUrlUseCase import ReplyRoomZoomUrlUseCase
+from .group.GetRoomsForWebUseCase import GetRoomsForWebUseCase
+from .group.DeleteRoomsForWebUseCase import DeleteRoomsForWebUseCase
 
-from .AddPointByTextUseCase import AddPointByTextUseCase
-from .StartInputUseCase import StartInputUseCase
-from .RoomQuitUseCase import RoomQuitUseCase
-from .MatchFinishUseCase import MatchFinishUseCase
-from .ReplyRoomModeUseCase import ReplyRoomModeUseCase
-from .ReplyUserModeUseCase import ReplyUserModeUseCase
-from .ChangeUserModeUseCase import ChangeUserModeUseCase
-from .ReplyFortuneUseCase import ReplyFortuneUseCase
-from .ReplyUserHelpUseCase import ReplyUserHelpUseCase
-from .ReplyRoomHelpUseCase import ReplyRoomHelpUseCase
-from .ReplySumHanchansUseCase import ReplySumHanchansUseCase
-from .ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
-from .ReplyMatchesUseCase import ReplyMatchesUseCase
-from .ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
-from .SetMyZoomUrlToRoomUseCase import SetMyZoomUrlToRoomUseCase
 from .hanchan.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
-from .SetZoomUrlToUserUseCase import SetZoomUrlToUserUseCase
-from .SetZoomUrlToRoomUseCase import SetZoomUrlToRoomUseCase
-from .CalculateWithTobiUseCase import CalculateWithTobiUseCase
-from .GetConfigsForWebUseCase import GetConfigsForWebUseCase
-from .GetHanchansForWebUseCase import GetHanchansForWebUseCase
-from .GetMatchesForWebUseCase import GetMatchesForWebUseCase
-from .GetRoomsForWebUseCase import GetRoomsForWebUseCase
-from .ReplyRoomSettingsMenuUseCase import ReplyRoomSettingsMenuUseCase
-from .ReplyStartMenuUseCase import ReplyStartMenuUseCase
-from .ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
-from .AddPointByJsonTextUseCase import AddPointByJsonTextUseCase
-from .UpdateConfigUseCase import UpdateConfigUseCase
-from .InputResultFromImageUseCase import InputResultFromImageUseCase
-from .ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
-from .ReplyRoomZoomUrlUseCase import ReplyRoomZoomUrlUseCase
-from .DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
-from .DisableMatchUseCase import DisableMatchUseCase
+from .hanchan.AddPointByJsonTextUseCase import AddPointByJsonTextUseCase
+from .hanchan.AddPointByTextUseCase import AddPointByTextUseCase
+from .hanchan.StartInputUseCase import StartInputUseCase
+from .hanchan.ReplySumHanchansUseCase import ReplySumHanchansUseCase
+from .hanchan.InputResultFromImageUseCase import InputResultFromImageUseCase
+from .hanchan.CalculateWithTobiUseCase import CalculateWithTobiUseCase
+from .hanchan.GetHanchansForWebUseCase import GetHanchansForWebUseCase
+from .hanchan.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
+
+from .match.ReplyMatchesUseCase import ReplyMatchesUseCase
+from .match.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
+from .match.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
+from .match.DisableMatchUseCase import DisableMatchUseCase
+from .match.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
+from .match.MatchFinishUseCase import MatchFinishUseCase
+from .match.GetMatchesForWebUseCase import GetMatchesForWebUseCase
+from .match.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
+
+from .config.UpdateConfigUseCase import UpdateConfigUseCase
+from .config.GetConfigsForWebUseCase import GetConfigsForWebUseCase
+from .config.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
 
 follow_use_case = FollowUseCase()
 unfollow_use_case = UnfollowUseCase()
@@ -71,6 +78,11 @@ get_configs_for_web_use_case = GetConfigsForWebUseCase()
 get_hanchans_for_web_use_case = GetHanchansForWebUseCase()
 get_matches_for_web_use_case = GetMatchesForWebUseCase()
 get_users_for_web_use_case = GetUsersForWebUseCase()
+delete_rooms_for_web_use_case = DeleteRoomsForWebUseCase()
+delete_configs_for_web_use_case = DeleteConfigsForWebUseCase()
+delete_hanchans_for_web_use_case = DeleteHanchansForWebUseCase()
+delete_matches_for_web_use_case = DeleteMatchesForWebUseCase()
+delete_users_for_web_use_case = DeleteUsersForWebUseCase()
 update_config_use_case = UpdateConfigUseCase()
 input_result_from_image_use_case = InputResultFromImageUseCase()
 reply_sum_matches_by_ids_use_case = ReplySumMatchesByIdsUseCase()
