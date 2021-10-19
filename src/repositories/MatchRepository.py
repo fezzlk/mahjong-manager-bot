@@ -1,8 +1,3 @@
-
-"""
-matches repository
-"""
-
 from models import Matches
 from sqlalchemy import and_
 from domains.Match import Match
@@ -17,10 +12,6 @@ class MatchRepository:
         session: BaseSession,
         ids: list,
     ) -> list:
-        # 配列をサニタイズ
-        if type(ids) != list:
-            ids = [ids]
-
         records = session\
             .query(Matches)\
             .filter(Matches.id.in_([int(s) for s in ids]))\

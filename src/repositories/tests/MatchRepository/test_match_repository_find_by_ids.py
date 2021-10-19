@@ -35,33 +35,6 @@ def test_hit_with_ids():
             assert result[i].status == target_matchs[i].status
 
 
-def test_hit_with_an_id_as_not_list():
-    # Arrange
-    with session_scope() as session:
-        dummy_matchs = generate_dummy_match_list()[:3]
-        for dummy_match in dummy_matchs:
-            match_repository.create(
-                session,
-                dummy_match,
-            )
-    target_match = generate_dummy_match_list()[2]
-    target_match_id = target_match._id
-
-    # Act
-    with session_scope() as session:
-        result = match_repository.find_by_ids(
-            session,
-            target_match_id,
-        )
-
-    # Assert
-        assert len(result) == 1
-        assert result[0].line_room_id == dummy_match.line_room_id
-        assert result[0].hanchan_ids == dummy_match.hanchan_ids
-        assert result[0].users == dummy_match.users
-        assert result[0].status == dummy_match.status
-
-
 def test_hit_0_record():
     # Arrange
     with session_scope() as session:

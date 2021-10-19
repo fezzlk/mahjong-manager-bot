@@ -1,7 +1,3 @@
-"""
-config repository
-"""
-
 from .interfaces.IConfigRepository import IConfigRepository
 from models import Configs
 from domains.Config import Config
