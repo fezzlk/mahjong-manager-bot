@@ -1,3 +1,4 @@
+from typing import Dict, List
 from linebot.models import (
     TextSendMessage,
     TemplateSendMessage,
@@ -9,6 +10,7 @@ from linebot.models import (
 import json
 from server import line_bot_api
 from .interfaces.IReplyService import IReplyService
+from linebot.models.events import Event
 
 
 class ReplyService(IReplyService):
@@ -24,7 +26,7 @@ class ReplyService(IReplyService):
     ) -> None:
         self.texts.append(TextSendMessage(text=text))
 
-    def add_image(self, image_url):
+    def add_image(self, image_url: str) -> None:
         self.images.append(
             ImageSendMessage(
                 original_content_url=image_url,
@@ -32,7 +34,7 @@ class ReplyService(IReplyService):
             )
         )
 
-    def add_start_menu(self):
+    def add_start_menu(self) -> None:
         self.buttons.append(
             TemplateSendMessage(
                 alt_text='Start Menu',
@@ -65,7 +67,7 @@ class ReplyService(IReplyService):
             )
         )
 
-    def add_others_menu(self):
+    def add_others_menu(self) -> None:
         self.buttons.append(
             TemplateSendMessage(
                 alt_text='Other Menu',
@@ -88,7 +90,7 @@ class ReplyService(IReplyService):
             )
         )
 
-    def add_settings_menu(self, key=''):
+    def add_settings_menu(self, key: str = '') -> None:
         if key == '':
             button = TemplateSendMessage(
                 alt_text='Settings Menu',
@@ -249,7 +251,7 @@ class ReplyService(IReplyService):
 
         self.buttons.append(button)
 
-    def add_tobi_menu(self, player_id_and_names):
+    def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
         self.buttons.append(
             TemplateSendMessage(
                 alt_text='Select Tobi Player Menu',
@@ -273,7 +275,7 @@ class ReplyService(IReplyService):
             )
         )
 
-    def add_submit_results_by_ocr_menu(self, results):
+    def add_submit_results_by_ocr_menu(self, results: Dict[str, int]) -> None:
         self.buttons.append(
             TemplateSendMessage(
                 alt_text='Approve OCR result Menu',
@@ -296,7 +298,7 @@ class ReplyService(IReplyService):
             )
         )
 
-    def reply(self, event):
+    def reply(self, event: Event) -> None:
         contents = self.texts + self.buttons + self.images
 
         if (len(contents) == 0):
@@ -308,7 +310,7 @@ class ReplyService(IReplyService):
             )
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self.texts = []
         self.buttons = []
         self.images = []
