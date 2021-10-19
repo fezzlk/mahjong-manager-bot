@@ -1,7 +1,3 @@
-"""
-views
-"""
-
 from flask import request, abort, render_template, url_for, redirect
 from linebot import exceptions
 from db_setting import Engine
