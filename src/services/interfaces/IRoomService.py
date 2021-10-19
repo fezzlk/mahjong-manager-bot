@@ -15,3 +15,7 @@ class IRoomService(metaclass=ABCMeta):
     @abstractmethod
     def find_or_create(self, room_id: str) -> Room:
         pass
+
+    @abstractmethod
+    def get_mode(self, room_id: str) -> RoomMode:
+        pass

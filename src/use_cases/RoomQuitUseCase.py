@@ -1,3 +1,4 @@
+from domains.Room import RoomMode
 from services import (
     request_info_service,
     reply_service,
@@ -9,11 +10,11 @@ from services import (
 class RoomQuitUseCase:
 
     def execute(self, text):
-        room_id = request_info_service.req_line_room_id
-        hanchan_service.disable(room_id)
+        line_room_id = request_info_service.req_line_room_id
+        hanchan_service.disable(line_room_id)
         room_service.chmod(
-            room_id,
-            room_service.modes.wait,
+            line_room_id,
+            RoomMode.wait,
         )
         reply_service.add_message(
             '始める時は「_start」と入力してください。')

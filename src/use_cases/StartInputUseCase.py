@@ -12,11 +12,11 @@ class StartInputUseCase:
 
     def execute(self):
         line_room_id = request_info_service.req_line_room_id
-        
+
         if room_service.get_mode(line_room_id) == RoomMode.input:
             reply_service.add_message('すでに入力モードです')
             return
-            
+
         current_match = match_service.get_or_create_current(line_room_id)
         hanchan_service.create({}, line_room_id, current_match)
 

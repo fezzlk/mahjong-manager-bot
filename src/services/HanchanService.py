@@ -3,18 +3,24 @@ from typing import Dict, List
 from repositories import session_scope, hanchan_repository
 from server import logger
 from domains.Hanchan import Hanchan
+from domains.Match import Match
 from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
 class HanchanService(IHanchanService):
-    def create(self, raw_scores, room_id, current_match):
+    def create(
+        self,
+        raw_scores: Dict[str, int],
+        line_room_id: str,
+        related_match: Match,
+    ) -> Hanchan:
         new_hanchan = Hanchan(
-            line_room_id=room_id,
+            line_room_id=line_room_id,
             raw_scores=raw_scores,
             converted_scores='',
-            match_id=current_match._id,
+            match_id=related_match._id,
             status=1,
         )
         with session_scope() as session:
@@ -24,8 +30,10 @@ class HanchanService(IHanchanService):
             )
 
         logger.info(
-            f'create hanchan: to room "{room_id}"'
+            f'create hanchan: to room "{line_room_id}"'
         )
+
+        return new_hanchan
 
     def disabled_by_id(self, line_room_id, hanchan_id):
         """disabled target hanchan"""
@@ -116,7 +124,7 @@ class HanchanService(IHanchanService):
 
             return hanchan
 
-    def change_status(
+    def update_status(
         self,
         line_room_id: str,
         status: int,
@@ -135,10 +143,10 @@ class HanchanService(IHanchanService):
             return hanchan
 
     def archive(self, line_room_id: str) -> Hanchan:
-        return self.change_status(line_room_id, 2)
+        return self.update_status(line_room_id, 2)
 
     def disable(self, line_room_id: str) -> Hanchan:
-        return self.change_status(line_room_id, 0)
+        return self.update_status(line_room_id, 0)
 
     def get(self, ids=None):
         with session_scope() as session:

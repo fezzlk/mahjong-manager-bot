@@ -8,7 +8,7 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 
 class MatchService(IMatchService):
 
-    def get_or_create_current(self, line_room_id):
+    def get_or_create_current(self, line_room_id: str) -> Match:
         current = self.get_current(line_room_id)
 
         if current is None:
@@ -25,7 +25,7 @@ class MatchService(IMatchService):
                 status=1,
             )
 
-    def create(self, line_room_id):
+    def create(self, line_room_id: str) -> Match:
         with session_scope() as session:
             new_match = Match(
                 line_room_id=line_room_id,

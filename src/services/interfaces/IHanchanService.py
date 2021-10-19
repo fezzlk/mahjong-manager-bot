@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List
 from domains.Hanchan import Hanchan
+from domains.Match import Match
 
 
 class IHanchanService(metaclass=ABCMeta):
@@ -38,7 +39,7 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def change_status(
+    def update_status(
         self,
         line_room_id: str,
         status: int,
@@ -51,4 +52,13 @@ class IHanchanService(metaclass=ABCMeta):
 
     @abstractmethod
     def disable(self, line_room_id: str) -> Hanchan:
+        pass
+
+    @abstractmethod
+    def create(
+        self,
+        raw_scores: Dict[str, int],
+        line_room_id: str,
+        related_match: Match,
+    ) -> Hanchan:
         pass

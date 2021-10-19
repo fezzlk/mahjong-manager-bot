@@ -35,3 +35,11 @@ class IMatchService(metaclass=ABCMeta):
     @abstractmethod
     def disable(self, line_room_id: str) -> Match:
         pass
+
+    @abstractmethod
+    def get_or_create_current(self, line_room_id: str) -> Match:
+        pass
+
+    @abstractmethod
+    def create(self, line_room_id: str) -> Match:
+        pass
