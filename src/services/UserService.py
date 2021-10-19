@@ -1,5 +1,6 @@
 """user"""
 
+from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
 from server import logger, line_bot_api
@@ -19,11 +20,14 @@ class UserService(IUserService):
 
         logger.info(f'delete: {user_id}')
 
-    def find_or_create_by_profile(self, profile):
+    def find_or_create_by_profile(
+        self,
+        profile: Profile,
+    ) -> User:
         with session_scope() as session:
             target = user_repository.find_one_by_line_user_id(
                 session,
-                profile.user_id
+                profile.user_id,
             )
 
         if target is None:
@@ -31,7 +35,11 @@ class UserService(IUserService):
 
         return target
 
-    def create(self, name, user_id):
+    def create(
+        self,
+        name: str,
+        user_id: str,
+    ) -> User:
         with session_scope() as session:
             new_user = User(
                 name=name,
@@ -44,7 +52,9 @@ class UserService(IUserService):
                 session,
                 new_user,
             )
+
             logger.info(f'create: {new_user.line_user_id} {new_user.name}')
+
             return new_user
 
     def delete(self, ids):

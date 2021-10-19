@@ -6,7 +6,7 @@ from server import logger
 
 class RoomService(IRoomService):
 
-    def find_or_create(self, room_id):
+    def find_or_create(self, room_id: str) -> Room:
         with session_scope() as session:
             room = room_repository.find_one_by_room_id(session, room_id)
 

@@ -1,4 +1,6 @@
 from abc import ABCMeta, abstractmethod
+from linebot.models.responses import Profile
+from domains.User import User
 
 
 class IUserService(metaclass=ABCMeta):
@@ -15,4 +17,19 @@ class IUserService(metaclass=ABCMeta):
         self,
         line_user_id: str,
     ) -> str:
+        pass
+
+    @abstractmethod
+    def find_or_create_by_profile(
+        self,
+        profile: Profile,
+    ) -> User:
+        pass
+
+    @abstractmethod
+    def create(
+        self,
+        name: str,
+        user_id: str,
+    ) -> User:
         pass

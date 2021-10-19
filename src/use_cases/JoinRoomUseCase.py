@@ -1,4 +1,4 @@
-from server import line_bot_api, logger
+from server import logger
 from services import (
     request_info_service,
     reply_service,
@@ -9,12 +9,11 @@ from services import (
 class JoinRoomUseCase:
 
     def execute(self):
-        """join room"""
         reply_service.add_message(
             'こんにちは、今日は麻雀日和ですね。'
         )
-        room_id = request_info_service.req_line_room_id
-        if room_id is None:
+        line_room_id = request_info_service.req_line_room_id
+        if line_room_id is None:
             logger.warning('This request is not from room chat')
             return
-        room_service.find_or_create(room_id)
+        room_service.find_or_create(line_room_id)
