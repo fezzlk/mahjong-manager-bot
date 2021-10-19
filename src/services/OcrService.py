@@ -2,6 +2,7 @@
 
 import json
 import os
+from typing import Dict
 from google.cloud import vision
 from google.oauth2 import service_account
 from server import logger
@@ -22,7 +23,7 @@ class OcrService:
                 service_account_info)
             self.client = vision.ImageAnnotatorClient(credentials=credentials)
 
-    def isResultImage(self):
+    def isResultImage(self) -> bool:
         if self.result is None:
             logger.warning(
                 'the requested image is not loaded(required execute self.run()'
@@ -33,7 +34,7 @@ class OcrService:
                 return True
         return False
 
-    def run(self, content=None):
+    def run(self, content: str = None) -> None:
         if self.client is None:
             logger.warning(
                 'ocr_service is not setup'
@@ -55,10 +56,10 @@ class OcrService:
 
         self.result = response.text_annotations
 
-    def delete_result(self):
+    def delete_result(self) -> None:
         self.result = None
 
-    def get_points(self):
+    def get_points(self) -> Dict[str, int]:
         if self.result is None:
             logger.warning(
                 'the requested image is not loaded(required execute self.run()'
