@@ -1,7 +1,7 @@
 from services import (
     request_info_service,
     reply_service,
-    points_service,
+    point_service,
     user_service,
     hanchan_service,
     calculate_service,
@@ -19,7 +19,7 @@ class AddPointByTextUseCase:
         line_room_id = request_info_service.req_line_room_id
 
         if text[0] == '@':
-            point, target_user = points_service.get_point_and_name_from_text(
+            point, target_user = point_service.get_point_and_name_from_text(
                 text[1:]
             )
             target_line_user_id = user_service.get_user_id_by_name(

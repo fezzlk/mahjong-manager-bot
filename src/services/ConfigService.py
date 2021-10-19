@@ -75,10 +75,6 @@ class ConfigService:
         )
 
     def delete(self, ids):
-        # 配列にサニタイズ
-        if type(ids) != list:
-            ids = [ids]
-
         with session_scope() as session:
             config_repository.delete_by_ids(session, ids)
 

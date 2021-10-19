@@ -1,7 +1,13 @@
-class PointsService:
-    """point service"""
+from .interfaces.IPointService import IPointService
+from typing import Tuple
 
-    def get_point_and_name_from_text(self, text):
+
+class PointService(IPointService):
+
+    def get_point_and_name_from_text(
+        self,
+        text: str,
+    ) -> Tuple[str, str]:
         s = text.split()
         if len(s) >= 2:
             # ユーザー名に空白がある場合を考慮し、最後の要素をポイント、そのほかをユーザー名として判断する

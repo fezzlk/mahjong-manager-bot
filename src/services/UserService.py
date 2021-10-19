@@ -6,7 +6,6 @@ from domains.User import User, UserMode
 
 
 class UserService:
-    """user service"""
 
     def find_one_by_line_user_id(self, user_id):
         with session_scope() as session:
@@ -14,14 +13,12 @@ class UserService:
             return user
 
     def delete_one_by_line_user_id(self, user_id):
-        """delete"""
         with session_scope() as session:
             user_repository.delete_one_by_line_user_id(session, user_id)
 
         logger.info(f'delete: {user_id}')
 
     def find_or_create_by_profile(self, profile):
-        """find or create by receiving message"""
         with session_scope() as session:
             target = user_repository.find_one_by_line_user_id(
                 session,

@@ -6,7 +6,7 @@ from services import (
     hanchan_service,
     reply_service,
     user_service,
-    points_service,
+    point_service,
 )
 
 
@@ -31,7 +31,7 @@ class PointsUseCases:
 
     def add_by_text(self, text):
         if text[0] == '@':
-            point, target_user = points_service.get_point_and_name_from_text(
+            point, target_user = point_service.get_point_and_name_from_text(
                 text[1:]
             )
             target_line_user_id = user_service.get_user_id_by_name(
