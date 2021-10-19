@@ -128,7 +128,7 @@ class UserService(IUserService):
     def wait_mode(self, user_id):
         self.chmod(user_id, UserMode.wait)
 
-    def get_mode(self, user_id):
+    def get_mode(self, user_id: str) -> UserMode:
         with session_scope() as session:
             target = user_repository.find_one_by_line_user_id(session, user_id)
 
