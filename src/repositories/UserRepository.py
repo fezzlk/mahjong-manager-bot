@@ -1,10 +1,7 @@
-"""
-users repository
-"""
-
 from models import Users
 from domains.User import User, UserMode
 from sqlalchemy.orm.session import Session as BaseSession
+from server import logger
 
 
 class UserRepository:
@@ -35,9 +32,6 @@ class UserRepository:
         session: BaseSession,
         name: str,
     ) -> User:
-        if name is None:
-            raise ValueError
-
         records = session\
             .query(Users)\
             .filter(Users.name == name)\
@@ -47,8 +41,7 @@ class UserRepository:
             return None
 
         if len(records) > 1:
-            # logger を使う
-            print("warning: find multi users by name")
+            logger.warning("warning: find multi users by name")
 
         return User(
             name=records[0].name,
@@ -63,10 +56,6 @@ class UserRepository:
         session: BaseSession,
         ids: list,
     ) -> list:
-        # 配列にサニタイズ
-        if type(ids) != list:
-            ids = [ids]
-
         records = session\
             .query(Users)\
             .filter(Users.id.in_(ids))\
@@ -133,10 +122,6 @@ class UserRepository:
         session: BaseSession,
         ids: list,
     ) -> None:
-        # 配列にサニタイズ
-        if type(ids) != list:
-            ids = [ids]
-
         session\
             .query(Users)\
             .filter(Users.id.in_(ids))\
@@ -148,9 +133,6 @@ class UserRepository:
         line_user_id: str,
         mode: UserMode,
     ) -> User:
-        if line_user_id is None:
-            raise ValueError
-
         record = session\
             .query(Users)\
             .filter(Users.user_id == line_user_id)\
@@ -175,9 +157,6 @@ class UserRepository:
         line_user_id: str,
         zoom_url: str,
     ) -> User:
-        if line_user_id is None:
-            raise ValueError
-
         record = session\
             .query(Users)\
             .filter(Users.user_id == line_user_id)\

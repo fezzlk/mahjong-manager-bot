@@ -1,9 +1,6 @@
 from tests.dummies import generate_dummy_user_list
-from db_setting import Session
 from repositories import session_scope, user_repository
 from domains.User import User
-
-session = Session()
 
 
 def test_hit_with_ids():
@@ -34,34 +31,6 @@ def test_hit_with_ids():
             assert result[i].zoom_url == target_users[i].zoom_url
             assert result[i].mode == target_users[i].mode
             assert result[i].jantama_name == target_users[i].jantama_name
-
-
-def test_hit_with_an_id_as_not_list():
-    # Arrange
-    with session_scope() as session:
-        dummy_users = generate_dummy_user_list()[:3]
-        for dummy_user in dummy_users:
-            user_repository.create(
-                session,
-                dummy_user,
-            )
-    target_user = generate_dummy_user_list()[2]
-    target_line_user_id = target_user._id
-
-    # Act
-    with session_scope() as session:
-        result = user_repository.find_by_ids(
-            session,
-            target_line_user_id,
-        )
-
-    # Assert
-        assert len(result) == 1
-        assert result[0].name == target_user.name
-        assert result[0].line_user_id == target_user.line_user_id
-        assert result[0].zoom_url == target_user.zoom_url
-        assert result[0].mode == target_user.mode
-        assert result[0].jantama_name == target_user.jantama_name
 
 
 def test_hit_0_record():
