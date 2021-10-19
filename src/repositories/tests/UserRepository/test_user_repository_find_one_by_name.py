@@ -1,10 +1,6 @@
-import pytest
 from tests.dummies import generate_dummy_user_list
-from db_setting import Session
 from repositories import session_scope, user_repository
 from domains.User import User
-
-session = Session()
 
 
 def test_hit_1_record():
@@ -81,19 +77,3 @@ def test_hit_0_record():
 
     # Assert
         assert result is None
-
-
-def test_NG_with_line_user_id_none():
-    with pytest.raises(ValueError):
-        # Arrange
-        # Do nothing
-
-        # Act
-        with session_scope() as session:
-            user_repository.find_one_by_name(
-                session,
-                None,
-            )
-
-        # Assert
-        # Do nothing
