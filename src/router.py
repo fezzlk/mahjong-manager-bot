@@ -1,7 +1,9 @@
 """router"""
 
 from enum import Enum
-import json
+
+from linebot.models.events import Event
+from domains.User import UserMode
 
 from server import logger
 from services import (
@@ -11,20 +13,23 @@ from services import (
     room_service,
 )
 from use_cases import (
-    user_use_cases,
-    room_use_cases,
-    calculate_use_cases,
-    config_use_cases,
-    matches_use_cases,
-    hanchans_use_cases,
-    reply_use_cases,
     follow_use_case,
     unfollow_use_case,
     join_room_use_case,
     add_point_by_text_use_case,
+    add_hanchan_by_points_text_use_case,
     start_input_use_case,
     room_quit_use_case,
     match_finish_use_case,
+    reply_user_mode_use_case,
+    change_user_mode_use_case,
+    reply_fortune_use_case,
+    reply_user_help_use_case,
+    reply_room_help_use_case,
+    reply_github_url_use_case,
+    set_zoom_url_to_user_use_case,
+    set_zoom_url_to_room_use_case,
+    calculate_with_tobi_use_case,
 )
 from domains.Room import RoomMode
 
@@ -72,8 +77,7 @@ class RCommands(Enum):
 class Router:
     """router(TODO: abolish Router class)"""
 
-    def root(self, event):
-        """root"""
+    def root(self, event: Event):
         logger.info(f'receive {event.type} event')
         request_info_service.set_req_info(event)
         isEnabledReply = True
@@ -102,8 +106,7 @@ class Router:
             reply_service.reply(event)
         request_info_service.delete_req_info()
 
-    def textMessage(self, event):
-        print(event)
+    def textMessage(self, event: Event):
         """receive text message event"""
         if event.source.type == 'room' or event.source.type == 'group':
             self.routing_for_room_by_text(event)
@@ -123,7 +126,7 @@ class Router:
             # )
             # ocr_use_cases.input_result_from_image(message_content.content)
 
-    def postback(self, event):
+    def postback(self, event: Event):
         """postback event"""
 
         text = event.postback.data
@@ -157,21 +160,21 @@ class Router:
             )
         )
 
-        # """if zoom url, register to room"""
-        # if '.zoom.us' in text:
-        #     user_use_cases.set_zoom_id(text)
+        """if zoom url, register to room"""
+        if '.zoom.us' in text:
+            set_zoom_url_to_user_use_case.execute(text)
 
     def routing_by_method(self, method, body):
         """routing by method for personal chat"""
 
         # mode
         if method == UCommands.mode.name:
-            user_use_cases.reply_mode()
+            reply_user_mode_use_case.execute()
         # exit
         elif method == UCommands.exit.name:
-            user_use_cases.chmod(
+            change_user_mode_use_case.execute(
                 request_info_service.req_line_user_id,
-                user_use_cases.modes.wait
+                UserMode.wait,
             )
         # payment
         elif method == UCommands.payment.name:
@@ -181,7 +184,7 @@ class Router:
             reply_service.add_message('分析機能は開発中です。')
         # fortune
         elif method == UCommands.fortune.name:
-            reply_use_cases.reply_fortune()
+            reply_fortune_use_case.execute()
         # history
         elif method == UCommands.history.name:
             reply_service.add_message('対戦履歴機能は開発中です。')
@@ -190,10 +193,10 @@ class Router:
             reply_service.add_message('個人設定機能は開発中です。')
         # help
         elif method == UCommands.help.name:
-            reply_use_cases.reply_user_help(UCommands)
+            reply_user_help_use_case.execute(UCommands)
         # github
         elif method == UCommands.github.name:
-            reply_use_cases.reply_github_url()
+            reply_github_url_use_case.execute()
 
     def routing_for_room_by_text(self, event):
         """routing by text"""
@@ -218,25 +221,16 @@ class Router:
             add_point_by_text_use_case.execute(text)
             return
 
-        # """wait mode"""
-        # """if text is result, add result"""
+        """wait mode"""
+        """if text is result, add result"""
 
-        # rows = [r for r in text.split('\n') if ':' in r]
-        # if len(rows) == 4:
-        #     points = {}
-        #     for r in rows:
-        #         col = r.split(':')
-        #         points[
-        #             user_use_cases.get_user_id_by_name(col[0])
-        #         ] = int(col[1])
-        #     hanchans_use_cases.add(points)
-        #     calculate_use_cases.calculate(
-        #         points
-        #     )
+        resultRows = [r for r in text.split('\n') if ':' in r]
+        if len(resultRows) == 4:
+            add_hanchan_by_points_text_use_case.execute(text)
 
-        # """if zoom url, register to room"""
-        # if '.zoom.us' in text:
-        #     room_use_cases.set_zoom_url(text)
+        """if zoom url, register to room"""
+        if '.zoom.us' in text:
+            set_zoom_url_to_room_use_case.execute(text)
 
     def routing_for_room_by_method(self, method, body):
         """routing by method"""
@@ -254,7 +248,7 @@ class Router:
             room_quit_use_case.execute()
         # help
         elif method == RCommands.help.name:
-            reply_use_cases.reply_room_help()
+            reply_room_help_use_case.execute(RCommands)
         # setting
         # elif method == RCommands.setting.name:
         #     config_use_cases.reply_menu(body)
@@ -284,43 +278,44 @@ class Router:
         #     matches_use_cases.reply()
         # tobi
         elif method == RCommands.tobi.name:
-            calculate_use_cases.calculate(
-                tobashita_player_id=body)
-        # add results
-        elif method == RCommands.add_result.name:
-            points = json.loads(body)
-            hanchans_use_cases.add(points)
-            calculate_use_cases.calculate(
-                points
+            calculate_with_tobi_use_case.execute(
+                tobashita_player_id=body
             )
-        # update config
-        elif method == RCommands.update_config.name:
-            key = body.split(' ')[0]
-            value = body.split(' ')[1]
-            config_use_cases.update(
-                key, value
-            )
-        # zoom
-        elif method == RCommands.zoom.name:
-            room_use_cases.reply_zoom_url()
-        # my_zoom
-        elif method == RCommands.my_zoom.name:
-            user_use_cases.reply_zoom_id()
-            room_use_cases.set_zoom_url(body)
+        # # add results
+        # elif method == RCommands.add_result.name:
+        #     points = json.loads(body)
+        #     hanchans_use_cases.add(points)
+        #     calculate_use_cases.calculate(
+        #         points
+        #     )
+        # # update config
+        # elif method == RCommands.update_config.name:
+        #     key = body.split(' ')[0]
+        #     value = body.split(' ')[1]
+        #     config_use_cases.update(
+        #         key, value
+        #     )
+        # # zoom
+        # elif method == RCommands.zoom.name:
+        #     room_use_cases.reply_zoom_url()
+        # # my_zoom
+        # elif method == RCommands.my_zoom.name:
+        #     user_use_cases.reply_zoom_id()
+        #     room_use_cases.set_zoom_url(body)
         # sum_matches
-        elif method == RCommands.sum_matches.name:
-            args = body.split(' ')
-            while 'to' in args:
-                index = args.index('to')
-                if index != 0 and len(args) - 1 > index:
-                    args += [
-                        str(i) for i in range(
-                            int(args[index - 1]),
-                            int(args[index + 1]) + 1
-                        )
-                    ]
-                args.remove('to')
-            matches_use_cases.reply_sum_matches_by_ids(args)
+        # elif method == RCommands.sum_matches.name:
+        #     args = body.split(' ')
+        #     while 'to' in args:
+        #         index = args.index('to')
+        #         if index != 0 and len(args) - 1 > index:
+        #             args += [
+        #                 str(i) for i in range(
+        #                     int(args[index - 1]),
+        #                     int(args[index + 1]) + 1
+        #                 )
+        #             ]
+        #         args.remove('to')
+        #     matches_use_cases.reply_sum_matches_by_ids(args)
         # # graphs
         # elif method == RCommands.graph.name:
         #     matches_use_cases.plot()

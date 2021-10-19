@@ -138,16 +138,20 @@ class UserService(IUserService):
 
             return target.mode
 
-    def set_zoom_id(self, line_user_id, zoom_url):
+    def set_zoom_url(
+        self,
+        line_user_id: str,
+        zoom_url: str,
+    ) -> User:
         with session_scope() as session:
-            user_repository.update_one_zoom_id_by_line_room_id(
+            user = user_repository.update_one_zoom_id_by_line_room_id(
                 session=session,
                 line_user_id=line_user_id,
                 zoom_url=zoom_url,
             )
 
-        logger.info(f'set_user_url: {zoom_url} to {line_user_id}')
-        return zoom_url
+        logger.info(f'set_user_url: {user.zoom_url} to {line_user_id}')
+        return user
 
     def get_zoom_id(self, user_id):
         with session_scope() as session:
