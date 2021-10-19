@@ -134,12 +134,6 @@ class Results(Base):
     def clone(engine):
         engine.execute('SELECT * INTO hanchans FROM results')
 
-    # @staticmethod
-    # def get_json(engine):
-    #     res = ResultSchema().dump(Results.query.all().data)
-    #     print(res)
-    #     return res
-
 
 class Hanchans(Base):
     """
