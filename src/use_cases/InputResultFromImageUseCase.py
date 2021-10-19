@@ -1,5 +1,3 @@
-"""ocr"""
-
 from server import logger
 from services import (
     ocr_service,
@@ -7,10 +5,9 @@ from services import (
 )
 
 
-class OcrUseCases:
-    """ocr UseCases"""
+class InputResultFromImageUseCase:
 
-    def input_result_from_image(self, image_content):
+    def execute(self, image_content: str):
         ocr_service.run(image_content)
         if ocr_service.isResultImage():
             results = ocr_service.get_points()

@@ -63,24 +63,3 @@ class UserUseCases:
 
     def chmod(self, user_id, mode):
         user_service.chmod(user_id, mode)
-
-    def set_zoom_id(self, zoom_id):
-        user_id = request_info_service.req_line_user_id
-        result = user_service(user_id, zoom_id)
-
-        if result is None:
-            self.services.reply_service.add_message(
-                'Zoom URL の登録に失敗しました。')
-            return
-
-        self.services.reply_service.add_message(
-            'Zoom URL を登録しました。\nトークルームにて「_my_zoom」で呼び出すことができます。')
-
-    def reply_zoom_id(self):
-        user_id = request_info_service.req_line_user_id
-        zoom_id = user_service.get_zoom_id(user_id)
-        if zoom_id is None:
-            self.services.reply_service.add_message(
-                'Zoom URL を取得できませんでした。')
-            return
-        self.services.reply_service.add_message(zoom_id)

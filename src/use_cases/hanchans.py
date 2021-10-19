@@ -4,9 +4,7 @@ import json
 from services import (
     request_info_service,
     match_service,
-    reply_service,
     user_service,
-    config_service,
     hanchan_service,
 )
 
@@ -15,16 +13,6 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 
 class HanchansUseCases:
     """Hanchans use cases"""
-
-    def add(self, raw_scores={}):
-        """add"""
-
-        room_id = request_info_service.req_line_room_id
-        current_match = match_service.get_or_add_current(room_id)
-        hanchan_service.create(raw_scores, room_id, current_match)
-
-    def get(self, ids=None):
-        return hanchan_service.get(ids)
 
     def delete(self, ids):
         deleted_hanchans = hanchan_service.delete(ids)

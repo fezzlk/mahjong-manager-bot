@@ -1,40 +1,30 @@
-"""calculate"""
-
 import json
-from server import logger
 from services import (
     request_info_service,
-    user_service,
-    reply_service,
     match_service,
-    room_service,
-    config_service,
     hanchan_service,
     calculate_service,
+    reply_service,
+    user_service,
+    config_service,
     message_service,
+    room_service,
 )
 
 
-class CalculateUseCases:
-    """
-    calculate points
-    """
+class AddPointByJsonTextUseCase:
 
-    def calculate(self, points=None, tobashita_player_id=None):
-        """
-        得点計算の準備および結果の格納
-        """
-        room_id = request_info_service.req_line_room_id
-        # points の取得(デフォルトでは引数 points が採用される)
-        # 引数に points がない場合、現在 active な result (current)のポイントを計算対象にする
-        if points is None:
-            current = hanchan_service.get_current(room_id)
-            if current is None:
-                logger.error(
-                    'current points is not found.'
-                )
-                return
-            points = json.loads(current.points)
+    def execute(
+        self,
+        text: str,
+    ) -> None:
+        points = json.loads(text)
+
+        line_room_id = request_info_service.req_line_room_id
+        current_match = match_service.get_or_add_current(line_room_id)
+        hanchan_service.create(points, line_room_id, current_match)
+
+        # 得点計算の準備および結果の格納
 
         # 計算可能な points かチェック
         # 4人分の点数がない、または超えている場合中断する
@@ -53,9 +43,8 @@ class CalculateUseCases:
                 '同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
             return
 
-        # 飛び賞が発生し、飛ばしたプレイヤーが未指定の場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
-        if (any(x < 0 for x in points.values())) & (
-                tobashita_player_id is None):
+        # 飛び賞が発生し、飛び賞を受け取るプレイヤーを指定するメニューを返す
+        if any(x < 0 for x in points.values()):
             reply_service.add_tobi_menu([
                 {'id': p_id, 'name': user_service.get_name_by_line_user_id(p_id), }
                 for p_id in points.keys() if points[p_id] > 0
@@ -67,10 +56,10 @@ class CalculateUseCases:
         calculate_result = calculate_service.calculate(
             points=points, ranking_prize=[
                 int(s) for s in config_service.get_value_by_key(
-                    room_id, '順位点').split(',')], tobi_prize=int(
+                    line_room_id, '順位点').split(',')], tobi_prize=int(
                 config_service.get_value_by_key(
-                    room_id, '飛び賞')), rounding_method=config_service.get_value_by_key(
-                        room_id, '端数計算方法'), tobashita_player_id=tobashita_player_id, )
+                    line_room_id, '飛び賞')), rounding_method=config_service.get_value_by_key(
+                        line_room_id, '端数計算方法'))
 
         room_id = request_info_service.req_line_room_id
 

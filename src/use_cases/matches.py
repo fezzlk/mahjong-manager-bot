@@ -33,7 +33,7 @@ class MatchesUseCases:
         result_ids.pop(i - 1)
         match_service.update_hanchan_ids(result_ids)
 
-    def reply_sum_results(self, match_id=None):
+    def reply_sum_hanchans(self, match_id=None):
         if match_id is None:
             if match_service.count_results() == 0:
                 reply_service.add_message(

@@ -5,7 +5,7 @@ from enum import Enum
 from linebot.models.events import Event
 from domains.User import UserMode
 
-from server import logger
+from server import logger, line_bot_api
 from services import (
     request_info_service,
     reply_service,
@@ -18,18 +18,33 @@ from use_cases import (
     join_room_use_case,
     add_point_by_text_use_case,
     add_hanchan_by_points_text_use_case,
+    add_point_by_Json_text_use_case,
     start_input_use_case,
     room_quit_use_case,
     match_finish_use_case,
     reply_user_mode_use_case,
+    reply_room_mode_use_case,
     change_user_mode_use_case,
     reply_fortune_use_case,
+    reply_sum_hanchans_use_case,
+    reply_matches_use_case,
     reply_user_help_use_case,
     reply_room_help_use_case,
+    set_my_zoom_url_to_room_use_case,
     reply_github_url_use_case,
+    reply_room_settings_menu_use_case,
+    reply_others_menu_use_case,
+    reply_start_menu_use_case,
+    reply_sum_matches_by_ids_use_case,
+    reply_sum_hanchans__by_match_id_use_case,
     set_zoom_url_to_user_use_case,
     set_zoom_url_to_room_use_case,
     calculate_with_tobi_use_case,
+    update_config_use_case,
+    input_result_from_image_use_case,
+    reply_room_zoom_url_use_case,
+    drop_hanchan_by_index_use_case,
+    disable_match_use_case,
 )
 from domains.Room import RoomMode
 
@@ -118,13 +133,13 @@ class Router:
             )
             raise BaseException('this source type is not supported')
 
-    # def imageMessage(self, event):
-    #     """receive image message event"""
-        # if event.source.type == 'room' or event.source.type == 'group':
-            # message_content = line_bot_api.get_message_content(
-            #     event.message.id
-            # )
-            # ocr_use_cases.input_result_from_image(message_content.content)
+    def imageMessage(self, event: Event):
+        """receive image message event"""
+        if event.source.type == 'room' or event.source.type == 'group':
+            message_content = line_bot_api.get_message_content(
+                event.message.id
+            )
+            input_result_from_image_use_case.execute(message_content.content)
 
     def postback(self, event: Event):
         """postback event"""
@@ -238,11 +253,11 @@ class Router:
         if method == RCommands.input.name:
             start_input_use_case.execute()
         # start menu
-        # elif method == RCommands.start.name:
-        #     reply_use_cases.add_start_menu()
+        elif method == RCommands.start.name:
+            reply_start_menu_use_case.execute()
         # mode
-        # elif method == RCommands.mode.name:
-        #     room_use_cases.reply_mode()
+        elif method == RCommands.mode.name:
+            reply_room_mode_use_case.execute()
         # exit
         elif method == RCommands.exit.name:
             room_quit_use_case.execute()
@@ -250,72 +265,67 @@ class Router:
         elif method == RCommands.help.name:
             reply_room_help_use_case.execute(RCommands)
         # setting
-        # elif method == RCommands.setting.name:
-        #     config_use_cases.reply_menu(body)
+        elif method == RCommands.setting.name:
+            reply_room_settings_menu_use_case.execute(body)
         # results
-        # elif method == RCommands.results.name:
-        #     room_use_cases.reply_sum_results()
+        elif method == RCommands.results.name:
+            reply_sum_hanchans_use_case.execute()
         # results by match id
-        # elif method == RCommands.match.name:
-        #     matches_use_cases.reply_sum_results(body)
+        elif method == RCommands.match.name:
+            reply_sum_hanchans__by_match_id_use_case.execute(body)
         # drop
-        # elif method == RCommands.drop.name:
-        #     matches_use_cases.drop_result_by_number(int(body))
+        elif method == RCommands.drop.name:
+            drop_hanchan_by_index_use_case.execute(int(body))
         # drop match
-        # elif method == RCommands.drop_m.name:
-        #     matches_use_cases.disable()
+        elif method == RCommands.drop_m.name:
+            disable_match_use_case.execute()
         # finish
         elif method == RCommands.finish.name:
             match_finish_use_case.execute()
-        # # fortune
-        # elif method == RCommands.fortune.name:
-        #     reply_use_cases.reply_fortune()
+        # fortune
+        elif method == RCommands.fortune.name:
+            reply_fortune_use_case.execute()
         # others menu
-        # elif method == RCommands.others.name:
-        #     reply_use_cases.add_others_menu()
-        # # matches
-        # elif method == RCommands.matches.name:
-        #     matches_use_cases.reply()
+        elif method == RCommands.others.name:
+            reply_others_menu_use_case.execute()
+        # matches
+        elif method == RCommands.matches.name:
+            reply_matches_use_case.execute()
         # tobi
         elif method == RCommands.tobi.name:
             calculate_with_tobi_use_case.execute(
                 tobashita_player_id=body
             )
-        # # add results
-        # elif method == RCommands.add_result.name:
-        #     points = json.loads(body)
-        #     hanchans_use_cases.add(points)
-        #     calculate_use_cases.calculate(
-        #         points
-        #     )
-        # # update config
-        # elif method == RCommands.update_config.name:
-        #     key = body.split(' ')[0]
-        #     value = body.split(' ')[1]
-        #     config_use_cases.update(
-        #         key, value
-        #     )
-        # # zoom
-        # elif method == RCommands.zoom.name:
-        #     room_use_cases.reply_zoom_url()
-        # # my_zoom
-        # elif method == RCommands.my_zoom.name:
-        #     user_use_cases.reply_zoom_id()
-        #     room_use_cases.set_zoom_url(body)
+        # add results
+        elif method == RCommands.add_result.name:
+            add_point_by_Json_text_use_case.execute(body)
+        # update config
+        elif method == RCommands.update_config.name:
+            key = body.split(' ')[0]
+            value = body.split(' ')[1]
+            update_config_use_case.execute(
+                key, value
+            )
+        # zoom
+        elif method == RCommands.zoom.name:
+            reply_room_zoom_url_use_case.execute()
+        # my_zoom
+        elif method == RCommands.my_zoom.name:
+            set_my_zoom_url_to_room_use_case.execute()
         # sum_matches
-        # elif method == RCommands.sum_matches.name:
-        #     args = body.split(' ')
-        #     while 'to' in args:
-        #         index = args.index('to')
-        #         if index != 0 and len(args) - 1 > index:
-        #             args += [
-        #                 str(i) for i in range(
-        #                     int(args[index - 1]),
-        #                     int(args[index + 1]) + 1
-        #                 )
-        #             ]
-        #         args.remove('to')
-        #     matches_use_cases.reply_sum_matches_by_ids(args)
+        elif method == RCommands.sum_matches.name:
+            args = body.split(' ')
+            # while 'to' in args:
+            #     index = args.index('to')
+            #     if index != 0 and len(args) - 1 > index:
+            #         args += [
+            #             str(i) for i in range(
+            #                 int(args[index - 1]),
+            #                 int(args[index + 1]) + 1
+            #             )
+            #         ]
+            #     args.remove('to')
+            reply_sum_matches_by_ids_use_case.execute(args)
         # # graphs
         # elif method == RCommands.graph.name:
         #     matches_use_cases.plot()

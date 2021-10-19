@@ -12,9 +12,6 @@ class ReplyUseCases:
     def add_start_menu(self):
         reply_service.add_start_menu()
 
-    def add_others_menu(self):
-        reply_service.add_others_menu()
-
     def reply_fortune(self):
         line_id = request_info_service.req_line_user_id
         reply_service.add_message(
