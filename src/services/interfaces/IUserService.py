@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from linebot.models.responses import Profile
-from domains.User import User
+from domains.User import User, UserMode
 
 
 class IUserService(metaclass=ABCMeta):
@@ -36,4 +36,20 @@ class IUserService(metaclass=ABCMeta):
 
     @abstractmethod
     def delete_one_by_line_user_id(self, user_id: str) -> None:
+        pass
+
+    @abstractmethod
+    def get_zoom_url(self, line_user_id: str) -> str:
+        pass
+
+    @abstractmethod
+    def set_zoom_url(
+        self,
+        line_user_id: str,
+        zoom_url: str,
+    ) -> User:
+        pass
+
+    @abstractmethod
+    def get_mode(self, user_id: str) -> UserMode:
         pass

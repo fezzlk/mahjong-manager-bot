@@ -153,17 +153,17 @@ class UserService(IUserService):
         logger.info(f'set_user_url: {user.zoom_url} to {line_user_id}')
         return user
 
-    def get_zoom_id(self, user_id):
+    def get_zoom_url(self, line_user_id: str) -> str:
         with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(session, user_id)
+            target = user_repository.find_one_by_line_user_id(session, line_user_id)
 
             if target is None:
-                logger.warning(f'user_services: user "{user_id}" is not found')
+                logger.warning(f'user_services: user "{line_user_id}" is not found')
                 return None
 
-            if target.zoom_id is None:
+            if target.zoom_url is None:
                 logger.warning(
-                    f'user_services: zoom id of user "{user_id}" is None')
+                    f'user_services: zoom id of user "{line_user_id}" is None')
                 return None
 
-            return target.zoom_id
+            return target.zoom_url
