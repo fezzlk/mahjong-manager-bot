@@ -1,20 +1,21 @@
 from dataclasses import dataclass
+from typing import Dict
 
 
 @dataclass()
 class Hanchan:
     _id: int
     line_room_id: str
-    raw_scores: dict
-    converted_scores: dict
+    raw_scores: Dict[str, int]
+    converted_scores: Dict[str, int]
     match_id: int
     status: int
 
     def __init__(
         self,
         line_room_id: str,
-        raw_scores: dict,
-        converted_scores: dict,
+        raw_scores: Dict[str, int],
+        converted_scores: Dict[str, int],
         match_id: int,
         status: int,
         _id: int = None,

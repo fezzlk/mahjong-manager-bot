@@ -18,7 +18,7 @@ class Room:
     def __init__(
         self,
         line_room_id: str,
-        mode: str,
+        mode: RoomMode,
         zoom_url: str = None,
         _id=None,
     ):
