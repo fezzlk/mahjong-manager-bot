@@ -8,12 +8,6 @@ from db_setting import Base
 import json
 
 
-# class ResultSchema(Schema):
-#     room_id = fields.Str()
-
-#     # created_at = fields.DateTime('%Y-%m-%dT%H:%M:%S+09:00')
-
-
 association_table_user_match = Table(
     'user_match', Base.metadata,
     Column('user_id', Integer, ForeignKey('users.id')),
