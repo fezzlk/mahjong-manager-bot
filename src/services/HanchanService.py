@@ -1,16 +1,14 @@
-"""hanchans"""
-
 import json
+from typing import Dict, List
 from repositories import session_scope, hanchan_repository
 from server import logger
 from domains.Hanchan import Hanchan
+from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
-class HanchanService:
-    """Hanchans service"""
-
+class HanchanService(IHanchanService):
     def create(self, raw_scores, room_id, current_match):
         new_hanchan = Hanchan(
             line_room_id=room_id,
@@ -43,7 +41,10 @@ class HanchanService:
                 f'disabled: id={hanchan_id}'
             )
 
-    def find_by_ids(self, ids):
+    def find_by_ids(
+        self,
+        ids: List[str],
+    ) -> List[Hanchan]:
         with session_scope() as session:
             return hanchan_repository.find_by_ids(session, ids)
 
@@ -55,7 +56,12 @@ class HanchanService:
                 1
             )
 
-    def add_raw_score(self, line_room_id, line_user_id, raw_score):
+    def add_raw_score(
+        self,
+        line_room_id: str,
+        line_user_id: str,
+        raw_score: int,
+    ) -> Hanchan:
         with session_scope() as session:
             hanchan = hanchan_repository.update_raw_score_of_user_by_room_id(
                 session=session,
@@ -66,7 +72,11 @@ class HanchanService:
 
             return hanchan
 
-    def drop_raw_score(self, line_room_id, line_user_id):
+    def drop_raw_score(
+        self,
+        line_room_id: str,
+        line_user_id: str,
+    ) -> Hanchan:
         with session_scope() as session:
             hanchan = hanchan_repository.update_raw_score_of_user_by_room_id(
                 session=session,
@@ -88,7 +98,11 @@ class HanchanService:
 
             return record
 
-    def update_converted_score(self, line_room_id, converted_scores):
+    def update_converted_score(
+        self,
+        line_room_id: str,
+        converted_scores: Dict[str, int],
+    ) -> Hanchan:
         with session_scope() as session:
             hanchan = hanchan_repository.update_one_converted_score_by_line_room_id(
                 session=session,
@@ -102,11 +116,15 @@ class HanchanService:
 
             return hanchan
 
-    def change_status(self, room_id, status):
+    def change_status(
+        self,
+        line_room_id: str,
+        status: int,
+    ) -> Hanchan:
         with session_scope() as session:
             hanchan = hanchan_repository.update_status_by_line_room_id(
                 session,
-                room_id,
+                line_room_id,
                 status,
             )
 
@@ -116,11 +134,11 @@ class HanchanService:
 
             return hanchan
 
-    def archive(self, room_id):
-        self.change_status(room_id, 2)
+    def archive(self, line_room_id: str) -> Hanchan:
+        return self.change_status(line_room_id, 2)
 
-    def disable(self, room_id):
-        self.change_status(room_id, 0)
+    def disable(self, line_room_id: str) -> Hanchan:
+        return self.change_status(line_room_id, 0)
 
     def get(self, ids=None):
         with session_scope() as session:

@@ -1,11 +1,12 @@
 """user"""
 
+from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
 from server import logger, line_bot_api
 from domains.User import User, UserMode
 
 
-class UserService:
+class UserService(IUserService):
 
     def find_one_by_line_user_id(self, user_id):
         with session_scope() as session:
@@ -59,10 +60,19 @@ class UserService:
 
             return user_repository.find_by_ids(session, ids)
 
-    def get_name_by_line_user_id(self, user_id):
+    def get_name_by_line_user_id(
+        self,
+        line_user_id: str,
+    ) -> str:
+        """
+            LINE Bot API から名前の取得を試みる
+            -> 失敗したら DB から名前の取得を試みる
+            -> 失敗したら LINE User ID を返す
+        """
         try:
             profile = line_bot_api.get_profile(
-                user_id)
+                line_user_id,
+            )
 
             return profile.display_name
 
@@ -70,16 +80,19 @@ class UserService:
             with session_scope() as session:
                 target = user_repository.find_one_by_line_user_id(
                     session,
-                    user_id
+                    line_user_id,
                 )
 
                 if target is None:
-                    logger.warning(f'user({user_id}) is not found')
-                    return user_id
+                    logger.warning(f'user({line_user_id}) is not found')
+                    return line_user_id
                 else:
                     return target.name
 
-    def get_user_id_by_name(self, name):
+    def get_user_id_by_name(
+        self,
+        name: str,
+    ) -> str:
         with session_scope() as session:
             target = user_repository.find_one_by_name(session, name)
 

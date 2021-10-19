@@ -1,5 +1,4 @@
-"""matches"""
-
+from .interfaces.IMatchService import IMatchService
 from repositories import session_scope, match_repository
 from domains.Match import Match
 from server import logger
@@ -7,8 +6,7 @@ from server import logger
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
-class MatchService:
-    """match service"""
+class MatchService(IMatchService):
 
     def get_or_create_current(self, line_room_id):
         current = self.get_current(line_room_id)
@@ -39,7 +37,11 @@ class MatchService:
             logger.info(f'create match: room "{line_room_id}"')
             return new_match
 
-    def add_hanchan_id(self, line_room_id, hanchan_id):
+    def add_hanchan_id(
+        self,
+        line_room_id: str,
+        hanchan_id: int,
+    ) -> Match:
         with session_scope() as session:
             record = match_repository.add_hanchan_id_by_line_room_id(
                 session=session,

@@ -8,16 +8,20 @@ from linebot.models import (
 
 import json
 from server import line_bot_api
+from .interfaces.IReplyService import IReplyService
 
 
-class ReplyService:
+class ReplyService(IReplyService):
 
     def __init__(self):
         self.texts = []
         self.buttons = []
         self.images = []
 
-    def add_message(self, text):
+    def add_message(
+        self,
+        text: str,
+    ) -> None:
         self.texts.append(TextSendMessage(text=text))
 
     def add_image(self, image_url):

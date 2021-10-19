@@ -1,5 +1,3 @@
-"""message"""
-
 import re
 import random
 import datetime
@@ -31,9 +29,11 @@ finish_hanchan_messages = [
 
 
 class MessageService:
-    """message service"""
 
-    def get_random_hai(self, user_id):
+    def get_random_hai(
+        self,
+        user_id: str,
+    ) -> str:
         now = datetime.datetime.now()
         random.seed(
             int(now.year + now.month + now.day) +
@@ -42,8 +42,8 @@ class MessageService:
 
         return random.choice(HAI)
 
-    def get_wait_massage(self):
+    def get_wait_massage(self) -> str:
         return random.choice(wait_messages)
 
-    def get_finish_hanchan_message(self):
+    def get_finish_hanchan_message(self) -> str:
         return random.choice(finish_hanchan_messages)

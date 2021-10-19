@@ -1,10 +1,10 @@
+from .interfaces.IRoomService import IRoomService
 from domains.Room import Room, RoomMode
 from repositories import session_scope, room_repository
 from server import logger
 
 
-class RoomService:
-    """room service"""
+class RoomService(IRoomService):
 
     def find_or_create(self, room_id):
         with session_scope() as session:
@@ -21,7 +21,11 @@ class RoomService:
 
             return room
 
-    def chmod(self, line_room_id, mode):
+    def chmod(
+        self,
+        line_room_id: str,
+        mode: RoomMode,
+    ) -> Room:
         if mode not in RoomMode:
             logger.warning(
                 'failed to change mode: unexpected mode request received.'

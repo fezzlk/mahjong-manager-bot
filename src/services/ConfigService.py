@@ -1,5 +1,5 @@
-"""config"""
-
+from .interfaces.IConfigService import IConfigService
+from typing import List
 from repositories import session_scope, config_repository
 from domains.Config import Config
 from server import logger
@@ -9,9 +9,7 @@ DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10'
                    '端数計算方法': '3万点以下切り上げ/以上切り捨て'}
 
 
-class ConfigService:
-    """config service"""
-
+class ConfigService(IConfigService):
     def get(self, ids=None):
         with session_scope() as session:
             # config.id を指定してなければ全ての config を取得
@@ -21,10 +19,18 @@ class ConfigService:
             # id に合致する config を取得
             return config_repository.find_by_ids(session, ids)
 
-    def get_value_by_key(self, target_id, key):
+    def get_value_by_key(
+        self,
+        target_id: str,
+        key: str,
+    ) -> str:
         # デフォルトから変更されている config の取得
         with session_scope() as session:
-            config = config_repository.find_one_by_target_id_and_key(session, target_id, key)
+            config = config_repository.find_one_by_target_id_and_key(
+                session,
+                target_id,
+                key
+            )
 
         # 上記の結果何も返ってこなければデフォルトの config を返す
         if config is None:
@@ -33,12 +39,15 @@ class ConfigService:
         # 取得した config を返す
         return config.value
 
-    def get_by_target(self, target_id):
+    def get_by_target(
+        self,
+        target_id: str,
+    ) -> List[Config]:
         # デフォルト config から変更されている config を取得
         with session_scope() as session:
             customized_configs = config_repository.find_by_target_id(
                 session,
-                target_id
+                target_id,
             )
 
             # デフォルト config をセット

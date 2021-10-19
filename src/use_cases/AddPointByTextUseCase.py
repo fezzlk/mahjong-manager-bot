@@ -15,7 +15,10 @@ from domains.Room import RoomMode
 
 class AddPointByTextUseCase:
 
-    def execute(self, text):
+    def execute(
+        self,
+        text: str,
+    ) -> None:
         line_room_id = request_info_service.req_line_room_id
 
         if text[0] == '@':
@@ -54,17 +57,20 @@ class AddPointByTextUseCase:
 
         if not point.isdigit():
             reply_service.add_message(
-                '点数は整数で入力してください。')
+                '点数は整数で入力してください。',
+            )
             return None
 
         if isMinus:
             point = '-' + point
 
-        points = hanchan_service.create_raw_score(
+        hanchan = hanchan_service.add_raw_score(
             line_room_id=line_room_id,
             line_user_id=target_line_user_id,
             raw_score=int(point),
         )
+
+        points = hanchan.raw_scores
 
         res = [
             f'{user_service.get_name_by_line_user_id(user_id)}: {point}'
@@ -74,25 +80,28 @@ class AddPointByTextUseCase:
         reply_service.add_message("\n".join(res))
 
         if len(points) == 4:
-            """
-            得点計算の準備および結果の格納
-            """
+            # 得点計算の準備および結果の格納
 
             # 計算可能な points かチェック
             # 4人分の点数がない、または超えている場合中断する
             if len(points) != 4:
                 reply_service.add_message(
-                    '四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
+                    '四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。'
+                )
                 return
+
             # 点数合計が 100000~100099 の範囲になければ中断する
             if int(sum(points.values()) / 100) != 1000:
                 reply_service.add_message(
-                    f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
+                    f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。'
+                )
                 return
+
             # 点数が全て異なっているかチェックし、同点があったら中断する
             if len(set(points.values())) != 4:
                 reply_service.add_message(
-                    '同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
+                    '同点のユーザーがいます。上家が1点でも高くなるよう修正してください。'
+                )
                 return
 
             # 飛び賞が発生した場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
@@ -103,14 +112,17 @@ class AddPointByTextUseCase:
                 ])
                 return
 
-            # config の取得(by target で撮っちゃって良い)
+            # config の取得
+            ranking_prize = config_service.get_value_by_key(line_room_id, '順位点')
+            rounding_method = config_service.get_value_by_key(line_room_id, '端数計算方法')
+
             # 計算の実行
             calculate_result = calculate_service.run_calculate(
                 points=points,
                 ranking_prize=[
-                    int(s) for s in config_service.get_value_by_key(line_room_id, '順位点').split(',')
+                    int(s) for s in ranking_prize.split(',')
                 ],
-                rounding_method=config_service.get_value_by_key(line_room_id, '端数計算方法'),
+                rounding_method=rounding_method,
             )
 
             # その半荘の結果を更新
@@ -164,7 +176,7 @@ class AddPointByTextUseCase:
 
         elif len(points) > 4:
             reply_service.add_message(
-                '5人以上入力されています。@{ユーザー名} で不要な入力を消してください。'
+                '5人以上入力されています。@[ユーザー名] で不要な入力を消してください。'
             )
 
         return

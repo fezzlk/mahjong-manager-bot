@@ -3,6 +3,7 @@ from typing import Tuple
 
 
 class IPointService(metaclass=ABCMeta):
+
     @abstractmethod
     def get_point_and_name_from_text(
         self,
