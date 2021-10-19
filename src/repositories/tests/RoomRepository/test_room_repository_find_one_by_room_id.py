@@ -1,9 +1,6 @@
 from tests.dummies import generate_dummy_room_list
-from db_setting import Session
 from repositories import session_scope, room_repository
 from domains.Room import Room
-
-session = Session()
 
 
 def test_hit_1_record():

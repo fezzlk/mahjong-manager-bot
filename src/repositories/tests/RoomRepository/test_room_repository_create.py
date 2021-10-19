@@ -1,8 +1,5 @@
 from tests.dummies import generate_dummy_room_list
-from db_setting import Session
 from repositories import session_scope, room_repository
-
-session = Session()
 
 
 def test_success():

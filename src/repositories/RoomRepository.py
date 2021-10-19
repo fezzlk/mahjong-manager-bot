@@ -1,7 +1,3 @@
-"""
-rooms repository
-"""
-
 from models import Rooms
 from domains.Room import Room, RoomMode
 from sqlalchemy.orm.session import Session as BaseSession
