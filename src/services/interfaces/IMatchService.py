@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import List
 from domains.Match import Match
 
 
@@ -42,4 +43,11 @@ class IMatchService(metaclass=ABCMeta):
 
     @abstractmethod
     def create(self, line_room_id: str) -> Match:
+        pass
+
+    @abstractmethod
+    def get_archived(
+        self,
+        line_room_id: str,
+    ) -> List[Match]:
         pass

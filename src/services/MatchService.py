@@ -1,3 +1,4 @@
+from typing import List
 from .interfaces.IMatchService import IMatchService
 from repositories import session_scope, match_repository
 from domains.Match import Match
@@ -98,10 +99,13 @@ class MatchService(IMatchService):
     def disable(self, line_room_id: str) -> Match:
         return self.update_status(line_room_id, 0)
 
-    def get_archived(self, room_id):
+    def get_archived(
+        self,
+        line_room_id: str,
+    ) -> List[Match]:
         with session_scope() as session:
             matches = match_repository.find_many_by_room_id_and_status(
-                session, room_id, 2)
+                session, line_room_id, 2)
             if len(matches) == 0:
                 return None
             return matches
