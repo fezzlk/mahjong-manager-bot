@@ -10,7 +10,7 @@ DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10'
 
 
 class ConfigService(IConfigService):
-    def get(self, ids=None):
+    def get(self, ids: List[str] = None) -> List[Config]:
         with session_scope() as session:
             # config.id を指定してなければ全ての config を取得
             if ids is None:
@@ -59,7 +59,12 @@ class ConfigService(IConfigService):
 
         return configs
 
-    def update(self, target_id, key, value):
+    def update(
+        self,
+        target_id: str,
+        key: str,
+        value: str,
+    ) -> None:
         """更新
         description: レコード自体の更新は行わなず、新たなレコードに作り直す（デフォルト値の場合にレコードを作らないようにするため）
         args:
@@ -83,7 +88,7 @@ class ConfigService(IConfigService):
             f'update:{key}:{value}:{target_id}'
         )
 
-    def delete(self, ids):
+    def delete(self, ids: List[str]) -> None:
         with session_scope() as session:
             config_repository.delete_by_ids(session, ids)
 
