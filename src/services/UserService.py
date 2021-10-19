@@ -14,7 +14,7 @@ class UserService(IUserService):
             user = user_repository.find_one_by_line_user_id(session, user_id)
             return user
 
-    def delete_one_by_line_user_id(self, user_id):
+    def delete_one_by_line_user_id(self, user_id: str) -> None:
         with session_scope() as session:
             user_repository.delete_one_by_line_user_id(session, user_id)
 
