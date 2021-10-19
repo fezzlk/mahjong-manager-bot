@@ -1,19 +1,20 @@
 """calculate"""
 
-from server import logger
 from .interfaces.ICalculateService import ICalculateService
+from typing import Dict, List
+from server import logger
 
 
 class CalculateService(ICalculateService):
 
     def run_calculate(
         self,
-        points: dict,
-        ranking_prize: list,
+        points: Dict[str, int],
+        ranking_prize: List[int],
         tobi_prize: int = 0,
         rounding_method: str = None,
         tobashita_player_id: str = None,
-    ) -> dict:
+    ) -> Dict[str, int]:
         # 準備
         sorted_points = sorted(
             points.items(), key=lambda x: x[1], reverse=True)
