@@ -14,9 +14,6 @@ class RoomRepository:
         session: BaseSession,
         room_id: int,
     ) -> Room:
-        if room_id is None:
-            raise ValueError
-
         record = session\
             .query(Rooms)\
             .filter(Rooms.room_id == room_id)\
@@ -37,10 +34,6 @@ class RoomRepository:
         session: BaseSession,
         ids: list,
     ) -> list:
-        # 配列にサニタイズ
-        if type(ids) != list:
-            ids = [ids]
-
         records = session\
             .query(Rooms)\
             .filter(Rooms.id.in_(ids))\
@@ -93,10 +86,6 @@ class RoomRepository:
         session: BaseSession,
         ids: list,
     ) -> None:
-        # 配列をサニタイズ
-        if type(ids) != list:
-            ids = [ids]
-
         session\
             .query(Rooms)\
             .filter(Rooms.id.in_(ids))\
@@ -134,9 +123,6 @@ class RoomRepository:
         line_room_id: str,
         zoom_url: str,
     ) -> Room:
-        if line_room_id is None:
-            raise ValueError
-
         record = session\
             .query(Rooms)\
             .filter(Rooms.room_id == line_room_id)\
