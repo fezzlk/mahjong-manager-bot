@@ -1,3 +1,4 @@
+from typing import List
 from .interfaces.IConfigRepository import IConfigRepository
 from models import Configs
 from domains.Config import Config
@@ -22,7 +23,7 @@ class ConfigRepository(IConfigRepository):
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: list,
+        ids: List[str],
     ) -> None:
         session\
             .query(Configs)\
@@ -46,7 +47,7 @@ class ConfigRepository(IConfigRepository):
     def find_all(
         self,
         session: BaseSession,
-    ) -> list:
+    ) -> List[Config]:
         records = session\
             .query(Configs)\
             .order_by(Configs.id)\
@@ -65,8 +66,8 @@ class ConfigRepository(IConfigRepository):
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: list,
-    ) -> list:
+        ids: List[str],
+    ) -> List[Config]:
         records = session\
             .query(Configs)\
             .filter(Configs.id.in_(ids))\

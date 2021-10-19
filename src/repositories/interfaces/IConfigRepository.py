@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import List
 from domains.Config import Config
 from sqlalchemy.orm.session import Session as BaseSession
 
@@ -17,7 +18,7 @@ class IConfigRepository(metaclass=ABCMeta):
     def find_all(
         self,
         session: BaseSession,
-    ) -> list:
+    ) -> List[Config]:
         pass
 
     @abstractmethod
@@ -32,8 +33,8 @@ class IConfigRepository(metaclass=ABCMeta):
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: list,
-    ) -> list:
+        ids: List[str],
+    ) -> List[Config]:
         pass
 
     @abstractmethod
@@ -57,6 +58,6 @@ class IConfigRepository(metaclass=ABCMeta):
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: list,
+        ids: List[str],
     ) -> None:
         pass
