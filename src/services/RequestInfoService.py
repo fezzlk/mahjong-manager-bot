@@ -1,3 +1,6 @@
+from linebot.models.events import Event
+
+
 class RequestInfoService:
     """RequestInfoService
     メッセージ送信元の LINE ユーザー ID, トークルーム ID を管理
@@ -12,7 +15,7 @@ class RequestInfoService:
     """
     メッセージ送信元情報のセット
     """
-    def set_req_info(self, event):
+    def set_req_info(self, event: Event) -> None:
         self.req_line_user_id = event.source.user_id
         if event.source.type == 'room':
             self.req_line_room_id = event.source.room_id
@@ -23,7 +26,7 @@ class RequestInfoService:
     メッセージ送信元情報の削除
     一つ前のメッセージ送信元の情報が残らないようにするために使う
     """
-    def delete_req_info(self):
+    def delete_req_info(self) -> None:
         self.req_line_user_id = None
         self.req_line_room_id = None
         self.req_line_group_id = None
