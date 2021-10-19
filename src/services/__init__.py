@@ -5,7 +5,7 @@ from .ConfigService import ConfigService
 from .HanchanService import HanchanService
 from .MatchService import MatchService
 from .MessageService import MessageService
-from .ocr import OcrService
+from .OcrService import OcrService
 from .PointService import PointService
 from .ReplyService import ReplyService
 from .RichMenuService import RichMenuService
