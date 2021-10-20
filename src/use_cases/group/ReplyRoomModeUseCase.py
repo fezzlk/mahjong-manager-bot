@@ -10,4 +10,4 @@ class ReplyRoomModeUseCase:
     def execute(self) -> None:
         line_room_id = request_info_service.req_line_room_id
         mode = room_service.get_mode(line_room_id)
-        reply_service.add_message(mode)
+        reply_service.add_message(mode.value)

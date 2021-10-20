@@ -47,17 +47,16 @@ class RoomService(IRoomService):
 
             return record
 
-    def get_mode(self, room_id: str) -> RoomMode:
+    def get_mode(self, line_room_id: str) -> RoomMode:
         with session_scope() as session:
             # find にし、複数件ヒットした場合にはエラーを返す
-            target = room_repository.find_one_by_room_id(session, room_id)
+            target = room_repository.find_one_by_room_id(session, line_room_id)
 
             if target is None:
-                logger.warning(
+                logger.error(
                     'failed to get mode: room is not found'
                 )
-
-                return None
+                raise Exception('トークルームが登録されていません。招待し直してください。')
 
             return target.mode
 
@@ -86,9 +85,9 @@ class RoomService(IRoomService):
             )
 
             if record is None:
-                logger.warning(
+                logger.error(
                     f'fail to set zoom url: room "{line_room_id}" is not found')
-                return None
+                raise Exception('トークルームが登録されていません。招待し直してください。')
 
             logger.info(f'set_zoom_url: {zoom_url} to {line_room_id}')
             return record
@@ -101,9 +100,9 @@ class RoomService(IRoomService):
             target = room_repository.find_one_by_room_id(session, line_room_id)
 
             if target is None:
-                logger.warning(
+                logger.error(
                     f'fail to get zoom url: room "{line_room_id}" is not found.')
-                return None
+                raise Exception('トークルームが登録されていません。招待し直してください。')
 
             if target.zoom_url is None:
                 logger.warning(
