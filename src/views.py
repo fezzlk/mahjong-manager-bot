@@ -70,9 +70,9 @@ def migrate():
 @app.route('/users')
 def get_users():
     data = get_users_for_web_use_case.execute()
-    keys = ['id', 'name', 'user_id', 'jantama_name',
+    keys = ['_id', 'name', 'line_user_id', 'jantama_name',
             'zoom_id', 'mode', 'matches']
-    input_keys = ['name', 'user_id', 'jantama_name']
+    input_keys = ['name', 'line_user_id', 'jantama_name']
     return render_template(
         'model.html',
         title='users',
@@ -100,8 +100,8 @@ def delete_users():
 @app.route('/rooms')
 def get_rooms():
     data = get_rooms_for_web_use_case.execute()
-    keys = ['id', 'room_id', 'zoom_url', 'mode', 'users']
-    input_keys = ['room_id', 'zoom_url']
+    keys = ['_id', 'line_room_id', 'zoom_url', 'mode', 'users']
+    input_keys = ['line_room_id', 'zoom_url']
     return render_template(
         'model.html',
         title='rooms',
@@ -126,9 +126,9 @@ def delete_rooms():
 @app.route('/hanchans')
 def get_hanchans():
     data = get_hanchans_for_web_use_case.execute()
-    keys = ['id', 'room_id', 'raw_scores',
+    keys = ['_id', 'line_room_id', 'raw_scores',
             'converted_scores', 'match_id', 'status']
-    input_keys = ['room_id', 'raw_scores',
+    input_keys = ['line_room_id', 'raw_scores',
                   'converted_scores', 'match_id', 'status']
     return render_template(
         'model.html',
@@ -154,8 +154,8 @@ def delete_hanchans():
 @app.route('/matches')
 def get_matches():
     data = get_matches_for_web_use_case.execute()
-    keys = ['id', 'room_id', 'result_ids', 'created_at', 'status', 'users']
-    input_keys = ['room_id', 'result_ids', 'status']
+    keys = ['_id', 'line_room_id', 'hanchan_ids', 'created_at', 'status', 'users']
+    input_keys = ['line_room_id', 'hanchan_ids', 'status']
     return render_template(
         'model.html',
         title='matches',
@@ -180,7 +180,7 @@ def delete_matches():
 @app.route('/configs')
 def get_configs():
     data = get_configs_for_web_use_case.execute()
-    keys = ['id', 'key', 'value', 'target_id']
+    keys = ['_id', 'key', 'value', 'target_id']
     input_keys = ['key', 'value', 'target_id']
     return render_template(
         'model.html',
