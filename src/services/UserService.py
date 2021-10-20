@@ -119,7 +119,7 @@ class UserService(IUserService):
         line_user_id: str,
         mode: UserMode,
     ) -> User:
-        if mode not in self.modes:
+        if mode not in UserMode:
             raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
