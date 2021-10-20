@@ -3,7 +3,6 @@ from services import (
     request_info_service,
     match_service,
     hanchan_service,
-    calculate_service,
     reply_service,
     user_service,
     config_service,
@@ -53,13 +52,14 @@ class AddPointByJsonTextUseCase:
 
         # config の取得(by target で撮っちゃって良い)
         # 計算の実行
-        calculate_result = calculate_service.calculate(
-            points=points, ranking_prize=[
-                int(s) for s in config_service.get_value_by_key(
-                    line_room_id, '順位点').split(',')], tobi_prize=int(
-                config_service.get_value_by_key(
-                    line_room_id, '飛び賞')), rounding_method=config_service.get_value_by_key(
-                        line_room_id, '端数計算方法'))
+        calculate_result = hanchan_service.run_calculate(
+            points=points,
+            ranking_prize=[
+                int(s) for s in config_service.get_value_by_key(line_room_id, '順位点').split(',')
+            ],
+            tobi_prize=int(config_service.get_value_by_key(line_room_id, '飛び賞')),
+            rounding_method=config_service.get_value_by_key(line_room_id, '端数計算方法'),
+        )
 
         room_id = request_info_service.req_line_room_id
 

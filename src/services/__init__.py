@@ -1,6 +1,5 @@
 """services"""
 from .RequestInfoService import RequestInfoService
-from .CalculateService import CalculateService
 from .ConfigService import ConfigService
 from .HanchanService import HanchanService
 from .MatchService import MatchService
@@ -13,7 +12,6 @@ from .RoomService import RoomService
 from .UserService import UserService
 
 request_info_service = RequestInfoService()
-calculate_service = CalculateService()
 config_service = ConfigService()
 hanchan_service = HanchanService()
 match_service = MatchService()

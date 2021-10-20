@@ -6,7 +6,6 @@ from services import (
     message_service,
     match_service,
     config_service,
-    calculate_service,
     room_service,
 )
 from domains.Room import RoomMode
@@ -65,7 +64,7 @@ class AddHanchanByPointsTextUseCase:
             rounding_method = config_service.get_value_by_key(line_room_id, '端数計算方法')
 
             # 計算の実行
-            calculate_result = calculate_service.run_calculate(
+            calculate_result = hanchan_service.run_calculate(
                 points=points,
                 ranking_prize=[
                     int(s) for s in ranking_prize.split(',')

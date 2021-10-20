@@ -4,7 +4,6 @@ from services import (
     point_service,
     user_service,
     hanchan_service,
-    calculate_service,
     config_service,
     match_service,
     room_service,
@@ -117,7 +116,7 @@ class AddPointByTextUseCase:
             rounding_method = config_service.get_value_by_key(line_room_id, '端数計算方法')
 
             # 計算の実行
-            calculate_result = calculate_service.run_calculate(
+            calculate_result = hanchan_service.run_calculate(
                 points=points,
                 ranking_prize=[
                     int(s) for s in ranking_prize.split(',')
