@@ -151,32 +151,6 @@ def delete_hanchans():
     return redirect(url_for('get_hanchans'))
 
 
-# @app.route('/results')
-# def get_results():
-#     data = hanchans_use_cases.get()
-#     keys = ['id', 'room_id', 'points', 'result', 'match_id', 'status']
-#     input_keys = ['room_id', 'points', 'result', 'match_id', 'status']
-#     return render_template(
-#         'model.html',
-#         title='results',
-#         keys=keys,
-#         input_keys=input_keys,
-#         data=data
-#     )
-
-
-# @app.route('/results/create', methods=['POST'])
-# def create_results():
-#     return redirect(url_for('get_results'))
-
-
-# @app.route('/results/delete', methods=['POST'])
-# def delete_results():
-#     target_id = request.args.get('target_id')
-#     hanchans_use_cases.delete(int(target_id))
-#     return redirect(url_for('get_results'))
-
-
 @app.route('/matches')
 def get_matches():
     data = get_matches_for_web_use_case.execute()
