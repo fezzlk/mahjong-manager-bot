@@ -138,8 +138,8 @@ class UserService(IUserService):
             target = user_repository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
-                logger.warning(f'user is not found: {user_id}')
-                return None
+                logger.error(f'user is not found: {user_id}')
+                raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
 
             return target.mode
 
@@ -163,8 +163,8 @@ class UserService(IUserService):
             target = user_repository.find_one_by_line_user_id(session, line_user_id)
 
             if target is None:
-                logger.warning(f'user_services: user "{line_user_id}" is not found')
-                return None
+                logger.error(f'user_services: user "{line_user_id}" is not found')
+                raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
 
             if target.zoom_url is None:
                 logger.warning(
