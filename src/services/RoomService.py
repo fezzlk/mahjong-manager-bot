@@ -82,6 +82,7 @@ class RoomService(IRoomService):
             record = room_repository.update_one_zoom_url_by_line_room_id(
                 session,
                 line_room_id,
+                zoom_url,
             )
 
             if record is None:
