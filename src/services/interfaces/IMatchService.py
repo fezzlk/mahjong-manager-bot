@@ -51,3 +51,19 @@ class IMatchService(metaclass=ABCMeta):
         line_room_id: str,
     ) -> List[Match]:
         pass
+
+    @abstractmethod
+    def remove_hanchan_id(
+        self,
+        match_id: int,
+        hanchan_id: int,
+    ) -> Match:
+        pass
+
+    @abstractmethod
+    def get(self, target_ids: List[int]) -> List[Match]:
+        pass
+
+    @abstractmethod
+    def delete(self, target_ids: List[int]) -> None:
+        pass

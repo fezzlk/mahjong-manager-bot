@@ -50,7 +50,9 @@ class MatchService(IMatchService):
                 hanchan_id=hanchan_id,
             )
 
-            logger.info(f'update result of match: id={record._id}')
+            logger.info(
+                f'add hanchan id to match: match_id={record._id}'
+            )
 
             return record
 
@@ -62,7 +64,7 @@ class MatchService(IMatchService):
                 hanchan_ids=hanchan_ids,
             )
             logger.info(
-                f'update hanchan ids of match: match_id={match.id}'
+                f'update hanchan ids of match: match_id={match._id}'
             )
             return match
 
@@ -110,14 +112,18 @@ class MatchService(IMatchService):
                 return None
             return matches
 
-    def get(self, target_ids):
+    def get(self, target_ids: List[int]) -> List[Match]:
         with session_scope() as session:
             if target_ids is None:
                 return match_repository.find_all(session)
             else:
                 return match_repository.find_by_ids(session, target_ids)
 
-    def remove_hanchan_id(self, match_id, hanchan_id):
+    def remove_hanchan_id(
+        self,
+        match_id: int,
+        hanchan_id: int,
+    ) -> Match:
         with session_scope() as session:
             match = match_repository.remove_hanchan_id_by_id(
                 session=session,
@@ -127,7 +133,7 @@ class MatchService(IMatchService):
 
             return match
 
-    def delete(self, target_ids):
+    def delete(self, target_ids: List[int]) -> None:
         with session_scope() as session:
             targets = match_repository.find_by_ids(session, target_ids)
             for target in targets:
