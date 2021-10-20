@@ -8,6 +8,7 @@ from .user.ReplyFortuneUseCase import ReplyFortuneUseCase
 from .user.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
 from .user.GetUsersForWebUseCase import GetUsersForWebUseCase
 from .user.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
+from .user.UserMyZoomCommandUseCase import UserMyZoomCommandUseCase
 
 from .group.JoinRoomUseCase import JoinRoomUseCase
 from .group.RoomQuitUseCase import RoomQuitUseCase
@@ -58,6 +59,7 @@ match_finish_use_case = MatchFinishUseCase()
 reply_user_mode_use_case = ReplyUserModeUseCase()
 reply_room_mode_use_case = ReplyRoomModeUseCase()
 user_exit_command_use_case = UserExitCommandUseCase()
+user_my_zoom_command_use_case = UserMyZoomCommandUseCase()
 reply_fortune_use_case = ReplyFortuneUseCase()
 reply_sum_hanchans_use_case = ReplySumHanchansUseCase()
 reply_sum_hanchans__by_match_id_use_case = ReplySumHanchansByMatchIdUseCase()

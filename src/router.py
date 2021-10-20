@@ -42,6 +42,7 @@ from use_cases import (
     reply_room_zoom_url_use_case,
     drop_hanchan_by_index_use_case,
     disable_match_use_case,
+    user_my_zoom_command_use_case,
 )
 from domains.Room import RoomMode
 
@@ -58,6 +59,7 @@ class UCommands(Enum):
     help = 'help'
     setting = 'setting'
     github = 'github'
+    my_zoom = 'my_zoom'
 
 
 class RCommands(Enum):
@@ -167,13 +169,14 @@ def routing_by_text(event):
 
     """routing by text on each mode"""
     """wait mode"""
+    # if zoom url, register to room
+    if '.zoom.us' in text:
+        set_zoom_url_to_user_use_case.execute(text)
+        return
+
     reply_service.add_message(
         message_service.get_wait_massage()
     )
-
-    """if zoom url, register to room"""
-    if '.zoom.us' in text:
-        set_zoom_url_to_user_use_case.execute(text)
 
 
 def routing_by_method(method, body):
@@ -208,6 +211,9 @@ def routing_by_method(method, body):
     # github
     elif method == UCommands.github.name:
         reply_github_url_use_case.execute()
+    # github
+    elif method == UCommands.my_zoom.name:
+        user_my_zoom_command_use_case.execute()
 
 
 def routing_for_room_by_text(event):
