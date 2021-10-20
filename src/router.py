@@ -1,7 +1,6 @@
 from enum import Enum
 
 from linebot.models.events import Event
-from domains.User import UserMode
 
 from server import logger, line_bot_api
 from services import (
@@ -22,7 +21,7 @@ from use_cases import (
     match_finish_use_case,
     reply_user_mode_use_case,
     reply_room_mode_use_case,
-    change_user_mode_use_case,
+    user_exit_command_use_case,
     reply_fortune_use_case,
     reply_sum_hanchans_use_case,
     reply_matches_use_case,
@@ -185,9 +184,8 @@ def routing_by_method(method, body):
         reply_user_mode_use_case.execute()
     # exit
     elif method == UCommands.exit.name:
-        change_user_mode_use_case.execute(
+        user_exit_command_use_case.execute(
             request_info_service.req_line_user_id,
-            UserMode.wait,
         )
     # payment
     elif method == UCommands.payment.name:

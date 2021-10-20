@@ -1,6 +1,6 @@
 from .user.FollowUseCase import FollowUseCase
 from .user.UnfollowUseCase import UnfollowUseCase
-from .user.ChangeUserModeUseCase import ChangeUserModeUseCase
+from .user.UserExitCommandUseCase import UserExitCommandUseCase
 from .user.SetZoomUrlToUserUseCase import SetZoomUrlToUserUseCase
 from .user.ReplyUserHelpUseCase import ReplyUserHelpUseCase
 from .user.ReplyUserModeUseCase import ReplyUserModeUseCase
@@ -57,7 +57,7 @@ room_quit_use_case = RoomQuitUseCase()
 match_finish_use_case = MatchFinishUseCase()
 reply_user_mode_use_case = ReplyUserModeUseCase()
 reply_room_mode_use_case = ReplyRoomModeUseCase()
-change_user_mode_use_case = ChangeUserModeUseCase()
+user_exit_command_use_case = UserExitCommandUseCase()
 reply_fortune_use_case = ReplyFortuneUseCase()
 reply_sum_hanchans_use_case = ReplySumHanchansUseCase()
 reply_sum_hanchans__by_match_id_use_case = ReplySumHanchansByMatchIdUseCase()
