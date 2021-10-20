@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import List
 from linebot.models.responses import Profile
 from domains.User import User, UserMode
 
@@ -52,4 +53,26 @@ class IUserService(metaclass=ABCMeta):
 
     @abstractmethod
     def get_mode(self, user_id: str) -> UserMode:
+        pass
+
+    @abstractmethod
+    def chmod(
+        self,
+        line_user_id: str,
+        mode: UserMode,
+    ) -> User:
+        pass
+
+    @abstractmethod
+    def get(
+        self,
+        ids: List[int] = None,
+    ) -> List[User]:
+        pass
+
+    @abstractmethod
+    def delete(
+        self,
+        ids: List[int],
+    ) -> None:
         pass

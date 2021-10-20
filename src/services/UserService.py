@@ -1,5 +1,6 @@
 """user"""
 
+from typing import List
 from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
@@ -9,16 +10,11 @@ from domains.User import User, UserMode
 
 class UserService(IUserService):
 
-    def find_one_by_line_user_id(self, user_id):
-        with session_scope() as session:
-            user = user_repository.find_one_by_line_user_id(session, user_id)
-            return user
-
     def delete_one_by_line_user_id(self, user_id: str) -> None:
         with session_scope() as session:
             user_repository.delete_one_by_line_user_id(session, user_id)
 
-        logger.info(f'delete: {user_id}')
+            logger.info(f'delete: {user_id}')
 
     def find_or_create_by_profile(
         self,
@@ -57,13 +53,19 @@ class UserService(IUserService):
 
             return new_user
 
-    def delete(self, ids):
+    def delete(
+        self,
+        ids: List[int],
+    ) -> None:
         with session_scope() as session:
             user_repository.delete_by_ids(session, ids)
 
         logger.info(f'delete: id={ids}')
 
-    def get(self, ids=None):
+    def get(
+        self,
+        ids: List[int] = None,
+    ) -> List[User]:
         with session_scope() as session:
             if ids is None:
                 return user_repository.find_all(session)
@@ -112,21 +114,24 @@ class UserService(IUserService):
 
             return target.user_id
 
-    def chmod(self, line_user_id, mode):
+    def chmod(
+        self,
+        line_user_id: str,
+        mode: UserMode,
+    ) -> User:
         if mode not in self.modes:
             raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
-            user_repository.update_one_mode_by_line_room_id(
+            user = user_repository.update_one_mode_by_line_room_id(
                 session=session,
                 line_user_id=line_user_id,
                 mode=mode,
             )
 
-        logger.info(f'chmod: {line_user_id}: {mode.value}')
+            logger.info(f'chmod: {line_user_id}: {mode.value}')
 
-    def wait_mode(self, user_id):
-        self.chmod(user_id, UserMode.wait)
+            return user
 
     def get_mode(self, user_id: str) -> UserMode:
         with session_scope() as session:
