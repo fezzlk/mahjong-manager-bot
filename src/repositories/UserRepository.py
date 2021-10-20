@@ -84,6 +84,7 @@ class UserRepository:
 
         return [
             User(
+                _id=record.id,
                 name=record.name,
                 line_user_id=record.user_id,
                 zoom_url=record.zoom_id,
@@ -144,6 +145,7 @@ class UserRepository:
         record.mode = mode.value
 
         return User(
+            _id=record.id,
             name=record.name,
             line_user_id=record.user_id,
             zoom_url=record.zoom_id,
@@ -168,6 +170,7 @@ class UserRepository:
         record.zoom_id = zoom_url
 
         return User(
+            _id=record.id,
             name=record.name,
             line_user_id=record.user_id,
             zoom_url=record.zoom_id,

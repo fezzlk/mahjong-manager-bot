@@ -42,6 +42,7 @@ class HanchanRepository:
 
         return [
             Hanchan(
+                _id=record.id,
                 line_room_id=record.room_id,
                 raw_scores=json.loads(record.raw_scores),
                 converted_scores=json.loads(record.converted_scores),
@@ -69,6 +70,7 @@ class HanchanRepository:
             return None
 
         return Hanchan(
+            _id=record.id,
             line_room_id=record.room_id,
             raw_scores=json.loads(record.raw_scores),
             converted_scores=json.loads(record.converted_scores),
@@ -94,6 +96,7 @@ class HanchanRepository:
             return None
 
         return Hanchan(
+            _id=record.id,
             line_room_id=record.room_id,
             raw_scores=json.loads(record.raw_scores),
             converted_scores=json.loads(record.converted_scores),
@@ -115,6 +118,7 @@ class HanchanRepository:
 
         return [
             Hanchan(
+                _id=record.id,
                 line_room_id=record.room_id,
                 raw_scores=json.loads(record.raw_scores),
                 converted_scores=json.loads(record.converted_scores),
@@ -180,6 +184,7 @@ class HanchanRepository:
         record.raw_scores = json.dumps(raw_scores)
 
         return Hanchan(
+            _id=record.id,
             line_room_id=record.room_id,
             raw_scores=json.loads(record.raw_scores),
             converted_scores=json.loads(record.converted_scores),
@@ -209,6 +214,7 @@ class HanchanRepository:
         record.status = status
 
         return Hanchan(
+            _id=record.id,
             line_room_id=record.room_id,
             raw_scores=json.loads(record.raw_scores),
             converted_scores=json.loads(record.converted_scores),
@@ -236,6 +242,7 @@ class HanchanRepository:
         record.status = status
 
         return Hanchan(
+            _id=record.id,
             line_room_id=record.room_id,
             raw_scores=json.loads(record.raw_scores),
             converted_scores=json.loads(record.converted_scores),
