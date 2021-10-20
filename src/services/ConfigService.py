@@ -10,7 +10,7 @@ DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10'
 
 
 class ConfigService(IConfigService):
-    def get(self, ids: List[str] = None) -> List[Config]:
+    def get(self, ids: List[int] = None) -> List[Config]:
         with session_scope() as session:
             # config.id を指定してなければ全ての config を取得
             if ids is None:
