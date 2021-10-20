@@ -11,6 +11,11 @@ from use_cases import (
     get_matches_for_web_use_case,
     get_rooms_for_web_use_case,
     get_users_for_web_use_case,
+    delete_configs_for_web_use_case,
+    delete_hanchans_for_web_use_case,
+    delete_matches_for_web_use_case,
+    delete_rooms_for_web_use_case,
+    delete_users_for_web_use_case,
 )
 
 
@@ -66,7 +71,7 @@ def migrate():
 def get_users():
     data = get_users_for_web_use_case.execute()
     keys = ['id', 'name', 'user_id', 'jantama_name',
-            'zoom_id', 'mode', 'rooms', 'matches']
+            'zoom_id', 'mode', 'matches']
     input_keys = ['name', 'user_id', 'jantama_name']
     return render_template(
         'model.html',
@@ -77,19 +82,19 @@ def get_users():
     )
 
 
-# @app.route('/users/create', methods=['POST'])
-# def create_users():
-#     name = request.form['name']
-#     user_id = request.form['user_id']
-#     user_use_cases.create(name, user_id)
-#     return redirect(url_for('get_users'))
+@app.route('/users/create', methods=['POST'])
+def create_users():
+    # name = request.form['name']
+    # user_id = request.form['user_id']
+    # user_use_cases.create(name, user_id)
+    return redirect(url_for('get_users'))
 
 
-# @app.route('/users/delete', methods=['POST'])
-# def delete_users():
-#     target_id = request.args.get('target_id')
-#     user_use_cases.delete(int(target_id))
-#     return redirect(url_for('get_users'))
+@app.route('/users/delete', methods=['POST'])
+def delete_users():
+    target_id = request.args.get('target_id')
+    delete_users_for_web_use_case.execute([int(target_id)])
+    return redirect(url_for('get_users'))
 
 
 @app.route('/rooms')
@@ -111,11 +116,11 @@ def create_rooms():
     return redirect(url_for('get_rooms'))
 
 
-# @app.route('/rooms/delete', methods=['POST'])
-# def delete_rooms():
-#     target_id = request.args.get('target_id')
-#     room_use_cases.delete(int(target_id))
-#     return redirect(url_for('get_rooms'))
+@app.route('/rooms/delete', methods=['POST'])
+def delete_rooms():
+    target_id = request.args.get('target_id')
+    delete_rooms_for_web_use_case.execute([int(target_id)])
+    return redirect(url_for('get_rooms'))
 
 
 @app.route('/hanchans')
@@ -141,8 +146,8 @@ def create_hanchans():
 
 @app.route('/hanchans/delete', methods=['POST'])
 def delete_hanchans():
-    # target_id = request.args.get('target_id')
-    # hanchan_service.delete(int(target_id))
+    target_id = request.args.get('target_id')
+    delete_hanchans_for_web_use_case.execute([int(target_id)])
     return redirect(url_for('get_hanchans'))
 
 
@@ -191,11 +196,11 @@ def create_matches():
     return redirect(url_for('get_matches'))
 
 
-# @app.route('/matches/delete', methods=['POST'])
-# def delete_matches():
-#     target_id = request.args.get('target_id')
-#     matches_use_cases.delete(int(target_id))
-#     return redirect(url_for('get_matches'))
+@app.route('/matches/delete', methods=['POST'])
+def delete_matches():
+    target_id = request.args.get('target_id')
+    delete_matches_for_web_use_case.execute([int(target_id)])
+    return redirect(url_for('get_matches'))
 
 
 @app.route('/configs')
@@ -217,11 +222,11 @@ def create_configs():
     return redirect(url_for('get_configs'))
 
 
-# @app.route('/configs/delete', methods=['POST'])
-# def delete_configs():
-#     target_id = request.args.get('target_id')
-#     config_use_cases.delete(int(target_id))
-#     return redirect(url_for('get_configs'))
+@app.route('/configs/delete', methods=['POST'])
+def delete_configs():
+    target_id = request.args.get('target_id')
+    delete_configs_for_web_use_case.execute([int(target_id)])
+    return redirect(url_for('get_configs'))
 
 
 @app.route("/callback", methods=['POST'])
