@@ -16,8 +16,8 @@ class ReplyRoomSettingsMenuUseCase:
 
         configs = config_service.get_by_target(target_id)
 
-        # 返信メッセージ用に変換&返信
-        s = [f'{key}: {str(value)}' for key, value in configs.items()]
-        reply_service.add_message('[設定]\n' + '\n'.join(s))
+        if body == '':
+            s = [f'{key}: {str(value)}' for key, value in configs.items()]
+            reply_service.add_message('[設定]\n' + '\n'.join(s))
 
         reply_service.add_settings_menu(body)
