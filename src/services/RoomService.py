@@ -1,3 +1,4 @@
+from typing import List
 from .interfaces.IRoomService import IRoomService
 from domains.Room import Room, RoomMode
 from repositories import session_scope, room_repository
@@ -60,14 +61,14 @@ class RoomService(IRoomService):
 
             return target.mode
 
-    def get(self, ids=None):
+    def get(self, ids: List[int] = None) -> List[Room]:
         with session_scope() as session:
             if ids is None:
                 return room_repository.find_all(session)
 
             return room_repository.find_by_ids(session, ids)
 
-    def delete(self, ids):
+    def delete(self, ids: List[int]) -> None:
         with session_scope() as session:
             room_repository.delete_by_ids(session, ids)
 
@@ -92,18 +93,21 @@ class RoomService(IRoomService):
             logger.info(f'set_zoom_url: {zoom_url} to {line_room_id}')
             return record
 
-    def get_zoom_url(self, room_id):
+    def get_zoom_url(
+        self,
+        line_room_id: str,
+    ) -> str:
         with session_scope() as session:
-            target = room_repository.find_one_by_room_id(session, room_id)
+            target = room_repository.find_one_by_room_id(session, line_room_id)
 
             if target is None:
                 logger.warning(
-                    f'fail to get zoom url: room "{room_id}" is not found.')
+                    f'fail to get zoom url: room "{line_room_id}" is not found.')
                 return None
 
             if target.zoom_url is None:
                 logger.warning(
-                    f'fail to get zoom url: room "{room_id}" does not have zoom url.')
+                    f'fail to get zoom url: room "{line_room_id}" does not have zoom url.')
                 return None
 
             return target.zoom_url
