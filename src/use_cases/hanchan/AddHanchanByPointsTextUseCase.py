@@ -20,7 +20,7 @@ class AddHanchanByPointsTextUseCase:
         for r in rows:
             col = r.split(':')
             points[
-                user_service.get_user_id_by_name(col[0])
+                user_service.get_line_user_id_by_name(col[0])
             ] = int(col[1])
 
         line_room_id = request_info_service.req_line_room_id

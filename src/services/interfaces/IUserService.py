@@ -7,7 +7,7 @@ from domains.User import User, UserMode
 class IUserService(metaclass=ABCMeta):
 
     @abstractmethod
-    def get_user_id_by_name(
+    def get_line_user_id_by_name(
         self,
         name: str,
     ) -> str:

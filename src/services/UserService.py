@@ -101,7 +101,7 @@ class UserService(IUserService):
                 else:
                     return target.name
 
-    def get_user_id_by_name(
+    def get_line_user_id_by_name(
         self,
         name: str,
     ) -> str:
@@ -149,7 +149,7 @@ class UserService(IUserService):
         zoom_url: str,
     ) -> User:
         with session_scope() as session:
-            user = user_repository.update_one_zoom_id_by_line_room_id(
+            user = user_repository.update_one_zoom_url_by_line_room_id(
                 session=session,
                 line_user_id=line_user_id,
                 zoom_url=zoom_url,

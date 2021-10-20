@@ -25,7 +25,7 @@ class AddPointByTextUseCase:
             point, target_user = point_service.get_point_and_name_from_text(
                 text[1:]
             )
-            target_line_user_id = user_service.get_user_id_by_name(
+            target_line_user_id = user_service.get_line_user_id_by_name(
                 target_user
             )
 
