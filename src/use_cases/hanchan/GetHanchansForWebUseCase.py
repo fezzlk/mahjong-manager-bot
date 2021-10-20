@@ -8,4 +8,4 @@ from domains.Hanchan import Hanchan
 class GetHanchansForWebUseCase:
 
     def execute(self) -> List[Hanchan]:
-        hanchan_service.get()
+        return hanchan_service.get()

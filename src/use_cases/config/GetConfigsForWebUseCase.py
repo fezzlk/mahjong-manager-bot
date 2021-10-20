@@ -8,4 +8,4 @@ from domains.Config import Config
 class GetConfigsForWebUseCase:
 
     def execute(self) -> List[Config]:
-        config_service.get()
+        return config_service.get()

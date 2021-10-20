@@ -8,4 +8,4 @@ from domains.Match import Match
 class GetMatchesForWebUseCase:
 
     def execute(self) -> List[Match]:
-        match_service.get()
+        return match_service.get()

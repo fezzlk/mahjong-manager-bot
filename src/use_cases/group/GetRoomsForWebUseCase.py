@@ -8,4 +8,4 @@ from domains.Room import Room
 class GetRoomsForWebUseCase:
 
     def execute(self) -> List[Room]:
-        room_service.get()
+        return room_service.get()

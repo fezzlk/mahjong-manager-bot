@@ -8,4 +8,4 @@ from domains.User import User
 class GetUsersForWebUseCase:
 
     def execute(self) -> List[User]:
-        user_service.get()
+        return user_service.get()
