@@ -51,7 +51,7 @@ class ConfigService(IConfigService):
             )
 
             # デフォルト config をセット
-            configs = DEFAULT_CONFIGS
+            configs = DEFAULT_CONFIGS.copy()
 
             # 変更項目を更新
             for customized_config in customized_configs:
