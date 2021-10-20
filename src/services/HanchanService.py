@@ -37,7 +37,7 @@ class HanchanService(IHanchanService):
 
     def disabled_by_id(
         self,
-        line_room_id: str, 
+        line_room_id: str,
         hanchan_id: int,
     ) -> Hanchan:
         """disabled target hanchan"""

@@ -39,4 +39,3 @@ class Hanchan:
 # match_id = Match.id
 
 # status は Enum(0: disabled, 1: active, 2: archived)
-
