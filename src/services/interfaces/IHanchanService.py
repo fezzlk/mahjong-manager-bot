@@ -62,3 +62,11 @@ class IHanchanService(metaclass=ABCMeta):
         related_match: Match,
     ) -> Hanchan:
         pass
+
+    @abstractmethod
+    def get(self, ids: List = None) -> List[Hanchan]:
+        pass
+
+    @abstractmethod
+    def delete(self, ids: List[int]) -> List[Hanchan]:
+        pass

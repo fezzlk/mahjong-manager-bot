@@ -35,10 +35,14 @@ class HanchanService(IHanchanService):
 
         return new_hanchan
 
-    def disabled_by_id(self, line_room_id, hanchan_id):
+    def disabled_by_id(
+        self,
+        line_room_id: str, 
+        hanchan_id: int,
+    ) -> Hanchan:
         """disabled target hanchan"""
         with session_scope() as session:
-            hanchan_repository.update_status_by_id_and_line_room_id(
+            new_hanchan = hanchan_repository.update_status_by_id_and_line_room_id(
                 session,
                 hanchan_id=hanchan_id,
                 line_room_id=line_room_id,
@@ -48,6 +52,8 @@ class HanchanService(IHanchanService):
             logger.info(
                 f'disabled: id={hanchan_id}'
             )
+
+            return new_hanchan
 
     def find_by_ids(
         self,
@@ -95,17 +101,6 @@ class HanchanService(IHanchanService):
 
             return hanchan
 
-    def clear_raw_scores(self, line_room_id):
-        with session_scope() as session:
-            record = hanchan_repository.update_raw_score_of_user_by_room_id(
-                session=session,
-                line_room_id=line_room_id,
-                line_user_id=None,
-                raw_score=None,
-            )
-
-            return record
-
     def update_converted_score(
         self,
         line_room_id: str,
@@ -148,7 +143,7 @@ class HanchanService(IHanchanService):
     def disable(self, line_room_id: str) -> Hanchan:
         return self.update_status(line_room_id, 0)
 
-    def get(self, ids=None):
+    def get(self, ids: List = None) -> List[Hanchan]:
         with session_scope() as session:
             if ids is None:
                 targets = hanchan_repository.find_all(session)
@@ -166,7 +161,7 @@ class HanchanService(IHanchanService):
 
             return targets
 
-    def delete(self, ids):
+    def delete(self, ids: List[int]) -> List[Hanchan]:
         with session_scope() as session:
             targets = hanchan_repository.find_by_ids(session, ids)
             for target in targets:
