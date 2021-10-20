@@ -1,5 +1,3 @@
-"""router"""
-
 from enum import Enum
 
 from linebot.models.events import Event
@@ -89,246 +87,248 @@ class RCommands(Enum):
     graph = 'graph'
 
 
-class Router:
-    """router(TODO: abolish Router class)"""
+def root(event: Event):
+    logger.info(f'receive {event.type} event')
+    request_info_service.set_req_info(event)
+    isEnabledReply = True
 
-    def root(self, event: Event):
-        logger.info(f'receive {event.type} event')
-        request_info_service.set_req_info(event)
-        isEnabledReply = True
+    try:
+        if event.type == 'message':
+            if event.message.type == 'text':
+                textMessage(event)
+            elif event.message.type == 'image':
+                imageMessage(event)
+        elif event.type == 'follow':
+            follow_use_case.execute()
+        elif event.type == 'unfollow':
+            unfollow_use_case.execute()
+            isEnabledReply = False
+        elif event.type == 'join':
+            join_room_use_case.execute()
+        elif event.type == 'postback':
+            postback(event)
 
-        try:
-            if event.type == 'message':
-                if event.message.type == 'text':
-                    self.textMessage(event)
-                elif event.message.type == 'image':
-                    self.imageMessage(event)
-            elif event.type == 'follow':
-                follow_use_case.execute()
-            elif event.type == 'unfollow':
-                unfollow_use_case.execute()
-                isEnabledReply = False
-            elif event.type == 'join':
-                join_room_use_case.execute()
-            elif event.type == 'postback':
-                self.postback(event)
+    except BaseException as err:
+        logger.exception(err)
+        reply_service.add_message(str(err))
 
-        except BaseException as err:
-            logger.exception(err)
-            reply_service.add_message(str(err))
+    if isEnabledReply:
+        reply_service.reply(event)
+    request_info_service.delete_req_info()
 
-        if isEnabledReply:
-            reply_service.reply(event)
-        request_info_service.delete_req_info()
 
-    def textMessage(self, event: Event):
-        """receive text message event"""
-        if event.source.type == 'room' or event.source.type == 'group':
-            self.routing_for_room_by_text(event)
-        elif event.source.type == 'user':
-            self.routing_by_text(event)
-        else:
-            logger.info(
-                f'error: message.source.type: {event.source.type}'
-            )
-            raise BaseException('this source type is not supported')
-
-    def imageMessage(self, event: Event):
-        """receive image message event"""
-        if event.source.type == 'room' or event.source.type == 'group':
-            message_content = line_bot_api.get_message_content(
-                event.message.id
-            )
-            input_result_from_image_use_case.execute(message_content.content)
-
-    def postback(self, event: Event):
-        """postback event"""
-
-        text = event.postback.data
-        method = text[1:].split()[0]
-        body = text[len(method) + 2:]
-        if event.source.type == 'room' or event.source.type == 'group':
-            self.routing_for_room_by_method(method, body)
-        elif event.source.type == 'user':
-            self.routing_by_method(method, body)
-
-    def routing_by_text(self, event):
-        """routing by text for personal chat"""
-        text = event.message.text
-        if (text[0] == '_') & (len(text) > 1):
-            method = text[1:].split()[0]
-            if method in [c.name for c in UCommands]:
-                body = text[len(method) + 2:]
-                self.routing_by_method(method, body)
-                return
-            else:
-                reply_service.add_message(
-                    '使い方がわからない場合はメニューの中の「使い方」を押してください。'
-                )
-                return
-
-        """routing by text on each mode"""
-        """wait mode"""
-        reply_service.add_message(
-            message_service.get_wait_massage(
-                request_info_service.req_line_user_id
-            )
+def textMessage(event: Event):
+    """receive text message event"""
+    if event.source.type == 'room' or event.source.type == 'group':
+        routing_for_room_by_text(event)
+    elif event.source.type == 'user':
+        routing_by_text(event)
+    else:
+        logger.info(
+            f'error: message.source.type: {event.source.type}'
         )
+        raise BaseException('this source type is not supported')
 
-        """if zoom url, register to room"""
-        if '.zoom.us' in text:
-            set_zoom_url_to_user_use_case.execute(text)
 
-    def routing_by_method(self, method, body):
-        """routing by method for personal chat"""
+def imageMessage(event: Event):
+    """receive image message event"""
+    if event.source.type == 'room' or event.source.type == 'group':
+        message_content = line_bot_api.get_message_content(
+            event.message.id
+        )
+        input_result_from_image_use_case.execute(message_content.content)
 
-        # mode
-        if method == UCommands.mode.name:
-            reply_user_mode_use_case.execute()
-        # exit
-        elif method == UCommands.exit.name:
-            change_user_mode_use_case.execute(
-                request_info_service.req_line_user_id,
-                UserMode.wait,
+
+def postback(event: Event):
+    """postback event"""
+
+    text = event.postback.data
+    method = text[1:].split()[0]
+    body = text[len(method) + 2:]
+    if event.source.type == 'room' or event.source.type == 'group':
+        routing_for_room_by_method(method, body)
+    elif event.source.type == 'user':
+        routing_by_method(method, body)
+
+
+def routing_by_text(event):
+    """routing by text for personal chat"""
+    text = event.message.text
+    if (text[0] == '_') & (len(text) > 1):
+        method = text[1:].split()[0]
+        if method in [c.name for c in UCommands]:
+            body = text[len(method) + 2:]
+            routing_by_method(method, body)
+            return
+        else:
+            reply_service.add_message(
+                '使い方がわからない場合はメニューの中の「使い方」を押してください。'
             )
-        # payment
-        elif method == UCommands.payment.name:
-            reply_service.add_message('支払い機能は開発中です。')
-        # analysis
-        elif method == UCommands.analysis.name:
-            reply_service.add_message('分析機能は開発中です。')
-        # fortune
-        elif method == UCommands.fortune.name:
-            reply_fortune_use_case.execute()
-        # history
-        elif method == UCommands.history.name:
-            reply_service.add_message('対戦履歴機能は開発中です。')
-        # setting
-        elif method == UCommands.setting.name:
-            reply_service.add_message('個人設定機能は開発中です。')
-        # help
-        elif method == UCommands.help.name:
-            reply_user_help_use_case.execute(UCommands)
-        # github
-        elif method == UCommands.github.name:
-            reply_github_url_use_case.execute()
-
-    def routing_for_room_by_text(self, event):
-        """routing by text"""
-        text = event.message.text
-        if (text[0] == '_') & (len(text) > 1):
-            method = text[1:].split()[0]
-            if method in [c.name for c in RCommands]:
-                body = text[len(method) + 2:]
-                self.routing_for_room_by_method(method, body)
-                return
-            else:
-                reply_service.add_message(
-                    '使い方がわからない場合は「_help」と入力してください。'
-                )
-                return
-
-        """routing by text on each mode"""
-        room_id = request_info_service.req_line_room_id
-        current_mode = room_service.get_mode(room_id)
-        """input mode"""
-        if current_mode.value == RoomMode.input.value:
-            add_point_by_text_use_case.execute(text)
             return
 
-        """wait mode"""
-        """if text is result, add result"""
+    """routing by text on each mode"""
+    """wait mode"""
+    reply_service.add_message(
+        message_service.get_wait_massage()
+    )
 
-        resultRows = [r for r in text.split('\n') if ':' in r]
-        if len(resultRows) == 4:
-            add_hanchan_by_points_text_use_case.execute(text)
+    """if zoom url, register to room"""
+    if '.zoom.us' in text:
+        set_zoom_url_to_user_use_case.execute(text)
 
-        """if zoom url, register to room"""
-        if '.zoom.us' in text:
-            set_zoom_url_to_room_use_case.execute(text)
 
-    def routing_for_room_by_method(self, method, body):
-        """routing by method"""
-        # input
-        if method == RCommands.input.name:
-            start_input_use_case.execute()
-        # start menu
-        elif method == RCommands.start.name:
-            reply_start_menu_use_case.execute()
-        # mode
-        elif method == RCommands.mode.name:
-            reply_room_mode_use_case.execute()
-        # exit
-        elif method == RCommands.exit.name:
-            room_quit_use_case.execute()
-        # help
-        elif method == RCommands.help.name:
-            reply_room_help_use_case.execute(RCommands)
-        # setting
-        elif method == RCommands.setting.name:
-            reply_room_settings_menu_use_case.execute(body)
-        # results
-        elif method == RCommands.results.name:
-            reply_sum_hanchans_use_case.execute()
-        # results by match id
-        elif method == RCommands.match.name:
-            reply_sum_hanchans__by_match_id_use_case.execute(body)
-        # drop
-        elif method == RCommands.drop.name:
-            drop_hanchan_by_index_use_case.execute(int(body))
-        # drop match
-        elif method == RCommands.drop_m.name:
-            disable_match_use_case.execute()
-        # finish
-        elif method == RCommands.finish.name:
-            match_finish_use_case.execute()
-        # fortune
-        elif method == RCommands.fortune.name:
-            reply_fortune_use_case.execute()
-        # others menu
-        elif method == RCommands.others.name:
-            reply_others_menu_use_case.execute()
-        # matches
-        elif method == RCommands.matches.name:
-            reply_matches_use_case.execute()
-        # tobi
-        elif method == RCommands.tobi.name:
-            calculate_with_tobi_use_case.execute(
-                tobashita_player_id=body
+def routing_by_method(method, body):
+    """routing by method for personal chat"""
+
+    # mode
+    if method == UCommands.mode.name:
+        reply_user_mode_use_case.execute()
+    # exit
+    elif method == UCommands.exit.name:
+        change_user_mode_use_case.execute(
+            request_info_service.req_line_user_id,
+            UserMode.wait,
+        )
+    # payment
+    elif method == UCommands.payment.name:
+        reply_service.add_message('支払い機能は開発中です。')
+    # analysis
+    elif method == UCommands.analysis.name:
+        reply_service.add_message('分析機能は開発中です。')
+    # fortune
+    elif method == UCommands.fortune.name:
+        reply_fortune_use_case.execute()
+    # history
+    elif method == UCommands.history.name:
+        reply_service.add_message('対戦履歴機能は開発中です。')
+    # setting
+    elif method == UCommands.setting.name:
+        reply_service.add_message('個人設定機能は開発中です。')
+    # help
+    elif method == UCommands.help.name:
+        reply_user_help_use_case.execute(UCommands)
+    # github
+    elif method == UCommands.github.name:
+        reply_github_url_use_case.execute()
+
+
+def routing_for_room_by_text(event):
+    """routing by text"""
+    text = event.message.text
+    if (text[0] == '_') & (len(text) > 1):
+        method = text[1:].split()[0]
+        if method in [c.name for c in RCommands]:
+            body = text[len(method) + 2:]
+            routing_for_room_by_method(method, body)
+            return
+        else:
+            reply_service.add_message(
+                '使い方がわからない場合は「_help」と入力してください。'
             )
-        # add results
-        elif method == RCommands.add_result.name:
-            add_point_by_Json_text_use_case.execute(body)
-        # update config
-        elif method == RCommands.update_config.name:
-            key = body.split(' ')[0]
-            value = body.split(' ')[1]
-            update_config_use_case.execute(
-                key, value
-            )
-        # zoom
-        elif method == RCommands.zoom.name:
-            reply_room_zoom_url_use_case.execute()
-        # my_zoom
-        elif method == RCommands.my_zoom.name:
-            set_my_zoom_url_to_room_use_case.execute()
-        # sum_matches
-        elif method == RCommands.sum_matches.name:
-            args = body.split(' ')
-            # while 'to' in args:
-            #     index = args.index('to')
-            #     if index != 0 and len(args) - 1 > index:
-            #         args += [
-            #             str(i) for i in range(
-            #                 int(args[index - 1]),
-            #                 int(args[index + 1]) + 1
-            #             )
-            #         ]
-            #     args.remove('to')
-            reply_sum_matches_by_ids_use_case.execute(args)
-        # # graphs
-        # elif method == RCommands.graph.name:
-        #     matches_use_cases.plot()
+            return
+
+    """routing by text on each mode"""
+    room_id = request_info_service.req_line_room_id
+    current_mode = room_service.get_mode(room_id)
+    """input mode"""
+    if current_mode.value == RoomMode.input.value:
+        add_point_by_text_use_case.execute(text)
+        return
+
+    """wait mode"""
+    """if text is result, add result"""
+
+    resultRows = [r for r in text.split('\n') if ':' in r]
+    if len(resultRows) == 4:
+        add_hanchan_by_points_text_use_case.execute(text)
+
+    """if zoom url, register to room"""
+    if '.zoom.us' in text:
+        set_zoom_url_to_room_use_case.execute(text)
+
+
+def routing_for_room_by_method(method, body):
+    """routing by method"""
+    # input
+    if method == RCommands.input.name:
+        start_input_use_case.execute()
+    # start menu
+    elif method == RCommands.start.name:
+        reply_start_menu_use_case.execute()
+    # mode
+    elif method == RCommands.mode.name:
+        reply_room_mode_use_case.execute()
+    # exit
+    elif method == RCommands.exit.name:
+        room_quit_use_case.execute()
+    # help
+    elif method == RCommands.help.name:
+        reply_room_help_use_case.execute(RCommands)
+    # setting
+    elif method == RCommands.setting.name:
+        reply_room_settings_menu_use_case.execute(body)
+    # results
+    elif method == RCommands.results.name:
+        reply_sum_hanchans_use_case.execute()
+    # results by match id
+    elif method == RCommands.match.name:
+        reply_sum_hanchans__by_match_id_use_case.execute(body)
+    # drop
+    elif method == RCommands.drop.name:
+        drop_hanchan_by_index_use_case.execute(int(body))
+    # drop match
+    elif method == RCommands.drop_m.name:
+        disable_match_use_case.execute()
+    # finish
+    elif method == RCommands.finish.name:
+        match_finish_use_case.execute()
+    # fortune
+    elif method == RCommands.fortune.name:
+        reply_fortune_use_case.execute()
+    # others menu
+    elif method == RCommands.others.name:
+        reply_others_menu_use_case.execute()
+    # matches
+    elif method == RCommands.matches.name:
+        reply_matches_use_case.execute()
+    # tobi
+    elif method == RCommands.tobi.name:
+        calculate_with_tobi_use_case.execute(
+            tobashita_player_id=body
+        )
+    # add results
+    elif method == RCommands.add_result.name:
+        add_point_by_Json_text_use_case.execute(body)
+    # update config
+    elif method == RCommands.update_config.name:
+        key = body.split(' ')[0]
+        value = body.split(' ')[1]
+        update_config_use_case.execute(
+            key, value
+        )
+    # zoom
+    elif method == RCommands.zoom.name:
+        reply_room_zoom_url_use_case.execute()
+    # my_zoom
+    elif method == RCommands.my_zoom.name:
+        set_my_zoom_url_to_room_use_case.execute()
+    # sum_matches
+    elif method == RCommands.sum_matches.name:
+        args = body.split(' ')
+        # while 'to' in args:
+        #     index = args.index('to')
+        #     if index != 0 and len(args) - 1 > index:
+        #         args += [
+        #             str(i) for i in range(
+        #                 int(args[index - 1]),
+        #                 int(args[index + 1]) + 1
+        #             )
+        #         ]
+        #     args.remove('to')
+        reply_sum_matches_by_ids_use_case.execute(args)
+    # # graphs
+    # elif method == RCommands.graph.name:
+    #     matches_use_cases.plot()
 
 
 # def parse_int_list(args):

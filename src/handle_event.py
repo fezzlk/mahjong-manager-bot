@@ -1,7 +1,8 @@
 """
 LINE messaging API handler
 """
-from server import handler, router
+from server import handler
+import router
 from linebot.models import (
     FollowEvent,
     UnfollowEvent,

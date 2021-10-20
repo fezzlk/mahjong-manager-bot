@@ -24,9 +24,6 @@ from db_setting import Engine
 from models import Base
 Base.metadata.create_all(bind=Engine)
 
-from router import Router
-router = Router()
-
 import views
 import api
 import handle_event
