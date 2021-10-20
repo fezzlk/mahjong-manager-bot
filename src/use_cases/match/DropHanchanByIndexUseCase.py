@@ -9,7 +9,7 @@ import json
 
 class DropHanchanByIndexUseCase:
 
-    def execute(self, i):
+    def execute(self, i: int) -> None:
         if match_service.count_results() == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。'

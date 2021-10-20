@@ -9,7 +9,7 @@ import json
 
 class ReplySumHanchansUseCase:
 
-    def execute(self):
+    def execute(self) -> None:
         if match_service.count_results() == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。')

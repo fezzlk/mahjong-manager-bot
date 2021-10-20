@@ -7,7 +7,7 @@ from services import (
 
 class ReplyUserModeUseCase:
 
-    def execute(self):
+    def execute(self) -> None:
         line_user_id = request_info_service.req_line_user_id
         mode = user_service.get_mode(line_user_id)
         if mode is None:

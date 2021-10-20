@@ -12,7 +12,7 @@ import json
 
 class ReplySumMatchesByIdsUseCase:
 
-    def execute(self, ids: List[str]):
+    def execute(self, ids: List[str]) -> None:
         formatted_id_list = sorted(list(set(ids)))
         matches = match_service.get(ids)
         if len(matches) == 0:

@@ -14,4 +14,3 @@ class ChangeUserModeUseCase:
     ) -> None:
         user_service.chmod(line_user_id, mode)
         reply_service.add_message('処理を中断しました。')
-        

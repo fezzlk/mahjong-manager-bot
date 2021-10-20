@@ -7,7 +7,7 @@ from services import (
 
 class InputResultFromImageUseCase:
 
-    def execute(self, image_content: str):
+    def execute(self, image_content: str) -> None:
         ocr_service.run(image_content)
         if ocr_service.isResultImage():
             results = ocr_service.get_points()

@@ -9,7 +9,7 @@ from services import (
 
 class RoomQuitUseCase:
 
-    def execute(self, text):
+    def execute(self) -> None:
         line_room_id = request_info_service.req_line_room_id
         hanchan_service.disable(line_room_id)
         room_service.chmod(

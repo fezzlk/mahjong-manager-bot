@@ -10,7 +10,7 @@ from domains.Room import RoomMode
 
 class StartInputUseCase:
 
-    def execute(self):
+    def execute(self) -> None:
         line_room_id = request_info_service.req_line_room_id
 
         if room_service.get_mode(line_room_id) == RoomMode.input:

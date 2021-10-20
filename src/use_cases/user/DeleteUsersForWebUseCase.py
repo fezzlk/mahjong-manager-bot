@@ -6,5 +6,5 @@ from services import (
 
 class DeleteUsersForWebUseCase:
 
-    def execute(self, ids: List[int]):
+    def execute(self, ids: List[int]) -> None:
         user_service.delete(ids)

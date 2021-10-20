@@ -9,7 +9,7 @@ from server import logger
 
 class DeleteMatchesForWebUseCase:
 
-    def execute(self, target_ids: List[int]):
+    def execute(self, target_ids: List[int]) -> None:
         targets = match_service.delete(target_ids)
         for target in targets:
             hanchan_service.delete(

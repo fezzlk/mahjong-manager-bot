@@ -6,5 +6,5 @@ from services import (
 
 class DeleteRoomsForWebUseCase:
 
-    def execute(self, ids: List[int]):
+    def execute(self, ids: List[int]) -> None:
         room_service.delete(ids)

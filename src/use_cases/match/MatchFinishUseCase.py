@@ -10,7 +10,7 @@ from services import (
 
 class MatchFinishUseCase:
 
-    def execute(self):
+    def execute(self) -> None:
         line_room_id = request_info_service.req_line_room_id
         if match_service.count_results(line_room_id) == 0:
             reply_service.add_message(

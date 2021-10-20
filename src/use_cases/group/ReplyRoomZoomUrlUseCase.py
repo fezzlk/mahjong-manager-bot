@@ -7,7 +7,7 @@ from services import (
 
 class ReplyRoomZoomUrlUseCase:
 
-    def execute(self):
+    def execute(self) -> None:
         line_room_id = request_info_service.req_line_room_id
         result_zoom_url = room_service.get_zoom_url(line_room_id)
 

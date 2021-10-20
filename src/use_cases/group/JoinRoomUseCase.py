@@ -8,7 +8,7 @@ from services import (
 
 class JoinRoomUseCase:
 
-    def execute(self):
+    def execute(self) -> None:
         reply_service.add_message(
             'こんにちは、今日は麻雀日和ですね。'
         )

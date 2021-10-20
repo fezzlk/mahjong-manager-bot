@@ -9,7 +9,7 @@ from services import (
 
 class FollowUseCase:
 
-    def execute(self):
+    def execute(self) -> None:
         """follow event"""
         profile = line_bot_api.get_profile(
             request_info_service.req_line_user_id
