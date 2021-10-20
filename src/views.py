@@ -71,8 +71,8 @@ def migrate():
 def get_users():
     data = get_users_for_web_use_case.execute()
     keys = ['_id', 'name', 'line_user_id', 'jantama_name',
-            'zoom_id', 'mode', 'matches']
-    input_keys = ['name', 'line_user_id', 'jantama_name']
+            'zoom_url', 'mode', 'matches', 'rooms']
+    input_keys = ['name', 'line_user_id', 'zoom_url', 'jantama_name']
     return render_template(
         'model.html',
         title='users',
