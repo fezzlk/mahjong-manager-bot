@@ -153,7 +153,7 @@ class UserRepository:
             jantama_name=record.jantama_name,
         )
 
-    def update_one_zoom_id_by_line_room_id(
+    def update_one_zoom_url_by_line_room_id(
         self,
         session: BaseSession,
         line_user_id: str,
