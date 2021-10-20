@@ -16,7 +16,7 @@
             <td>{{ v[k] }}</td>
             {% endfor %}
             <td>
-                <form action="{{ url_for('delete_'+title, target_id=v['id']) }}" method="post">
+                <form action="{{ url_for('delete_'+title, target_id=v['_id']) }}" method="post">
                     <button type="submit">削除</button>
                 </form>
             </td>
