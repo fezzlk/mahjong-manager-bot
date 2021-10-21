@@ -50,7 +50,7 @@ class AddPointByJsonTextUseCase:
             ])
             return
 
-        # config の取得(by target で撮っちゃって良い)
+        # config の取得
         # 計算の実行
         calculate_result = hanchan_service.run_calculate(
             points=points,
