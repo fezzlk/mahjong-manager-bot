@@ -205,7 +205,7 @@ class HanchanService(IHanchanService):
                 tobasare_players.append(player)
 
             # マイナス点の場合の端数処理を考慮するため、100000足して130(=(100000+30000)/1000)を引く
-            result[player] = int((point + 10000 + padding) / 1000) - 130
+            result[player] = int((point + 100000 + padding) / 1000) - 130
 
         # 1位(他プレイヤーの点数合計×(-1))
         result[sorted_points[0][0]] = -1 * sum(result.values())
