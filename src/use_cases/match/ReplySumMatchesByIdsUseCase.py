@@ -43,19 +43,21 @@ class ReplySumMatchesByIdsUseCase:
             if is_required_sum:
                 reply_service.add_message(
                     '\n'.join([
-                        f'{user_service.get_name_by_line_user_id(user_id)}: \
-                            {converted_score}'
+                        f'{user_service.get_name_by_line_user_id(user_id)}: {converted_score}'
                         for user_id, converted_score in sum_hanchans.items()
                     ])
                 )
 
             key = 'レート'
-            room_id = request_info_service.req_line_room_id
+            match_list = []
+            line_room_id = request_info_service.req_line_room_id
+            for line_user_id, converted_score in sum_hanchans.items():
+                name = user_service.get_name_by_line_user_id(line_user_id)
+                price = converted_score * int(config_service.get_value_by_key(line_room_id, key)[1]) * 10
+                score = ("+" if converted_score > 0 else "") + converted_score
+                match_list.append(f'{name}: {price}円 ({score})')
+
             reply_service.add_message(
-                '対戦ID: ' + str(match_id) + '\n' + date + '\n'.join([
-                    f'{user_service.get_name_by_line_user_id(user_id)}: \
-                    {converted_score * int(config_service.get_value_by_key(room_id, key)[1]) * 10}円 \
-                    ({"+" if converted_score > 0 else ""}{converted_score})'
-                    for user_id, converted_score in sum_hanchans.items()
-                ])
+                '対戦ID: ' + str(match_id) + '\n' + date + '\n'.join(match_list)
             )
+

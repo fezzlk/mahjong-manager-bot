@@ -22,8 +22,7 @@ class ReplySumHanchansByMatchIdUseCase:
             converted_scores = hanchans[i].converted_scores
             hanchans_list.append(
                 f'第{i+1}回\n' + '\n'.join([
-                    f'{user_service.get_name_by_line_user_id(r[0])}: \
-                        {"+" if r[1] > 0 else ""}{r[1]}'
+                    f'{user_service.get_name_by_line_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}'
                     for r in sorted(
                         converted_scores.items(),
                         key=lambda x:x[1],
@@ -41,8 +40,7 @@ class ReplySumHanchansByMatchIdUseCase:
         reply_service.add_message('\n\n'.join(hanchans_list))
         reply_service.add_message(
             '総計\n' + date + '\n'.join([
-                f'{user_service.get_name_by_line_user_id(r[0])}: \
-                    {"+" if r[1] > 0 else ""}{r[1]}'
+                f'{user_service.get_name_by_line_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}'
                 for r in sorted(
                     sum_hanchans.items(),
                     key=lambda x:x[1],
