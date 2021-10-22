@@ -112,7 +112,7 @@ class UserService(IUserService):
                 logger.warning(f'user({name}) is not found')
                 return name
 
-            return target.user_id
+            return target.line_user_id
 
     def chmod(
         self,

@@ -29,14 +29,14 @@ class AddPointByTextUseCase:
             )
 
             if point == 'delete':
-                points = hanchan_service.drop_raw_score(
+                hanchan = hanchan_service.drop_raw_score(
                     line_room_id,
                     target_line_user_id,
                 )
 
                 res = [
                     f'{user_service.get_name_by_line_user_id(user_id)}: {point}'
-                    for user_id, point in points.items()
+                    for user_id, point in hanchan.raw_scores.items()
                 ]
 
                 reply_service.add_message("\n".join(res))
