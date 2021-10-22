@@ -100,7 +100,7 @@ class AddPointByJsonTextUseCase:
         )
 
         reply_service.add_message(
-            message_service.get_hanchan_message()
+            message_service.get_finish_hanchan_message()
         )
 
         # 一半荘の結果をアーカイブ

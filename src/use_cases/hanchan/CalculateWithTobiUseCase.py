@@ -80,7 +80,7 @@ class CalculateWithTobiUseCase:
         # 結果の表示
         hanchan = hanchan_service.get_current(line_room_id)
         converted_scores = hanchan.converted_scores
-        current_match = match_service.get_current()
+        current_match = match_service.get_current(line_room_id)
         hanchans = hanchan_service.find_by_ids(current_match.hanchan_ids)
         sum_hanchans = {}
         for r in hanchans:
@@ -107,7 +107,7 @@ class CalculateWithTobiUseCase:
         )
 
         reply_service.add_message(
-            message_service.get_hanchan_message()
+            message_service.get_finish_hanchan_message()
         )
 
         # 一半荘の結果をアーカイブ
