@@ -131,6 +131,9 @@ class HanchanService(IHanchanService):
                 status,
             )
 
+            if hanchan is None:
+                return None
+
             logger.info(
                 f'{STATUS_LIST[status]} hanchan: id={hanchan._id}'
             )
