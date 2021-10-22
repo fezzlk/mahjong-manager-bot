@@ -6,7 +6,6 @@ from services import (
     user_service,
     config_service,
 )
-import json
 
 
 class ReplyMatchesUseCase:
