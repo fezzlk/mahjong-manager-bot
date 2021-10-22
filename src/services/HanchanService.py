@@ -63,7 +63,7 @@ class HanchanService(IHanchanService):
             return hanchan_repository.find_by_ids(session, ids)
 
     def get_current(self, line_room_id):
-        with session_scope as session:
+        with session_scope() as session:
             return hanchan_repository.find_one_by_line_room_id_and_status(
                 session,
                 line_room_id,
