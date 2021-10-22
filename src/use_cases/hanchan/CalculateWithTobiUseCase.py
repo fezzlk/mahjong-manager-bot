@@ -93,7 +93,7 @@ class CalculateWithTobiUseCase:
         reply_service.add_message(
             '一半荘お疲れ様でした。結果を表示します。'
         )
-        
+
         score_text_list = []
         for r in sorted(
             converted_scores.items(),
