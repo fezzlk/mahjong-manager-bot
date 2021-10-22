@@ -1,4 +1,5 @@
 import json
+from domains.Room import RoomMode
 from services import (
     request_info_service,
     match_service,
@@ -107,7 +108,7 @@ class AddPointByJsonTextUseCase:
         hanchan_service.archive(room_id)
 
         # ルームを待機モードにする
-        room_service.chmod(room_id, room_service.modes.wait)
+        room_service.chmod(room_id, RoomMode.wait)
 
         reply_service.add_message(
             '始める時は「_start」と入力してください。')

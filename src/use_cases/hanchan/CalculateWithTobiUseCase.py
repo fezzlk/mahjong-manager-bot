@@ -1,6 +1,6 @@
 """calculate"""
 
-import json
+from domains.Room import RoomMode
 from server import logger
 from services import (
     request_info_service,
@@ -114,7 +114,7 @@ class CalculateWithTobiUseCase:
         hanchan_service.archive(line_room_id)
 
         # ルームを待機モードにする
-        room_service.chmod(line_room_id, room_service.modes.wait)
+        room_service.chmod(line_room_id, RoomMode.wait)
 
         reply_service.add_message(
             '始める時は「_start」と入力してください。')
