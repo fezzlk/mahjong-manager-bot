@@ -2,7 +2,8 @@ from enum import Enum
 
 from linebot.models.events import Event
 
-from server import logger, line_bot_api
+from server import logger
+from messaging_api_setting import line_bot_api
 from services import (
     request_info_service,
     reply_service,

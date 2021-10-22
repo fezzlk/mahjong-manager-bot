@@ -4,7 +4,8 @@ from typing import List
 from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
-from server import logger, line_bot_api
+from server import logger
+from messaging_api_setting import line_bot_api
 from domains.User import User, UserMode
 
 

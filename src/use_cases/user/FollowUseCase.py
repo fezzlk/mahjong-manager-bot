@@ -1,4 +1,4 @@
-from server import line_bot_api
+from messaging_api_setting import line_bot_api
 from services import (
     request_info_service,
     user_service,

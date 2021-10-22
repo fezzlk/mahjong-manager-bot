@@ -8,7 +8,7 @@ from linebot.models import (
     PostbackTemplateAction,
 )
 
-from server import line_bot_api
+from messaging_api_setting import line_bot_api
 
 
 class RichMenuService:
