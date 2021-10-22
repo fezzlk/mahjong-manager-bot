@@ -6,7 +6,7 @@ If '$ flask run' is executed, this file is call at first.
 
 import os
 import sys
-sys.path.append("/src")
+sys.path.append(".")
 
 from dotenv import load_dotenv
 load_dotenv()
