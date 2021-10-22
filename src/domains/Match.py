@@ -30,7 +30,7 @@ class Match:
 # TODO: 値オブジェクト化
 # line_room_id は対戦結果が投稿された LINE Room ID, Rから始まる
 
-# result_ids は Result.id: int の 配列をjson化した文字列
+# hanchan_ids は Hanchan._id: int の 配列
 
 # status は Enum(0: disabled, 1: active, 2: archived)
 

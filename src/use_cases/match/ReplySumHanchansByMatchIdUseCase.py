@@ -4,7 +4,6 @@ from services import (
     hanchan_service,
     user_service,
 )
-import json
 
 
 class ReplySumHanchansByMatchIdUseCase:
@@ -12,7 +11,7 @@ class ReplySumHanchansByMatchIdUseCase:
     def execute(self, match_id: int) -> None:
         match = match_service.get(match_id)
 
-        ids = json.loads(match.result_ids)
+        ids = match.hanchan_ids
         date = match.created_at.strftime('%Y-%m-%d') + '\n',
         hanchans = hanchan_service.find_by_ids(ids)
 
@@ -20,7 +19,7 @@ class ReplySumHanchansByMatchIdUseCase:
         sum_hanchans = {}
 
         for i in range(len(ids)):
-            converted_scores = json.loads(hanchans[i].converted_scores)
+            converted_scores = hanchans[i].converted_scores
             hanchans_list.append(
                 f'第{i+1}回\n' + '\n'.join([
                     f'{user_service.get_name_by_line_user_id(r[0])}: \

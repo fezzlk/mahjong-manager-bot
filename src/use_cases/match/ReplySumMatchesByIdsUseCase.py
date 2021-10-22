@@ -7,7 +7,6 @@ from services import (
     config_service,
     request_info_service,
 )
-import json
 
 
 class ReplySumMatchesByIdsUseCase:
@@ -23,10 +22,10 @@ class ReplySumMatchesByIdsUseCase:
         reply_service.add_message(
             f'対戦ID={",".join(formatted_id_list)}の累計を表示します。'
         )
-        result_ids = []
+        hanchan_ids = []
         for match in matches:
-            result_ids += json.loads(match.result_ids)
-            ids = result_ids
+            hanchan_ids += match.hanchan_ids
+            ids = hanchan_ids
             match_id = ','.join(formatted_id_list)
             is_required_sum = True
             date = ''
@@ -34,7 +33,7 @@ class ReplySumMatchesByIdsUseCase:
 
             sum_hanchans = {}
             for i in range(len(ids)):
-                converted_scores = json.loads(hanchans[i].converted_scores)
+                converted_scores = hanchans[i].converted_scores
 
                 for user_id, converted_score in converted_scores.items():
                     if user_id not in sum_hanchans.keys():

@@ -1,4 +1,3 @@
-import json
 from typing import Dict, List
 from repositories import session_scope, hanchan_repository
 from server import logger
@@ -152,15 +151,6 @@ class HanchanService(IHanchanService):
                 targets = hanchan_repository.find_all(session)
             else:
                 targets = hanchan_repository.find_by_ids(session, ids)
-
-            for hanchan in targets:
-                if hanchan.raw_scores is not None:
-                    hanchan.raw_scores = json.loads(hanchan.raw_scores)
-
-                if hanchan.converted_scores is not None:
-                    hanchan.converted_scores = json.loads(
-                        hanchan.converted_scores
-                    )
 
             return targets
 

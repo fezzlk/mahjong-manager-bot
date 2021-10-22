@@ -72,14 +72,12 @@ class AddPointByJsonTextUseCase:
 
         # 結果の表示
         hanchan = hanchan_service.get_current(room_id)
-        converted_scores = json.loads(hanchan.converted_scores)
+        converted_scores = hanchan.converted_scores
         current_match = match_service.get_current()
-        hanchans = hanchan_service.find_by_ids(
-            json.loads(current_match.result_ids)
-        )
+        hanchans = hanchan_service.find_by_ids(current_match.hanchan_ids)
         sum_hanchans = {}
         for r in hanchans:
-            converted_scores = json.loads(r.converted_scores)
+            converted_scores = r.converted_scores
             for user_id, converted_score in converted_scores.items():
                 if user_id not in sum_hanchans.keys():
                     sum_hanchans[user_id] = 0

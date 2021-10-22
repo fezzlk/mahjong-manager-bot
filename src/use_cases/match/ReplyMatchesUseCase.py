@@ -24,7 +24,7 @@ class ReplyMatchesUseCase:
             '最近の4試合の結果を表示します。詳細は「_match <ID>」')
         for match in matches[:4]:
 
-            ids = json.loads(match.result_ids)
+            ids = match.hanchan_ids
             match_id = match._id
             is_required_sum = False
             date = match.created_at.strftime('%Y-%m-%d') + '\n'
@@ -32,7 +32,7 @@ class ReplyMatchesUseCase:
 
             sum_hanchans = {}
             for i in range(len(ids)):
-                converted_scores = json.loads(hanchans[i].converted_scores)
+                converted_scores = hanchans[i].converted_scores
 
                 for user_id, converted_score in converted_scores.items():
                     if user_id not in sum_hanchans.keys():
