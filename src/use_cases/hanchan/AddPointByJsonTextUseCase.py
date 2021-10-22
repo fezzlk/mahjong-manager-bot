@@ -87,7 +87,7 @@ class AddPointByJsonTextUseCase:
         reply_service.add_message(
             '一半荘お疲れ様でした。結果を表示します。'
         )
-        
+
         score_text_list = []
         for r in sorted(
             converted_scores.items(),
@@ -95,8 +95,8 @@ class AddPointByJsonTextUseCase:
             reverse=True
         ):
             name = user_service.get_name_by_line_user_id(r[0])
-            score = ("+" if r[1] > 0 else "") + r[1]
-            sum_score = ("+" if sum_hanchans[r[0]] > 0 else "") + sum_hanchans[r[0]]
+            score = ("+" if r[1] > 0 else "") + str(r[1])
+            sum_score = ("+" if sum_hanchans[r[0]] > 0 else "") + str(sum_hanchans[r[0]])
             score_text_list.append(
                 f'{name}: {score} ({sum_score})'
             )
