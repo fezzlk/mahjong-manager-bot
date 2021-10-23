@@ -18,7 +18,7 @@ class ReplySumHanchansUseCase:
         match = match_service.get_current(line_room_id)
 
         ids = match.hanchan_ids
-        date = match.created_at.strftime('%Y-%m-%d') + '\n',
+        date = match.created_at.strftime('%Y-%m-%d')
         hanchans = hanchan_service.find_by_ids(ids)
 
         hanchans_list = []
@@ -45,7 +45,7 @@ class ReplySumHanchansUseCase:
 
         reply_service.add_message('\n\n'.join(hanchans_list))
         reply_service.add_message(
-            '総計\n' + date + '\n'.join([
+            '総計\n' + date + '\n' + '\n'.join([
                 f'{user_service.get_name_by_line_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}'
                 for r in sorted(
                     sum_hanchans.items(),
