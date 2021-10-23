@@ -7,7 +7,7 @@ from tests.dummies import (
 from linebot.models import (
     TextSendMessage,
 )
-from server import line_bot_api
+from messaging_api_setting import line_bot_api
 
 
 def test_reply_to_user(mocker):
