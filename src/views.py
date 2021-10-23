@@ -2,7 +2,7 @@ from flask import Blueprint, request, abort, render_template, url_for, redirect
 from linebot import exceptions
 from db_setting import Engine
 from models import Base
-from server import app, handler, logger
+from server import handler, logger
 from models import Results, Hanchans
 from db_setting import Session
 from use_cases import (
@@ -21,7 +21,7 @@ from use_cases import (
 views_blueprint = Blueprint('views_blueprint', __name__, url_prefix='/')
 
 
-@app.route('/')
+@views_blueprint.route('/')
 def index():
     if request.args.get('message') is not None:
         message = request.args.get('message')
@@ -36,7 +36,7 @@ def index():
 #     return render_template('index.html', title='home', message='message')
 
 
-@app.route('/reset', methods=['POST'])
+@views_blueprint.route('/reset', methods=['POST'])
 def reset_db():
     Base.metadata.drop_all(bind=Engine)
     Base.metadata.create_all(bind=Engine)
@@ -44,7 +44,7 @@ def reset_db():
     return redirect(url_for('index', message='DBをリセットしました。'))
 
 
-@app.route('/migrate', methods=['POST'])
+@views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
     # Rooms.add_column(Engine, 'zoom_url')
     # Users.add_column(Engine, 'zoom_id')
@@ -69,7 +69,7 @@ def migrate():
     return redirect(url_for('index', message='migrateしました'))
 
 
-@app.route('/users')
+@views_blueprint.route('/users')
 def get_users():
     data = get_users_for_web_use_case.execute()
     keys = ['_id', 'name', 'line_user_id', 'jantama_name',
@@ -84,7 +84,7 @@ def get_users():
     )
 
 
-@app.route('/users/create', methods=['POST'])
+@views_blueprint.route('/users/create', methods=['POST'])
 def create_users():
     # name = request.form['name']
     # user_id = request.form['user_id']
@@ -92,14 +92,14 @@ def create_users():
     return redirect(url_for('get_users'))
 
 
-@app.route('/users/delete', methods=['POST'])
+@views_blueprint.route('/users/delete', methods=['POST'])
 def delete_users():
     target_id = request.args.get('target_id')
     delete_users_for_web_use_case.execute([int(target_id)])
     return redirect(url_for('get_users'))
 
 
-@app.route('/rooms')
+@views_blueprint.route('/rooms')
 def get_rooms():
     data = get_rooms_for_web_use_case.execute()
     keys = ['_id', 'line_room_id', 'zoom_url', 'mode', 'users']
@@ -113,19 +113,19 @@ def get_rooms():
     )
 
 
-@app.route('/rooms/create', methods=['POST'])
+@views_blueprint.route('/rooms/create', methods=['POST'])
 def create_rooms():
     return redirect(url_for('get_rooms'))
 
 
-@app.route('/rooms/delete', methods=['POST'])
+@views_blueprint.route('/rooms/delete', methods=['POST'])
 def delete_rooms():
     target_id = request.args.get('target_id')
     delete_rooms_for_web_use_case.execute([int(target_id)])
     return redirect(url_for('get_rooms'))
 
 
-@app.route('/hanchans')
+@views_blueprint.route('/hanchans')
 def get_hanchans():
     data = get_hanchans_for_web_use_case.execute()
     keys = ['_id', 'line_room_id', 'raw_scores',
@@ -141,19 +141,19 @@ def get_hanchans():
     )
 
 
-@app.route('/hanchans/create', methods=['POST'])
+@views_blueprint.route('/hanchans/create', methods=['POST'])
 def create_hanchans():
     return redirect(url_for('get_hanchans'))
 
 
-@app.route('/hanchans/delete', methods=['POST'])
+@views_blueprint.route('/hanchans/delete', methods=['POST'])
 def delete_hanchans():
     target_id = request.args.get('target_id')
     delete_hanchans_for_web_use_case.execute([int(target_id)])
     return redirect(url_for('get_hanchans'))
 
 
-@app.route('/matches')
+@views_blueprint.route('/matches')
 def get_matches():
     data = get_matches_for_web_use_case.execute()
     keys = ['_id', 'line_room_id', 'hanchan_ids', 'created_at', 'status', 'users']
@@ -167,19 +167,19 @@ def get_matches():
     )
 
 
-@app.route('/matches/create', methods=['POST'])
+@views_blueprint.route('/matches/create', methods=['POST'])
 def create_matches():
     return redirect(url_for('get_matches'))
 
 
-@app.route('/matches/delete', methods=['POST'])
+@views_blueprint.route('/matches/delete', methods=['POST'])
 def delete_matches():
     target_id = request.args.get('target_id')
     delete_matches_for_web_use_case.execute([int(target_id)])
     return redirect(url_for('get_matches'))
 
 
-@app.route('/configs')
+@views_blueprint.route('/configs')
 def get_configs():
     data = get_configs_for_web_use_case.execute()
     keys = ['_id', 'key', 'value', 'target_id']
@@ -193,19 +193,19 @@ def get_configs():
     )
 
 
-@app.route('/configs/create', methods=['POST'])
+@views_blueprint.route('/configs/create', methods=['POST'])
 def create_configs():
     return redirect(url_for('get_configs'))
 
 
-@app.route('/configs/delete', methods=['POST'])
+@views_blueprint.route('/configs/delete', methods=['POST'])
 def delete_configs():
     target_id = request.args.get('target_id')
     delete_configs_for_web_use_case.execute([int(target_id)])
     return redirect(url_for('get_configs'))
 
 
-@app.route("/callback", methods=['POST'])
+@views_blueprint.route("/callback", methods=['POST'])
 def callback():
     """ Endpoint for LINE messaging API """
 
