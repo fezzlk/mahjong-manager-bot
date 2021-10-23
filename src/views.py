@@ -18,6 +18,8 @@ from use_cases import (
     delete_users_for_web_use_case,
 )
 
+print('call views.py')
+
 
 @app.route('/')
 def index():

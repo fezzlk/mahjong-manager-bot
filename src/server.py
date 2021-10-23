@@ -26,5 +26,9 @@ import views
 import api
 import handle_event
 
+@app.route('/hello')
+def hello():
+    return 'hello'
+
 if __name__ == '__main__':
     app.run()
