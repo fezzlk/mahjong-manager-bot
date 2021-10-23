@@ -3,17 +3,19 @@ from services import (
     reply_service,
     hanchan_service,
     user_service,
+    request_info_service,
 )
 
 
 class ReplySumHanchansUseCase:
 
     def execute(self) -> None:
-        if match_service.count_results() == 0:
+        line_room_id = request_info_service.req_line_room_id
+        if match_service.count_results(line_room_id) == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。')
             return
-        match = match_service.get_current()
+        match = match_service.get_current(line_room_id)
 
         ids = match.hanchan_ids
         date = match.created_at.strftime('%Y-%m-%d') + '\n',

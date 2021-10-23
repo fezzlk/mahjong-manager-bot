@@ -9,12 +9,13 @@ from services import (
 class DropHanchanByIndexUseCase:
 
     def execute(self, i: int) -> None:
-        if match_service.count_results() == 0:
+        line_room_id = request_info_service.req_line_room_id
+        if match_service.count_results(line_room_id) == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
             return
-        current = match_service.get_current()
+        current = match_service.get_current(line_room_id)
         hanchan_ids = current.hanchan_ids
         room_id = request_info_service.req_line_room_id
         hanchan_service.disabled_by_id(room_id, hanchan_ids[i - 1])
