@@ -1,4 +1,5 @@
-from flask import Blueprint, request, render_template, url_for, redirect
+import os
+from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine
 from models import Base
 from models import Results, Hanchans
@@ -15,7 +16,9 @@ from use_cases import (
     delete_rooms_for_web_use_case,
     delete_users_for_web_use_case,
 )
+from linebot import WebhookHandler, exceptions
 
+handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])
 views_blueprint = Blueprint('views_blueprint', __name__, url_prefix='/')
 
 
@@ -199,3 +202,16 @@ def delete_configs():
     target_id = request.args.get('target_id')
     delete_configs_for_web_use_case.execute([int(target_id)])
     return redirect(url_for('get_configs'))
+
+
+@views_blueprint.route("/callback", methods=['POST'])
+def callback():
+    """ Endpoint for LINE messaging API """
+
+    signature = request.headers['X-Line-Signature']
+    body = request.get_data(as_text=True)
+    try:
+        handler.handle(body, signature)
+    except exceptions.InvalidSignatureError:
+        abort(400)
+    return 'OK'
