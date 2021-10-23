@@ -87,7 +87,7 @@ class MatchRepository:
     ) -> None:
         record = Matches(
             line_room_id=new_match.line_room_id,
-            hanchan_ids=json.dumps(new_match.hanchan_ids),
+            hanchan_ids=new_match.hanchan_ids,
             status=new_match.status,
         )
 

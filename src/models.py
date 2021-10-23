@@ -198,7 +198,7 @@ class Matches(Base):
 
     def __init__(self, line_room_id, hanchan_ids, status):
         self.room_id = line_room_id
-        self.result_ids = hanchan_ids
+        self.result_ids = json.dumps(hanchan_ids),
         self.status = status
 
     @staticmethod

@@ -15,8 +15,8 @@ class HanchanRepository:
         hanchan = Hanchans(
             room_id=new_hanchan.line_room_id,
             match_id=new_hanchan.match_id,
-            raw_scores=json.dumps(new_hanchan.raw_scores),
-            converted_scores=json.dumps(new_hanchan.converted_scores),
+            raw_scores=new_hanchan.raw_scores,
+            converted_scores=new_hanchan.converted_scores,
             status=new_hanchan.status,
         )
         session.add(hanchan)
