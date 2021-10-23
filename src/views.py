@@ -1,8 +1,6 @@
-from flask import Blueprint, request, abort, render_template, url_for, redirect
-from linebot import exceptions
+from flask import Blueprint, request, render_template, url_for, redirect
 from db_setting import Engine
 from models import Base
-from server import handler, logger
 from models import Results, Hanchans
 from db_setting import Session
 from use_cases import (
@@ -40,7 +38,6 @@ def index():
 def reset_db():
     Base.metadata.drop_all(bind=Engine)
     Base.metadata.create_all(bind=Engine)
-    logger.info('reset DB')
     return redirect(url_for('index', message='DBをリセットしました。'))
 
 
@@ -65,7 +62,6 @@ def migrate():
         session.add(h)
     session.commit()
 
-    logger.info('migrate')
     return redirect(url_for('index', message='migrateしました'))
 
 
@@ -203,16 +199,3 @@ def delete_configs():
     target_id = request.args.get('target_id')
     delete_configs_for_web_use_case.execute([int(target_id)])
     return redirect(url_for('get_configs'))
-
-
-@views_blueprint.route("/callback", methods=['POST'])
-def callback():
-    """ Endpoint for LINE messaging API """
-
-    signature = request.headers['X-Line-Signature']
-    body = request.get_data(as_text=True)
-    try:
-        handler.handle(body, signature)
-    except exceptions.InvalidSignatureError:
-        abort(400)
-    return 'OK'
