@@ -179,8 +179,15 @@ class HanchanService(IHanchanService):
             reverse=True,
         )
 
-        # 計算方法合わせて点数調整用の padding を設定
+        # 素点計算
+        result = {}
+        tobasare_players = []
+        isTobi = not(tobashita_player_id is None or
+                     tobashita_player_id == '')
+
+        # 計算方法に合わせて点数調整用の adjuster(丸めの境界値の調整) と padding(端数調整) を設定
         padding = 0
+        adjuster = 100000
         if rounding_method == '五捨六入':
             padding = 400
         elif rounding_method == '四捨五入':
@@ -189,12 +196,9 @@ class HanchanService(IHanchanService):
             padding = 0
         elif rounding_method == '切り上げ':
             padding = 900
+        else:
+            adjuster = -30000
 
-        # 素点計算
-        result = {}
-        tobasare_players = []
-        isTobi = not(tobashita_player_id is None or
-                     tobashita_player_id == '')
         # 2~4位
         for t in sorted_points[1:]:
             player = t[0]
@@ -203,8 +207,10 @@ class HanchanService(IHanchanService):
             if (point < 0):
                 tobasare_players.append(player)
 
-            # マイナス点の場合の端数処理を考慮するため、100000足して130(=(100000+30000)/1000)を引く
-            result[player] = int((point + 100000 + padding) / 1000) - 130
+            # 3万点切り上げ切り捨ての場合、一時的に30000点を引き、int の丸めを利用する
+            # ex. 切り上げ: int(-10100/1000) -> -10000, 切り捨て: int(10100/1000) -> 10000
+            # その他の場合、マイナス点の場合の丸め方をプラスの丸め方に合わせるため、一時的に100000足す
+            result[player] = int((point + adjuster + padding) / 1000) - 30 - (adjuster // 1000)
 
         # 1位(他プレイヤーの点数合計×(-1))
         result[sorted_points[0][0]] = -1 * sum(result.values())
