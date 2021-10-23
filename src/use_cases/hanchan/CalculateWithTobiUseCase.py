@@ -1,7 +1,6 @@
 """calculate"""
 
 from domains.Room import RoomMode
-from server import logger
 from services import (
     request_info_service,
     user_service,
@@ -24,7 +23,7 @@ class CalculateWithTobiUseCase:
         # 現在 active な result (current)のポイントを計算対象にする
         current = hanchan_service.get_current(line_room_id)
         if current is None:
-            logger.error(
+            print(
                 'current points is not found.'
             )
             return

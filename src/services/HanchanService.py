@@ -1,6 +1,5 @@
 from typing import Dict, List
 from repositories import session_scope, hanchan_repository
-from server import logger
 from domains.Hanchan import Hanchan
 from domains.Match import Match
 from .interfaces.IHanchanService import IHanchanService
@@ -28,7 +27,7 @@ class HanchanService(IHanchanService):
                 new_hanchan,
             )
 
-        logger.info(
+        print(
             f'create hanchan: to room "{line_room_id}"'
         )
 
@@ -48,7 +47,7 @@ class HanchanService(IHanchanService):
                 status=0,
             )
 
-            logger.info(
+            print(
                 f'disabled: id={hanchan_id}'
             )
 
@@ -112,7 +111,7 @@ class HanchanService(IHanchanService):
                 converted_scores=converted_scores,
             )
 
-            logger.info(
+            print(
                 f'update hanchan: id={hanchan._id}'
             )
 
@@ -133,7 +132,7 @@ class HanchanService(IHanchanService):
             if hanchan is None:
                 return None
 
-            logger.info(
+            print(
                 f'{STATUS_LIST[status]} hanchan: id={hanchan._id}'
             )
 
@@ -160,7 +159,7 @@ class HanchanService(IHanchanService):
             for target in targets:
                 session.delete(target)
 
-            logger.info(f'delete: id={ids}')
+            print(f'delete: id={ids}')
             return targets
 
     def run_calculate(
@@ -221,7 +220,7 @@ class HanchanService(IHanchanService):
                 if t[0] == tobashita_player_id:
                     result[t[0]] += tobi_prize * len(tobasare_players)
                 else:
-                    logger.warning(
+                    print(
                         'tobashita_player_id is not matching'
                     )
         return result

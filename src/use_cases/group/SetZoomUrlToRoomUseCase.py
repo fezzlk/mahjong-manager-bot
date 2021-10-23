@@ -4,7 +4,6 @@ from services import (
     user_service,
     room_service,
 )
-from server import logger
 
 
 class SetZoomUrlToRoomUseCase:
@@ -15,7 +14,7 @@ class SetZoomUrlToRoomUseCase:
             user = user_service.find_by_line_user_id(line_user_id)
 
             if user is None:
-                logger.warning(
+                print(
                     f'set_zoom_url: user(id={line_user_id}) is not found')
                 return
 

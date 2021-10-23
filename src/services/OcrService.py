@@ -5,7 +5,6 @@ import os
 from typing import Dict
 from google.cloud import vision
 from google.oauth2 import service_account
-from server import logger
 
 
 class OcrService:
@@ -25,7 +24,7 @@ class OcrService:
 
     def isResultImage(self) -> bool:
         if self.result is None:
-            logger.warning(
+            print(
                 'the requested image is not loaded(required execute self.run()'
             )
             return
@@ -36,7 +35,7 @@ class OcrService:
 
     def run(self, content: str = None) -> None:
         if self.client is None:
-            logger.warning(
+            print(
                 'ocr_service is not setup'
             )
             return

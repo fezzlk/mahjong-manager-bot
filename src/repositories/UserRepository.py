@@ -1,7 +1,6 @@
 from models import Users
 from domains.User import User, UserMode
 from sqlalchemy.orm.session import Session as BaseSession
-from server import logger
 
 
 class UserRepository:
@@ -41,7 +40,7 @@ class UserRepository:
             return None
 
         if len(records) > 1:
-            logger.warning("warning: find multi users by name")
+            print("warning: find multi users by name")
 
         return User(
             name=records[0].name,

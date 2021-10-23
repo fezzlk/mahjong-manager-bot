@@ -2,7 +2,6 @@ from .interfaces.IConfigService import IConfigService
 from typing import List
 from repositories import session_scope, config_repository
 from domains.Config import Config
-from server import logger
 
 DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10', '-20']),
                    '飛び賞': '10', 'チップ': 'なし', '人数': '4',
@@ -84,7 +83,7 @@ class ConfigService(IConfigService):
                 )
                 config_repository.create(session, new_config)
 
-        logger.info(
+        print(
             f'update:{key}:{value}:{target_id}'
         )
 
@@ -92,4 +91,4 @@ class ConfigService(IConfigService):
         with session_scope() as session:
             config_repository.delete_by_ids(session, ids)
 
-        logger.info(f'delete: id={ids}')
+        print(f'delete: id={ids}')
