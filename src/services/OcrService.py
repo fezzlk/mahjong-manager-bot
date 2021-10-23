@@ -43,7 +43,7 @@ class OcrService:
 
         image = vision.Image(content=content)
 
-        logger.info(
+        print(
             'ocr: text detection running'
         )
         response = self.client.text_detection(image=image)
@@ -60,7 +60,7 @@ class OcrService:
 
     def get_points(self) -> Dict[str, int]:
         if self.result is None:
-            logger.warning(
+            print(
                 'the requested image is not loaded(required execute self.run()'
             )
         for r in self.result:
