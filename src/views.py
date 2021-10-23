@@ -1,4 +1,4 @@
-from flask import request, abort, render_template, url_for, redirect
+from flask import Blueprint, request, abort, render_template, url_for, redirect
 from linebot import exceptions
 from db_setting import Engine
 from models import Base
@@ -18,7 +18,7 @@ from use_cases import (
     delete_users_for_web_use_case,
 )
 
-print('call views.py')
+views_blueprint = Blueprint('views_blueprint', __name__, url_prefix='/')
 
 
 @app.route('/')

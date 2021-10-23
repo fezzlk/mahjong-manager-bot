@@ -22,13 +22,13 @@ from db_setting import Engine
 from models import Base
 Base.metadata.create_all(bind=Engine)
 
-import views
-import api
-import handle_event
+from views import views_blueprint
+from api import api_blueprint
 
-@app.route('/hello')
-def hello():
-    return 'hello'
+app.register_blueprint(views_blueprint)
+app.register_blueprint(api_blueprint)
+
+import handle_event
 
 if __name__ == '__main__':
     app.run()
