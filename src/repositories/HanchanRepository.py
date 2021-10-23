@@ -44,8 +44,8 @@ class HanchanRepository:
             Hanchan(
                 _id=record.id,
                 line_room_id=record.room_id,
-                raw_scores=json.loads(record.raw_scores),
-                converted_scores=json.loads(record.converted_scores),
+                raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
+                converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
                 match_id=record.match_id,
                 status=record.status,
             )
@@ -72,8 +72,8 @@ class HanchanRepository:
         return Hanchan(
             _id=record.id,
             line_room_id=record.room_id,
-            raw_scores=json.loads(record.raw_scores),
-            converted_scores=json.loads(record.converted_scores),
+            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
+            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
@@ -98,8 +98,8 @@ class HanchanRepository:
         return Hanchan(
             _id=record.id,
             line_room_id=record.room_id,
-            raw_scores=json.loads(record.raw_scores),
-            converted_scores=json.loads(record.converted_scores),
+            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
+            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
@@ -120,8 +120,8 @@ class HanchanRepository:
             Hanchan(
                 _id=record.id,
                 line_room_id=record.room_id,
-                raw_scores=json.loads(record.raw_scores),
-                converted_scores=json.loads(record.converted_scores),
+                raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
+                converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
                 match_id=record.match_id,
                 status=record.status,
             )
@@ -150,8 +150,8 @@ class HanchanRepository:
         return Hanchan(
             _id=record.id,
             line_room_id=record.room_id,
-            raw_scores=json.loads(record.raw_scores),
-            converted_scores=json.loads(record.converted_scores),
+            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
+            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
@@ -186,8 +186,8 @@ class HanchanRepository:
         return Hanchan(
             _id=record.id,
             line_room_id=record.room_id,
-            raw_scores=json.loads(record.raw_scores),
-            converted_scores=json.loads(record.converted_scores),
+            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
+            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
@@ -216,8 +216,8 @@ class HanchanRepository:
         return Hanchan(
             _id=record.id,
             line_room_id=record.room_id,
-            raw_scores=json.loads(record.raw_scores),
-            converted_scores=json.loads(record.converted_scores),
+            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
+            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
@@ -244,8 +244,8 @@ class HanchanRepository:
         return Hanchan(
             _id=record.id,
             line_room_id=record.room_id,
-            raw_scores=json.loads(record.raw_scores),
-            converted_scores=json.loads(record.converted_scores),
+            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
+            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
