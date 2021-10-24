@@ -2,7 +2,6 @@ from typing import List
 from .interfaces.IRoomService import IRoomService
 from domains.Room import Room, RoomMode
 from repositories import session_scope, room_repository
-from server import logger
 
 
 class RoomService(IRoomService):
@@ -18,7 +17,7 @@ class RoomService(IRoomService):
                     mode=RoomMode.wait,
                 )
                 room_repository.create(session, room)
-                logger.info(f'create room: {room_id}')
+                print(f'create room: {room_id}')
 
             return room
 
@@ -28,7 +27,7 @@ class RoomService(IRoomService):
         mode: RoomMode,
     ) -> Room:
         if mode not in RoomMode:
-            logger.warning(
+            print(
                 'failed to change mode: unexpected mode request received.'
             )
             return None
@@ -40,7 +39,7 @@ class RoomService(IRoomService):
                 mode
             )
             if record is None:
-                logger.warning(
+                print(
                     'failed to change mode: room is not found'
                 )
                 return None
@@ -53,7 +52,7 @@ class RoomService(IRoomService):
             target = room_repository.find_one_by_room_id(session, line_room_id)
 
             if target is None:
-                logger.error(
+                print(
                     'failed to get mode: room is not found'
                 )
                 raise Exception('トークルームが登録されていません。招待し直してください。')
@@ -71,7 +70,7 @@ class RoomService(IRoomService):
         with session_scope() as session:
             room_repository.delete_by_ids(session, ids)
 
-        logger.info(f'delete: id={ids}')
+        print(f'delete: id={ids}')
 
     def set_zoom_url(
         self,
@@ -86,11 +85,11 @@ class RoomService(IRoomService):
             )
 
             if record is None:
-                logger.error(
+                print(
                     f'fail to set zoom url: room "{line_room_id}" is not found')
                 raise Exception('トークルームが登録されていません。招待し直してください。')
 
-            logger.info(f'set_zoom_url: {zoom_url} to {line_room_id}')
+            print(f'set_zoom_url: {zoom_url} to {line_room_id}')
             return record
 
     def get_zoom_url(
@@ -101,12 +100,12 @@ class RoomService(IRoomService):
             target = room_repository.find_one_by_room_id(session, line_room_id)
 
             if target is None:
-                logger.error(
+                print(
                     f'fail to get zoom url: room "{line_room_id}" is not found.')
                 raise Exception('トークルームが登録されていません。招待し直してください。')
 
             if target.zoom_url is None:
-                logger.warning(
+                print(
                     f'fail to get zoom url: room "{line_room_id}" does not have zoom url.')
                 return None
 

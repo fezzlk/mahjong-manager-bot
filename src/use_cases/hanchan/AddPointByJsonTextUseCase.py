@@ -62,19 +62,19 @@ class AddPointByJsonTextUseCase:
             rounding_method=config_service.get_value_by_key(line_room_id, '端数計算方法'),
         )
 
-        room_id = request_info_service.req_line_room_id
+        line_room_id = request_info_service.req_line_room_id
 
         # その半荘の結果を更新
-        hanchan_service.update_converted_score(room_id, calculate_result)
+        hanchan_service.update_converted_score(line_room_id, calculate_result)
 
         # 総合結果に半荘結果を追加
-        current_result = hanchan_service.get_current(room_id)
-        match_service.add_result(room_id, current_result.id)
+        current_result = hanchan_service.get_current(line_room_id)
+        match_service.add_result(line_room_id, current_result.id)
 
         # 結果の表示
-        hanchan = hanchan_service.get_current(room_id)
+        hanchan = hanchan_service.get_current(line_room_id)
         converted_scores = hanchan.converted_scores
-        current_match = match_service.get_current()
+        current_match = match_service.get_current(line_room_id)
         hanchans = hanchan_service.find_by_ids(current_match.hanchan_ids)
         sum_hanchans = {}
         for r in hanchans:
@@ -109,10 +109,10 @@ class AddPointByJsonTextUseCase:
         )
 
         # 一半荘の結果をアーカイブ
-        hanchan_service.archive(room_id)
+        hanchan_service.archive(line_room_id)
 
         # ルームを待機モードにする
-        room_service.chmod(room_id, RoomMode.wait)
+        room_service.chmod(line_room_id, RoomMode.wait)
 
         reply_service.add_message(
             '始める時は「_start」と入力してください。')

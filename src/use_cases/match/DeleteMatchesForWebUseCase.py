@@ -3,7 +3,6 @@ from services import (
     match_service,
     hanchan_service,
 )
-from server import logger
 
 
 class DeleteMatchesForWebUseCase:
@@ -12,4 +11,4 @@ class DeleteMatchesForWebUseCase:
         targets = match_service.delete(target_ids)
         for target in targets:
             hanchan_service.delete(target.hanchan_ids)
-        logger.info(f'delete match: id={target_ids}')
+        print(f'delete match: id={target_ids}')

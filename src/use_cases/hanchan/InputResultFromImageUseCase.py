@@ -1,4 +1,3 @@
-from server import logger
 from services import (
     ocr_service,
     reply_service,
@@ -21,7 +20,7 @@ class InputResultFromImageUseCase:
             reply_service.add_submit_results_by_ocr_menu(results)
 
         else:
-            logger.warning(
+            print(
                 'this image is not result of jantama'
             )
         ocr_service.delete_result()

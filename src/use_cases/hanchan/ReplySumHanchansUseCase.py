@@ -3,20 +3,22 @@ from services import (
     reply_service,
     hanchan_service,
     user_service,
+    request_info_service,
 )
 
 
 class ReplySumHanchansUseCase:
 
     def execute(self) -> None:
-        if match_service.count_results() == 0:
+        line_room_id = request_info_service.req_line_room_id
+        if match_service.count_results(line_room_id) == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。')
             return
-        match = match_service.get_current()
+        match = match_service.get_current(line_room_id)
 
         ids = match.hanchan_ids
-        date = match.created_at.strftime('%Y-%m-%d') + '\n',
+        date = match.created_at.strftime('%Y-%m-%d')
         hanchans = hanchan_service.find_by_ids(ids)
 
         hanchans_list = []
@@ -43,7 +45,7 @@ class ReplySumHanchansUseCase:
 
         reply_service.add_message('\n\n'.join(hanchans_list))
         reply_service.add_message(
-            '総計\n' + date + '\n'.join([
+            '総計\n' + date + '\n' + '\n'.join([
                 f'{user_service.get_name_by_line_user_id(r[0])}: {"+" if r[1] > 0 else ""}{r[1]}'
                 for r in sorted(
                     sum_hanchans.items(),

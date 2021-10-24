@@ -8,7 +8,7 @@ from services import (
     rich_menu_service,
     reply_service,
 )
-from server import line_bot_api
+from messaging_api_setting import line_bot_api
 
 
 def test_execute(mocker):

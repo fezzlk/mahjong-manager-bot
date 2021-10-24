@@ -2,7 +2,7 @@ from services.RichMenuService import RichMenuService
 from tests.dummies import (
     generate_dummy_user_list,
 )
-from server import line_bot_api
+from messaging_api_setting import line_bot_api
 
 
 def test_success(mocker):

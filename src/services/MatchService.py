@@ -2,7 +2,6 @@ from typing import List
 from .interfaces.IMatchService import IMatchService
 from repositories import session_scope, match_repository
 from domains.Match import Match
-from server import logger
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
@@ -35,7 +34,7 @@ class MatchService(IMatchService):
             )
             match_repository.create(session, new_match)
 
-            logger.info(f'create match: room "{line_room_id}"')
+            print(f'create match: room "{line_room_id}"')
             return new_match
 
     def add_hanchan_id(
@@ -50,7 +49,7 @@ class MatchService(IMatchService):
                 hanchan_id=hanchan_id,
             )
 
-            logger.info(
+            print(
                 f'add hanchan id to match: match_id={record._id}'
             )
 
@@ -63,7 +62,7 @@ class MatchService(IMatchService):
                 line_room_id=line_room_id,
                 hanchan_ids=hanchan_ids,
             )
-            logger.info(
+            print(
                 f'update hanchan ids of match: match_id={match._id}'
             )
             return match
@@ -71,7 +70,7 @@ class MatchService(IMatchService):
     def count_results(self, line_room_id: str) -> int:
         current = self.get_current(line_room_id)
         if current is None:
-            logger.warning(
+            print(
                 'current match is not found'
             )
             return 0
@@ -89,7 +88,7 @@ class MatchService(IMatchService):
                 status,
             )
 
-            logger.info(
+            print(
                 f'{STATUS_LIST[status]} match: id={record._id}'
             )
 
@@ -138,5 +137,5 @@ class MatchService(IMatchService):
             targets = match_repository.find_by_ids(session, target_ids)
             for target in targets:
                 session.delete(target)
-            logger.info(f'delete: id={target_ids}')
+            print(f'delete: id={target_ids}')
             return targets

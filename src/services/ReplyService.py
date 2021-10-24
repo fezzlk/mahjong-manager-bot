@@ -8,7 +8,7 @@ from linebot.models import (
 )
 
 import json
-from server import line_bot_api
+from messaging_api_setting import line_bot_api
 from .interfaces.IReplyService import IReplyService
 from linebot.models.events import Event
 

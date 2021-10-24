@@ -4,7 +4,7 @@ from typing import List
 from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
-from server import logger, line_bot_api
+from messaging_api_setting import line_bot_api
 from domains.User import User, UserMode
 
 
@@ -14,7 +14,7 @@ class UserService(IUserService):
         with session_scope() as session:
             user_repository.delete_one_by_line_user_id(session, user_id)
 
-            logger.info(f'delete: {user_id}')
+            print(f'delete: {user_id}')
 
     def find_or_create_by_profile(
         self,
@@ -49,7 +49,7 @@ class UserService(IUserService):
                 new_user,
             )
 
-            logger.info(f'create: {new_user.line_user_id} {new_user.name}')
+            print(f'create: {new_user.line_user_id} {new_user.name}')
 
             return new_user
 
@@ -60,7 +60,7 @@ class UserService(IUserService):
         with session_scope() as session:
             user_repository.delete_by_ids(session, ids)
 
-        logger.info(f'delete: id={ids}')
+        print(f'delete: id={ids}')
 
     def get(
         self,
@@ -96,7 +96,7 @@ class UserService(IUserService):
                 )
 
                 if target is None:
-                    logger.warning(f'user({line_user_id}) is not found')
+                    print(f'user({line_user_id}) is not found')
                     return line_user_id
                 else:
                     return target.name
@@ -109,7 +109,7 @@ class UserService(IUserService):
             target = user_repository.find_one_by_name(session, name)
 
             if target is None:
-                logger.warning(f'user({name}) is not found')
+                print(f'user({name}) is not found')
                 return name
 
             return target.line_user_id
@@ -129,7 +129,7 @@ class UserService(IUserService):
                 mode=mode,
             )
 
-            logger.info(f'chmod: {line_user_id}: {mode.value}')
+            print(f'chmod: {line_user_id}: {mode.value}')
 
             return user
 
@@ -138,7 +138,7 @@ class UserService(IUserService):
             target = user_repository.find_one_by_line_user_id(session, user_id)
 
             if target is None:
-                logger.error(f'user is not found: {user_id}')
+                print(f'user is not found: {user_id}')
                 raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
 
             return target.mode
@@ -155,7 +155,7 @@ class UserService(IUserService):
                 zoom_url=zoom_url,
             )
 
-        logger.info(f'set_user_url: {user.zoom_url} to {line_user_id}')
+        print(f'set_user_url: {user.zoom_url} to {line_user_id}')
         return user
 
     def get_zoom_url(self, line_user_id: str) -> str:
@@ -163,11 +163,11 @@ class UserService(IUserService):
             target = user_repository.find_one_by_line_user_id(session, line_user_id)
 
             if target is None:
-                logger.error(f'user_services: user "{line_user_id}" is not found')
+                print(f'user_services: user "{line_user_id}" is not found')
                 raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
 
             if target.zoom_url is None:
-                logger.warning(
+                print(
                     f'user_services: zoom id of user "{line_user_id}" is None')
                 return None
 

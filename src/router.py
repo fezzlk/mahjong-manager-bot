@@ -2,7 +2,7 @@ from enum import Enum
 
 from linebot.models.events import Event
 
-from server import logger, line_bot_api
+from messaging_api_setting import line_bot_api
 from services import (
     request_info_service,
     reply_service,
@@ -89,7 +89,7 @@ class RCommands(Enum):
 
 
 def root(event: Event):
-    logger.info(f'receive {event.type} event')
+    print(f'receive {event.type} event')
     request_info_service.set_req_info(event)
     isEnabledReply = True
 
@@ -110,7 +110,7 @@ def root(event: Event):
             postback(event)
 
     except BaseException as err:
-        logger.exception(err)
+        print(err)
         reply_service.add_message(str(err))
 
     if isEnabledReply:
@@ -125,7 +125,7 @@ def textMessage(event: Event):
     elif event.source.type == 'user':
         routing_by_text(event)
     else:
-        logger.info(
+        print(
             f'error: message.source.type: {event.source.type}'
         )
         raise BaseException('this source type is not supported')
