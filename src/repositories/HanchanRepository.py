@@ -12,15 +12,7 @@ class HanchanRepository:
         session: BaseSession,
         new_hanchan: Hanchan,
     ) -> None:
-        bottom_record = session\
-            .query(Hanchans)\
-            .order_by(Hanchans.id.desc())\
-            .first()
-
-        last_id = bottom_record.id if bottom_record is not None else 0
-
         hanchan = Hanchans(
-            id=last_id + 1,
             room_id=new_hanchan.line_room_id,
             match_id=new_hanchan.match_id,
             raw_scores=new_hanchan.raw_scores,

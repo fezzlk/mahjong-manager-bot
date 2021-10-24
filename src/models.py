@@ -154,10 +154,7 @@ class Hanchans(Base):
         status,
         raw_scores={},
         converted_scores={},
-        id=None,
     ):
-        if id is not None:
-            self.id = id
         self.room_id = room_id
         self.raw_scores = json.dumps(raw_scores)
         self.converted_scores = json.dumps(converted_scores)
