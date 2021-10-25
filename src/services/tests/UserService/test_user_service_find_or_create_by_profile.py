@@ -15,7 +15,7 @@ def test_create_new_user():
     # Assert
     assert isinstance(result, User)
     assert result.line_user_id == dummy_profile.user_id
-    assert result.line_name == dummy_profile.display_name
+    assert result.line_user_name == dummy_profile.display_name
 
 
 def test_find_exist_user():
@@ -32,4 +32,4 @@ def test_find_exist_user():
     # Assert
     assert isinstance(result, User)
     assert result.line_user_id == dummy_user.line_user_id
-    assert result.line_name == dummy_user.line_name
+    assert result.line_user_name == dummy_user.line_user_name

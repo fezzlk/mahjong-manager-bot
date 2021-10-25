@@ -29,7 +29,7 @@ class Users(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    line_name = Column(String(255), nullable=False)
+    line_user_name = Column(String(255), nullable=False)
     # line_user_id is unique
     line_user_id = Column(String(255), nullable=False)
     zoom_url = Column(String(255), nullable=True)
@@ -47,8 +47,8 @@ class Users(Base):
         back_populates="users"
     )
 
-    def __init__(self, line_name, line_user_id, mode, zoom_url=None, jantama_name=None):
-        self.line_name = line_name
+    def __init__(self, line_user_name, line_user_id, mode, zoom_url=None, jantama_name=None):
+        self.line_user_name = line_user_name
         self.zoom_url = zoom_url
         self.jantama_name = jantama_name
         self.line_user_id = line_user_id

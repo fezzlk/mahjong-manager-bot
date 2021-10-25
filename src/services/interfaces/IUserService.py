@@ -9,7 +9,7 @@ class IUserService(metaclass=ABCMeta):
     @abstractmethod
     def get_line_user_id_by_name(
         self,
-        line_name: str,
+        line_user_name: str,
     ) -> str:
         pass
 
@@ -30,7 +30,7 @@ class IUserService(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        line_name: str,
+        line_user_name: str,
         line_user_id: str,
     ) -> User:
         pass

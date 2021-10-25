@@ -33,12 +33,12 @@ class UserService(IUserService):
 
     def create(
         self,
-        line_name: str,
+        line_user_name: str,
         line_user_id: str,
     ) -> User:
         with session_scope() as session:
             new_user = User(
-                line_name=line_name,
+                line_user_name=line_user_name,
                 line_user_id=line_user_id,
                 zoom_url=None,
                 mode=UserMode.wait,
@@ -49,7 +49,7 @@ class UserService(IUserService):
                 new_user,
             )
 
-            print(f'create: {new_user.line_user_id} {new_user.line_name}')
+            print(f'create: {new_user.line_user_id} {new_user.line_user_name}')
 
             return new_user
 
@@ -99,18 +99,18 @@ class UserService(IUserService):
                     print(f'user({line_user_id}) is not found')
                     return line_user_id
                 else:
-                    return target.line_name
+                    return target.line_user_name
 
     def get_line_user_id_by_name(
         self,
-        line_name: str,
+        line_user_name: str,
     ) -> str:
         with session_scope() as session:
-            target = user_repository.find_one_by_name(session, line_name)
+            target = user_repository.find_one_by_name(session, line_user_name)
 
             if target is None:
-                print(f'user({line_name}) is not found')
-                return line_name
+                print(f'user({line_user_name}) is not found')
+                return line_user_name
 
             return target.line_user_id
 

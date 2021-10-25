@@ -30,7 +30,7 @@ def test_hit_1_record():
         assert len(result) == len(other_users)
         for i in range(len(result)):
             assert isinstance(result[i], User)
-            assert result[i].line_name == other_users[i].line_name
+            assert result[i].line_user_name == other_users[i].line_user_name
             assert result[i].line_user_id == other_users[i].line_user_id
             assert result[i].zoom_url == other_users[i].zoom_url
             assert result[i].mode == other_users[i].mode
@@ -63,7 +63,7 @@ def test_hit_0_record():
         assert len(result) == len(dummy_users)
         for i in range(len(result)):
             assert isinstance(result[i], User)
-            assert result[i].line_name == dummy_users[i].line_name
+            assert result[i].line_user_name == dummy_users[i].line_user_name
             assert result[i].line_user_id == dummy_users[i].line_user_id
             assert result[i].zoom_url == dummy_users[i].zoom_url
             assert result[i].mode == dummy_users[i].mode

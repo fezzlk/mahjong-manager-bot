@@ -16,7 +16,7 @@ class IUserRepository(metaclass=ABCMeta):
     def find_one_by_name(
         self,
         session: BaseSession,
-        line_name: str,
+        line_user_name: str,
     ) -> User:
         pass
 

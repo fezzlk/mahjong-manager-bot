@@ -19,7 +19,7 @@ class UserRepository:
             return None
 
         return User(
-            line_name=record.line_name,
+            line_user_name=record.line_user_name,
             line_user_id=record.line_user_id,
             zoom_url=record.zoom_url,
             mode=UserMode[record.mode],
@@ -29,21 +29,21 @@ class UserRepository:
     def find_one_by_name(
         self,
         session: BaseSession,
-        line_name: str,
+        line_user_name: str,
     ) -> User:
         records = session\
             .query(Users)\
-            .filter(Users.line_name == line_name)\
+            .filter(Users.line_user_name == line_user_name)\
             .all()
 
         if len(records) == 0:
             return None
 
         if len(records) > 1:
-            print("warning: find multi users by line_name")
+            print("warning: find multi users by line_user_name")
 
         return User(
-            line_name=records[0].line_name,
+            line_user_name=records[0].line_user_name,
             line_user_id=records[0].line_user_id,
             zoom_url=records[0].zoom_url,
             mode=UserMode[records[0].mode],
@@ -63,7 +63,7 @@ class UserRepository:
 
         return [
             User(
-                line_name=record.line_name,
+                line_user_name=record.line_user_name,
                 line_user_id=record.line_user_id,
                 zoom_url=record.zoom_url,
                 mode=UserMode[record.mode],
@@ -84,7 +84,7 @@ class UserRepository:
         return [
             User(
                 _id=record.id,
-                line_name=record.line_name,
+                line_user_name=record.line_user_name,
                 line_user_id=record.line_user_id,
                 zoom_url=record.zoom_url,
                 mode=UserMode[record.mode],
@@ -99,7 +99,7 @@ class UserRepository:
         new_user: User,
     ) -> None:
         record = Users(
-            line_name=new_user.line_name,
+            line_user_name=new_user.line_user_name,
             line_user_id=new_user.line_user_id,
             zoom_url=new_user.zoom_url,
             mode=new_user.mode.value,
@@ -145,7 +145,7 @@ class UserRepository:
 
         return User(
             _id=record.id,
-            line_name=record.line_name,
+            line_user_name=record.line_user_name,
             line_user_id=record.line_user_id,
             zoom_url=record.zoom_url,
             mode=UserMode[record.mode],
@@ -170,7 +170,7 @@ class UserRepository:
 
         return User(
             _id=record.id,
-            line_name=record.line_name,
+            line_user_name=record.line_user_name,
             line_user_id=record.line_user_id,
             zoom_url=record.zoom_url,
             mode=UserMode[record.mode],

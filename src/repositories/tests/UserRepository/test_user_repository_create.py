@@ -19,7 +19,7 @@ def test_success():
             session,
         )
         assert len(result) == 1
-        assert result[0].line_name == dummy_user.line_name
+        assert result[0].line_user_name == dummy_user.line_user_name
         assert result[0].line_user_id == dummy_user.line_user_id
         assert result[0].zoom_url == dummy_user.zoom_url
         assert result[0].mode == dummy_user.mode

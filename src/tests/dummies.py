@@ -56,7 +56,7 @@ def generate_dummy_config_list():
 def generate_dummy_user_list():
     return [
         User(
-            line_name="test user1",
+            line_user_name="test user1",
             line_user_id="U0123456789abcdefghijklmnopqrstu1",
             zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
@@ -65,7 +65,7 @@ def generate_dummy_user_list():
             _id=1,
         ),
         User(
-            line_name="test user2",
+            line_user_name="test user2",
             line_user_id="U0123456789abcdefghijklmnopqrstu2",
             zoom_url="https://us00web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
@@ -74,7 +74,7 @@ def generate_dummy_user_list():
             _id=2,
         ),
         User(
-            line_name="test user3",
+            line_user_name="test user3",
             line_user_id="U0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us00web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
@@ -82,9 +82,9 @@ def generate_dummy_user_list():
             matches=[],
             _id=3,
         ),
-        # same line_name _id=3
+        # same line_user_name _id=3
         User(
-            line_name="test user3",
+            line_user_name="test user3",
             line_user_id="U0123456789abcdefghijklmnopqrstu4",
             zoom_url="https://us00web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
@@ -93,7 +93,7 @@ def generate_dummy_user_list():
             _id=4,
         ),
         User(
-            line_name="test user5",
+            line_user_name="test user5",
             line_user_id="dummy_user_id",
             zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
