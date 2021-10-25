@@ -93,42 +93,6 @@ class Rooms(Base):
                        (Rooms.__tablename__, column_name, column_type))
 
 
-class Results(Base):
-    """
-    Result model
-    """
-
-    __tablename__ = 'results'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    room_id = Column(String(255), nullable=False)
-    points = Column(String(255), nullable=True)
-    result = Column(String(255), nullable=True)
-    match_id = Column(Integer, ForeignKey("matches.id"))
-    # status:
-    # 0: disabled
-    # 1: active
-    # 2: archive
-    status = Column(Integer, nullable=False)
-
-    def __init__(self, room_id, match_id, points={}):
-        self.room_id = room_id
-        self.points = json.dumps(points)
-        self.match_id = match_id
-        self.status = 1
-
-    @staticmethod
-    def add_column(engine, column_name):
-        column = Column(column_name, String(255), nullable=True)
-        column_type = column.type.compile(engine.dialect)
-        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
-                       (Results.__tablename__, column_name, column_type))
-
-    @staticmethod
-    def clone(engine):
-        engine.execute('SELECT * INTO hanchans FROM results')
-
-
 class Hanchans(Base):
     """
     Hanchan model
