@@ -1,8 +1,7 @@
 import os
 from flask import Blueprint, abort, request, render_template, url_for, redirect
-from db_setting import Engine
-from models import Base
-from db_setting import Session
+from db_setting import Engine, Session
+from models import Base, Groups, Rooms
 from use_cases import (
     get_configs_for_web_use_case,
     get_hanchans_for_web_use_case,
@@ -50,20 +49,17 @@ def migrate():
     # Users.add_column(Engine, 'jantama_name')
     # results_service.migrate()
     session = Session()
-    result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
-    print(result)
-    # res = session\
-    #     .query(Results).all()
-    # for r in res:
-    #     h = Hanchans(
-    #         id=r.id,
-    #         room_id=r.room_id,
-    #         raw_scores=r.points,
-    #         converted_scores=r.result,
-    #         match_id=r.match_id,
-    #         status=r.status,
-    #     )
-    #     session.add(h)
+    # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
+    res = session\
+        .query(Rooms).all()
+    for r in res:
+        h = Groups(
+            id=r.id,
+            line_group_id=r.room_id,
+            mode=r.mode,
+            zoom_url=r.zoom_url,
+        )
+        session.add(h)
     session.commit()
 
     return redirect(url_for('views_blueprint.index', message='migrateしました'))

@@ -20,6 +20,12 @@ association_table_user_room = Table(
     Column('room_id', Integer, ForeignKey('rooms.id'))
 )
 
+association_table_user_group = Table(
+    'user_group', Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('group_id', Integer, ForeignKey('groups.id'))
+)
+
 
 class Users(Base):
     """
@@ -46,6 +52,11 @@ class Users(Base):
         secondary=association_table_user_room,
         back_populates="users"
     )
+    groups = relationship(
+        "Groups",
+        secondary=association_table_user_group,
+        back_populates="users"
+    )
 
     def __init__(self, name, user_id, mode, zoom_id=None, jantama_name=None):
         self.name = name
@@ -63,10 +74,6 @@ class Users(Base):
 
 
 class Rooms(Base):
-    """
-    Room model
-    """
-
     __tablename__ = 'rooms'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -91,6 +98,40 @@ class Rooms(Base):
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
                        (Rooms.__tablename__, column_name, column_type))
+
+
+class Groups(Base):
+    __tablename__ = 'groups'
+
+    id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
+    line_group_id = Column(String(255), nullable=False, unique=True)
+    zoom_url = Column(String(255), nullable=True)
+    mode = Column(String(255), nullable=False)
+    users = relationship(
+        "Users",
+        secondary=association_table_user_group,
+        back_populates="groups"
+    )
+
+    def __init__(
+        self,
+        line_group_id,
+        mode,
+        zoom_url,
+        id=None,
+    ):
+        if id is not None:
+            self.id = id
+        self.line_group_id = line_group_id
+        self.mode = mode
+        self.zoom_url = zoom_url
+
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (Groups.__tablename__, column_name, column_type))
 
 
 class Hanchans(Base):
