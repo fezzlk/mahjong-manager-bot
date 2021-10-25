@@ -49,17 +49,24 @@ def migrate():
     # Users.add_column(Engine, 'jantama_name')
     # results_service.migrate()
     session = Session()
-    # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
-    res = session\
-        .query(Groups).all()
-    for r in res:
-        h = Groups(
-            id=r.id,
-            line_group_id=r.group_id,
-            mode=r.mode,
-            zoom_url=r.zoom_url,
-        )
-        session.add(h)
+
+    # # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
+    Engine.execute('ALTER TABLE users RENAME COLUMN name TO line_name;')
+    Engine.execute('ALTER TABLE users RENAME COLUMN user_id TO line_user_id;')
+    Engine.execute('ALTER TABLE users RENAME COLUMN zoom_id TO zoom_url;')
+    Engine.execute('ALTER TABLE matches RENAME COLUMN room_id TO line_group_id;')
+    Engine.execute('ALTER TABLE matches RENAME COLUMN result_ids TO hanchan_ids;')
+    Engine.execute('ALTER TABLE hanchans RENAME COLUMN room_id TO line_group_id;')
+    # res = session\
+    #     .query(Groups).all()
+    # for r in res:
+    #     h = Groups(
+    #         id=r.id,
+    #         line_group_id=r.group_id,
+    #         mode=r.mode,
+    #         zoom_url=r.zoom_url,
+    #     )
+    #     session.add(h)
     session.commit()
 
     return redirect(url_for('views_blueprint.index', message='migrateしました'))
