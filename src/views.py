@@ -2,7 +2,6 @@ import os
 from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine
 from models import Base
-from models import Results, Hanchans
 from db_setting import Session
 from use_cases import (
     get_configs_for_web_use_case,
@@ -41,7 +40,7 @@ def index():
 def reset_db():
     Base.metadata.drop_all(bind=Engine)
     Base.metadata.create_all(bind=Engine)
-    return redirect(url_for('index', message='DBをリセットしました。'))
+    return redirect(url_for('views_blueprint.index', message='DBをリセットしました。'))
 
 
 @views_blueprint.route('/migrate', methods=['POST'])
@@ -51,21 +50,23 @@ def migrate():
     # Users.add_column(Engine, 'jantama_name')
     # results_service.migrate()
     session = Session()
-    res = session\
-        .query(Results).all()
-    for r in res:
-        h = Hanchans(
-            id=r.id,
-            room_id=r.room_id,
-            raw_scores=r.points,
-            converted_scores=r.result,
-            match_id=r.match_id,
-            status=r.status,
-        )
-        session.add(h)
+    result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
+    print(result)
+    # res = session\
+    #     .query(Results).all()
+    # for r in res:
+    #     h = Hanchans(
+    #         id=r.id,
+    #         room_id=r.room_id,
+    #         raw_scores=r.points,
+    #         converted_scores=r.result,
+    #         match_id=r.match_id,
+    #         status=r.status,
+    #     )
+    #     session.add(h)
     session.commit()
 
-    return redirect(url_for('index', message='migrateしました'))
+    return redirect(url_for('views_blueprint.index', message='migrateしました'))
 
 
 @views_blueprint.route('/users')
@@ -88,14 +89,14 @@ def create_users():
     # name = request.form['name']
     # user_id = request.form['user_id']
     # user_use_cases.create(name, user_id)
-    return redirect(url_for('get_users'))
+    return redirect(url_for('views_blueprint.get_users'))
 
 
 @views_blueprint.route('/users/delete', methods=['POST'])
 def delete_users():
     target_id = request.args.get('target_id')
     delete_users_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_users'))
+    return redirect(url_for('views_blueprint.get_users'))
 
 
 @views_blueprint.route('/rooms')
@@ -114,14 +115,14 @@ def get_rooms():
 
 @views_blueprint.route('/rooms/create', methods=['POST'])
 def create_rooms():
-    return redirect(url_for('get_rooms'))
+    return redirect(url_for('views_blueprint.get_rooms'))
 
 
 @views_blueprint.route('/rooms/delete', methods=['POST'])
 def delete_rooms():
     target_id = request.args.get('target_id')
     delete_rooms_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_rooms'))
+    return redirect(url_for('views_blueprint.get_rooms'))
 
 
 @views_blueprint.route('/hanchans')
@@ -142,14 +143,14 @@ def get_hanchans():
 
 @views_blueprint.route('/hanchans/create', methods=['POST'])
 def create_hanchans():
-    return redirect(url_for('get_hanchans'))
+    return redirect(url_for('views_blueprint.get_hanchans'))
 
 
 @views_blueprint.route('/hanchans/delete', methods=['POST'])
 def delete_hanchans():
     target_id = request.args.get('target_id')
     delete_hanchans_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_hanchans'))
+    return redirect(url_for('views_blueprint.get_hanchans'))
 
 
 @views_blueprint.route('/matches')
@@ -168,14 +169,14 @@ def get_matches():
 
 @views_blueprint.route('/matches/create', methods=['POST'])
 def create_matches():
-    return redirect(url_for('get_matches'))
+    return redirect(url_for('views_blueprint.get_matches'))
 
 
 @views_blueprint.route('/matches/delete', methods=['POST'])
 def delete_matches():
     target_id = request.args.get('target_id')
     delete_matches_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_matches'))
+    return redirect(url_for('views_blueprint.get_matches'))
 
 
 @views_blueprint.route('/configs')
@@ -194,14 +195,14 @@ def get_configs():
 
 @views_blueprint.route('/configs/create', methods=['POST'])
 def create_configs():
-    return redirect(url_for('get_configs'))
+    return redirect(url_for('views_blueprint.get_configs'))
 
 
 @views_blueprint.route('/configs/delete', methods=['POST'])
 def delete_configs():
     target_id = request.args.get('target_id')
     delete_configs_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_configs'))
+    return redirect(url_for('views_blueprint.get_configs'))
 
 
 @views_blueprint.route("/callback", methods=['POST'])
