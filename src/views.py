@@ -51,7 +51,7 @@ def migrate():
     session = Session()
 
     # # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
-    Engine.execute('ALTER TABLE users RENAME COLUMN line_user_name TO line_user_name;')
+    Engine.execute('ALTER TABLE users RENAME COLUMN line_name TO line_user_name;')
     # res = session\
     #     .query(Groups).all()
     # for r in res:
