@@ -136,7 +136,7 @@ class Hanchans(Base):
 
     __tablename__ = 'hanchans'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
     room_id = Column(String(255), nullable=False)
     raw_scores = Column(String(255), nullable=True)
     converted_scores = Column(String(255), nullable=True)
