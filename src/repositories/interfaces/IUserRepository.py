@@ -60,7 +60,7 @@ class IUserRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_one_mode_by_line_room_id(
+    def update_one_mode_by_line_user_id(
         self,
         session: BaseSession,
         line_user_id: str,
@@ -69,7 +69,7 @@ class IUserRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_one_zoom_url_by_line_room_id(
+    def update_one_zoom_url_by_line_user_id(
         self,
         session: BaseSession,
         line_user_id: str,

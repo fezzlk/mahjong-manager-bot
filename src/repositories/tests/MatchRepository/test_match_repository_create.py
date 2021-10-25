@@ -22,7 +22,7 @@ def test_success():
             session,
         )
         assert len(result) == 1
-        assert result[0].line_room_id == dummy_match.line_room_id
+        assert result[0].line_group_id == dummy_match.line_group_id
         assert result[0].hanchan_ids == dummy_match.hanchan_ids
         assert result[0].users == dummy_match.users
         assert result[0].status == dummy_match.status

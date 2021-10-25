@@ -14,12 +14,6 @@ association_table_user_match = Table(
     Column('match_id', Integer, ForeignKey('matches.id'))
 )
 
-association_table_user_room = Table(
-    'user_room', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('room_id', Integer, ForeignKey('rooms.id'))
-)
-
 association_table_user_group = Table(
     'user_group', Base.metadata,
     Column('user_id', Integer, ForeignKey('users.id')),
@@ -47,11 +41,6 @@ class Users(Base):
         secondary=association_table_user_match,
         back_populates="users"
     )
-    rooms = relationship(
-        "Rooms",
-        secondary=association_table_user_room,
-        back_populates="users"
-    )
     groups = relationship(
         "Groups",
         secondary=association_table_user_group,
@@ -71,33 +60,6 @@ class Users(Base):
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
                        (Users.__tablename__, column_name, column_type))
-
-
-class Rooms(Base):
-    __tablename__ = 'rooms'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    # room_id is unique
-    room_id = Column(String(255), nullable=False)
-    zoom_url = Column(String(255), nullable=True)
-    mode = Column(String(255), nullable=False)
-    users = relationship(
-        "Users",
-        secondary=association_table_user_room,
-        back_populates="rooms"
-    )
-
-    def __init__(self, room_id, mode, zoom_url):
-        self.room_id = room_id
-        self.mode = mode
-        self.zoom_url = zoom_url
-
-    @staticmethod
-    def add_column(engine, column_name):
-        column = Column(column_name, String(255), nullable=True)
-        column_type = column.type.compile(engine.dialect)
-        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
-                       (Rooms.__tablename__, column_name, column_type))
 
 
 class Groups(Base):

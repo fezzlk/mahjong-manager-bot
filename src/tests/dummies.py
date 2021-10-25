@@ -1,6 +1,6 @@
 from domains.Config import Config
 from domains.User import User, UserMode
-from domains.Room import Room, RoomMode
+from domains.Group import Group, GroupMode
 from domains.Hanchan import Hanchan
 from domains.Match import Match
 
@@ -11,7 +11,7 @@ from domains.Match import Match
 
 def generate_dummy_config_list():
     users = generate_dummy_user_list()
-    rooms = generate_dummy_room_list()
+    groups = generate_dummy_group_list()
 
     return [
         Config(
@@ -33,19 +33,19 @@ def generate_dummy_config_list():
             _id=3,
         ),
         Config(
-            target_id=rooms[0].line_room_id,
+            target_id=groups[0].line_group_id,
             key='飛び賞',
             value='10',
             _id=4,
         ),
         Config(
-            target_id=rooms[0].line_room_id,
+            target_id=groups[0].line_group_id,
             key='レート',
             value='2',
             _id=5,
         ),
         Config(
-            target_id=rooms[1].line_room_id,
+            target_id=groups[1].line_group_id,
             key='飛び賞',
             value='10',
             _id=6,
@@ -104,42 +104,42 @@ def generate_dummy_user_list():
     ]
 
 
-def generate_dummy_room_list():
+def generate_dummy_group_list():
     return [
-        Room(
-            line_room_id="R0123456789abcdefghijklmnopqrstu1",
+        Group(
+            line_group_id="R0123456789abcdefghijklmnopqrstu1",
             zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode.wait,
+            mode=GroupMode.wait,
             _id=1,
         ),
-        Room(
-            line_room_id="R0123456789abcdefghijklmnopqrstu2",
+        Group(
+            line_group_id="R0123456789abcdefghijklmnopqrstu2",
             zoom_url="https://us01web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode.wait,
+            mode=GroupMode.wait,
             _id=2,
         ),
-        Room(
-            line_room_id="R0123456789abcdefghijklmnopqrstu3",
+        Group(
+            line_group_id="R0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us01web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode.wait,
+            mode=GroupMode.wait,
             _id=3,
         ),
-        # same line room id 3
-        Room(
-            line_room_id="R0123456789abcdefghijklmnopqrstu3",
+        # same line group id 3
+        Group(
+            line_group_id="R0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us01web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=RoomMode.input,
+            mode=GroupMode.input,
             _id=4,
         ),
     ]
 
 
 def generate_dummy_hanchan_list():
-    rooms = generate_dummy_room_list()
+    groups = generate_dummy_group_list()
 
     return [
         Hanchan(
-            line_room_id=rooms[0].line_room_id,
+            line_group_id=groups[0].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=1,
@@ -147,7 +147,7 @@ def generate_dummy_hanchan_list():
             _id=1,
         ),
         Hanchan(
-            line_room_id=rooms[0].line_room_id,
+            line_group_id=groups[0].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=1,
@@ -155,7 +155,7 @@ def generate_dummy_hanchan_list():
             _id=2,
         ),
         Hanchan(
-            line_room_id=rooms[0].line_room_id,
+            line_group_id=groups[0].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=1,
@@ -163,7 +163,7 @@ def generate_dummy_hanchan_list():
             _id=3,
         ),
         Hanchan(
-            line_room_id=rooms[0].line_room_id,
+            line_group_id=groups[0].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=2,
@@ -171,7 +171,7 @@ def generate_dummy_hanchan_list():
             _id=4,
         ),
         Hanchan(
-            line_room_id=rooms[1].line_room_id,
+            line_group_id=groups[1].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=5,
@@ -183,39 +183,39 @@ def generate_dummy_hanchan_list():
 
 
 def generate_dummy_match_list():
-    rooms = generate_dummy_room_list()
+    groups = generate_dummy_group_list()
 
     return [
         Match(
-            line_room_id=rooms[0].line_room_id,
+            line_group_id=groups[0].line_group_id,
             hanchan_ids=[],
             users=[],
             status=1,
             _id=1,
         ),
         Match(
-            line_room_id=rooms[0].line_room_id,
+            line_group_id=groups[0].line_group_id,
             hanchan_ids=[],
             users=[],
             status=2,
             _id=2,
         ),
         Match(
-            line_room_id=rooms[0].line_room_id,
+            line_group_id=groups[0].line_group_id,
             hanchan_ids=[],
             users=[],
             status=0,
             _id=3,
         ),
         Match(
-            line_room_id=rooms[0].line_room_id,
+            line_group_id=groups[0].line_group_id,
             hanchan_ids=[],
             users=[],
             status=0,
             _id=4,
         ),
         Match(
-            line_room_id=rooms[1].line_room_id,
+            line_group_id=groups[1].line_group_id,
             hanchan_ids=[],
             users=[],
             status=0,
@@ -243,9 +243,9 @@ def generate_dummy_unfollow_event():
 def generate_dummy_join_event():
     return Event(
         event_type='join',
-        source_type='room',
+        source_type='group',
         user_id=generate_dummy_user_list()[0].line_user_id,
-        room_id=generate_dummy_room_list()[0].line_room_id,
+        group_id=generate_dummy_group_list()[0].line_group_id,
     )
 
 
@@ -259,12 +259,12 @@ def generate_dummy_text_message_event_from_user():
     )
 
 
-def generate_dummy_text_message_event_from_room():
+def generate_dummy_text_message_event_from_group():
     return Event(
         event_type='message',
-        source_type='room',
+        source_type='group',
         user_id=generate_dummy_user_list()[0].line_user_id,
-        room_id=generate_dummy_room_list()[0].line_room_id,
+        group_id=generate_dummy_group_list()[0].line_group_id,
         message_type='text',
         text='dummy_text',
     )
@@ -303,7 +303,7 @@ class Event:
         event_type='message',
         source_type='user',
         user_id=generate_dummy_user_list()[0].line_user_id,
-        room_id=generate_dummy_room_list()[0].line_room_id,
+        group_id=generate_dummy_group_list()[0].line_group_id,
         message_type='text',
         text='dummy_text',
         postback_data='dummy_postback_data',
@@ -311,7 +311,7 @@ class Event:
     ):
         self.type = event_type
         self.replyToken = 'dummy_reply_token'
-        self.source = Source(user_id=user_id, source_type=source_type, room_id=room_id)
+        self.source = Source(user_id=user_id, source_type=source_type, group_id=group_id)
         self.mode = mode
         if self.type == 'message':
             self.message = Message(text=text, message_type=message_type)
@@ -324,14 +324,14 @@ class Source:
         self,
         user_id=generate_dummy_user_list()[0].line_user_id,
         source_type='user',
-        room_id=generate_dummy_room_list()[0].line_room_id,
+        group_id=generate_dummy_group_list()[0].line_group_id,
     ):
         self.type = source_type
         self.user_id = user_id
 
-        if source_type == 'room':
-            dummy_room = generate_dummy_room_list()[0]
-            self.room_id = dummy_room.line_room_id
+        if source_type == 'group':
+            dummy_group = generate_dummy_group_list()[0]
+            self.line_group_id = dummy_group.line_group_id
 
 
 class Message:

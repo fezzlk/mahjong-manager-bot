@@ -123,7 +123,7 @@ class UserService(IUserService):
             raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
-            user = user_repository.update_one_mode_by_line_room_id(
+            user = user_repository.update_one_mode_by_line_user_id(
                 session=session,
                 line_user_id=line_user_id,
                 mode=mode,
@@ -149,7 +149,7 @@ class UserService(IUserService):
         zoom_url: str,
     ) -> User:
         with session_scope() as session:
-            user = user_repository.update_one_zoom_url_by_line_room_id(
+            user = user_repository.update_one_zoom_url_by_line_user_id(
                 session=session,
                 line_user_id=line_user_id,
                 zoom_url=zoom_url,

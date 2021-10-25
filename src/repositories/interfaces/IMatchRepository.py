@@ -13,19 +13,19 @@ class IMatchRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def find_one_by_line_room_id_and_status(
+    def find_one_by_line_group_id_and_status(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Match:
         pass
 
     @abstractmethod
-    def find_many_by_room_id_and_status(
+    def find_many_by_group_id_and_status(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int
     ) -> list:
         pass
@@ -46,28 +46,28 @@ class IMatchRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_hanchan_id_by_line_room_id(
+    def add_hanchan_id_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         hanchan_id: int,
     ) -> Match:
         pass
 
     @abstractmethod
-    def update_one_status_by_line_room_id(
+    def update_one_status_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Match:
         pass
 
     @abstractmethod
-    def update_one_hanchan_ids_by_line_room_id(
+    def update_one_hanchan_ids_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         hanchan_ids: list,
     ) -> Match:
         pass

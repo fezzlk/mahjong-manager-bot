@@ -1,17 +1,17 @@
 import os
 from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine, Session
-from models import Base, Groups, Rooms
+from models import Base, Groups
 from use_cases import (
     get_configs_for_web_use_case,
     get_hanchans_for_web_use_case,
     get_matches_for_web_use_case,
-    get_rooms_for_web_use_case,
+    get_groups_for_web_use_case,
     get_users_for_web_use_case,
     delete_configs_for_web_use_case,
     delete_hanchans_for_web_use_case,
     delete_matches_for_web_use_case,
-    delete_rooms_for_web_use_case,
+    delete_groups_for_web_use_case,
     delete_users_for_web_use_case,
 )
 from linebot import WebhookHandler, exceptions
@@ -44,18 +44,18 @@ def reset_db():
 
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
-    # Rooms.add_column(Engine, 'zoom_url')
+    # Groups.add_column(Engine, 'zoom_url')
     # Users.add_column(Engine, 'zoom_id')
     # Users.add_column(Engine, 'jantama_name')
     # results_service.migrate()
     session = Session()
     # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
     res = session\
-        .query(Rooms).all()
+        .query(Groups).all()
     for r in res:
         h = Groups(
             id=r.id,
-            line_group_id=r.room_id,
+            line_group_id=r.group_id,
             mode=r.mode,
             zoom_url=r.zoom_url,
         )
@@ -69,7 +69,7 @@ def migrate():
 def get_users():
     data = get_users_for_web_use_case.execute()
     keys = ['_id', 'name', 'line_user_id', 'jantama_name',
-            'zoom_url', 'mode', 'matches', 'rooms']
+            'zoom_url', 'mode', 'matches', 'groups']
     input_keys = ['name', 'line_user_id', 'zoom_url', 'jantama_name']
     return render_template(
         'model.html',
@@ -95,38 +95,38 @@ def delete_users():
     return redirect(url_for('views_blueprint.get_users'))
 
 
-@views_blueprint.route('/rooms')
-def get_rooms():
-    data = get_rooms_for_web_use_case.execute()
-    keys = ['_id', 'line_room_id', 'zoom_url', 'mode', 'users']
-    input_keys = ['line_room_id', 'zoom_url']
+@views_blueprint.route('/groups')
+def get_groups():
+    data = get_groups_for_web_use_case.execute()
+    keys = ['_id', 'line_group_id', 'zoom_url', 'mode', 'users']
+    input_keys = ['line_group_id', 'zoom_url']
     return render_template(
         'model.html',
-        title='rooms',
+        title='groups',
         keys=keys,
         input_keys=input_keys,
         data=data
     )
 
 
-@views_blueprint.route('/rooms/create', methods=['POST'])
-def create_rooms():
-    return redirect(url_for('views_blueprint.get_rooms'))
+@views_blueprint.route('/groups/create', methods=['POST'])
+def create_groups():
+    return redirect(url_for('views_blueprint.get_groups'))
 
 
-@views_blueprint.route('/rooms/delete', methods=['POST'])
-def delete_rooms():
+@views_blueprint.route('/groups/delete', methods=['POST'])
+def delete_groups():
     target_id = request.args.get('target_id')
-    delete_rooms_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('views_blueprint.get_rooms'))
+    delete_groups_for_web_use_case.execute([int(target_id)])
+    return redirect(url_for('views_blueprint.get_groups'))
 
 
 @views_blueprint.route('/hanchans')
 def get_hanchans():
     data = get_hanchans_for_web_use_case.execute()
-    keys = ['_id', 'line_room_id', 'raw_scores',
+    keys = ['_id', 'line_group_id', 'raw_scores',
             'converted_scores', 'match_id', 'status']
-    input_keys = ['line_room_id', 'raw_scores',
+    input_keys = ['line_group_id', 'raw_scores',
                   'converted_scores', 'match_id', 'status']
     return render_template(
         'model.html',
@@ -152,8 +152,8 @@ def delete_hanchans():
 @views_blueprint.route('/matches')
 def get_matches():
     data = get_matches_for_web_use_case.execute()
-    keys = ['_id', 'line_room_id', 'hanchan_ids', 'created_at', 'status', 'users']
-    input_keys = ['line_room_id', 'hanchan_ids', 'status']
+    keys = ['_id', 'line_group_id', 'hanchan_ids', 'created_at', 'status', 'users']
+    input_keys = ['line_group_id', 'hanchan_ids', 'status']
     return render_template(
         'model.html',
         title='matches',

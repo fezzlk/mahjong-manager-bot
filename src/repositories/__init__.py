@@ -6,13 +6,13 @@ from .ConfigRepository import ConfigRepository
 from .UserRepository import UserRepository
 from .HanchanRepository import HanchanRepository
 from .MatchRepository import MatchRepository
-from .RoomRepository import RoomRepository
+from .GroupRepository import GroupRepository
 
 config_repository = ConfigRepository()
 user_repository = UserRepository()
 hanchan_repository = HanchanRepository()
 match_repository = MatchRepository()
-room_repository = RoomRepository()
+group_repository = GroupRepository()
 
 
 @contextmanager

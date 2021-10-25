@@ -11,6 +11,6 @@ class UpdateConfigUseCase:
         """
         リクエスト元のルームの設定更新
         """
-        target_id = request_info_service.req_line_room_id
+        target_id = request_info_service.req_line_group_id
         config_service.update(target_id, key, value)
         reply_service.add_message(f'{key}を{value}に変更しました。')

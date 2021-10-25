@@ -127,7 +127,7 @@ class UserRepository:
             .filter(Users.id.in_(ids))\
             .delete(synchronize_session=False)
 
-    def update_one_mode_by_line_room_id(
+    def update_one_mode_by_line_user_id(
         self,
         session: BaseSession,
         line_user_id: str,
@@ -152,7 +152,7 @@ class UserRepository:
             jantama_name=record.jantama_name,
         )
 
-    def update_one_zoom_url_by_line_room_id(
+    def update_one_zoom_url_by_line_user_id(
         self,
         session: BaseSession,
         line_user_id: str,

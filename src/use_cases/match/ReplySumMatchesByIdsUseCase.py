@@ -50,10 +50,10 @@ class ReplySumMatchesByIdsUseCase:
 
             key = 'レート'
             match_list = []
-            line_room_id = request_info_service.req_line_room_id
+            line_group_id = request_info_service.req_line_group_id
             for line_user_id, converted_score in sum_hanchans.items():
                 name = user_service.get_name_by_line_user_id(line_user_id)
-                price = str(converted_score * int(config_service.get_value_by_key(line_room_id, key)[1]) * 10)
+                price = str(converted_score * int(config_service.get_value_by_key(line_group_id, key)[1]) * 10)
                 score = ("+" if converted_score > 0 else "") + str(converted_score)
                 match_list.append(f'{name}: {price}円 ({score})')
 

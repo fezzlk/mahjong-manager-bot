@@ -1,5 +1,5 @@
 import json
-from domains.Room import RoomMode
+from domains.Group import GroupMode
 from services import (
     request_info_service,
     match_service,
@@ -8,7 +8,7 @@ from services import (
     user_service,
     config_service,
     message_service,
-    room_service,
+    group_service,
 )
 
 
@@ -20,9 +20,9 @@ class AddPointByJsonTextUseCase:
     ) -> None:
         points = json.loads(text)
 
-        line_room_id = request_info_service.req_line_room_id
-        current_match = match_service.get_or_add_current(line_room_id)
-        hanchan_service.create(points, line_room_id, current_match)
+        line_group_id = request_info_service.req_line_group_id
+        current_match = match_service.get_or_add_current(line_group_id)
+        hanchan_service.create(points, line_group_id, current_match)
 
         # 得点計算の準備および結果の格納
 
@@ -56,25 +56,25 @@ class AddPointByJsonTextUseCase:
         calculate_result = hanchan_service.run_calculate(
             points=points,
             ranking_prize=[
-                int(s) for s in config_service.get_value_by_key(line_room_id, '順位点').split(',')
+                int(s) for s in config_service.get_value_by_key(line_group_id, '順位点').split(',')
             ],
-            tobi_prize=int(config_service.get_value_by_key(line_room_id, '飛び賞')),
-            rounding_method=config_service.get_value_by_key(line_room_id, '端数計算方法'),
+            tobi_prize=int(config_service.get_value_by_key(line_group_id, '飛び賞')),
+            rounding_method=config_service.get_value_by_key(line_group_id, '端数計算方法'),
         )
 
-        line_room_id = request_info_service.req_line_room_id
+        line_group_id = request_info_service.req_line_group_id
 
         # その半荘の結果を更新
-        hanchan_service.update_converted_score(line_room_id, calculate_result)
+        hanchan_service.update_converted_score(line_group_id, calculate_result)
 
         # 総合結果に半荘結果を追加
-        current_result = hanchan_service.get_current(line_room_id)
-        match_service.add_result(line_room_id, current_result.id)
+        current_result = hanchan_service.get_current(line_group_id)
+        match_service.add_result(line_group_id, current_result.id)
 
         # 結果の表示
-        hanchan = hanchan_service.get_current(line_room_id)
+        hanchan = hanchan_service.get_current(line_group_id)
         converted_scores = hanchan.converted_scores
-        current_match = match_service.get_current(line_room_id)
+        current_match = match_service.get_current(line_group_id)
         hanchans = hanchan_service.find_by_ids(current_match.hanchan_ids)
         sum_hanchans = {}
         for r in hanchans:
@@ -109,10 +109,10 @@ class AddPointByJsonTextUseCase:
         )
 
         # 一半荘の結果をアーカイブ
-        hanchan_service.archive(line_room_id)
+        hanchan_service.archive(line_group_id)
 
         # ルームを待機モードにする
-        room_service.chmod(line_room_id, RoomMode.wait)
+        group_service.chmod(line_group_id, GroupMode.wait)
 
         reply_service.add_message(
             '始める時は「_start」と入力してください。')

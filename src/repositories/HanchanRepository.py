@@ -13,7 +13,7 @@ class HanchanRepository:
         new_hanchan: Hanchan,
     ) -> None:
         hanchan = Hanchans(
-            room_id=new_hanchan.line_room_id,
+            room_id=new_hanchan.line_group_id,
             match_id=new_hanchan.match_id,
             raw_scores=new_hanchan.raw_scores,
             converted_scores=new_hanchan.converted_scores,
@@ -43,7 +43,7 @@ class HanchanRepository:
         return [
             Hanchan(
                 _id=record.id,
-                line_room_id=record.room_id,
+                line_group_id=record.room_id,
                 raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
                 converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
                 match_id=record.match_id,
@@ -52,16 +52,16 @@ class HanchanRepository:
             for record in records
         ]
 
-    def find_one_by_id_and_line_room_id(
+    def find_one_by_id_and_line_group_id(
         self,
         session: BaseSession,
         target_id: str,
-        line_room_id: str,
+        line_group_id: str,
     ) -> Hanchan:
         record = session\
             .query(Hanchans)\
             .filter(and_(
-                Hanchans.room_id == line_room_id,
+                Hanchans.room_id == line_group_id,
                 Hanchans.id == target_id,
             ))\
             .first()
@@ -71,22 +71,22 @@ class HanchanRepository:
 
         return Hanchan(
             _id=record.id,
-            line_room_id=record.room_id,
+            line_group_id=record.room_id,
             raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
             converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
 
-    def find_one_by_line_room_id_and_status(
+    def find_one_by_line_group_id_and_status(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Hanchan:
         record = session\
             .query(Hanchans).filter(and_(
-                Hanchans.room_id == line_room_id,
+                Hanchans.room_id == line_group_id,
                 Hanchans.status == status,
             ))\
             .order_by(desc(Hanchans.id))\
@@ -97,7 +97,7 @@ class HanchanRepository:
 
         return Hanchan(
             _id=record.id,
-            line_room_id=record.room_id,
+            line_group_id=record.room_id,
             raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
             converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
@@ -119,7 +119,7 @@ class HanchanRepository:
         return [
             Hanchan(
                 _id=record.id,
-                line_room_id=record.room_id,
+                line_group_id=record.room_id,
                 raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
                 converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
                 match_id=record.match_id,
@@ -128,15 +128,15 @@ class HanchanRepository:
             for record in records
         ]
 
-    def update_one_converted_score_by_line_room_id(
+    def update_one_converted_score_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         converted_scores: dict,
     ) -> Hanchan:
         record = session\
             .query(Hanchans).filter(and_(
-                Hanchans.room_id == line_room_id,
+                Hanchans.room_id == line_group_id,
                 Hanchans.status == 1,
             ))\
             .order_by(desc(Hanchans.id))\
@@ -149,23 +149,23 @@ class HanchanRepository:
 
         return Hanchan(
             _id=record.id,
-            line_room_id=record.room_id,
+            line_group_id=record.room_id,
             raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
             converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
 
-    def update_raw_score_of_user_by_room_id(
+    def update_raw_score_of_user_by_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         line_user_id: str,
         raw_score: int = None,
     ) -> Hanchan:
         record = session\
             .query(Hanchans).filter(and_(
-                Hanchans.room_id == line_room_id,
+                Hanchans.room_id == line_group_id,
                 Hanchans.status == 1,
             ))\
             .order_by(desc(Hanchans.id))\
@@ -185,24 +185,24 @@ class HanchanRepository:
 
         return Hanchan(
             _id=record.id,
-            line_room_id=record.room_id,
+            line_group_id=record.line_group_id,
             raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
             converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
 
-    def update_status_by_id_and_line_room_id(
+    def update_status_by_id_and_line_group_id(
         self,
         session: BaseSession,
         hanchan_id: int,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Hanchan:
         record = session\
             .query(Hanchans).filter(and_(
                 Hanchans.id == hanchan_id,
-                Hanchans.room_id == line_room_id,
+                Hanchans.room_id == line_group_id,
                 Hanchans.status == 1,
             ))\
             .order_by(desc(Hanchans.id))\
@@ -215,22 +215,22 @@ class HanchanRepository:
 
         return Hanchan(
             _id=record.id,
-            line_room_id=record.room_id,
+            line_group_id=record.room_id,
             raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
             converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,
             status=record.status,
         )
 
-    def update_status_by_line_room_id(
+    def update_status_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Hanchan:
         record = session\
             .query(Hanchans).filter(and_(
-                Hanchans.room_id == line_room_id,
+                Hanchans.room_id == line_group_id,
                 Hanchans.status == 1,
             ))\
             .order_by(desc(Hanchans.id))\
@@ -243,7 +243,7 @@ class HanchanRepository:
 
         return Hanchan(
             _id=record.id,
-            line_room_id=record.room_id,
+            line_group_id=record.room_id,
             raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
             converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
             match_id=record.match_id,

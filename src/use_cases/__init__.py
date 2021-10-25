@@ -10,18 +10,18 @@ from .user.GetUsersForWebUseCase import GetUsersForWebUseCase
 from .user.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 from .user.UserMyZoomCommandUseCase import UserMyZoomCommandUseCase
 
-from .group.JoinRoomUseCase import JoinRoomUseCase
-from .group.RoomQuitUseCase import RoomQuitUseCase
-from .group.SetZoomUrlToRoomUseCase import SetZoomUrlToRoomUseCase
-from .group.SetMyZoomUrlToRoomUseCase import SetMyZoomUrlToRoomUseCase
-from .group.ReplyRoomHelpUseCase import ReplyRoomHelpUseCase
-from .group.ReplyRoomSettingsMenuUseCase import ReplyRoomSettingsMenuUseCase
+from .group.JoinGroupUseCase import JoinGroupUseCase
+from .group.GroupQuitUseCase import GroupQuitUseCase
+from .group.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
+from .group.SetMyZoomUrlToGroupUseCase import SetMyZoomUrlToGroupUseCase
+from .group.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
+from .group.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
 from .group.ReplyStartMenuUseCase import ReplyStartMenuUseCase
 from .group.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
-from .group.ReplyRoomModeUseCase import ReplyRoomModeUseCase
-from .group.ReplyRoomZoomUrlUseCase import ReplyRoomZoomUrlUseCase
-from .group.GetRoomsForWebUseCase import GetRoomsForWebUseCase
-from .group.DeleteRoomsForWebUseCase import DeleteRoomsForWebUseCase
+from .group.ReplyGroupModeUseCase import ReplyGroupModeUseCase
+from .group.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCase
+from .group.GetGroupsForWebUseCase import GetGroupsForWebUseCase
+from .group.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
 
 from .hanchan.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
 from .hanchan.AddPointByJsonTextUseCase import AddPointByJsonTextUseCase
@@ -48,16 +48,16 @@ from .config.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
 
 follow_use_case = FollowUseCase()
 unfollow_use_case = UnfollowUseCase()
-join_room_use_case = JoinRoomUseCase()
+join_group_use_case = JoinGroupUseCase()
 add_hanchan_by_points_text_use_case = AddHanchanByPointsTextUseCase()
 add_point_by_text_use_case = AddPointByTextUseCase()
 add_point_by_Json_text_use_case = AddPointByJsonTextUseCase()
 drop_hanchan_by_index_use_case = DropHanchanByIndexUseCase()
 start_input_use_case = StartInputUseCase()
-room_quit_use_case = RoomQuitUseCase()
+group_quit_use_case = GroupQuitUseCase()
 match_finish_use_case = MatchFinishUseCase()
 reply_user_mode_use_case = ReplyUserModeUseCase()
-reply_room_mode_use_case = ReplyRoomModeUseCase()
+reply_group_mode_use_case = ReplyGroupModeUseCase()
 user_exit_command_use_case = UserExitCommandUseCase()
 user_my_zoom_command_use_case = UserMyZoomCommandUseCase()
 reply_fortune_use_case = ReplyFortuneUseCase()
@@ -65,22 +65,22 @@ reply_sum_hanchans_use_case = ReplySumHanchansUseCase()
 reply_sum_hanchans__by_match_id_use_case = ReplySumHanchansByMatchIdUseCase()
 reply_matches_use_case = ReplyMatchesUseCase()
 reply_user_help_use_case = ReplyUserHelpUseCase()
-reply_room_help_use_case = ReplyRoomHelpUseCase()
+reply_group_help_use_case = ReplyGroupHelpUseCase()
 reply_github_url_use_case = ReplyGitHubUrlUseCase()
 reply_start_menu_use_case = ReplyStartMenuUseCase()
 reply_others_menu_use_case = ReplyOthersMenuUseCase()
-reply_room_settings_menu_use_case = ReplyRoomSettingsMenuUseCase()
-reply_room_zoom_url_use_case = ReplyRoomZoomUrlUseCase()
-set_my_zoom_url_to_room_use_case = SetMyZoomUrlToRoomUseCase()
+reply_group_settings_menu_use_case = ReplyGroupSettingsMenuUseCase()
+reply_group_zoom_url_use_case = ReplyGroupZoomUrlUseCase()
+set_my_zoom_url_to_group_use_case = SetMyZoomUrlToGroupUseCase()
 set_zoom_url_to_user_use_case = SetZoomUrlToUserUseCase()
-set_zoom_url_to_room_use_case = SetZoomUrlToRoomUseCase()
+set_zoom_url_to_group_use_case = SetZoomUrlToGroupUseCase()
 calculate_with_tobi_use_case = CalculateWithTobiUseCase()
-get_rooms_for_web_use_case = GetRoomsForWebUseCase()
+get_groups_for_web_use_case = GetGroupsForWebUseCase()
 get_configs_for_web_use_case = GetConfigsForWebUseCase()
 get_hanchans_for_web_use_case = GetHanchansForWebUseCase()
 get_matches_for_web_use_case = GetMatchesForWebUseCase()
 get_users_for_web_use_case = GetUsersForWebUseCase()
-delete_rooms_for_web_use_case = DeleteRoomsForWebUseCase()
+delete_groups_for_web_use_case = DeleteGroupsForWebUseCase()
 delete_configs_for_web_use_case = DeleteConfigsForWebUseCase()
 delete_hanchans_for_web_use_case = DeleteHanchansForWebUseCase()
 delete_matches_for_web_use_case = DeleteMatchesForWebUseCase()
