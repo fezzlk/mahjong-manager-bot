@@ -16,7 +16,7 @@ class FollowUseCase:
         )
         user = user_service.find_or_create_by_profile(profile)
         reply_service.add_message(
-            f'こんにちは。\n麻雀対戦結果管理アカウントである Mahjong Manager は {user.name} さんの快適な麻雀生活をサポートします。')
+            f'こんにちは。\n麻雀対戦結果管理アカウントである Mahjong Manager は {user.line_name} さんの快適な麻雀生活をサポートします。')
         rich_menu_service.create_and_link(
             request_info_service.req_line_user_id
         )

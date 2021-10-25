@@ -31,12 +31,12 @@ class MessageService:
 
     def get_random_hai(
         self,
-        user_id: str,
+        line_user_id: str,
     ) -> str:
         now = datetime.datetime.now()
         random.seed(
             int(now.year + now.month + now.day) +
-            int(re.sub("\\D", "", user_id))
+            int(re.sub("\\D", "", line_user_id))
         )
 
         return random.choice(HAI)

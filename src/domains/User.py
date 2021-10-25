@@ -20,7 +20,7 @@ class User:
 
     def __init__(
         self,
-        name: str,
+        line_name: str,
         line_user_id: str,
         zoom_url: str,
         mode: UserMode,
@@ -30,7 +30,7 @@ class User:
         _id: int = None,
     ):
         self._id = _id
-        self.name = name
+        self.line_name = line_name
         self.line_user_id = line_user_id
         self.zoom_url = zoom_url
         self.mode = mode
@@ -39,7 +39,7 @@ class User:
         self.groups = groups
 
 # TODO: 値オブジェクト化
-# name: LINE account name
+# line_name: LINE account name
 
 # line_user_id は LINE Account の ID, Uから始まる
 

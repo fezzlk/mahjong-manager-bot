@@ -79,10 +79,10 @@ class AddPointByJsonTextUseCase:
         sum_hanchans = {}
         for r in hanchans:
             converted_scores = r.converted_scores
-            for user_id, converted_score in converted_scores.items():
-                if user_id not in sum_hanchans.keys():
-                    sum_hanchans[user_id] = 0
-                sum_hanchans[user_id] += converted_score
+            for line_user_id, converted_score in converted_scores.items():
+                if line_user_id not in sum_hanchans.keys():
+                    sum_hanchans[line_user_id] = 0
+                sum_hanchans[line_user_id] += converted_score
 
         reply_service.add_message(
             '一半荘お疲れ様でした。結果を表示します。'

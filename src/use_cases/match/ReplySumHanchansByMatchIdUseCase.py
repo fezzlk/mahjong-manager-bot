@@ -31,11 +31,11 @@ class ReplySumHanchansByMatchIdUseCase:
                 ])
             )
 
-            for user_id, converted_score in converted_scores.items():
-                if user_id not in sum_hanchans.keys():
-                    sum_hanchans[user_id] = 0
+            for line_user_id, converted_score in converted_scores.items():
+                if line_user_id not in sum_hanchans.keys():
+                    sum_hanchans[line_user_id] = 0
 
-                sum_hanchans[user_id] += converted_score
+                sum_hanchans[line_user_id] += converted_score
 
         reply_service.add_message('\n\n'.join(hanchans_list))
         reply_service.add_message(

@@ -33,16 +33,16 @@ class ReplyMatchesUseCase:
             for i in range(len(ids)):
                 converted_scores = hanchans[i].converted_scores
 
-                for user_id, converted_score in converted_scores.items():
-                    if user_id not in sum_hanchans.keys():
-                        sum_hanchans[user_id] = 0
-                    sum_hanchans[user_id] += converted_score
+                for line_user_id, converted_score in converted_scores.items():
+                    if line_user_id not in sum_hanchans.keys():
+                        sum_hanchans[line_user_id] = 0
+                    sum_hanchans[line_user_id] += converted_score
 
             if is_required_sum:
                 reply_service.add_message(
                     '\n'.join([
-                        f'{user_service.get_name_by_line_user_id(user_id)}: {converted_score}'
-                        for user_id, converted_score in sum_hanchans.items()
+                        f'{user_service.get_name_by_line_user_id(line_user_id)}: {converted_score}'
+                        for line_user_id, converted_score in sum_hanchans.items()
                     ])
                 )
 

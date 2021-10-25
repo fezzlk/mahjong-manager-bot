@@ -6,7 +6,7 @@ class IMessageService(metaclass=ABCMeta):
     @abstractmethod
     def get_random_hai(
         self,
-        user_id: str,
+        line_user_id: str,
     ) -> str:
         pass
 

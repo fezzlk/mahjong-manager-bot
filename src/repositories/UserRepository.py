@@ -12,16 +12,16 @@ class UserRepository:
     ) -> User:
         record = session\
             .query(Users)\
-            .filter(Users.user_id == line_user_id)\
+            .filter(Users.line_user_id == line_user_id)\
             .first()
 
         if record is None:
             return None
 
         return User(
-            name=record.name,
-            line_user_id=record.user_id,
-            zoom_url=record.zoom_id,
+            line_name=record.line_name,
+            line_user_id=record.line_user_id,
+            zoom_url=record.zoom_url,
             mode=UserMode[record.mode],
             jantama_name=record.jantama_name,
         )
@@ -29,23 +29,23 @@ class UserRepository:
     def find_one_by_name(
         self,
         session: BaseSession,
-        name: str,
+        line_name: str,
     ) -> User:
         records = session\
             .query(Users)\
-            .filter(Users.name == name)\
+            .filter(Users.line_name == line_name)\
             .all()
 
         if len(records) == 0:
             return None
 
         if len(records) > 1:
-            print("warning: find multi users by name")
+            print("warning: find multi users by line_name")
 
         return User(
-            name=records[0].name,
-            line_user_id=records[0].user_id,
-            zoom_url=records[0].zoom_id,
+            line_name=records[0].line_name,
+            line_user_id=records[0].line_user_id,
+            zoom_url=records[0].zoom_url,
             mode=UserMode[records[0].mode],
             jantama_name=records[0].jantama_name,
         )
@@ -63,9 +63,9 @@ class UserRepository:
 
         return [
             User(
-                name=record.name,
-                line_user_id=record.user_id,
-                zoom_url=record.zoom_id,
+                line_name=record.line_name,
+                line_user_id=record.line_user_id,
+                zoom_url=record.zoom_url,
                 mode=UserMode[record.mode],
                 jantama_name=record.jantama_name,
             )
@@ -84,9 +84,9 @@ class UserRepository:
         return [
             User(
                 _id=record.id,
-                name=record.name,
-                line_user_id=record.user_id,
-                zoom_url=record.zoom_id,
+                line_name=record.line_name,
+                line_user_id=record.line_user_id,
+                zoom_url=record.zoom_url,
                 mode=UserMode[record.mode],
                 jantama_name=record.jantama_name,
             )
@@ -99,9 +99,9 @@ class UserRepository:
         new_user: User,
     ) -> None:
         record = Users(
-            name=new_user.name,
-            user_id=new_user.line_user_id,
-            zoom_id=new_user.zoom_url,
+            line_name=new_user.line_name,
+            line_user_id=new_user.line_user_id,
+            zoom_url=new_user.zoom_url,
             mode=new_user.mode.value,
             jantama_name=new_user.jantama_name,
         )
@@ -114,7 +114,7 @@ class UserRepository:
     ) -> None:
         session\
             .query(Users)\
-            .filter(Users.user_id == line_user_id)\
+            .filter(Users.line_user_id == line_user_id)\
             .delete()
 
     def delete_by_ids(
@@ -135,7 +135,7 @@ class UserRepository:
     ) -> User:
         record = session\
             .query(Users)\
-            .filter(Users.user_id == line_user_id)\
+            .filter(Users.line_user_id == line_user_id)\
             .first()
 
         if record is None:
@@ -145,9 +145,9 @@ class UserRepository:
 
         return User(
             _id=record.id,
-            name=record.name,
-            line_user_id=record.user_id,
-            zoom_url=record.zoom_id,
+            line_name=record.line_name,
+            line_user_id=record.line_user_id,
+            zoom_url=record.zoom_url,
             mode=UserMode[record.mode],
             jantama_name=record.jantama_name,
         )
@@ -160,19 +160,19 @@ class UserRepository:
     ) -> User:
         record = session\
             .query(Users)\
-            .filter(Users.user_id == line_user_id)\
+            .filter(Users.line_user_id == line_user_id)\
             .first()
 
         if record is None:
             return None
 
-        record.zoom_id = zoom_url
+        record.zoom_url = zoom_url
 
         return User(
             _id=record.id,
-            name=record.name,
-            line_user_id=record.user_id,
-            zoom_url=record.zoom_id,
+            line_name=record.line_name,
+            line_user_id=record.line_user_id,
+            zoom_url=record.zoom_url,
             mode=UserMode[record.mode],
             jantama_name=record.jantama_name,
         )

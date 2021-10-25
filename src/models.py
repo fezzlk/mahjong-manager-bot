@@ -29,10 +29,10 @@ class Users(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(255), nullable=False)
-    # user_id is unique
-    user_id = Column(String(255), nullable=False)
-    zoom_id = Column(String(255), nullable=True)
+    line_name = Column(String(255), nullable=False)
+    # line_user_id is unique
+    line_user_id = Column(String(255), nullable=False)
+    zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
     # jantama_name is unique
     jantama_name = Column(String(255), nullable=True)
@@ -47,11 +47,11 @@ class Users(Base):
         back_populates="users"
     )
 
-    def __init__(self, name, user_id, mode, zoom_id=None, jantama_name=None):
-        self.name = name
-        self.zoom_id = zoom_id
+    def __init__(self, line_name, line_user_id, mode, zoom_url=None, jantama_name=None):
+        self.line_name = line_name
+        self.zoom_url = zoom_url
         self.jantama_name = jantama_name
-        self.user_id = user_id
+        self.line_user_id = line_user_id
         self.mode = mode
 
     @staticmethod
@@ -104,7 +104,7 @@ class Hanchans(Base):
     __tablename__ = 'hanchans'
 
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
-    room_id = Column(String(255), nullable=False)
+    line_group_id = Column(String(255), nullable=False)
     raw_scores = Column(String(255), nullable=True)
     converted_scores = Column(String(255), nullable=True)
     match_id = Column(Integer, ForeignKey("matches.id"))
@@ -116,13 +116,13 @@ class Hanchans(Base):
 
     def __init__(
         self,
-        room_id,
+        line_group_id,
         match_id,
         status,
         raw_scores={},
         converted_scores={},
     ):
-        self.room_id = room_id
+        self.line_group_id = line_group_id
         self.raw_scores = json.dumps(raw_scores)
         self.converted_scores = json.dumps(converted_scores)
         self.match_id = match_id
@@ -148,8 +148,8 @@ class Matches(Base):
     __tablename__ = 'matches'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_id = Column(String(255), nullable=False)
-    result_ids = Column(String(255))
+    line_group_id = Column(String(255), nullable=False)
+    hanchan_ids = Column(String(255))
     # status:
     # 0: disabled
     # 1: active
@@ -163,9 +163,9 @@ class Matches(Base):
     created_at = Column(DateTime, nullable=False,
                         server_default=current_timestamp())
 
-    def __init__(self, line_room_id, hanchan_ids, status):
-        self.room_id = line_room_id
-        self.result_ids = json.dumps(hanchan_ids),
+    def __init__(self, line_line_group_id, hanchan_ids, status):
+        self.line_group_id = line_line_group_id
+        self.hanchan_ids = json.dumps(hanchan_ids),
         self.status = status
 
     @staticmethod
@@ -210,10 +210,10 @@ class Configs(Base):
 #     __tablename__ = 'advises'
 
 #     id = Column(Integer, primary_key=True, autoincrement=True)
-#     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+#     line_user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 #     phrase = Column(String(255), nullable=False)
 #     match_id = Column(Integer, ForeignKey("matches.id"))
 
-#     def __init__(self, user_id, phrase):
-#         self.user_id = user_id
+#     def __init__(self, line_user_id, phrase):
+#         self.line_user_id = line_user_id
 #         self.phrase = phrase

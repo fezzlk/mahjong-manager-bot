@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine, Session
-from models import Base, Groups
+from models import Base
 from use_cases import (
     get_configs_for_web_use_case,
     get_hanchans_for_web_use_case,
@@ -45,7 +45,7 @@ def reset_db():
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
     # Groups.add_column(Engine, 'zoom_url')
-    # Users.add_column(Engine, 'zoom_id')
+    # Users.add_column(Engine, 'zoom_url')
     # Users.add_column(Engine, 'jantama_name')
     # results_service.migrate()
     session = Session()
@@ -53,10 +53,10 @@ def migrate():
     # # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
     Engine.execute('ALTER TABLE users RENAME COLUMN name TO line_name;')
     Engine.execute('ALTER TABLE users RENAME COLUMN user_id TO line_user_id;')
-    Engine.execute('ALTER TABLE users RENAME COLUMN zoom_id TO zoom_url;')
-    Engine.execute('ALTER TABLE matches RENAME COLUMN room_id TO line_group_id;')
-    Engine.execute('ALTER TABLE matches RENAME COLUMN result_ids TO hanchan_ids;')
-    Engine.execute('ALTER TABLE hanchans RENAME COLUMN room_id TO line_group_id;')
+    Engine.execute('ALTER TABLE users RENAME COLUMN zoom_url TO zoom_url;')
+    Engine.execute('ALTER TABLE matches RENAME COLUMN line_group_id TO line_group_id;')
+    Engine.execute('ALTER TABLE matches RENAME COLUMN hanchan_ids TO hanchan_ids;')
+    Engine.execute('ALTER TABLE hanchans RENAME COLUMN line_group_id TO line_group_id;')
     # res = session\
     #     .query(Groups).all()
     # for r in res:
@@ -75,9 +75,9 @@ def migrate():
 @views_blueprint.route('/users')
 def get_users():
     data = get_users_for_web_use_case.execute()
-    keys = ['_id', 'name', 'line_user_id', 'jantama_name',
+    keys = ['_id', 'line_name', 'line_user_id', 'jantama_name',
             'zoom_url', 'mode', 'matches', 'groups']
-    input_keys = ['name', 'line_user_id', 'zoom_url', 'jantama_name']
+    input_keys = ['line_name', 'line_user_id', 'zoom_url', 'jantama_name']
     return render_template(
         'model.html',
         title='users',
@@ -89,9 +89,9 @@ def get_users():
 
 @views_blueprint.route('/users/create', methods=['POST'])
 def create_users():
-    # name = request.form['name']
+    # line_name = request.form['line_name']
     # user_id = request.form['user_id']
-    # user_use_cases.create(name, user_id)
+    # user_use_cases.create(line_name, user_id)
     return redirect(url_for('views_blueprint.get_users'))
 
 

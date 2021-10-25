@@ -18,7 +18,7 @@ class SetZoomUrlToGroupUseCase:
                     f'set_zoom_url: user(id={line_user_id}) is not found')
                 return
 
-            zoom_url = user.zoom_id
+            zoom_url = user.zoom_url
 
         line_group_id = request_info_service.req_line_group_id
         result_zoom_url = group_service.set_zoom_url(line_group_id, zoom_url)

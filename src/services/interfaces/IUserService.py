@@ -9,7 +9,7 @@ class IUserService(metaclass=ABCMeta):
     @abstractmethod
     def get_line_user_id_by_name(
         self,
-        name: str,
+        line_name: str,
     ) -> str:
         pass
 
@@ -30,13 +30,13 @@ class IUserService(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        name: str,
-        user_id: str,
+        line_name: str,
+        line_user_id: str,
     ) -> User:
         pass
 
     @abstractmethod
-    def delete_one_by_line_user_id(self, user_id: str) -> None:
+    def delete_one_by_line_user_id(self, line_user_id: str) -> None:
         pass
 
     @abstractmethod
@@ -52,7 +52,7 @@ class IUserService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_mode(self, user_id: str) -> UserMode:
+    def get_mode(self, line_user_id: str) -> UserMode:
         pass
 
     @abstractmethod

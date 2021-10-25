@@ -14,7 +14,7 @@
 #         以下ResultServiceに移植
 #         results = session\
 #         .query(Results).filter(
-#         Results.id.in_([int(s) for s in json.loads(match.result_ids)]),
+#         Results.id.in_([int(s) for s in json.loads(match.hanchan_ids)]),
 #         )\
 #         .order_by(Results.id)\
 #         .all()

@@ -35,8 +35,8 @@ class AddPointByTextUseCase:
                 )
 
                 res = [
-                    f'{user_service.get_name_by_line_user_id(user_id)}: {point}'
-                    for user_id, point in hanchan.raw_scores.items()
+                    f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
+                    for line_user_id, point in hanchan.raw_scores.items()
                 ]
 
                 reply_service.add_message("\n".join(res))
@@ -72,8 +72,8 @@ class AddPointByTextUseCase:
         points = hanchan.raw_scores
 
         res = [
-            f'{user_service.get_name_by_line_user_id(user_id)}: {point}'
-            for user_id, point in points.items()
+            f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
+            for line_user_id, point in points.items()
         ]
 
         reply_service.add_message("\n".join(res))
@@ -138,10 +138,10 @@ class AddPointByTextUseCase:
             sum_hanchans = {}
             for r in hanchans:
                 converted_scores = r.converted_scores
-                for user_id, converted_score in converted_scores.items():
-                    if user_id not in sum_hanchans.keys():
-                        sum_hanchans[user_id] = 0
-                    sum_hanchans[user_id] += converted_score
+                for line_user_id, converted_score in converted_scores.items():
+                    if line_user_id not in sum_hanchans.keys():
+                        sum_hanchans[line_user_id] = 0
+                    sum_hanchans[line_user_id] += converted_score
 
             reply_service.add_message(
                 '一半荘お疲れ様でした。結果を表示します。'
