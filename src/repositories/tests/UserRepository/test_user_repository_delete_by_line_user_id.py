@@ -3,7 +3,7 @@ from repositories import session_scope, user_repository
 from domains.User import User
 
 
-def test_hit_with_ids():
+def test_hit_1_record():
     # Arrange
     dummy_users = generate_dummy_user_list()[:3]
     with session_scope() as session:
@@ -12,19 +12,18 @@ def test_hit_with_ids():
                 session,
                 dummy_user,
             )
-    other_users = dummy_users[:1]
-    target_users = dummy_users[1:3]
-    ids = [target_user._id for target_user in target_users]
+    other_users = dummy_users[:2]
+    target_line_user_id = dummy_users[2].line_user_id
 
     # Act
     with session_scope() as session:
-        result = user_repository.delete_by_ids(
+        result = user_repository.delete_by_line_user_id(
             session,
-            ids,
+            target_line_user_id,
         )
 
     # Assert
-    assert result == len(target_users)
+    assert result == 1
     with session_scope() as session:
         record_on_db = user_repository.find_all(
             session,
@@ -42,20 +41,19 @@ def test_hit_with_ids():
 def test_hit_0_record():
     # Arrange
     with session_scope() as session:
-        dummy_users = generate_dummy_user_list()[:3]
+        dummy_users = generate_dummy_user_list()[:2]
         for dummy_user in dummy_users:
             user_repository.create(
                 session,
                 dummy_user,
             )
-    target_users = generate_dummy_user_list()[3:6]
-    ids = [target_user._id for target_user in target_users]
+    target_line_user_id = generate_dummy_user_list()[2].line_user_id
 
     # Act
     with session_scope() as session:
-        result = user_repository.delete_by_ids(
+        result = user_repository.delete_by_line_user_id(
             session,
-            ids,
+            target_line_user_id,
         )
 
     # Assert

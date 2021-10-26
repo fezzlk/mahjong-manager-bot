@@ -36,7 +36,7 @@ class IUserService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def delete_one_by_line_user_id(self, line_user_id: str) -> None:
+    def delete_by_line_user_id(self, line_user_id: str) -> None:
         pass
 
     @abstractmethod
