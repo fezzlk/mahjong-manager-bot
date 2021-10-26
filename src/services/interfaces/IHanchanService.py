@@ -9,7 +9,7 @@ class IHanchanService(metaclass=ABCMeta):
     @abstractmethod
     def drop_raw_score(
         self,
-        line_room_id: str,
+        line_group_id: str,
         line_user_id: str,
     ) -> Hanchan:
         pass
@@ -17,7 +17,7 @@ class IHanchanService(metaclass=ABCMeta):
     @abstractmethod
     def add_raw_score(
         self,
-        line_room_id: str,
+        line_group_id: str,
         line_user_id: str,
         raw_score: int,
     ) -> Hanchan:
@@ -26,7 +26,7 @@ class IHanchanService(metaclass=ABCMeta):
     @abstractmethod
     def update_converted_score(
         self,
-        line_room_id: str,
+        line_group_id: str,
         converted_scores: Dict[str, int],
     ) -> Hanchan:
         pass
@@ -41,24 +41,24 @@ class IHanchanService(metaclass=ABCMeta):
     @abstractmethod
     def update_status(
         self,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Hanchan:
         pass
 
     @abstractmethod
-    def archive(self, line_room_id: str) -> Hanchan:
+    def archive(self, line_group_id: str) -> Hanchan:
         pass
 
     @abstractmethod
-    def disable(self, line_room_id: str) -> Hanchan:
+    def disable(self, line_group_id: str) -> Hanchan:
         pass
 
     @abstractmethod
     def create(
         self,
         raw_scores: Dict[str, int],
-        line_room_id: str,
+        line_group_id: str,
         related_match: Match,
     ) -> Hanchan:
         pass

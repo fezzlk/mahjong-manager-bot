@@ -21,8 +21,8 @@ class MatchRepository:
         return [
             Match(
                 _id=record.id,
-                line_room_id=record.room_id,
-                hanchan_ids=json.loads(record.result_ids),
+                line_group_id=record.line_group_id,
+                hanchan_ids=json.loads(record.hanchan_ids),
                 users=record.users,
                 status=record.status,
                 created_at=record.created_at,
@@ -30,15 +30,15 @@ class MatchRepository:
             for record in records
         ]
 
-    def find_one_by_line_room_id_and_status(
+    def find_one_by_line_group_id_and_status(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Match:
         record = session\
             .query(Matches).filter(and_(
-                Matches.room_id == line_room_id,
+                Matches.line_group_id == line_group_id,
                 Matches.status == status,
             )).order_by(Matches.id.desc())\
             .first()
@@ -48,22 +48,22 @@ class MatchRepository:
 
         return Match(
             _id=record.id,
-            line_room_id=record.room_id,
-            hanchan_ids=json.loads(record.result_ids),
+            line_group_id=record.line_group_id,
+            hanchan_ids=json.loads(record.hanchan_ids),
             users=record.users,
             status=record.status,
             created_at=record.created_at,
         )
 
-    def find_many_by_room_id_and_status(
+    def find_many_by_group_id_and_status(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int
     ) -> list:
         records = session\
             .query(Matches).filter(and_(
-                Matches.room_id == line_room_id,
+                Matches.line_group_id == line_group_id,
                 Matches.status == status,
             )).order_by(Matches.id.desc())\
             .all()
@@ -71,8 +71,8 @@ class MatchRepository:
         return [
             Match(
                 _id=record.id,
-                line_room_id=record.room_id,
-                hanchan_ids=json.loads(record.result_ids),
+                line_group_id=record.line_group_id,
+                hanchan_ids=json.loads(record.hanchan_ids),
                 users=record.users,
                 status=record.status,
                 created_at=record.created_at,
@@ -86,7 +86,7 @@ class MatchRepository:
         new_match: Match,
     ) -> None:
         record = Matches(
-            line_room_id=new_match.line_room_id,
+            line_group_id=new_match.line_group_id,
             hanchan_ids=new_match.hanchan_ids,
             status=new_match.status,
         )
@@ -105,8 +105,8 @@ class MatchRepository:
         return [
             Match(
                 _id=record.id,
-                line_room_id=record.room_id,
-                hanchan_ids=json.loads(record.result_ids),
+                line_group_id=record.line_group_id,
+                hanchan_ids=json.loads(record.hanchan_ids),
                 users=record.users,
                 status=record.status,
                 created_at=record.created_at,
@@ -114,15 +114,15 @@ class MatchRepository:
             for record in records
         ]
 
-    def add_hanchan_id_by_line_room_id(
+    def add_hanchan_id_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         hanchan_id: int,
     ) -> Match:
         record = session\
             .query(Matches).filter(and_(
-                Matches.room_id == line_room_id,
+                Matches.line_group_id == line_group_id,
                 Matches.status == 1,
             )).order_by(Matches.id.desc())\
             .first()
@@ -130,28 +130,28 @@ class MatchRepository:
         if record is None:
             return None
 
-        hanchan_ids = json.loads(record.result_ids)
+        hanchan_ids = json.loads(record.hanchan_ids)
         hanchan_ids.append(str(hanchan_id))
-        record.result_ids = json.dumps(list(set(hanchan_ids)))
+        record.hanchan_ids = json.dumps(list(set(hanchan_ids)))
 
         return Match(
             _id=record.id,
-            line_room_id=record.room_id,
+            line_group_id=record.line_group_id,
             hanchan_ids=hanchan_ids,
             users=record.users,
             status=record.status,
             created_at=record.created_at,
         )
 
-    def update_one_status_by_line_room_id(
+    def update_one_status_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Match:
         record = session\
             .query(Matches).filter(and_(
-                Matches.room_id == line_room_id,
+                Matches.line_group_id == line_group_id,
                 Matches.status == 1,
             )).order_by(Matches.id.desc())\
             .first()
@@ -163,22 +163,22 @@ class MatchRepository:
 
         return Match(
             _id=record.id,
-            line_room_id=record.room_id,
-            hanchan_ids=json.loads(record.result_ids),
+            line_group_id=record.line_group_id,
+            hanchan_ids=json.loads(record.hanchan_ids),
             users=record.users,
             status=record.status,
             created_at=record.created_at,
         )
 
-    def update_one_hanchan_ids_by_line_room_id(
+    def update_one_hanchan_ids_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         hanchan_ids: list,
     ) -> Match:
         record = session\
             .query(Matches).filter(and_(
-                Matches.room_id == line_room_id,
+                Matches.line_group_id == line_group_id,
                 Matches.status == 1,
             )).order_by(Matches.id.desc())\
             .first()
@@ -190,8 +190,8 @@ class MatchRepository:
 
         return Match(
             _id=record.id,
-            line_room_id=record.room_id,
-            hanchan_ids=json.loads(record.result_ids),
+            line_group_id=record.line_group_id,
+            hanchan_ids=json.loads(record.hanchan_ids),
             users=record.users,
             status=record.status,
             created_at=record.created_at,
@@ -212,15 +212,15 @@ class MatchRepository:
         if record is None:
             return None
 
-        hanchan_ids = json.loads(record.result_ids)
+        hanchan_ids = json.loads(record.hanchan_ids)
         if hanchan_id in hanchan_ids:
             hanchan_ids.remove(hanchan_id)
         record.hanchan_ids = json.dumps(hanchan_ids)
 
         return Match(
             _id=record.id,
-            line_room_id=record.room_id,
-            hanchan_ids=json.loads(record.result_ids),
+            line_group_id=record.line_group_id,
+            hanchan_ids=json.loads(record.hanchan_ids),
             users=record.users,
             status=record.status,
             created_at=record.created_at,

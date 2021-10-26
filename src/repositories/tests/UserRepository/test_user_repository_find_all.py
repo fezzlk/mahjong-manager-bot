@@ -23,7 +23,7 @@ def test_success_find_records():
         assert len(result) == len(dummy_users)
         for i in range(len(result)):
             assert isinstance(result[i], User)
-            assert result[i].name == dummy_users[i].name
+            assert result[i].line_user_name == dummy_users[i].line_user_name
             assert result[i].line_user_id == dummy_users[i].line_user_id
             assert result[i].zoom_url == dummy_users[i].zoom_url
             assert result[i].mode == dummy_users[i].mode

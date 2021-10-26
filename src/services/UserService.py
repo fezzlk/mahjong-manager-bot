@@ -10,11 +10,11 @@ from domains.User import User, UserMode
 
 class UserService(IUserService):
 
-    def delete_one_by_line_user_id(self, user_id: str) -> None:
+    def delete_one_by_line_user_id(self, line_user_id: str) -> None:
         with session_scope() as session:
-            user_repository.delete_one_by_line_user_id(session, user_id)
+            user_repository.delete_one_by_line_user_id(session, line_user_id)
 
-            print(f'delete: {user_id}')
+            print(f'delete: {line_user_id}')
 
     def find_or_create_by_profile(
         self,
@@ -33,13 +33,13 @@ class UserService(IUserService):
 
     def create(
         self,
-        name: str,
-        user_id: str,
+        line_user_name: str,
+        line_user_id: str,
     ) -> User:
         with session_scope() as session:
             new_user = User(
-                name=name,
-                line_user_id=user_id,
+                line_user_name=line_user_name,
+                line_user_id=line_user_id,
                 zoom_url=None,
                 mode=UserMode.wait,
                 jantama_name=None,
@@ -49,7 +49,7 @@ class UserService(IUserService):
                 new_user,
             )
 
-            print(f'create: {new_user.line_user_id} {new_user.name}')
+            print(f'create: {new_user.line_user_id} {new_user.line_user_name}')
 
             return new_user
 
@@ -99,18 +99,18 @@ class UserService(IUserService):
                     print(f'user({line_user_id}) is not found')
                     return line_user_id
                 else:
-                    return target.name
+                    return target.line_user_name
 
     def get_line_user_id_by_name(
         self,
-        name: str,
+        line_user_name: str,
     ) -> str:
         with session_scope() as session:
-            target = user_repository.find_one_by_name(session, name)
+            target = user_repository.find_one_by_name(session, line_user_name)
 
             if target is None:
-                print(f'user({name}) is not found')
-                return name
+                print(f'user({line_user_name}) is not found')
+                return line_user_name
 
             return target.line_user_id
 
@@ -123,7 +123,7 @@ class UserService(IUserService):
             raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
-            user = user_repository.update_one_mode_by_line_room_id(
+            user = user_repository.update_one_mode_by_line_user_id(
                 session=session,
                 line_user_id=line_user_id,
                 mode=mode,
@@ -133,12 +133,12 @@ class UserService(IUserService):
 
             return user
 
-    def get_mode(self, user_id: str) -> UserMode:
+    def get_mode(self, line_user_id: str) -> UserMode:
         with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(session, user_id)
+            target = user_repository.find_one_by_line_user_id(session, line_user_id)
 
             if target is None:
-                print(f'user is not found: {user_id}')
+                print(f'user is not found: {line_user_id}')
                 raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
 
             return target.mode
@@ -149,7 +149,7 @@ class UserService(IUserService):
         zoom_url: str,
     ) -> User:
         with session_scope() as session:
-            user = user_repository.update_one_zoom_url_by_line_room_id(
+            user = user_repository.update_one_zoom_url_by_line_user_id(
                 session=session,
                 line_user_id=line_user_id,
                 zoom_url=zoom_url,

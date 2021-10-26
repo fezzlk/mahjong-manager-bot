@@ -16,7 +16,7 @@ class IUserRepository(metaclass=ABCMeta):
     def find_one_by_name(
         self,
         session: BaseSession,
-        name: str,
+        line_user_name: str,
     ) -> User:
         pass
 
@@ -60,7 +60,7 @@ class IUserRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_one_mode_by_line_room_id(
+    def update_one_mode_by_line_user_id(
         self,
         session: BaseSession,
         line_user_id: str,
@@ -69,7 +69,7 @@ class IUserRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_one_zoom_url_by_line_room_id(
+    def update_one_zoom_url_by_line_user_id(
         self,
         session: BaseSession,
         line_user_id: str,

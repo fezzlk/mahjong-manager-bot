@@ -7,44 +7,44 @@ from services import (
     request_info_service,
     reply_service,
     message_service,
-    room_service,
+    group_service,
 )
 from use_cases import (
     follow_use_case,
     unfollow_use_case,
-    join_room_use_case,
+    join_group_use_case,
     add_point_by_text_use_case,
     add_hanchan_by_points_text_use_case,
     add_point_by_Json_text_use_case,
     start_input_use_case,
-    room_quit_use_case,
+    group_quit_use_case,
     match_finish_use_case,
     reply_user_mode_use_case,
-    reply_room_mode_use_case,
+    reply_group_mode_use_case,
     user_exit_command_use_case,
     reply_fortune_use_case,
     reply_sum_hanchans_use_case,
     reply_matches_use_case,
     reply_user_help_use_case,
-    reply_room_help_use_case,
-    set_my_zoom_url_to_room_use_case,
+    reply_group_help_use_case,
+    set_my_zoom_url_to_group_use_case,
     reply_github_url_use_case,
-    reply_room_settings_menu_use_case,
+    reply_group_settings_menu_use_case,
     reply_others_menu_use_case,
     reply_start_menu_use_case,
     reply_sum_matches_by_ids_use_case,
     reply_sum_hanchans__by_match_id_use_case,
     set_zoom_url_to_user_use_case,
-    set_zoom_url_to_room_use_case,
+    set_zoom_url_to_group_use_case,
     calculate_with_tobi_use_case,
     update_config_use_case,
     input_result_from_image_use_case,
-    reply_room_zoom_url_use_case,
+    reply_group_zoom_url_use_case,
     drop_hanchan_by_index_use_case,
     disable_match_use_case,
     user_my_zoom_command_use_case,
 )
-from domains.Room import RoomMode
+from domains.Group import GroupMode
 
 
 class UCommands(Enum):
@@ -63,7 +63,7 @@ class UCommands(Enum):
 
 
 class RCommands(Enum):
-    """Commands for room"""
+    """Commands for group"""
 
     start = 'start'
     exit = 'exit'  # danger(入力中の半荘データが disabled になる)
@@ -105,7 +105,7 @@ def root(event: Event):
             unfollow_use_case.execute()
             isEnabledReply = False
         elif event.type == 'join':
-            join_room_use_case.execute()
+            join_group_use_case.execute()
         elif event.type == 'postback':
             postback(event)
 
@@ -121,7 +121,7 @@ def root(event: Event):
 def textMessage(event: Event):
     """receive text message event"""
     if event.source.type == 'room' or event.source.type == 'group':
-        routing_for_room_by_text(event)
+        routing_for_group_by_text(event)
     elif event.source.type == 'user':
         routing_by_text(event)
     else:
@@ -147,7 +147,7 @@ def postback(event: Event):
     method = text[1:].split()[0]
     body = text[len(method) + 2:]
     if event.source.type == 'room' or event.source.type == 'group':
-        routing_for_room_by_method(method, body)
+        routing_for_group_by_method(method, body)
     elif event.source.type == 'user':
         routing_by_method(method, body)
 
@@ -169,7 +169,7 @@ def routing_by_text(event):
 
     """routing by text on each mode"""
     """wait mode"""
-    # if zoom url, register to room
+    # if zoom url, register to group
     if '.zoom.us' in text:
         set_zoom_url_to_user_use_case.execute(text)
         return
@@ -216,14 +216,14 @@ def routing_by_method(method, body):
         user_my_zoom_command_use_case.execute()
 
 
-def routing_for_room_by_text(event):
+def routing_for_group_by_text(event):
     """routing by text"""
     text = event.message.text
     if (text[0] == '_') & (len(text) > 1):
         method = text[1:].split()[0]
         if method in [c.name for c in RCommands]:
             body = text[len(method) + 2:]
-            routing_for_room_by_method(method, body)
+            routing_for_group_by_method(method, body)
             return
         else:
             reply_service.add_message(
@@ -232,10 +232,10 @@ def routing_for_room_by_text(event):
             return
 
     """routing by text on each mode"""
-    room_id = request_info_service.req_line_room_id
-    current_mode = room_service.get_mode(room_id)
+    group_id = request_info_service.req_line_group_id
+    current_mode = group_service.get_mode(group_id)
     """input mode"""
-    if current_mode.value == RoomMode.input.value:
+    if current_mode.value == GroupMode.input.value:
         add_point_by_text_use_case.execute(text)
         return
 
@@ -246,12 +246,12 @@ def routing_for_room_by_text(event):
     if len(resultRows) == 4:
         add_hanchan_by_points_text_use_case.execute(text)
 
-    """if zoom url, register to room"""
+    """if zoom url, register to group"""
     if '.zoom.us' in text:
-        set_zoom_url_to_room_use_case.execute(text)
+        set_zoom_url_to_group_use_case.execute(text)
 
 
-def routing_for_room_by_method(method, body):
+def routing_for_group_by_method(method, body):
     """routing by method"""
     # input
     if method == RCommands.input.name:
@@ -261,16 +261,16 @@ def routing_for_room_by_method(method, body):
         reply_start_menu_use_case.execute()
     # mode
     elif method == RCommands.mode.name:
-        reply_room_mode_use_case.execute()
+        reply_group_mode_use_case.execute()
     # exit
     elif method == RCommands.exit.name:
-        room_quit_use_case.execute()
+        group_quit_use_case.execute()
     # help
     elif method == RCommands.help.name:
-        reply_room_help_use_case.execute(RCommands)
+        reply_group_help_use_case.execute(RCommands)
     # setting
     elif method == RCommands.setting.name:
-        reply_room_settings_menu_use_case.execute(body)
+        reply_group_settings_menu_use_case.execute(body)
     # results
     elif method == RCommands.results.name:
         reply_sum_hanchans_use_case.execute()
@@ -312,10 +312,10 @@ def routing_for_room_by_method(method, body):
         )
     # zoom
     elif method == RCommands.zoom.name:
-        reply_room_zoom_url_use_case.execute()
+        reply_group_zoom_url_use_case.execute()
     # my_zoom
     elif method == RCommands.my_zoom.name:
-        set_my_zoom_url_to_room_use_case.execute()
+        set_my_zoom_url_to_group_use_case.execute()
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')

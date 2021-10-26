@@ -6,10 +6,10 @@ from services import (
     hanchan_service,
     config_service,
     match_service,
-    room_service,
+    group_service,
     message_service,
 )
-from domains.Room import RoomMode
+from domains.Group import GroupMode
 
 
 class AddPointByTextUseCase:
@@ -18,7 +18,7 @@ class AddPointByTextUseCase:
         self,
         text: str,
     ) -> None:
-        line_room_id = request_info_service.req_line_room_id
+        line_group_id = request_info_service.req_line_group_id
 
         if text[0] == '@':
             point, target_user = point_service.get_point_and_name_from_text(
@@ -30,13 +30,13 @@ class AddPointByTextUseCase:
 
             if point == 'delete':
                 hanchan = hanchan_service.drop_raw_score(
-                    line_room_id,
+                    line_group_id,
                     target_line_user_id,
                 )
 
                 res = [
-                    f'{user_service.get_name_by_line_user_id(user_id)}: {point}'
-                    for user_id, point in hanchan.raw_scores.items()
+                    f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
+                    for line_user_id, point in hanchan.raw_scores.items()
                 ]
 
                 reply_service.add_message("\n".join(res))
@@ -64,7 +64,7 @@ class AddPointByTextUseCase:
             point = '-' + point
 
         hanchan = hanchan_service.add_raw_score(
-            line_room_id=line_room_id,
+            line_group_id=line_group_id,
             line_user_id=target_line_user_id,
             raw_score=int(point),
         )
@@ -72,8 +72,8 @@ class AddPointByTextUseCase:
         points = hanchan.raw_scores
 
         res = [
-            f'{user_service.get_name_by_line_user_id(user_id)}: {point}'
-            for user_id, point in points.items()
+            f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
+            for line_user_id, point in points.items()
         ]
 
         reply_service.add_message("\n".join(res))
@@ -112,8 +112,8 @@ class AddPointByTextUseCase:
                 return
 
             # config の取得
-            ranking_prize = config_service.get_value_by_key(line_room_id, '順位点')
-            rounding_method = config_service.get_value_by_key(line_room_id, '端数計算方法')
+            ranking_prize = config_service.get_value_by_key(line_group_id, '順位点')
+            rounding_method = config_service.get_value_by_key(line_group_id, '端数計算方法')
 
             # 計算の実行
             calculate_result = hanchan_service.run_calculate(
@@ -125,10 +125,10 @@ class AddPointByTextUseCase:
             )
 
             # その半荘の結果を更新
-            current_hanchan = hanchan_service.update_converted_score(line_room_id, calculate_result)
+            current_hanchan = hanchan_service.update_converted_score(line_group_id, calculate_result)
 
             # 総合結果に半荘結果を追加
-            current_match = match_service.add_hanchan_id(line_room_id, current_hanchan._id)
+            current_match = match_service.add_hanchan_id(line_group_id, current_hanchan._id)
 
             # 結果の表示
             converted_scores = current_hanchan.converted_scores
@@ -138,10 +138,10 @@ class AddPointByTextUseCase:
             sum_hanchans = {}
             for r in hanchans:
                 converted_scores = r.converted_scores
-                for user_id, converted_score in converted_scores.items():
-                    if user_id not in sum_hanchans.keys():
-                        sum_hanchans[user_id] = 0
-                    sum_hanchans[user_id] += converted_score
+                for line_user_id, converted_score in converted_scores.items():
+                    if line_user_id not in sum_hanchans.keys():
+                        sum_hanchans[line_user_id] = 0
+                    sum_hanchans[line_user_id] += converted_score
 
             reply_service.add_message(
                 '一半荘お疲れ様でした。結果を表示します。'
@@ -168,10 +168,10 @@ class AddPointByTextUseCase:
             )
 
             # 一半荘の結果をアーカイブ
-            hanchan_service.archive(line_room_id)
+            hanchan_service.archive(line_group_id)
 
             # ルームを待機モードにする
-            room_service.chmod(line_room_id, RoomMode.wait)
+            group_service.chmod(line_group_id, GroupMode.wait)
 
             reply_service.add_message(
                 '始める時は「_start」と入力してください。'

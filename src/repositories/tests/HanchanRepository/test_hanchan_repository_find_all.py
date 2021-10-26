@@ -33,7 +33,7 @@ def test_success_find_records():
         assert len(result) == len(dummy_hanchans)
         for i in range(len(result)):
             assert isinstance(result[i], Hanchan)
-            assert result[i].line_room_id == dummy_hanchans[i].line_room_id
+            assert result[i].line_group_id == dummy_hanchans[i].line_group_id
             assert result[i].match_id == dummy_hanchans[i].match_id
             assert result[i].raw_scores == dummy_hanchans[i].raw_scores
             assert result[i].converted_scores == dummy_hanchans[i].converted_scores

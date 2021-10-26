@@ -5,7 +5,7 @@ import datetime
 @dataclass()
 class Match:
     _id: int
-    line_room_id: str
+    line_group_id: str
     hanchan_ids: str
     users: list
     status: int
@@ -13,7 +13,7 @@ class Match:
 
     def __init__(
         self,
-        line_room_id: str,
+        line_group_id: str,
         hanchan_ids: str,
         status: int,
         users: list = [],
@@ -21,14 +21,14 @@ class Match:
         _id: int = None,
     ):
         self._id = _id
-        self.line_room_id = line_room_id
+        self.line_group_id = line_group_id
         self.hanchan_ids = hanchan_ids
         self.users = users
         self.status = status
         self.created_at = created_at
 
 # TODO: 値オブジェクト化
-# line_room_id は対戦結果が投稿された LINE Room ID, Rから始まる
+# line_group_id は対戦結果が投稿された LINE Group ID, Rから始まる
 
 # hanchan_ids は Hanchan._id: int の 配列
 

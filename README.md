@@ -36,8 +36,8 @@
 ### Domains
 - User
   - Mahjong player's LINE account
-- Room
-  - LINE chat room
+- Group
+  - LINE chat group
 - Hanchan
   - Result of a hanchan
 - Match

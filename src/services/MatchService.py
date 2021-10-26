@@ -8,44 +8,44 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 
 class MatchService(IMatchService):
 
-    def get_or_create_current(self, line_room_id: str) -> Match:
-        current = self.get_current(line_room_id)
+    def get_or_create_current(self, line_group_id: str) -> Match:
+        current = self.get_current(line_group_id)
 
         if current is None:
-            self.create(line_room_id)
-            current = self.get_current(line_room_id)
+            self.create(line_group_id)
+            current = self.get_current(line_group_id)
 
         return current
 
-    def get_current(self, line_room_id: str) -> Match:
+    def get_current(self, line_group_id: str) -> Match:
         with session_scope() as session:
-            return match_repository.find_one_by_line_room_id_and_status(
+            return match_repository.find_one_by_line_group_id_and_status(
                 session=session,
-                line_room_id=line_room_id,
+                line_group_id=line_group_id,
                 status=1,
             )
 
-    def create(self, line_room_id: str) -> Match:
+    def create(self, line_group_id: str) -> Match:
         with session_scope() as session:
             new_match = Match(
-                line_room_id=line_room_id,
+                line_group_id=line_group_id,
                 hanchan_ids=[],
                 status=1,
             )
             match_repository.create(session, new_match)
 
-            print(f'create match: room "{line_room_id}"')
+            print(f'create match: group "{line_group_id}"')
             return new_match
 
     def add_hanchan_id(
         self,
-        line_room_id: str,
+        line_group_id: str,
         hanchan_id: int,
     ) -> Match:
         with session_scope() as session:
-            record = match_repository.add_hanchan_id_by_line_room_id(
+            record = match_repository.add_hanchan_id_by_line_group_id(
                 session=session,
-                line_room_id=line_room_id,
+                line_group_id=line_group_id,
                 hanchan_id=hanchan_id,
             )
 
@@ -55,11 +55,11 @@ class MatchService(IMatchService):
 
             return record
 
-    def update_hanchan_ids(self, hanchan_ids, line_room_id):
+    def update_hanchan_ids(self, hanchan_ids, line_group_id):
         with session_scope() as session:
-            match = match_repository.update_one_hanchan_ids_by_line_room_id(
+            match = match_repository.update_one_hanchan_ids_by_line_group_id(
                 session=session,
-                line_room_id=line_room_id,
+                line_group_id=line_group_id,
                 hanchan_ids=hanchan_ids,
             )
             print(
@@ -67,8 +67,8 @@ class MatchService(IMatchService):
             )
             return match
 
-    def count_results(self, line_room_id: str) -> int:
-        current = self.get_current(line_room_id)
+    def count_results(self, line_group_id: str) -> int:
+        current = self.get_current(line_group_id)
         if current is None:
             print(
                 'current match is not found'
@@ -78,13 +78,13 @@ class MatchService(IMatchService):
 
     def update_status(
         self,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Match:
         with session_scope() as session:
-            record = match_repository.update_one_status_by_line_room_id(
+            record = match_repository.update_one_status_by_line_group_id(
                 session,
-                line_room_id,
+                line_group_id,
                 status,
             )
 
@@ -94,19 +94,19 @@ class MatchService(IMatchService):
 
             return record
 
-    def archive(self, line_room_id: str) -> Match:
-        return self.update_status(line_room_id, 2)
+    def archive(self, line_group_id: str) -> Match:
+        return self.update_status(line_group_id, 2)
 
-    def disable(self, line_room_id: str) -> Match:
-        return self.update_status(line_room_id, 0)
+    def disable(self, line_group_id: str) -> Match:
+        return self.update_status(line_group_id, 0)
 
     def get_archived(
         self,
-        line_room_id: str,
+        line_group_id: str,
     ) -> List[Match]:
         with session_scope() as session:
-            matches = match_repository.find_many_by_room_id_and_status(
-                session, line_room_id, 2)
+            matches = match_repository.find_many_by_group_id_and_status(
+                session, line_group_id, 2)
             if len(matches) == 0:
                 return None
             return matches

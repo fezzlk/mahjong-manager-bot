@@ -6,9 +6,9 @@ from services import (
     message_service,
     match_service,
     config_service,
-    room_service,
+    group_service,
 )
-from domains.Room import RoomMode
+from domains.Group import GroupMode
 
 
 class AddHanchanByPointsTextUseCase:
@@ -22,9 +22,9 @@ class AddHanchanByPointsTextUseCase:
                 user_service.get_line_user_id_by_name(col[0])
             ] = int(col[1])
 
-        line_room_id = request_info_service.req_line_room_id
-        current_match = match_service.get_or_add_current(line_room_id)
-        hanchan_service.create(points, line_room_id, current_match)
+        line_group_id = request_info_service.req_line_group_id
+        current_match = match_service.get_or_add_current(line_group_id)
+        hanchan_service.create(points, line_group_id, current_match)
 
         if len(points) == 4:
             # 得点計算の準備および結果の格納
@@ -60,8 +60,8 @@ class AddHanchanByPointsTextUseCase:
                 return
 
             # config の取得
-            ranking_prize = config_service.get_value_by_key(line_room_id, '順位点')
-            rounding_method = config_service.get_value_by_key(line_room_id, '端数計算方法')
+            ranking_prize = config_service.get_value_by_key(line_group_id, '順位点')
+            rounding_method = config_service.get_value_by_key(line_group_id, '端数計算方法')
 
             # 計算の実行
             calculate_result = hanchan_service.run_calculate(
@@ -73,10 +73,10 @@ class AddHanchanByPointsTextUseCase:
             )
 
             # その半荘の結果を更新
-            current_hanchan = hanchan_service.update_converted_score(line_room_id, calculate_result)
+            current_hanchan = hanchan_service.update_converted_score(line_group_id, calculate_result)
 
             # 総合結果に半荘結果を追加
-            current_match = match_service.add_hanchan_id(line_room_id, current_hanchan._id)
+            current_match = match_service.add_hanchan_id(line_group_id, current_hanchan._id)
 
             # 結果の表示
             converted_scores = current_hanchan.converted_scores
@@ -86,10 +86,10 @@ class AddHanchanByPointsTextUseCase:
             sum_hanchans = {}
             for r in hanchans:
                 converted_scores = r.converted_scores
-                for user_id, converted_score in converted_scores.items():
-                    if user_id not in sum_hanchans.keys():
-                        sum_hanchans[user_id] = 0
-                    sum_hanchans[user_id] += converted_score
+                for line_user_id, converted_score in converted_scores.items():
+                    if line_user_id not in sum_hanchans.keys():
+                        sum_hanchans[line_user_id] = 0
+                    sum_hanchans[line_user_id] += converted_score
 
             reply_service.add_message(
                 '一半荘お疲れ様でした。結果を表示します。'
@@ -116,10 +116,10 @@ class AddHanchanByPointsTextUseCase:
             )
 
             # 一半荘の結果をアーカイブ
-            hanchan_service.archive(line_room_id)
+            hanchan_service.archive(line_group_id)
 
             # ルームを待機モードにする
-            room_service.chmod(line_room_id, RoomMode.wait)
+            group_service.chmod(line_group_id, GroupMode.wait)
 
             reply_service.add_message(
                 '始める時は「_start」と入力してください。'

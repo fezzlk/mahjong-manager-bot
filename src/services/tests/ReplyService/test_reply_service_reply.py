@@ -1,7 +1,7 @@
 from services.ReplyService import ReplyService
 from tests.dummies import (
     generate_dummy_follow_event,
-    generate_dummy_text_message_event_from_room,
+    generate_dummy_text_message_event_from_group,
     generate_dummy_text_message_event_from_user,
 )
 from linebot.models import (
@@ -32,7 +32,7 @@ def test_reply_to_user(mocker):
     assert len(reply_service.texts) == 0
 
 
-def test_reply_to_room(mocker):
+def test_reply_to_group(mocker):
     # Arrange
     reply_service = ReplyService()
     dummy_event = generate_dummy_follow_event()
@@ -57,7 +57,7 @@ def test_reply_to_room(mocker):
 def test_content_0(mocker):
     # Arrange
     reply_service = ReplyService()
-    dummy_event = generate_dummy_text_message_event_from_room()
+    dummy_event = generate_dummy_text_message_event_from_group()
 
     # Act
     reply_service.reply(dummy_event)
@@ -69,7 +69,7 @@ def test_content_0(mocker):
 def test_not_reply(mocker):
     # Arrange
     reply_service = ReplyService()
-    dummy_event = generate_dummy_text_message_event_from_room()
+    dummy_event = generate_dummy_text_message_event_from_group()
     dummy_text = 'dummy_text'
     reply_service.texts = [
         TextSendMessage(text=dummy_text)

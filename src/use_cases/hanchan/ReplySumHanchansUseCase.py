@@ -10,12 +10,12 @@ from services import (
 class ReplySumHanchansUseCase:
 
     def execute(self) -> None:
-        line_room_id = request_info_service.req_line_room_id
-        if match_service.count_results(line_room_id) == 0:
+        line_group_id = request_info_service.req_line_group_id
+        if match_service.count_results(line_group_id) == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。')
             return
-        match = match_service.get_current(line_room_id)
+        match = match_service.get_current(line_group_id)
 
         ids = match.hanchan_ids
         date = match.created_at.strftime('%Y-%m-%d')
@@ -37,11 +37,11 @@ class ReplySumHanchansUseCase:
                 ])
             )
 
-            for user_id, converted_score in converted_scores.items():
-                if user_id not in sum_hanchans.keys():
-                    sum_hanchans[user_id] = 0
+            for line_user_id, converted_score in converted_scores.items():
+                if line_user_id not in sum_hanchans.keys():
+                    sum_hanchans[line_user_id] = 0
 
-                sum_hanchans[user_id] += converted_score
+                sum_hanchans[line_user_id] += converted_score
 
         reply_service.add_message('\n\n'.join(hanchans_list))
         reply_service.add_message(

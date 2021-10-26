@@ -8,7 +8,7 @@ from .OcrService import OcrService
 from .PointService import PointService
 from .ReplyService import ReplyService
 from .RichMenuService import RichMenuService
-from .RoomService import RoomService
+from .GroupService import GroupService
 from .UserService import UserService
 
 request_info_service = RequestInfoService()
@@ -20,5 +20,5 @@ ocr_service = OcrService()
 point_service = PointService()
 reply_service = ReplyService()
 rich_menu_service = RichMenuService()
-room_service = RoomService()
+group_service = GroupService()
 user_service = UserService()

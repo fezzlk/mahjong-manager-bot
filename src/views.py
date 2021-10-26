@@ -1,19 +1,17 @@
 import os
 from flask import Blueprint, abort, request, render_template, url_for, redirect
-from db_setting import Engine
+from db_setting import Engine, Session
 from models import Base
-from models import Results, Hanchans
-from db_setting import Session
 from use_cases import (
     get_configs_for_web_use_case,
     get_hanchans_for_web_use_case,
     get_matches_for_web_use_case,
-    get_rooms_for_web_use_case,
+    get_groups_for_web_use_case,
     get_users_for_web_use_case,
     delete_configs_for_web_use_case,
     delete_hanchans_for_web_use_case,
     delete_matches_for_web_use_case,
-    delete_rooms_for_web_use_case,
+    delete_groups_for_web_use_case,
     delete_users_for_web_use_case,
 )
 from linebot import WebhookHandler, exceptions
@@ -41,39 +39,40 @@ def index():
 def reset_db():
     Base.metadata.drop_all(bind=Engine)
     Base.metadata.create_all(bind=Engine)
-    return redirect(url_for('index', message='DBをリセットしました。'))
+    return redirect(url_for('views_blueprint.index', message='DBをリセットしました。'))
 
 
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
-    # Rooms.add_column(Engine, 'zoom_url')
-    # Users.add_column(Engine, 'zoom_id')
+    # Groups.add_column(Engine, 'zoom_url')
+    # Users.add_column(Engine, 'zoom_url')
     # Users.add_column(Engine, 'jantama_name')
     # results_service.migrate()
     session = Session()
-    res = session\
-        .query(Results).all()
-    for r in res:
-        h = Hanchans(
-            id=r.id,
-            room_id=r.room_id,
-            raw_scores=r.points,
-            converted_scores=r.result,
-            match_id=r.match_id,
-            status=r.status,
-        )
-        session.add(h)
+
+    # # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
+    Engine.execute('ALTER TABLE users RENAME COLUMN line_name TO line_user_name;')
+    # res = session\
+    #     .query(Groups).all()
+    # for r in res:
+    #     h = Groups(
+    #         id=r.id,
+    #         line_group_id=r.group_id,
+    #         mode=r.mode,
+    #         zoom_url=r.zoom_url,
+    #     )
+    #     session.add(h)
     session.commit()
 
-    return redirect(url_for('index', message='migrateしました'))
+    return redirect(url_for('views_blueprint.index', message='migrateしました'))
 
 
 @views_blueprint.route('/users')
 def get_users():
     data = get_users_for_web_use_case.execute()
-    keys = ['_id', 'name', 'line_user_id', 'jantama_name',
-            'zoom_url', 'mode', 'matches', 'rooms']
-    input_keys = ['name', 'line_user_id', 'zoom_url', 'jantama_name']
+    keys = ['_id', 'line_user_name', 'line_user_id', 'jantama_name',
+            'zoom_url', 'mode', 'matches', 'groups']
+    input_keys = ['line_user_name', 'line_user_id', 'zoom_url', 'jantama_name']
     return render_template(
         'model.html',
         title='users',
@@ -85,51 +84,51 @@ def get_users():
 
 @views_blueprint.route('/users/create', methods=['POST'])
 def create_users():
-    # name = request.form['name']
+    # line_user_name = request.form['line_user_name']
     # user_id = request.form['user_id']
-    # user_use_cases.create(name, user_id)
-    return redirect(url_for('get_users'))
+    # user_use_cases.create(line_user_name, user_id)
+    return redirect(url_for('views_blueprint.get_users'))
 
 
 @views_blueprint.route('/users/delete', methods=['POST'])
 def delete_users():
     target_id = request.args.get('target_id')
     delete_users_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_users'))
+    return redirect(url_for('views_blueprint.get_users'))
 
 
-@views_blueprint.route('/rooms')
-def get_rooms():
-    data = get_rooms_for_web_use_case.execute()
-    keys = ['_id', 'line_room_id', 'zoom_url', 'mode', 'users']
-    input_keys = ['line_room_id', 'zoom_url']
+@views_blueprint.route('/groups')
+def get_groups():
+    data = get_groups_for_web_use_case.execute()
+    keys = ['_id', 'line_group_id', 'zoom_url', 'mode', 'users']
+    input_keys = ['line_group_id', 'zoom_url']
     return render_template(
         'model.html',
-        title='rooms',
+        title='groups',
         keys=keys,
         input_keys=input_keys,
         data=data
     )
 
 
-@views_blueprint.route('/rooms/create', methods=['POST'])
-def create_rooms():
-    return redirect(url_for('get_rooms'))
+@views_blueprint.route('/groups/create', methods=['POST'])
+def create_groups():
+    return redirect(url_for('views_blueprint.get_groups'))
 
 
-@views_blueprint.route('/rooms/delete', methods=['POST'])
-def delete_rooms():
+@views_blueprint.route('/groups/delete', methods=['POST'])
+def delete_groups():
     target_id = request.args.get('target_id')
-    delete_rooms_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_rooms'))
+    delete_groups_for_web_use_case.execute([int(target_id)])
+    return redirect(url_for('views_blueprint.get_groups'))
 
 
 @views_blueprint.route('/hanchans')
 def get_hanchans():
     data = get_hanchans_for_web_use_case.execute()
-    keys = ['_id', 'line_room_id', 'raw_scores',
+    keys = ['_id', 'line_group_id', 'raw_scores',
             'converted_scores', 'match_id', 'status']
-    input_keys = ['line_room_id', 'raw_scores',
+    input_keys = ['line_group_id', 'raw_scores',
                   'converted_scores', 'match_id', 'status']
     return render_template(
         'model.html',
@@ -142,21 +141,21 @@ def get_hanchans():
 
 @views_blueprint.route('/hanchans/create', methods=['POST'])
 def create_hanchans():
-    return redirect(url_for('get_hanchans'))
+    return redirect(url_for('views_blueprint.get_hanchans'))
 
 
 @views_blueprint.route('/hanchans/delete', methods=['POST'])
 def delete_hanchans():
     target_id = request.args.get('target_id')
     delete_hanchans_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_hanchans'))
+    return redirect(url_for('views_blueprint.get_hanchans'))
 
 
 @views_blueprint.route('/matches')
 def get_matches():
     data = get_matches_for_web_use_case.execute()
-    keys = ['_id', 'line_room_id', 'hanchan_ids', 'created_at', 'status', 'users']
-    input_keys = ['line_room_id', 'hanchan_ids', 'status']
+    keys = ['_id', 'line_group_id', 'hanchan_ids', 'created_at', 'status', 'users']
+    input_keys = ['line_group_id', 'hanchan_ids', 'status']
     return render_template(
         'model.html',
         title='matches',
@@ -168,14 +167,14 @@ def get_matches():
 
 @views_blueprint.route('/matches/create', methods=['POST'])
 def create_matches():
-    return redirect(url_for('get_matches'))
+    return redirect(url_for('views_blueprint.get_matches'))
 
 
 @views_blueprint.route('/matches/delete', methods=['POST'])
 def delete_matches():
     target_id = request.args.get('target_id')
     delete_matches_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_matches'))
+    return redirect(url_for('views_blueprint.get_matches'))
 
 
 @views_blueprint.route('/configs')
@@ -194,14 +193,14 @@ def get_configs():
 
 @views_blueprint.route('/configs/create', methods=['POST'])
 def create_configs():
-    return redirect(url_for('get_configs'))
+    return redirect(url_for('views_blueprint.get_configs'))
 
 
 @views_blueprint.route('/configs/delete', methods=['POST'])
 def delete_configs():
     target_id = request.args.get('target_id')
     delete_configs_for_web_use_case.execute([int(target_id)])
-    return redirect(url_for('get_configs'))
+    return redirect(url_for('views_blueprint.get_configs'))
 
 
 @views_blueprint.route("/callback", methods=['POST'])

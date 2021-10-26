@@ -29,7 +29,7 @@ def test_hit_with_ids():
         assert len(result) == len(target_matchs)
         for i in range(len(result)):
             assert isinstance(result[i], Match)
-            assert result[i].line_room_id == target_matchs[i].line_room_id
+            assert result[i].line_group_id == target_matchs[i].line_group_id
             assert result[i].hanchan_ids == target_matchs[i].hanchan_ids
             assert result[i].users == target_matchs[i].users
             assert result[i].status == target_matchs[i].status

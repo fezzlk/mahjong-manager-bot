@@ -41,7 +41,7 @@ def test_hit_with_ids():
         assert len(result) == len(other_hanchans)
         for i in range(len(result)):
             assert isinstance(result[i], Hanchan)
-            assert result[i].line_room_id == other_hanchans[i].line_room_id
+            assert result[i].line_group_id == other_hanchans[i].line_group_id
             assert result[i].match_id == other_hanchans[i].match_id
             assert result[i].raw_scores == other_hanchans[i].raw_scores
             assert result[i].converted_scores == other_hanchans[i].converted_scores
@@ -80,7 +80,7 @@ def test_hit_0_record():
         assert len(result) == len(dummy_hanchans)
         for i in range(len(result)):
             assert isinstance(result[i], Hanchan)
-            assert result[i].line_room_id == dummy_hanchans[i].line_room_id
+            assert result[i].line_group_id == dummy_hanchans[i].line_group_id
             assert result[i].match_id == dummy_hanchans[i].match_id
             assert result[i].raw_scores == dummy_hanchans[i].raw_scores
             assert result[i].converted_scores == dummy_hanchans[i].converted_scores

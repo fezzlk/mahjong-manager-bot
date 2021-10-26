@@ -5,19 +5,19 @@ from sqlalchemy.orm.session import Session as BaseSession
 
 class IHanchanRepository(metaclass=ABCMeta):
     @abstractmethod
-    def find_one_by_id_and_line_room_id(
+    def find_one_by_id_and_line_group_id(
         self,
         session: BaseSession,
         target_id: str,
-        line_room_id: str,
+        line_group_id: str,
     ) -> Hanchan:
         pass
 
     @abstractmethod
-    def find_one_by_line_room_id_and_status(
+    def find_one_by_line_group_id_and_status(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Hanchan:
         pass
@@ -54,39 +54,39 @@ class IHanchanRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_raw_score_of_user_by_room_id(
+    def update_raw_score_of_user_by_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         line_user_id: str,
         raw_score: int = None,
     ) -> Hanchan:
         pass
 
     @abstractmethod
-    def update_status_by_line_room_id(
+    def update_status_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Hanchan:
         pass
 
     @abstractmethod
-    def update_status_by_id_and_line_room_id(
+    def update_status_by_id_and_line_group_id(
         self,
         session: BaseSession,
         hanchan_id: int,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Hanchan:
         pass
 
     @abstractmethod
-    def update_one_converted_score_by_line_room_id(
+    def update_one_converted_score_by_line_group_id(
         self,
         session: BaseSession,
-        line_room_id: str,
+        line_group_id: str,
         converted_scores: dict,
     ) -> Hanchan:
         pass

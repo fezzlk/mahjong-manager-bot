@@ -11,11 +11,11 @@ class HanchanService(IHanchanService):
     def create(
         self,
         raw_scores: Dict[str, int],
-        line_room_id: str,
+        line_group_id: str,
         related_match: Match,
     ) -> Hanchan:
         new_hanchan = Hanchan(
-            line_room_id=line_room_id,
+            line_group_id=line_group_id,
             raw_scores=raw_scores,
             converted_scores='',
             match_id=related_match._id,
@@ -28,22 +28,22 @@ class HanchanService(IHanchanService):
             )
 
         print(
-            f'create hanchan: to room "{line_room_id}"'
+            f'create hanchan: to group "{line_group_id}"'
         )
 
         return new_hanchan
 
     def disabled_by_id(
         self,
-        line_room_id: str,
+        line_group_id: str,
         hanchan_id: int,
     ) -> Hanchan:
         """disabled target hanchan"""
         with session_scope() as session:
-            new_hanchan = hanchan_repository.update_status_by_id_and_line_room_id(
+            new_hanchan = hanchan_repository.update_status_by_id_and_line_group_id(
                 session,
                 hanchan_id=hanchan_id,
-                line_room_id=line_room_id,
+                line_group_id=line_group_id,
                 status=0,
             )
 
@@ -60,24 +60,24 @@ class HanchanService(IHanchanService):
         with session_scope() as session:
             return hanchan_repository.find_by_ids(session, ids)
 
-    def get_current(self, line_room_id):
+    def get_current(self, line_group_id):
         with session_scope() as session:
-            return hanchan_repository.find_one_by_line_room_id_and_status(
+            return hanchan_repository.find_one_by_line_group_id_and_status(
                 session,
-                line_room_id,
+                line_group_id,
                 1
             )
 
     def add_raw_score(
         self,
-        line_room_id: str,
+        line_group_id: str,
         line_user_id: str,
         raw_score: int,
     ) -> Hanchan:
         with session_scope() as session:
-            hanchan = hanchan_repository.update_raw_score_of_user_by_room_id(
+            hanchan = hanchan_repository.update_raw_score_of_user_by_group_id(
                 session=session,
-                line_room_id=line_room_id,
+                line_group_id=line_group_id,
                 line_user_id=line_user_id,
                 raw_score=raw_score,
             )
@@ -86,13 +86,13 @@ class HanchanService(IHanchanService):
 
     def drop_raw_score(
         self,
-        line_room_id: str,
+        line_group_id: str,
         line_user_id: str,
     ) -> Hanchan:
         with session_scope() as session:
-            hanchan = hanchan_repository.update_raw_score_of_user_by_room_id(
+            hanchan = hanchan_repository.update_raw_score_of_user_by_group_id(
                 session=session,
-                line_room_id=line_room_id,
+                line_group_id=line_group_id,
                 line_user_id=line_user_id,
                 raw_score=None,
             )
@@ -101,13 +101,13 @@ class HanchanService(IHanchanService):
 
     def update_converted_score(
         self,
-        line_room_id: str,
+        line_group_id: str,
         converted_scores: Dict[str, int],
     ) -> Hanchan:
         with session_scope() as session:
-            hanchan = hanchan_repository.update_one_converted_score_by_line_room_id(
+            hanchan = hanchan_repository.update_one_converted_score_by_line_group_id(
                 session=session,
-                line_room_id=line_room_id,
+                line_group_id=line_group_id,
                 converted_scores=converted_scores,
             )
 
@@ -119,13 +119,13 @@ class HanchanService(IHanchanService):
 
     def update_status(
         self,
-        line_room_id: str,
+        line_group_id: str,
         status: int,
     ) -> Hanchan:
         with session_scope() as session:
-            hanchan = hanchan_repository.update_status_by_line_room_id(
+            hanchan = hanchan_repository.update_status_by_line_group_id(
                 session,
-                line_room_id,
+                line_group_id,
                 status,
             )
 
@@ -138,11 +138,11 @@ class HanchanService(IHanchanService):
 
             return hanchan
 
-    def archive(self, line_room_id: str) -> Hanchan:
-        return self.update_status(line_room_id, 2)
+    def archive(self, line_group_id: str) -> Hanchan:
+        return self.update_status(line_group_id, 2)
 
-    def disable(self, line_room_id: str) -> Hanchan:
-        return self.update_status(line_room_id, 0)
+    def disable(self, line_group_id: str) -> Hanchan:
+        return self.update_status(line_group_id, 0)
 
     def get(self, ids: List[int] = None) -> List[Hanchan]:
         with session_scope() as session:

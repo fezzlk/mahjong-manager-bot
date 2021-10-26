@@ -1,12 +1,12 @@
 """calculate"""
 
-from domains.Room import RoomMode
+from domains.Group import GroupMode
 from services import (
     request_info_service,
     user_service,
     reply_service,
     match_service,
-    room_service,
+    group_service,
     config_service,
     hanchan_service,
     message_service,
@@ -19,9 +19,9 @@ class CalculateWithTobiUseCase:
         """
         得点計算の準備および結果の格納
         """
-        line_room_id = request_info_service.req_line_room_id
+        line_group_id = request_info_service.req_line_group_id
         # 現在 active な result (current)のポイントを計算対象にする
-        current = hanchan_service.get_current(line_room_id)
+        current = hanchan_service.get_current(line_group_id)
         if current is None:
             print(
                 'current points is not found.'
@@ -60,34 +60,34 @@ class CalculateWithTobiUseCase:
         calculate_result = hanchan_service.run_calculate(
             points=points,
             ranking_prize=[
-                int(s) for s in config_service.get_value_by_key(line_room_id, '順位点').split(',')
+                int(s) for s in config_service.get_value_by_key(line_group_id, '順位点').split(',')
             ],
-            tobi_prize=int(config_service.get_value_by_key(line_room_id, '飛び賞')),
-            rounding_method=config_service.get_value_by_key(line_room_id, '端数計算方法'),
+            tobi_prize=int(config_service.get_value_by_key(line_group_id, '飛び賞')),
+            rounding_method=config_service.get_value_by_key(line_group_id, '端数計算方法'),
             tobashita_player_id=tobashita_player_id,
         )
 
-        line_room_id = request_info_service.req_line_room_id
+        line_group_id = request_info_service.req_line_group_id
 
         # その半荘の結果を更新
-        hanchan_service.update_converted_score(line_room_id, calculate_result)
+        hanchan_service.update_converted_score(line_group_id, calculate_result)
 
         # 総合結果に半荘結果を追加
-        current_hanchan = hanchan_service.get_current(line_room_id)
-        match_service.add_hanchan_id(line_room_id, current_hanchan._id)
+        current_hanchan = hanchan_service.get_current(line_group_id)
+        match_service.add_hanchan_id(line_group_id, current_hanchan._id)
 
         # 結果の表示
-        hanchan = hanchan_service.get_current(line_room_id)
+        hanchan = hanchan_service.get_current(line_group_id)
         converted_scores = hanchan.converted_scores
-        current_match = match_service.get_current(line_room_id)
+        current_match = match_service.get_current(line_group_id)
         hanchans = hanchan_service.find_by_ids(current_match.hanchan_ids)
         sum_hanchans = {}
         for r in hanchans:
             converted_scores = r.converted_scores
-            for user_id, converted_score in converted_scores.items():
-                if user_id not in sum_hanchans.keys():
-                    sum_hanchans[user_id] = 0
-                sum_hanchans[user_id] += converted_score
+            for line_user_id, converted_score in converted_scores.items():
+                if line_user_id not in sum_hanchans.keys():
+                    sum_hanchans[line_user_id] = 0
+                sum_hanchans[line_user_id] += converted_score
 
         reply_service.add_message(
             '一半荘お疲れ様でした。結果を表示します。'
@@ -114,10 +114,10 @@ class CalculateWithTobiUseCase:
         )
 
         # 一半荘の結果をアーカイブ
-        hanchan_service.archive(line_room_id)
+        hanchan_service.archive(line_group_id)
 
         # ルームを待機モードにする
-        room_service.chmod(line_room_id, RoomMode.wait)
+        group_service.chmod(line_group_id, GroupMode.wait)
 
         reply_service.add_message(
             '始める時は「_start」と入力してください。')

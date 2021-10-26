@@ -16,30 +16,30 @@ class User:
     mode: UserMode
     jantama_name: str
     matches: list
-    rooms: list
+    groups: list
 
     def __init__(
         self,
-        name: str,
+        line_user_name: str,
         line_user_id: str,
         zoom_url: str,
         mode: UserMode,
         jantama_name: str,
         matches: list = [],
-        rooms: list = [],
+        groups: list = [],
         _id: int = None,
     ):
         self._id = _id
-        self.name = name
+        self.line_user_name = line_user_name
         self.line_user_id = line_user_id
         self.zoom_url = zoom_url
         self.mode = mode
         self.jantama_name = jantama_name
         self.matches = matches
-        self.rooms = rooms
+        self.groups = groups
 
 # TODO: 値オブジェクト化
-# name: LINE account name
+# line_user_name: LINE account name
 
 # line_user_id は LINE Account の ID, Uから始まる
 

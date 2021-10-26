@@ -26,7 +26,7 @@ def test_hit_with_ids():
         assert len(result) == len(target_users)
         for i in range(len(result)):
             assert isinstance(result[i], User)
-            assert result[i].name == target_users[i].name
+            assert result[i].line_user_name == target_users[i].line_user_name
             assert result[i].line_user_id == target_users[i].line_user_id
             assert result[i].zoom_url == target_users[i].zoom_url
             assert result[i].mode == target_users[i].mode
