@@ -26,6 +26,7 @@ def test_hit_records():
         assert len(result) == len(target_configs)
         for i in range(len(result)):
             assert isinstance(result[i], Config)
+            assert result[i]._id == dummy_configs[i]._id
             assert result[i].target_id == dummy_configs[i].target_id
             assert result[i].key == dummy_configs[i].key
             assert result[i].value == dummy_configs[i].value
