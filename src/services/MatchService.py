@@ -1,6 +1,5 @@
 from typing import List
 
-from sqlalchemy.sql.expression import table
 from .interfaces.IMatchService import IMatchService
 from repositories import session_scope, match_repository
 from domains.Match import Match
