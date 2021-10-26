@@ -2,7 +2,7 @@ import os
 from linebot import LineBotApi
 
 
-line_bot_api = None
+line_bot_api: LineBotApi = None
 
 if "YOUR_CHANNEL_ACCESS_TOKEN" in os.environ:
     YOUR_CHANNEL_ACCESS_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]

@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 import os
 
 Engine = create_engine(os.environ["DATABASE_URL"])
@@ -11,4 +11,4 @@ Session = sessionmaker(
     bind=Engine
 )
 
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
