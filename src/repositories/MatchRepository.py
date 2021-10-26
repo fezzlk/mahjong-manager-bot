@@ -97,9 +97,7 @@ class MatchRepository:
         hanchan_ids: List[int],
     ) -> Match:
         record = session\
-            .query(MatchSchema).filter(
-                MatchSchema.id == match_id,
-            )\
+            .query(MatchSchema).filter(MatchSchema.id == match_id)\
             .first()
 
         if record is None:
@@ -116,9 +114,7 @@ class MatchRepository:
         status: int,
     ) -> Match:
         record = session\
-            .query(MatchSchema).filter(
-                MatchSchema.id == match_id,
-            )\
+            .query(MatchSchema).filter(MatchSchema.id == match_id)\
             .first()
 
         if record is None:

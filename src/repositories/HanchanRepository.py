@@ -113,9 +113,7 @@ class HanchanRepository:
         converted_scores: Dict[str, int],
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(and_(
-                HanchanSchema._id == hanchan_id,
-            ))\
+            .query(HanchanSchema).filter(HanchanSchema._id == hanchan_id)\
             .first()
 
         if record is None:
@@ -132,9 +130,7 @@ class HanchanRepository:
         raw_scores: Dict[str, int],
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(and_(
-                HanchanSchema._id == hanchan_id,
-            ))\
+            .query(HanchanSchema).filter(HanchanSchema._id == hanchan_id)\
             .first()
 
         if record is None:
@@ -151,9 +147,7 @@ class HanchanRepository:
         status: int,
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(and_(
-                HanchanSchema.id == hanchan_id,
-            ))\
+            .query(HanchanSchema).filter(HanchanSchema.id == hanchan_id)\
             .first()
 
         if record is None:
