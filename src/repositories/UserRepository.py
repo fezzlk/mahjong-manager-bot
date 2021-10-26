@@ -57,7 +57,7 @@ class UserRepository:
             .all()
 
         return [
-            self._mapping_record_to_config_domain(record)
+            self._mapping_record_to_user_domain(record)
             for record in records
         ]
 
@@ -73,7 +73,7 @@ class UserRepository:
             .all()
 
         return [
-            self._mapping_record_to_config_domain(record)
+            self._mapping_record_to_user_domain(record)
             for record in records
         ]
 
@@ -90,7 +90,7 @@ class UserRepository:
         if record is None:
             return None
 
-        return self._mapping_record_to_config_domain(record)
+        return self._mapping_record_to_user_domain(record)
 
     def find_one_by_name(
         self,
@@ -108,7 +108,7 @@ class UserRepository:
         if len(records) > 1:
             print("warning: find multi users by line_user_name")
 
-        return self._mapping_record_to_config_domain(records[0])
+        return self._mapping_record_to_user_domain(records[0])
 
     def update_one_mode_by_line_user_id(
         self,
@@ -126,7 +126,7 @@ class UserRepository:
 
         record.mode = mode.value
 
-        return self._mapping_record_to_config_domain(record)
+        return self._mapping_record_to_user_domain(record)
 
     def update_one_zoom_url_by_line_user_id(
         self,
@@ -144,9 +144,9 @@ class UserRepository:
 
         record.zoom_url = zoom_url
 
-        return self._mapping_record_to_config_domain(record)
+        return self._mapping_record_to_user_domain(record)
 
-    def _mapping_record_to_config_domain(self, record: UserSchema) -> User:
+    def _mapping_record_to_user_domain(self, record: UserSchema) -> User:
         return User(
             _id=record.id,
             line_user_name=record.line_user_name,
