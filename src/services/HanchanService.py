@@ -1,6 +1,5 @@
 from typing import Dict, List
 
-from sqlalchemy.sql.visitors import traverse_using
 from repositories import session_scope, hanchan_repository
 from domains.Hanchan import Hanchan
 from domains.Match import Match
