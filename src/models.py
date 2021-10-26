@@ -128,7 +128,7 @@ class HanchanSchema(Base):
                        (HanchanSchema.__tablename__, column_name, column_type))
 
 
-class MatcheSchema(Base):
+class MatchSchema(Base):
     __tablename__ = 'matches'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -156,7 +156,7 @@ class MatcheSchema(Base):
         column = Column(column_name, String(255), nullable=True)
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
-                       (MatcheSchema.__tablename__, column_name, column_type))
+                       (MatchSchema.__tablename__, column_name, column_type))
 
 
 class ConfigSchema(Base):
