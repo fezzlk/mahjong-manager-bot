@@ -1,9 +1,67 @@
+from typing import List
 from models import GroupSchema
 from domains.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
 class GroupRepository:
+
+    def create(
+        self,
+        session: BaseSession,
+        new_group: Group,
+    ) -> Group:
+        record = GroupSchema(
+            line_group_id=new_group.line_group_id,
+            mode=new_group.mode.value,
+            zoom_url=new_group.zoom_url,
+        )
+        session.add(record)
+        session.commit()
+        new_group._id = record.id
+        return new_group
+
+    def delete_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[str],
+    ) -> int:
+        delete_count = session\
+            .query(GroupSchema)\
+            .filter(GroupSchema.id.in_(ids))\
+            .delete(synchronize_session=False)
+
+        return delete_count
+
+    def find_all(
+        self,
+        session: BaseSession,
+    ) -> List[Group]:
+        records = session\
+            .query(GroupSchema)\
+            .order_by(GroupSchema.id)\
+            .all()
+
+        return [
+            self._mapping_record_to_group_domain(record)
+            for record in records
+        ]
+
+    def find_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[str],
+    ) -> List[Group]:
+        records = session\
+            .query(GroupSchema)\
+            .filter(GroupSchema.id.in_(ids))\
+            .order_by(GroupSchema.id)\
+            .all()
+
+        return [
+            self._mapping_record_to_group_domain(record)
+            for record in records
+        ]
 
     def find_one_by_group_id(
         self,
@@ -18,74 +76,7 @@ class GroupRepository:
         if record is None:
             return None
 
-        return Group(
-            line_group_id=record.line_group_id,
-            zoom_url=record.zoom_url,
-            mode=GroupMode[record.mode],
-            _id=record.id,
-        )
-
-    def find_by_ids(
-        self,
-        session: BaseSession,
-        ids: list,
-    ) -> list:
-        records = session\
-            .query(GroupSchema)\
-            .filter(GroupSchema.id.in_(ids))\
-            .order_by(GroupSchema.id)\
-            .all()
-
-        return [
-            Group(
-                line_group_id=record.line_group_id,
-                zoom_url=record.zoom_url,
-                mode=GroupMode[record.mode],
-                _id=record.id,
-            )
-            for record in records
-        ]
-
-    def find_all(
-        self,
-        session: BaseSession,
-    ) -> list:
-        records = session\
-            .query(GroupSchema)\
-            .order_by(GroupSchema.id)\
-            .all()
-
-        return [
-            Group(
-                line_group_id=record.line_group_id,
-                zoom_url=record.zoom_url,
-                mode=GroupMode[record.mode],
-                _id=record.id,
-            )
-            for record in records
-        ]
-
-    def create(
-        self,
-        session: BaseSession,
-        new_group: Group,
-    ) -> None:
-        record = GroupSchema(
-            line_group_id=new_group.line_group_id,
-            mode=new_group.mode.value,
-            zoom_url=new_group.zoom_url,
-        )
-        session.add(record)
-
-    def delete_by_ids(
-        self,
-        session: BaseSession,
-        ids: list,
-    ) -> None:
-        session\
-            .query(GroupSchema)\
-            .filter(GroupSchema.id.in_(ids))\
-            .delete(synchronize_session=False)
+        return self._mapping_record_to_group_domain(record)
 
     def update_one_mode_by_line_group_id(
         self,
@@ -106,12 +97,7 @@ class GroupRepository:
 
         record.mode = mode.value
 
-        return Group(
-            line_group_id=record.line_group_id,
-            zoom_url=record.zoom_url,
-            mode=GroupMode[record.mode],
-            _id=record.id,
-        )
+        return self._mapping_record_to_group_domain(record)
 
     def update_one_zoom_url_by_line_group_id(
         self,
@@ -129,6 +115,9 @@ class GroupRepository:
 
         record.zoom_url = zoom_url
 
+        return self._mapping_record_to_group_domain(record)
+
+    def _mapping_record_to_group_domain(self, record: GroupSchema) -> Group:
         return Group(
             line_group_id=record.line_group_id,
             zoom_url=record.zoom_url,
