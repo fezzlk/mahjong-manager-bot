@@ -1,4 +1,6 @@
 from typing import Dict, List
+
+from sqlalchemy.sql.visitors import traverse_using
 from repositories import session_scope, hanchan_repository
 from domains.Hanchan import Hanchan
 from domains.Match import Match
@@ -40,18 +42,26 @@ class HanchanService(IHanchanService):
     ) -> Hanchan:
         """disabled target hanchan"""
         with session_scope() as session:
-            new_hanchan = hanchan_repository.update_status_by_id_and_line_group_id(
-                session,
+            target = hanchan_repository.find_one_by_id_and_line_group_id(
+                session=session,
                 hanchan_id=hanchan_id,
                 line_group_id=line_group_id,
+            )
+
+            if target is None:
+                return None
+
+            updated_hanchan = hanchan_repository.update_status_by_id(
+                session,
+                hanchan_id=target._id,
                 status=0,
             )
 
             print(
-                f'disabled: id={hanchan_id}'
+                f'disabled: id={updated_hanchan._id}'
             )
 
-            return new_hanchan
+            return updated_hanchan
 
     def find_by_ids(
         self,
@@ -75,14 +85,30 @@ class HanchanService(IHanchanService):
         raw_score: int,
     ) -> Hanchan:
         with session_scope() as session:
-            hanchan = hanchan_repository.update_raw_score_of_user_by_group_id(
+            target = hanchan_repository.find_one_by_line_group_id_and_status(
                 session=session,
                 line_group_id=line_group_id,
-                line_user_id=line_user_id,
-                raw_score=raw_score,
+                status=1,
             )
 
-            return hanchan
+            if target is None:
+                return None
+
+            raw_scores = target.raw_scores
+            if line_user_id is None:
+                raw_scores = {}
+            elif raw_score is None:
+                raw_scores.pop(line_user_id)
+            else:
+                raw_scores[line_user_id] = raw_score
+
+            updated_hanchan = hanchan_repository.update_one_raw_scores_by_id(
+                session=session,
+                hanchan_id=target._id,
+                raw_scores=raw_scores,
+            )
+
+            return updated_hanchan
 
     def drop_raw_score(
         self,
@@ -90,7 +116,7 @@ class HanchanService(IHanchanService):
         line_user_id: str,
     ) -> Hanchan:
         with session_scope() as session:
-            hanchan = hanchan_repository.update_raw_score_of_user_by_group_id(
+            hanchan = hanchan_repository.update_one_raw_scores_by_id(
                 session=session,
                 line_group_id=line_group_id,
                 line_user_id=line_user_id,
@@ -105,44 +131,59 @@ class HanchanService(IHanchanService):
         converted_scores: Dict[str, int],
     ) -> Hanchan:
         with session_scope() as session:
-            hanchan = hanchan_repository.update_one_converted_score_by_line_group_id(
+            target = hanchan_repository.find_one_by_line_group_id_and_status(
                 session=session,
                 line_group_id=line_group_id,
-                converted_scores=converted_scores,
+                status=1,
             )
+
+            if target is None:
+                return None
+
+            updated_hanchan = hanchan_repository.update_one_converted_scores_by_id(
+                session=session, hanchan_id=target._id, converted_scores=converted_scores)
 
             print(
-                f'update hanchan: id={hanchan._id}'
+                f'update hanchan: id={updated_hanchan._id}'
             )
 
-            return hanchan
+            return updated_hanchan
 
-    def update_status(
+    def update_status_active_hanchan(
         self,
         line_group_id: str,
         status: int,
     ) -> Hanchan:
         with session_scope() as session:
-            hanchan = hanchan_repository.update_status_by_line_group_id(
-                session,
-                line_group_id,
-                status,
+            target = hanchan_repository.find_one_by_line_group_id_and_status(
+                session=session,
+                line_group_id=line_group_id,
+                status=1,
             )
 
-            if hanchan is None:
+            if target is None:
+                return None
+
+            updated_hanchan = hanchan_repository.update_status_by_id(
+                session=session,
+                hanchan_id=target._id,
+                status=status,
+            )
+
+            if updated_hanchan is None:
                 return None
 
             print(
-                f'{STATUS_LIST[status]} hanchan: id={hanchan._id}'
+                f'{STATUS_LIST[updated_hanchan.status]} hanchan: id={updated_hanchan._id}'
             )
 
-            return hanchan
+            return updated_hanchan
 
     def archive(self, line_group_id: str) -> Hanchan:
-        return self.update_status(line_group_id, 2)
+        return self.update_status_active_hanchan(line_group_id, 2)
 
     def disable(self, line_group_id: str) -> Hanchan:
-        return self.update_status(line_group_id, 0)
+        return self.update_status_active_hanchan(line_group_id, 0)
 
     def get(self, ids: List[int] = None) -> List[Hanchan]:
         with session_scope() as session:
@@ -210,7 +251,8 @@ class HanchanService(IHanchanService):
             # 3万点切り上げ切り捨ての場合、一時的に30000点を引き、int の丸めを利用する
             # ex. 切り上げ: int(-10100/1000) -> -10000, 切り捨て: int(10100/1000) -> 10000
             # その他の場合、マイナス点の場合の丸め方をプラスの丸め方に合わせるため、一時的に100000足す
-            result[player] = int((point + adjuster + padding) / 1000) - 30 - (adjuster // 1000)
+            result[player] = int(
+                (point + adjuster + padding) / 1000) - 30 - (adjuster // 1000)
 
         # 1位(他プレイヤーの点数合計×(-1))
         result[sorted_points[0][0]] = -1 * sum(result.values())

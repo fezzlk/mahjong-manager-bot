@@ -1,3 +1,4 @@
+from typing import Dict, List
 from models import HanchanSchema
 from sqlalchemy import and_, desc
 from domains.Hanchan import Hanchan
@@ -11,7 +12,7 @@ class HanchanRepository:
         self,
         session: BaseSession,
         new_hanchan: Hanchan,
-    ) -> None:
+    ) -> Hanchan:
         hanchan = HanchanSchema(
             line_group_id=new_hanchan.line_group_id,
             match_id=new_hanchan.match_id,
@@ -20,35 +21,50 @@ class HanchanRepository:
             status=new_hanchan.status,
         )
         session.add(hanchan)
+        session.commit()
+        new_hanchan._id = hanchan.id
+        return new_hanchan
 
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: list,
-    ) -> None:
-        session\
+        ids: List[Hanchan],
+    ) -> int:
+        delete_count = session\
             .query(HanchanSchema)\
             .filter(HanchanSchema.id.in_(ids))\
             .delete(synchronize_session=False)
 
+        return delete_count
+
     def find_all(
         self,
         session: BaseSession,
-    ) -> list:
+    ) -> List[Hanchan]:
         records = session\
             .query(HanchanSchema)\
             .order_by(HanchanSchema.id)\
             .all()
 
         return [
-            Hanchan(
-                _id=record.id,
-                line_group_id=record.line_group_id,
-                raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
-                converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
-                match_id=record.match_id,
-                status=record.status,
-            )
+            self._mapping_record_to_hanchan_domain(record)
+            for record in records
+        ]
+
+    def find_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[Hanchan],
+    ) -> List[Hanchan]:
+        # TODO use map to filter
+        records = session\
+            .query(HanchanSchema)\
+            .filter(HanchanSchema.id.in_([int(s) for s in ids]))\
+            .order_by(HanchanSchema.id)\
+            .all()
+
+        return [
+            self._mapping_record_to_hanchan_domain(record)
             for record in records
         ]
 
@@ -69,14 +85,7 @@ class HanchanRepository:
         if record is None:
             return None
 
-        return Hanchan(
-            _id=record.id,
-            line_group_id=record.line_group_id,
-            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
-            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
-            match_id=record.match_id,
-            status=record.status,
-        )
+        return self._mapping_record_to_hanchan_domain(record)
 
     def find_one_by_line_group_id_and_status(
         self,
@@ -95,51 +104,18 @@ class HanchanRepository:
         if record is None:
             return None
 
-        return Hanchan(
-            _id=record.id,
-            line_group_id=record.line_group_id,
-            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
-            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
-            match_id=record.match_id,
-            status=record.status,
-        )
+        return self._mapping_record_to_hanchan_domain(record)
 
-    def find_by_ids(
+    def update_one_converted_scores_by_id(
         self,
         session: BaseSession,
-        ids: list,
-    ) -> list:
-        # TODO use map to filter
-        records = session\
-            .query(HanchanSchema)\
-            .filter(HanchanSchema.id.in_([int(s) for s in ids]))\
-            .order_by(HanchanSchema.id)\
-            .all()
-
-        return [
-            Hanchan(
-                _id=record.id,
-                line_group_id=record.line_group_id,
-                raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
-                converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
-                match_id=record.match_id,
-                status=record.status,
-            )
-            for record in records
-        ]
-
-    def update_one_converted_score_by_line_group_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        converted_scores: dict,
+        hanchan_id: int,
+        converted_scores: Dict[str, int],
     ) -> Hanchan:
         record = session\
             .query(HanchanSchema).filter(and_(
-                HanchanSchema.line_group_id == line_group_id,
-                HanchanSchema.status == 1,
+                HanchanSchema._id == hanchan_id,
             ))\
-            .order_by(desc(HanchanSchema.id))\
             .first()
 
         if record is None:
@@ -147,65 +123,37 @@ class HanchanRepository:
 
         record.converted_scores = json.dumps(converted_scores)
 
-        return Hanchan(
-            _id=record.id,
-            line_group_id=record.line_group_id,
-            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
-            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
-            match_id=record.match_id,
-            status=record.status,
-        )
+        return self._mapping_record_to_hanchan_domain(record)
 
-    def update_raw_score_of_user_by_group_id(
+    def update_one_raw_scores_by_id(
         self,
         session: BaseSession,
-        line_group_id: str,
-        line_user_id: str,
-        raw_score: int = None,
+        hanchan_id: int,
+        raw_scores: Dict[str, int],
     ) -> Hanchan:
         record = session\
             .query(HanchanSchema).filter(and_(
-                HanchanSchema.line_group_id == line_group_id,
-                HanchanSchema.status == 1,
+                HanchanSchema._id == hanchan_id,
             ))\
-            .order_by(desc(HanchanSchema.id))\
             .first()
 
         if record is None:
             return None
 
-        raw_scores = json.loads(record.raw_scores)
-        if line_user_id is None:
-            raw_scores = {}
-        elif raw_score is None:
-            raw_scores.pop(line_user_id)
-        else:
-            raw_scores[line_user_id] = raw_score
         record.raw_scores = json.dumps(raw_scores)
 
-        return Hanchan(
-            _id=record.id,
-            line_group_id=record.line_group_id,
-            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
-            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
-            match_id=record.match_id,
-            status=record.status,
-        )
+        return self._mapping_record_to_hanchan_domain
 
-    def update_status_by_id_and_line_group_id(
+    def update_status_by_id(
         self,
         session: BaseSession,
         hanchan_id: int,
-        line_group_id: str,
         status: int,
     ) -> Hanchan:
         record = session\
             .query(HanchanSchema).filter(and_(
                 HanchanSchema.id == hanchan_id,
-                HanchanSchema.line_group_id == line_group_id,
-                HanchanSchema.status == 1,
             ))\
-            .order_by(desc(HanchanSchema.id))\
             .first()
 
         if record is None:
@@ -213,39 +161,25 @@ class HanchanRepository:
 
         record.status = status
 
-        return Hanchan(
-            _id=record.id,
-            line_group_id=record.line_group_id,
-            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
-            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
-            match_id=record.match_id,
-            status=record.status,
-        )
+        return self._mapping_record_to_hanchan_domain(record)
 
-    def update_status_by_line_group_id(
+    def _mapping_record_to_hanchan_domain(
         self,
-        session: BaseSession,
-        line_group_id: str,
-        status: int,
+        record: HanchanSchema
     ) -> Hanchan:
-        record = session\
-            .query(HanchanSchema).filter(and_(
-                HanchanSchema.line_group_id == line_group_id,
-                HanchanSchema.status == 1,
-            ))\
-            .order_by(desc(HanchanSchema.id))\
-            .first()
-
-        if record is None:
-            return None
-
-        record.status = status
-
         return Hanchan(
             _id=record.id,
             line_group_id=record.line_group_id,
-            raw_scores=(json.loads(record.raw_scores) if record.raw_scores is not None else {}),
-            converted_scores=(json.loads(record.converted_scores) if record.converted_scores is not None else {}),
+            raw_scores=(
+                json.loads(
+                    record.raw_scores
+                ) if record.raw_scores is not None else {}
+            ),
+            converted_scores=(
+                json.loads(
+                    record.converted_scores
+                ) if record.converted_scores is not None else {}
+            ),
             match_id=record.match_id,
             status=record.status,
         )

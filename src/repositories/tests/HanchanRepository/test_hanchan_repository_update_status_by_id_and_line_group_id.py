@@ -27,7 +27,7 @@
 
 #     # Act
 #     with session_scope() as session:
-#         result = hanchan_repository.update_one_converted_score_by_line_group_id(
+#         result = hanchan_repository.update_one_converted_scores_by_id(
 #             session=session,
 #             line_group_id=target_hanchan.line_group_id,
 #             converted_scores=dummy_converted_scores,
