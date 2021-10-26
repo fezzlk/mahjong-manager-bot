@@ -1,4 +1,4 @@
-from models import Groups
+from models import GroupSchema
 from domains.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
@@ -11,8 +11,8 @@ class GroupRepository:
         line_group_id: int,
     ) -> Group:
         record = session\
-            .query(Groups)\
-            .filter(Groups.line_group_id == line_group_id)\
+            .query(GroupSchema)\
+            .filter(GroupSchema.line_group_id == line_group_id)\
             .first()
 
         if record is None:
@@ -31,9 +31,9 @@ class GroupRepository:
         ids: list,
     ) -> list:
         records = session\
-            .query(Groups)\
-            .filter(Groups.id.in_(ids))\
-            .order_by(Groups.id)\
+            .query(GroupSchema)\
+            .filter(GroupSchema.id.in_(ids))\
+            .order_by(GroupSchema.id)\
             .all()
 
         return [
@@ -51,8 +51,8 @@ class GroupRepository:
         session: BaseSession,
     ) -> list:
         records = session\
-            .query(Groups)\
-            .order_by(Groups.id)\
+            .query(GroupSchema)\
+            .order_by(GroupSchema.id)\
             .all()
 
         return [
@@ -70,7 +70,7 @@ class GroupRepository:
         session: BaseSession,
         new_group: Group,
     ) -> None:
-        record = Groups(
+        record = GroupSchema(
             line_group_id=new_group.line_group_id,
             mode=new_group.mode.value,
             zoom_url=new_group.zoom_url,
@@ -83,8 +83,8 @@ class GroupRepository:
         ids: list,
     ) -> None:
         session\
-            .query(Groups)\
-            .filter(Groups.id.in_(ids))\
+            .query(GroupSchema)\
+            .filter(GroupSchema.id.in_(ids))\
             .delete(synchronize_session=False)
 
     def update_one_mode_by_line_group_id(
@@ -97,8 +97,8 @@ class GroupRepository:
             raise ValueError
 
         record = session\
-            .query(Groups)\
-            .filter(Groups.line_group_id == line_group_id)\
+            .query(GroupSchema)\
+            .filter(GroupSchema.line_group_id == line_group_id)\
             .first()
 
         if record is None:
@@ -120,8 +120,8 @@ class GroupRepository:
         zoom_url: str,
     ) -> Group:
         record = session\
-            .query(Groups)\
-            .filter(Groups.line_group_id == line_group_id)\
+            .query(GroupSchema)\
+            .filter(GroupSchema.line_group_id == line_group_id)\
             .first()
 
         if record is None:

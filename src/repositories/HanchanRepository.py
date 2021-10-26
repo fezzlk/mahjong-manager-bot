@@ -1,4 +1,4 @@
-from models import Hanchans
+from models import HanchanSchema
 from sqlalchemy import and_, desc
 from domains.Hanchan import Hanchan
 from sqlalchemy.orm.session import Session as BaseSession
@@ -12,7 +12,7 @@ class HanchanRepository:
         session: BaseSession,
         new_hanchan: Hanchan,
     ) -> None:
-        hanchan = Hanchans(
+        hanchan = HanchanSchema(
             line_group_id=new_hanchan.line_group_id,
             match_id=new_hanchan.match_id,
             raw_scores=new_hanchan.raw_scores,
@@ -27,8 +27,8 @@ class HanchanRepository:
         ids: list,
     ) -> None:
         session\
-            .query(Hanchans)\
-            .filter(Hanchans.id.in_(ids))\
+            .query(HanchanSchema)\
+            .filter(HanchanSchema.id.in_(ids))\
             .delete(synchronize_session=False)
 
     def find_all(
@@ -36,8 +36,8 @@ class HanchanRepository:
         session: BaseSession,
     ) -> list:
         records = session\
-            .query(Hanchans)\
-            .order_by(Hanchans.id)\
+            .query(HanchanSchema)\
+            .order_by(HanchanSchema.id)\
             .all()
 
         return [
@@ -59,10 +59,10 @@ class HanchanRepository:
         line_group_id: str,
     ) -> Hanchan:
         record = session\
-            .query(Hanchans)\
+            .query(HanchanSchema)\
             .filter(and_(
-                Hanchans.line_group_id == line_group_id,
-                Hanchans.id == target_id,
+                HanchanSchema.line_group_id == line_group_id,
+                HanchanSchema.id == target_id,
             ))\
             .first()
 
@@ -85,11 +85,11 @@ class HanchanRepository:
         status: int,
     ) -> Hanchan:
         record = session\
-            .query(Hanchans).filter(and_(
-                Hanchans.line_group_id == line_group_id,
-                Hanchans.status == status,
+            .query(HanchanSchema).filter(and_(
+                HanchanSchema.line_group_id == line_group_id,
+                HanchanSchema.status == status,
             ))\
-            .order_by(desc(Hanchans.id))\
+            .order_by(desc(HanchanSchema.id))\
             .first()
 
         if record is None:
@@ -111,9 +111,9 @@ class HanchanRepository:
     ) -> list:
         # TODO use map to filter
         records = session\
-            .query(Hanchans)\
-            .filter(Hanchans.id.in_([int(s) for s in ids]))\
-            .order_by(Hanchans.id)\
+            .query(HanchanSchema)\
+            .filter(HanchanSchema.id.in_([int(s) for s in ids]))\
+            .order_by(HanchanSchema.id)\
             .all()
 
         return [
@@ -135,11 +135,11 @@ class HanchanRepository:
         converted_scores: dict,
     ) -> Hanchan:
         record = session\
-            .query(Hanchans).filter(and_(
-                Hanchans.line_group_id == line_group_id,
-                Hanchans.status == 1,
+            .query(HanchanSchema).filter(and_(
+                HanchanSchema.line_group_id == line_group_id,
+                HanchanSchema.status == 1,
             ))\
-            .order_by(desc(Hanchans.id))\
+            .order_by(desc(HanchanSchema.id))\
             .first()
 
         if record is None:
@@ -164,11 +164,11 @@ class HanchanRepository:
         raw_score: int = None,
     ) -> Hanchan:
         record = session\
-            .query(Hanchans).filter(and_(
-                Hanchans.line_group_id == line_group_id,
-                Hanchans.status == 1,
+            .query(HanchanSchema).filter(and_(
+                HanchanSchema.line_group_id == line_group_id,
+                HanchanSchema.status == 1,
             ))\
-            .order_by(desc(Hanchans.id))\
+            .order_by(desc(HanchanSchema.id))\
             .first()
 
         if record is None:
@@ -200,12 +200,12 @@ class HanchanRepository:
         status: int,
     ) -> Hanchan:
         record = session\
-            .query(Hanchans).filter(and_(
-                Hanchans.id == hanchan_id,
-                Hanchans.line_group_id == line_group_id,
-                Hanchans.status == 1,
+            .query(HanchanSchema).filter(and_(
+                HanchanSchema.id == hanchan_id,
+                HanchanSchema.line_group_id == line_group_id,
+                HanchanSchema.status == 1,
             ))\
-            .order_by(desc(Hanchans.id))\
+            .order_by(desc(HanchanSchema.id))\
             .first()
 
         if record is None:
@@ -229,11 +229,11 @@ class HanchanRepository:
         status: int,
     ) -> Hanchan:
         record = session\
-            .query(Hanchans).filter(and_(
-                Hanchans.line_group_id == line_group_id,
-                Hanchans.status == 1,
+            .query(HanchanSchema).filter(and_(
+                HanchanSchema.line_group_id == line_group_id,
+                HanchanSchema.status == 1,
             ))\
-            .order_by(desc(Hanchans.id))\
+            .order_by(desc(HanchanSchema.id))\
             .first()
 
         if record is None:

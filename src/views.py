@@ -44,18 +44,18 @@ def reset_db():
 
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
-    # Groups.add_column(Engine, 'zoom_url')
-    # Users.add_column(Engine, 'zoom_url')
-    # Users.add_column(Engine, 'jantama_name')
+    # GroupSchema.add_column(Engine, 'zoom_url')
+    # UserSchema.add_column(Engine, 'zoom_url')
+    # UserSchema.add_column(Engine, 'jantama_name')
     # results_service.migrate()
     session = Session()
 
     # # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
     Engine.execute('ALTER TABLE users RENAME COLUMN line_name TO line_user_name;')
     # res = session\
-    #     .query(Groups).all()
+    #     .query(GroupSchema).all()
     # for r in res:
-    #     h = Groups(
+    #     h = GroupSchema(
     #         id=r.id,
     #         line_group_id=r.group_id,
     #         mode=r.mode,

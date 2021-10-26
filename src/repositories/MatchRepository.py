@@ -1,4 +1,4 @@
-from models import Matches
+from models import MatchSchema
 from sqlalchemy import and_
 from domains.Match import Match
 from sqlalchemy.orm.session import Session as BaseSession
@@ -13,9 +13,9 @@ class MatchRepository:
         ids: list,
     ) -> list:
         records = session\
-            .query(Matches)\
-            .filter(Matches.id.in_([int(s) for s in ids]))\
-            .order_by(Matches.id)\
+            .query(MatchSchema)\
+            .filter(MatchSchema.id.in_([int(s) for s in ids]))\
+            .order_by(MatchSchema.id)\
             .all()
 
         return [
@@ -37,10 +37,10 @@ class MatchRepository:
         status: int,
     ) -> Match:
         record = session\
-            .query(Matches).filter(and_(
-                Matches.line_group_id == line_group_id,
-                Matches.status == status,
-            )).order_by(Matches.id.desc())\
+            .query(MatchSchema).filter(and_(
+                MatchSchema.line_group_id == line_group_id,
+                MatchSchema.status == status,
+            )).order_by(MatchSchema.id.desc())\
             .first()
 
         if record is None:
@@ -62,10 +62,10 @@ class MatchRepository:
         status: int
     ) -> list:
         records = session\
-            .query(Matches).filter(and_(
-                Matches.line_group_id == line_group_id,
-                Matches.status == status,
-            )).order_by(Matches.id.desc())\
+            .query(MatchSchema).filter(and_(
+                MatchSchema.line_group_id == line_group_id,
+                MatchSchema.status == status,
+            )).order_by(MatchSchema.id.desc())\
             .all()
 
         return [
@@ -85,7 +85,7 @@ class MatchRepository:
         session: BaseSession,
         new_match: Match,
     ) -> None:
-        record = Matches(
+        record = MatchSchema(
             line_group_id=new_match.line_group_id,
             hanchan_ids=new_match.hanchan_ids,
             status=new_match.status,
@@ -98,8 +98,8 @@ class MatchRepository:
         session: BaseSession,
     ) -> list:
         records = session\
-            .query(Matches)\
-            .order_by(Matches.id)\
+            .query(MatchSchema)\
+            .order_by(MatchSchema.id)\
             .all()
 
         return [
@@ -121,10 +121,10 @@ class MatchRepository:
         hanchan_id: int,
     ) -> Match:
         record = session\
-            .query(Matches).filter(and_(
-                Matches.line_group_id == line_group_id,
-                Matches.status == 1,
-            )).order_by(Matches.id.desc())\
+            .query(MatchSchema).filter(and_(
+                MatchSchema.line_group_id == line_group_id,
+                MatchSchema.status == 1,
+            )).order_by(MatchSchema.id.desc())\
             .first()
 
         if record is None:
@@ -150,10 +150,10 @@ class MatchRepository:
         status: int,
     ) -> Match:
         record = session\
-            .query(Matches).filter(and_(
-                Matches.line_group_id == line_group_id,
-                Matches.status == 1,
-            )).order_by(Matches.id.desc())\
+            .query(MatchSchema).filter(and_(
+                MatchSchema.line_group_id == line_group_id,
+                MatchSchema.status == 1,
+            )).order_by(MatchSchema.id.desc())\
             .first()
 
         if record is None:
@@ -177,10 +177,10 @@ class MatchRepository:
         hanchan_ids: list,
     ) -> Match:
         record = session\
-            .query(Matches).filter(and_(
-                Matches.line_group_id == line_group_id,
-                Matches.status == 1,
-            )).order_by(Matches.id.desc())\
+            .query(MatchSchema).filter(and_(
+                MatchSchema.line_group_id == line_group_id,
+                MatchSchema.status == 1,
+            )).order_by(MatchSchema.id.desc())\
             .first()
 
         if record is None:
@@ -204,9 +204,9 @@ class MatchRepository:
         hanchan_id: int,
     ) -> Match:
         record = session\
-            .query(Matches).filter(and_(
-                Matches.id == match_id,
-            )).order_by(Matches.id.desc())\
+            .query(MatchSchema).filter(and_(
+                MatchSchema.id == match_id,
+            )).order_by(MatchSchema.id.desc())\
             .first()
 
         if record is None:

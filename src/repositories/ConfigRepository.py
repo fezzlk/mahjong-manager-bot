@@ -1,6 +1,6 @@
 from typing import List
 from .interfaces.IConfigRepository import IConfigRepository
-from models import Configs
+from models import ConfigSchema
 from domains.Config import Config
 from sqlalchemy import and_
 from sqlalchemy.orm.session import Session as BaseSession
@@ -13,7 +13,7 @@ class ConfigRepository(IConfigRepository):
         session: BaseSession,
         new_config: Config,
     ) -> None:
-        record = Configs(
+        record = ConfigSchema(
             target_id=new_config.target_id,
             key=new_config.key,
             value=new_config.value,
@@ -26,8 +26,8 @@ class ConfigRepository(IConfigRepository):
         ids: List[str],
     ) -> None:
         session\
-            .query(Configs)\
-            .filter(Configs.id.in_(ids))\
+            .query(ConfigSchema)\
+            .filter(ConfigSchema.id.in_(ids))\
             .delete(synchronize_session=False)
 
     def delete_by_target_id_and_key(
@@ -37,10 +37,10 @@ class ConfigRepository(IConfigRepository):
         key: str,
     ) -> None:
         session\
-            .query(Configs)\
+            .query(ConfigSchema)\
             .filter(and_(
-                Configs.target_id == target_id,
-                Configs.key == key,
+                ConfigSchema.target_id == target_id,
+                ConfigSchema.key == key,
             ))\
             .delete()
 
@@ -49,8 +49,8 @@ class ConfigRepository(IConfigRepository):
         session: BaseSession,
     ) -> List[Config]:
         records = session\
-            .query(Configs)\
-            .order_by(Configs.id)\
+            .query(ConfigSchema)\
+            .order_by(ConfigSchema.id)\
             .all()
 
         return [
@@ -69,9 +69,9 @@ class ConfigRepository(IConfigRepository):
         ids: List[str],
     ) -> List[Config]:
         records = session\
-            .query(Configs)\
-            .filter(Configs.id.in_(ids))\
-            .order_by(Configs.id)\
+            .query(ConfigSchema)\
+            .filter(ConfigSchema.id.in_(ids))\
+            .order_by(ConfigSchema.id)\
             .all()
 
         return [
@@ -90,9 +90,9 @@ class ConfigRepository(IConfigRepository):
         target_id: str,
     ) -> Config:
         records = session\
-            .query(Configs)\
-            .filter(Configs.target_id == target_id)\
-            .order_by(Configs.id)\
+            .query(ConfigSchema)\
+            .filter(ConfigSchema.target_id == target_id)\
+            .order_by(ConfigSchema.id)\
             .all()
 
         return [
@@ -112,10 +112,10 @@ class ConfigRepository(IConfigRepository):
         key: str,
     ) -> Config:
         record = session\
-            .query(Configs)\
+            .query(ConfigSchema)\
             .filter(and_(
-                Configs.target_id == target_id,
-                Configs.key == key,
+                ConfigSchema.target_id == target_id,
+                ConfigSchema.key == key,
             ))\
             .first()
 

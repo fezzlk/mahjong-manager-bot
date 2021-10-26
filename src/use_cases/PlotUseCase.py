@@ -4,10 +4,10 @@
 #         group_id = request_info_service.req_line_group_id¥
 #         group_id = 'R808c3c802d36f386290630fc6ba10f0c'
 #         matches = session\
-#         .query(Matches).filter(and_(
-#         Matches.status == 2,
-#         Matches.line_group_id == group_id,
-#         )).order_by(Matches.id.desc())\
+#         .query(MatchSchema).filter(and_(
+#         MatchSchema.status == 2,
+#         MatchSchema.line_group_id == group_id,
+#         )).order_by(MatchSchema.id.desc())\
 #         .all()
 #         match = matches[0]
 #         print(match)

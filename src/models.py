@@ -30,12 +30,12 @@ class UserSchema(Base):
     mode = Column(String(255), nullable=False)
     jantama_name = Column(String(255), nullable=True)
     matches = relationship(
-        "Matches",
+        "MatchSchema",
         secondary=association_table_user_match,
         back_populates="users"
     )
     groups = relationship(
-        "Groups",
+        "GroupSchema",
         secondary=association_table_user_group,
         back_populates="users"
     )
@@ -70,7 +70,7 @@ class GroupSchema(Base):
     zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
     users = relationship(
-        "Users",
+        "UserSchema",
         secondary=association_table_user_group,
         back_populates="groups"
     )
@@ -136,7 +136,7 @@ class MatcheSchema(Base):
     hanchan_ids = Column(String(255))
     status = Column(Integer, nullable=False)
     users = relationship(
-        "Users",
+        "UserSchema",
         secondary=association_table_user_match,
         back_populates="matches"
     )
