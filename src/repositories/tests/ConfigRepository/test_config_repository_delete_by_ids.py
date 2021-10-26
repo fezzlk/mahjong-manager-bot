@@ -18,22 +18,23 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        config_repository.delete_by_ids(
+        result = config_repository.delete_by_ids(
             session=session,
             ids=ids,
         )
 
     # Assert
+    assert result == 2
     with session_scope() as session:
-        result = config_repository.find_all(
+        record_on_db = config_repository.find_all(
             session=session,
         )
-        assert len(result) == len(other_configs)
-        for i in range(len(result)):
-            assert isinstance(result[i], Config)
-            assert result[i].target_id == other_configs[i].target_id
-            assert result[i].key == other_configs[i].key
-            assert result[i].value == other_configs[i].value
+        assert len(record_on_db) == len(other_configs)
+        for i in range(len(record_on_db)):
+            assert isinstance(record_on_db[i], Config)
+            assert record_on_db[i].target_id == other_configs[i].target_id
+            assert record_on_db[i].key == other_configs[i].key
+            assert record_on_db[i].value == other_configs[i].value
 
 
 def test_hit_0_record():
@@ -56,13 +57,14 @@ def test_hit_0_record():
         )
 
     # Assert
+    assert result == 0
     with session_scope() as session:
-        result = config_repository.find_all(
+        record_on_db = config_repository.find_all(
             session=session,
         )
-        assert len(result) == len(dummy_configs)
-        for i in range(len(result)):
-            assert isinstance(result[i], Config)
-            assert result[i].target_id == dummy_configs[i].target_id
-            assert result[i].key == dummy_configs[i].key
-            assert result[i].value == dummy_configs[i].value
+        assert len(record_on_db) == len(dummy_configs)
+        for i in range(len(record_on_db)):
+            assert isinstance(record_on_db[i], Config)
+            assert record_on_db[i].target_id == dummy_configs[i].target_id
+            assert record_on_db[i].key == dummy_configs[i].key
+            assert record_on_db[i].value == dummy_configs[i].value
