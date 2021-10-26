@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 import datetime
+from typing import List
 
 
 @dataclass()
 class Match:
     _id: int
     line_group_id: str
-    hanchan_ids: str
+    hanchan_ids: List[int]
     users: list
     status: int
     created_at: datetime.date
@@ -14,7 +15,7 @@ class Match:
     def __init__(
         self,
         line_group_id: str,
-        hanchan_ids: str,
+        hanchan_ids: List[int],
         status: int,
         users: list = [],
         created_at: datetime.date = None,
