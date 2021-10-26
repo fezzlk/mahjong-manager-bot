@@ -135,10 +135,6 @@ class Hanchans(Base):
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
                        (Hanchans.__tablename__, column_name, column_type))
 
-#     @staticmethod
-#     def clone(engine):
-#         engine.execute('SELECT * INTO hanchans FROM results')
-
 
 class Matches(Base):
     """
