@@ -17,7 +17,7 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        user_repository.delete_one_by_line_user_id(
+        user_repository.delete_by_line_user_id(
             session,
             target_line_user_id,
         )
@@ -50,7 +50,7 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = user_repository.delete_one_by_line_user_id(
+        result = user_repository.delete_by_line_user_id(
             session,
             target_line_user_id,
         )
