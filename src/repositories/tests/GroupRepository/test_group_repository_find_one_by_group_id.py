@@ -44,7 +44,7 @@ def test_hit_0_record():
     with session_scope() as session:
         result = group_repository.find_one_by_group_id(
             session,
-            group_id=target_line_group_id,
+            line_group_id=target_line_group_id,
         )
 
     # Assert

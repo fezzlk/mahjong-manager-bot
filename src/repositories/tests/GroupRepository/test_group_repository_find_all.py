@@ -6,7 +6,7 @@ from domains.Group import Group
 def test_success_find_records():
     # Arrange
     with session_scope() as session:
-        dummy_groups = generate_dummy_group_list()
+        dummy_groups = generate_dummy_group_list()[:3]
         for dummy_group in dummy_groups:
             group_repository.create(
                 session,

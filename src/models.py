@@ -159,8 +159,8 @@ class Matches(Base):
     created_at = Column(DateTime, nullable=False,
                         server_default=current_timestamp())
 
-    def __init__(self, line_line_group_id, hanchan_ids, status):
-        self.line_group_id = line_line_group_id
+    def __init__(self, line_group_id, hanchan_ids, status):
+        self.line_group_id = line_group_id
         self.hanchan_ids = json.dumps(hanchan_ids),
         self.status = status
 

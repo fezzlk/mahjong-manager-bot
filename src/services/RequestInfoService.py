@@ -15,9 +15,9 @@ class RequestInfoService:
     メッセージ送信元情報のセット
     """
     def set_req_info(self, event: Event) -> None:
-        self.req_line_user_id = event.source.line_user_id
+        self.req_line_user_id = event.source.user_id
         if event.source.type == 'room':
-            self.req_line_group_id = event.source.line_group_id
+            self.req_line_group_id = event.source.room_id
         if event.source.type == 'group':
             self.req_line_group_id = event.source.group_id
 

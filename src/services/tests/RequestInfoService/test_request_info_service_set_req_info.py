@@ -40,4 +40,4 @@ def test_message_event_from_group():
 
     # Assert
     assert request_info_service.req_line_user_id == message_event.source.user_id
-    assert request_info_service.req_line_group_id == message_event.source.line_group_id
+    assert request_info_service.req_line_group_id == message_event.source.group_id

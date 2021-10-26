@@ -107,26 +107,26 @@ def generate_dummy_user_list():
 def generate_dummy_group_list():
     return [
         Group(
-            line_group_id="R0123456789abcdefghijklmnopqrstu1",
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
             zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=GroupMode.wait,
             _id=1,
         ),
         Group(
-            line_group_id="R0123456789abcdefghijklmnopqrstu2",
+            line_group_id="G0123456789abcdefghijklmnopqrstu2",
             zoom_url="https://us01web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=GroupMode.wait,
             _id=2,
         ),
         Group(
-            line_group_id="R0123456789abcdefghijklmnopqrstu3",
+            line_group_id="G0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us01web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=GroupMode.wait,
             _id=3,
         ),
         # same line group id 3
         Group(
-            line_group_id="R0123456789abcdefghijklmnopqrstu3",
+            line_group_id="G0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us01web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=GroupMode.input,
             _id=4,
@@ -330,8 +330,7 @@ class Source:
         self.user_id = user_id
 
         if source_type == 'group':
-            dummy_group = generate_dummy_group_list()[0]
-            self.line_group_id = dummy_group.line_group_id
+            self.group_id = group_id
 
 
 class Message:
