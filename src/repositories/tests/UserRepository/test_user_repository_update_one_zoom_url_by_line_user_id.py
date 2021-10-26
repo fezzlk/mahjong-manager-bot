@@ -16,9 +16,10 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        result = user_repository.find_one_by_name(
+        result = user_repository.update_one_zoom_url_by_line_user_id(
             session,
-            target_user.line_user_name,
+            target_user.line_user_id,
+            zoom_url=dummy_users[1].zoom_url,
         )
 
     # Assert
@@ -26,35 +27,7 @@ def test_hit_1_record():
         assert result._id == target_user._id
         assert result.line_user_name == target_user.line_user_name
         assert result.line_user_id == target_user.line_user_id
-        assert result.zoom_url == target_user.zoom_url
-        assert result.mode == target_user.mode
-        assert result.jantama_name == target_user.jantama_name
-
-
-def test_hit_some_records():
-    # Arrange
-    dummy_users = generate_dummy_user_list()[:4]
-    with session_scope() as session:
-        for dummy_user in dummy_users:
-            user_repository.create(
-                session,
-                dummy_user,
-            )
-    target_user = dummy_users[2]
-
-    # Act
-    with session_scope() as session:
-        result = user_repository.find_one_by_name(
-            session,
-            target_user.line_user_name,
-        )
-
-    # Assert
-        assert isinstance(result, User)
-        assert result._id == target_user._id
-        assert result.line_user_name == target_user.line_user_name
-        assert result.line_user_id == target_user.line_user_id
-        assert result.zoom_url == target_user.zoom_url
+        assert result.zoom_url == dummy_users[1].zoom_url
         assert result.mode == target_user.mode
         assert result.jantama_name == target_user.jantama_name
 
@@ -72,9 +45,10 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = user_repository.find_one_by_name(
+        result = user_repository.update_one_zoom_url_by_line_user_id(
             session,
-            target_user.line_user_name,
+            target_user.line_user_id,
+            zoom_url=dummy_users[1].zoom_url,
         )
 
     # Assert

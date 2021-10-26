@@ -24,7 +24,7 @@ def test_hit_with_ids():
         )
 
     # Assert
-    assert result == 2
+    assert result == len(target_configs)
     with session_scope() as session:
         record_on_db = config_repository.find_all(
             session=session,

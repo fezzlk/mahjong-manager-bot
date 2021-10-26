@@ -18,24 +18,25 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        user_repository.delete_by_ids(
+        result = user_repository.delete_by_ids(
             session,
             ids,
         )
 
     # Assert
+    assert result == len(target_users)
     with session_scope() as session:
-        result = user_repository.find_all(
+        record_on_db = user_repository.find_all(
             session,
         )
-        assert len(result) == len(other_users)
-        for i in range(len(result)):
-            assert isinstance(result[i], User)
-            assert result[i].line_user_name == other_users[i].line_user_name
-            assert result[i].line_user_id == other_users[i].line_user_id
-            assert result[i].zoom_url == other_users[i].zoom_url
-            assert result[i].mode == other_users[i].mode
-            assert result[i].jantama_name == other_users[i].jantama_name
+        assert len(record_on_db) == len(other_users)
+        for i in range(len(record_on_db)):
+            assert isinstance(record_on_db[i], User)
+            assert record_on_db[i].line_user_name == other_users[i].line_user_name
+            assert record_on_db[i].line_user_id == other_users[i].line_user_id
+            assert record_on_db[i].zoom_url == other_users[i].zoom_url
+            assert record_on_db[i].mode == other_users[i].mode
+            assert record_on_db[i].jantama_name == other_users[i].jantama_name
 
 
 def test_hit_0_record():
@@ -58,15 +59,16 @@ def test_hit_0_record():
         )
 
     # Assert
+    assert result == 0
     with session_scope() as session:
-        result = user_repository.find_all(
+        record_on_db = user_repository.find_all(
             session,
         )
-        assert len(result) == len(dummy_users)
-        for i in range(len(result)):
-            assert isinstance(result[i], User)
-            assert result[i].line_user_name == dummy_users[i].line_user_name
-            assert result[i].line_user_id == dummy_users[i].line_user_id
-            assert result[i].zoom_url == dummy_users[i].zoom_url
-            assert result[i].mode == dummy_users[i].mode
-            assert result[i].jantama_name == dummy_users[i].jantama_name
+        assert len(record_on_db) == len(dummy_users)
+        for i in range(len(record_on_db)):
+            assert isinstance(record_on_db[i], User)
+            assert record_on_db[i].line_user_name == dummy_users[i].line_user_name
+            assert record_on_db[i].line_user_id == dummy_users[i].line_user_id
+            assert record_on_db[i].zoom_url == dummy_users[i].zoom_url
+            assert record_on_db[i].mode == dummy_users[i].mode
+            assert record_on_db[i].jantama_name == dummy_users[i].jantama_name
