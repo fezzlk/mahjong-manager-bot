@@ -143,7 +143,7 @@ def imageMessage(event: Event):
 def postback(event: Event):
     """postback event"""
 
-    text = event.postback.data
+    text: str = event.postback.data
     method = text[1:].split()[0]
     body = text[len(method) + 2:]
     if event.source.type == 'room' or event.source.type == 'group':
@@ -152,7 +152,7 @@ def postback(event: Event):
         routing_by_method(method, body)
 
 
-def routing_by_text(event):
+def routing_by_text(event: Event):
     """routing by text for personal chat"""
     text = event.message.text
     if (text[0] == '_') & (len(text) > 1):
@@ -179,7 +179,7 @@ def routing_by_text(event):
     )
 
 
-def routing_by_method(method, body):
+def routing_by_method(method: str, body: str):
     """routing by method for personal chat"""
 
     # mode
@@ -216,7 +216,7 @@ def routing_by_method(method, body):
         user_my_zoom_command_use_case.execute()
 
 
-def routing_for_group_by_text(event):
+def routing_for_group_by_text(event: Event):
     """routing by text"""
     text = event.message.text
     if (text[0] == '_') & (len(text) > 1):
