@@ -17,7 +17,7 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        result = group_repository.find_one_by_group_id(
+        result = group_repository.find_one_by_line_group_id(
             session,
             target_line_group_id,
         )
@@ -42,7 +42,7 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = group_repository.find_one_by_group_id(
+        result = group_repository.find_one_by_line_group_id(
             session,
             line_group_id=target_line_group_id,
         )

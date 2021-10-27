@@ -38,7 +38,7 @@ class IGroupRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def find_one_by_group_id(
+    def find_one_by_line_group_id(
         self,
         session: BaseSession,
         line_group_id: int,
