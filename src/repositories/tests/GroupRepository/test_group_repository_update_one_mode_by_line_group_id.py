@@ -1,6 +1,6 @@
 from tests.dummies import generate_dummy_group_list
 from repositories import session_scope, group_repository
-from domains.Group import Group
+from domains.Group import Group, GroupMode
 
 
 def test_hit_1_record():
@@ -17,9 +17,10 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        result = group_repository.find_one_by_line_group_id(
+        result = group_repository.update_one_mode_by_line_group_id(
             session,
             target_line_group_id,
+            mode=GroupMode.input,
         )
 
     # Assert
@@ -27,7 +28,7 @@ def test_hit_1_record():
         assert result._id == target_group._id
         assert result.line_group_id == target_group.line_group_id
         assert result.zoom_url == target_group.zoom_url
-        assert result.mode == target_group.mode
+        assert result.mode == GroupMode.input
 
 
 def test_hit_0_record():
@@ -43,9 +44,10 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = group_repository.find_one_by_line_group_id(
+        result = group_repository.update_one_mode_by_line_group_id(
             session,
             line_group_id=target_line_group_id,
+            mode=GroupMode.input,
         )
 
     # Assert

@@ -26,6 +26,7 @@ def test_hit_with_ids():
         assert len(result) == len(target_groups)
         for i in range(len(result)):
             assert isinstance(result[i], Group)
+            assert result[i]._id == target_groups[i]._id
             assert result[i].line_group_id == target_groups[i].line_group_id
             assert result[i].zoom_url == target_groups[i].zoom_url
             assert result[i].mode == target_groups[i].mode
