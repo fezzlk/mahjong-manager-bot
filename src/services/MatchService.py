@@ -138,7 +138,7 @@ class MatchService(IMatchService):
         line_group_id: str,
     ) -> List[Match]:
         with session_scope() as session:
-            matches = match_repository.find_many_by_group_id_and_status(
+            matches = match_repository.find_many_by_line_group_id_and_status(
                 session, line_group_id, 2)
             if len(matches) == 0:
                 return None

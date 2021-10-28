@@ -1,4 +1,3 @@
-import pytest
 from tests.dummies import generate_dummy_match_list
 from db_setting import Session
 from repositories import session_scope, match_repository
@@ -17,19 +16,21 @@ def test_hit_records():
                 dummy_match,
             )
     target_matches = dummy_matchs[2:4]
+    target_matches.reverse()
 
     # Act
     with session_scope() as session:
-        result = match_repository.find_many_by_group_id_and_status(
+        result = match_repository.find_many_by_line_group_id_and_status(
             session,
-            target_matches[0].line_group_id,
-            target_matches[0].status,
+            line_group_id=target_matches[0].line_group_id,
+            status=target_matches[0].status,
         )
 
     # Assert
         assert len(result) == len(target_matches)
         for i in range(len(result)):
             assert isinstance(result[i], Match)
+            assert result[i]._id == target_matches[i]._id
             assert result[i].line_group_id == target_matches[i].line_group_id
             assert result[i].hanchan_ids == target_matches[i].hanchan_ids
             assert result[i].users == target_matches[i].users
@@ -49,7 +50,7 @@ def test_hit_0_record_with_not_exist_line_group_id():
 
     # Act
     with session_scope() as session:
-        result = match_repository.find_many_by_group_id_and_status(
+        result = match_repository.find_many_by_line_group_id_and_status(
             session=session,
             line_group_id=target_match.line_group_id,
             status=target_match.status,
@@ -72,7 +73,7 @@ def test_hit_0_record_with_not_exist_status():
 
     # Act
     with session_scope() as session:
-        result = match_repository.find_many_by_group_id_and_status(
+        result = match_repository.find_many_by_line_group_id_and_status(
             session=session,
             line_group_id=target_match.line_group_id,
             status=target_match.status,
@@ -80,4 +81,3 @@ def test_hit_0_record_with_not_exist_status():
 
     # Assert
         assert len(result) == 0
-

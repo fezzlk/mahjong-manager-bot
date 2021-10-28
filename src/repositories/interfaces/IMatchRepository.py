@@ -30,7 +30,7 @@ class IMatchRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def find_many_by_group_id_and_status(
+    def find_many_by_line_group_id_and_status(
         self,
         session: BaseSession,
         line_group_id: str,
