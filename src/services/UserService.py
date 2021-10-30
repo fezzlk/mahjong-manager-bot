@@ -98,8 +98,8 @@ class UserService(IUserService):
                 if target is None:
                     print(f'user({line_user_id}) is not found')
                     return line_user_id
-                else:
-                    return target.line_user_name
+
+                return target.line_user_name
 
     def get_line_user_id_by_name(
         self,

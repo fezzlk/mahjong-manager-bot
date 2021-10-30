@@ -112,8 +112,10 @@ class AddPointByTextUseCase:
                 return
 
             # config の取得
-            ranking_prize = config_service.get_value_by_key(line_group_id, '順位点')
-            rounding_method = config_service.get_value_by_key(line_group_id, '端数計算方法')
+            ranking_prize = config_service.get_value_by_key(
+                line_group_id, '順位点')
+            rounding_method = config_service.get_value_by_key(
+                line_group_id, '端数計算方法')
 
             # 計算の実行
             calculate_result = hanchan_service.run_calculate(
@@ -125,10 +127,12 @@ class AddPointByTextUseCase:
             )
 
             # その半荘の結果を更新
-            current_hanchan = hanchan_service.update_converted_score(line_group_id, calculate_result)
+            current_hanchan = hanchan_service.update_converted_score(
+                line_group_id, calculate_result)
 
             # 総合結果に半荘結果を追加
-            current_match = match_service.add_hanchan_id(line_group_id, current_hanchan._id)
+            current_match = match_service.add_hanchan_id(
+                line_group_id, current_hanchan._id)
 
             # 結果の表示
             converted_scores = current_hanchan.converted_scores
@@ -155,7 +159,8 @@ class AddPointByTextUseCase:
             ):
                 name = user_service.get_name_by_line_user_id(r[0])
                 score = ("+" if r[1] > 0 else "") + str(r[1])
-                sum_score = ("+" if sum_hanchans[r[0]] > 0 else "") + str(sum_hanchans[r[0]])
+                sum_score = (
+                    "+" if sum_hanchans[r[0]] > 0 else "") + str(sum_hanchans[r[0]])
                 score_text_list.append(
                     f'{name}: {score} ({sum_score})'
                 )
