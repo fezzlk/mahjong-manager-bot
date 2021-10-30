@@ -113,7 +113,7 @@ class HanchanRepository:
         converted_scores: Dict[str, int],
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(HanchanSchema._id == hanchan_id)\
+            .query(HanchanSchema).filter(HanchanSchema.id == hanchan_id)\
             .first()
 
         if record is None:
@@ -130,7 +130,7 @@ class HanchanRepository:
         raw_scores: Dict[str, int],
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(HanchanSchema._id == hanchan_id)\
+            .query(HanchanSchema).filter(HanchanSchema.id == hanchan_id)\
             .first()
 
         if record is None:
@@ -138,9 +138,9 @@ class HanchanRepository:
 
         record.raw_scores = json.dumps(raw_scores)
 
-        return self._mapping_record_to_hanchan_domain
+        return self._mapping_record_to_hanchan_domain(record)
 
-    def update_status_by_id(
+    def update_one_status_by_id(
         self,
         session: BaseSession,
         hanchan_id: int,

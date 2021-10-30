@@ -74,7 +74,7 @@ class IHanchanRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_status_by_id(
+    def update_one_status_by_id(
         self,
         session: BaseSession,
         hanchan_id: int,

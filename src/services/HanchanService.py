@@ -50,7 +50,7 @@ class HanchanService(IHanchanService):
             if target is None:
                 return None
 
-            updated_hanchan = hanchan_repository.update_status_by_id(
+            updated_hanchan = hanchan_repository.update_one_status_by_id(
                 session,
                 hanchan_id=target._id,
                 status=0,
@@ -163,7 +163,7 @@ class HanchanService(IHanchanService):
             if target is None:
                 return None
 
-            updated_hanchan = hanchan_repository.update_status_by_id(
+            updated_hanchan = hanchan_repository.update_one_status_by_id(
                 session=session,
                 hanchan_id=target._id,
                 status=status,

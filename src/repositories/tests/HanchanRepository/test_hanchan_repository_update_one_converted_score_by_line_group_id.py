@@ -35,6 +35,7 @@ def test_hit():
 
     # Assert
         assert isinstance(result, Hanchan)
+        assert result._id == target_hanchan._id
         assert result.line_group_id == target_hanchan.line_group_id
         assert result.match_id == target_hanchan.match_id
         assert result.raw_scores == target_hanchan.raw_scores
