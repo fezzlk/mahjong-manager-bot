@@ -23,6 +23,7 @@ def test_success_find_records():
         assert len(result) == len(dummy_groups)
         for i in range(len(result)):
             assert isinstance(result[i], Group)
+            assert result[i]._id == dummy_groups[i]._id
             assert result[i].line_group_id == dummy_groups[i].line_group_id
             assert result[i].zoom_url == dummy_groups[i].zoom_url
             assert result[i].mode == dummy_groups[i].mode

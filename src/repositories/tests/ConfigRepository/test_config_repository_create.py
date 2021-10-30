@@ -16,7 +16,7 @@ def test_success():
 
     # Assert
     assert isinstance(result, Config)
-    assert result._id == 1
+    assert result._id == dummy_config._id
     assert result.target_id == dummy_config.target_id
     assert result.key == dummy_config.key
     assert result.value == dummy_config.value
@@ -26,7 +26,7 @@ def test_success():
             session,
         )
         assert len(record_on_db) == 1
-        assert record_on_db[0]._id == 1
+        assert record_on_db[0]._id == dummy_config._id
         assert record_on_db[0].target_id == dummy_config.target_id
         assert record_on_db[0].key == dummy_config.key
         assert record_on_db[0].value == dummy_config.value

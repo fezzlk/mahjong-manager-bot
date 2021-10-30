@@ -32,6 +32,7 @@ def test_hit_with_ids():
         assert len(record_on_db) == len(other_users)
         for i in range(len(record_on_db)):
             assert isinstance(record_on_db[i], User)
+            assert record_on_db[i]._id == other_users[i]._id
             assert record_on_db[i].line_user_name == other_users[i].line_user_name
             assert record_on_db[i].line_user_id == other_users[i].line_user_id
             assert record_on_db[i].zoom_url == other_users[i].zoom_url
@@ -67,6 +68,7 @@ def test_hit_0_record():
         assert len(record_on_db) == len(dummy_users)
         for i in range(len(record_on_db)):
             assert isinstance(record_on_db[i], User)
+            assert record_on_db[i]._id == dummy_users[i]._id
             assert record_on_db[i].line_user_name == dummy_users[i].line_user_name
             assert record_on_db[i].line_user_id == dummy_users[i].line_user_id
             assert record_on_db[i].zoom_url == dummy_users[i].zoom_url

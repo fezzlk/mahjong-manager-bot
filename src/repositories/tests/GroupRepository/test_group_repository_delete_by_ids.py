@@ -18,22 +18,23 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        group_repository.delete_by_ids(
+        result = group_repository.delete_by_ids(
             session,
             ids,
         )
 
     # Assert
+    assert result == len(target_groups)
     with session_scope() as session:
-        result = group_repository.find_all(
+        record_on_db = group_repository.find_all(
             session,
         )
-        assert len(result) == len(other_groups)
-        for i in range(len(result)):
-            assert isinstance(result[i], Group)
-            assert result[i].line_group_id == other_groups[i].line_group_id
-            assert result[i].zoom_url == other_groups[i].zoom_url
-            assert result[i].mode == other_groups[i].mode
+        assert len(record_on_db) == len(other_groups)
+        for i in range(len(record_on_db)):
+            assert isinstance(record_on_db[i], Group)
+            assert record_on_db[i].line_group_id == other_groups[i].line_group_id
+            assert record_on_db[i].zoom_url == other_groups[i].zoom_url
+            assert record_on_db[i].mode == other_groups[i].mode
 
 
 def test_hit_0_record():
@@ -56,13 +57,14 @@ def test_hit_0_record():
         )
 
     # Assert
+    assert result == 0
     with session_scope() as session:
-        result = group_repository.find_all(
+        record_on_db = group_repository.find_all(
             session,
         )
-        assert len(result) == len(dummy_groups)
-        for i in range(len(result)):
-            assert isinstance(result[i], Group)
-            assert result[i].line_group_id == dummy_groups[i].line_group_id
-            assert result[i].zoom_url == dummy_groups[i].zoom_url
-            assert result[i].mode == dummy_groups[i].mode
+        assert len(record_on_db) == len(dummy_groups)
+        for i in range(len(record_on_db)):
+            assert isinstance(record_on_db[i], Group)
+            assert record_on_db[i].line_group_id == dummy_groups[i].line_group_id
+            assert record_on_db[i].zoom_url == dummy_groups[i].zoom_url
+            assert record_on_db[i].mode == dummy_groups[i].mode

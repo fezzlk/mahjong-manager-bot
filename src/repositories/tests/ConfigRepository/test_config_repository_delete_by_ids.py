@@ -32,6 +32,7 @@ def test_hit_with_ids():
         assert len(record_on_db) == len(other_configs)
         for i in range(len(record_on_db)):
             assert isinstance(record_on_db[i], Config)
+            assert record_on_db[i]._id == other_configs[i]._id
             assert record_on_db[i].target_id == other_configs[i].target_id
             assert record_on_db[i].key == other_configs[i].key
             assert record_on_db[i].value == other_configs[i].value
@@ -65,6 +66,7 @@ def test_hit_0_record():
         assert len(record_on_db) == len(dummy_configs)
         for i in range(len(record_on_db)):
             assert isinstance(record_on_db[i], Config)
+            assert record_on_db[i]._id == dummy_configs[i]._id
             assert record_on_db[i].target_id == dummy_configs[i].target_id
             assert record_on_db[i].key == dummy_configs[i].key
             assert record_on_db[i].value == dummy_configs[i].value

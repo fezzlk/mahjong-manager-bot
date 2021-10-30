@@ -26,6 +26,7 @@ def test_success_find_records():
         assert len(result) == len(dummy_matchs)
         for i in range(len(result)):
             assert isinstance(result[i], Match)
+            assert result[i]._id == dummy_matchs[i]._id
             assert result[i].line_group_id == dummy_matchs[i].line_group_id
             assert result[i].hanchan_ids == dummy_matchs[i].hanchan_ids
             assert result[i].users == dummy_matchs[i].users
