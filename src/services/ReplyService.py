@@ -260,10 +260,10 @@ class ReplyService(IReplyService):
                     text='どなたが飛ばしましたか？',
                     actions=[
                         PostbackAction(
-                            label=player['line_user_name'],
-                            display_text=player['line_user_name'],
-                            data='_tobi ' + player['id'],
-                        ) for player in player_id_and_names
+                            label=player_id_and_name['name'],
+                            display_text=player_id_and_name['name'],
+                            data='_tobi ' + player_id_and_name['id'],
+                        ) for player_id_and_name in player_id_and_names
                     ] + [
                         PostbackAction(
                             label='誰も飛ばしていません',

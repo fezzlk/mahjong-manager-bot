@@ -22,6 +22,7 @@ def test_hit():
 
     # Assert
         assert isinstance(result, Config)
+        assert result._id == dummy_config._id
         assert result.target_id == dummy_config.target_id
         assert result.key == dummy_config.key
         assert result.value == dummy_config.value

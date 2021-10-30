@@ -10,9 +10,9 @@ from domains.User import User, UserMode
 
 class UserService(IUserService):
 
-    def delete_one_by_line_user_id(self, line_user_id: str) -> None:
+    def delete_by_line_user_id(self, line_user_id: str) -> None:
         with session_scope() as session:
-            user_repository.delete_one_by_line_user_id(session, line_user_id)
+            user_repository.delete_by_line_user_id(session, line_user_id)
 
             print(f'delete: {line_user_id}')
 
@@ -98,8 +98,8 @@ class UserService(IUserService):
                 if target is None:
                     print(f'user({line_user_id}) is not found')
                     return line_user_id
-                else:
-                    return target.line_user_name
+
+                return target.line_user_name
 
     def get_line_user_id_by_name(
         self,
@@ -135,7 +135,8 @@ class UserService(IUserService):
 
     def get_mode(self, line_user_id: str) -> UserMode:
         with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(session, line_user_id)
+            target = user_repository.find_one_by_line_user_id(
+                session, line_user_id)
 
             if target is None:
                 print(f'user is not found: {line_user_id}')
@@ -160,7 +161,8 @@ class UserService(IUserService):
 
     def get_zoom_url(self, line_user_id: str) -> str:
         with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(session, line_user_id)
+            target = user_repository.find_one_by_line_user_id(
+                session, line_user_id)
 
             if target is None:
                 print(f'user_services: user "{line_user_id}" is not found')

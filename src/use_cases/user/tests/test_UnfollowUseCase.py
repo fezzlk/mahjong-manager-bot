@@ -5,6 +5,7 @@ from tests.dummies import (
 from use_cases import UnfollowUseCase
 from services import (
     request_info_service,
+    reply_service,
 )
 from repositories import session_scope, UserRepository
 
@@ -28,3 +29,4 @@ def test_execute(mocker):
     with session_scope() as session:
         result = user_repository.find_all(session)
         assert len(result) == 0
+    reply_service.reset()

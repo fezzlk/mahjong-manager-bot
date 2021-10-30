@@ -12,37 +12,44 @@ class ConfigRepository(IConfigRepository):
         self,
         session: BaseSession,
         new_config: Config,
-    ) -> None:
+    ) -> Config:
         record = ConfigSchema(
             target_id=new_config.target_id,
             key=new_config.key,
             value=new_config.value,
         )
         session.add(record)
+        session.commit()
+        new_config._id = record.id
+        return new_config
 
     def delete_by_ids(
         self,
         session: BaseSession,
         ids: List[str],
-    ) -> None:
-        session\
+    ) -> int:
+        delete_count = session\
             .query(ConfigSchema)\
             .filter(ConfigSchema.id.in_(ids))\
             .delete(synchronize_session=False)
+
+        return delete_count
 
     def delete_by_target_id_and_key(
         self,
         session: BaseSession,
         target_id: str,
         key: str,
-    ) -> None:
-        session\
+    ) -> int:
+        delete_count = session\
             .query(ConfigSchema)\
             .filter(and_(
                 ConfigSchema.target_id == target_id,
                 ConfigSchema.key == key,
             ))\
             .delete()
+
+        return delete_count
 
     def find_all(
         self,
@@ -54,12 +61,7 @@ class ConfigRepository(IConfigRepository):
             .all()
 
         return [
-            Config(
-                target_id=record.target_id,
-                key=record.key,
-                value=record.value,
-                _id=record.id,
-            )
+            self._mapping_record_to_config_domain(record)
             for record in records
         ]
 
@@ -75,12 +77,7 @@ class ConfigRepository(IConfigRepository):
             .all()
 
         return [
-            Config(
-                target_id=record.target_id,
-                key=record.key,
-                value=record.value,
-                _id=record.id,
-            )
+            self._mapping_record_to_config_domain(record)
             for record in records
         ]
 
@@ -96,12 +93,7 @@ class ConfigRepository(IConfigRepository):
             .all()
 
         return [
-            Config(
-                target_id=record.target_id,
-                key=record.key,
-                value=record.value,
-                _id=record.id,
-            )
+            self._mapping_record_to_config_domain(record)
             for record in records
         ]
 
@@ -122,6 +114,9 @@ class ConfigRepository(IConfigRepository):
         if record is None:
             return None
 
+        return self._mapping_record_to_config_domain(record)
+
+    def _mapping_record_to_config_domain(self, record: ConfigSchema) -> Config:
         return Config(
             target_id=record.target_id,
             key=record.key,

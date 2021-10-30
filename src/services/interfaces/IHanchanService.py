@@ -39,7 +39,7 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_status(
+    def update_status_active_hanchan(
         self,
         line_group_id: str,
         status: int,

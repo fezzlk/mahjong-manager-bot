@@ -4,6 +4,7 @@ from tests.dummies import (
 from use_cases import JoinGroupUseCase
 from services import (
     request_info_service,
+    reply_service,
 )
 from repositories import session_scope, group_repository
 
@@ -22,3 +23,4 @@ def test_execute(mocker):
     with session_scope() as session:
         result = group_repository.find_all(session)
         assert len(result) == 1
+    reply_service.reset()

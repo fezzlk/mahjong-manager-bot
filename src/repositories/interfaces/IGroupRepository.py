@@ -1,46 +1,48 @@
 from abc import ABCMeta, abstractmethod
+from typing import List
 from domains.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
 class IGroupRepository(metaclass=ABCMeta):
-    @abstractmethod
-    def find_one_by_group_id(
-        self,
-        session: BaseSession,
-        group_id: int,
-    ) -> Group:
-        pass
-
-    @abstractmethod
-    def find_by_ids(
-        self,
-        session: BaseSession,
-        ids: list,
-    ) -> list:
-        pass
-
-    @abstractmethod
-    def find_all(
-        self,
-        session: BaseSession,
-    ) -> list:
-        pass
 
     @abstractmethod
     def create(
         self,
         session: BaseSession,
         new_group: Group,
-    ) -> None:
+    ) -> Group:
         pass
 
     @abstractmethod
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: list,
-    ) -> None:
+        ids: List[Group],
+    ) -> int:
+        pass
+
+    @abstractmethod
+    def find_all(
+        self,
+        session: BaseSession,
+    ) -> List[Group]:
+        pass
+
+    @abstractmethod
+    def find_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[str],
+    ) -> List[Group]:
+        pass
+
+    @abstractmethod
+    def find_one_by_line_group_id(
+        self,
+        session: BaseSession,
+        line_group_id: int,
+    ) -> Group:
         pass
 
     @abstractmethod

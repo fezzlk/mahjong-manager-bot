@@ -28,12 +28,13 @@ def test_hit_1_record():
     with session_scope() as session:
         result = hanchan_repository.find_one_by_id_and_line_group_id(
             session=session,
-            target_id=target_hanchan._id,
+            hanchan_id=target_hanchan._id,
             line_group_id=target_hanchan.line_group_id,
         )
 
     # Assert
         assert isinstance(result, Hanchan)
+        assert result._id == target_hanchan._id
         assert result.line_group_id == target_hanchan.line_group_id
         assert result.match_id == target_hanchan.match_id
         assert result.raw_scores == target_hanchan.raw_scores
@@ -63,7 +64,7 @@ def test_hit_0_record_with_not_exist_id():
     with session_scope() as session:
         result = hanchan_repository.find_one_by_id_and_line_group_id(
             session=session,
-            target_id=target_hanchan._id,
+            hanchan_id=target_hanchan._id,
             line_group_id=target_hanchan.line_group_id,
         )
 
@@ -93,7 +94,7 @@ def test_hit_0_record_with_not_exist_line_group_id():
     with session_scope() as session:
         result = hanchan_repository.find_one_by_id_and_line_group_id(
             session=session,
-            target_id=target_hanchan._id,
+            hanchan_id=target_hanchan._id,
             line_group_id=target_hanchan.line_group_id,
         )
 

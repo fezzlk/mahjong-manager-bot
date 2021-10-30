@@ -28,24 +28,25 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        hanchan_repository.delete_by_ids(
+        result = hanchan_repository.delete_by_ids(
             session,
             ids,
         )
 
     # Assert
+    assert result == len(ids)
     with session_scope() as session:
-        result = hanchan_repository.find_all(
+        record_on_db = hanchan_repository.find_all(
             session,
         )
-        assert len(result) == len(other_hanchans)
-        for i in range(len(result)):
-            assert isinstance(result[i], Hanchan)
-            assert result[i].line_group_id == other_hanchans[i].line_group_id
-            assert result[i].match_id == other_hanchans[i].match_id
-            assert result[i].raw_scores == other_hanchans[i].raw_scores
-            assert result[i].converted_scores == other_hanchans[i].converted_scores
-            assert result[i].status == other_hanchans[i].status
+        assert len(record_on_db) == len(other_hanchans)
+        for i in range(len(record_on_db)):
+            assert isinstance(record_on_db[i], Hanchan)
+            assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
+            assert record_on_db[i].match_id == other_hanchans[i].match_id
+            assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores
+            assert record_on_db[i].converted_scores == other_hanchans[i].converted_scores
+            assert record_on_db[i].status == other_hanchans[i].status
 
 
 def test_hit_0_record():
@@ -73,15 +74,16 @@ def test_hit_0_record():
         )
 
     # Assert
+    assert result == 0
     with session_scope() as session:
-        result = hanchan_repository.find_all(
+        record_on_db = hanchan_repository.find_all(
             session,
         )
-        assert len(result) == len(dummy_hanchans)
-        for i in range(len(result)):
-            assert isinstance(result[i], Hanchan)
-            assert result[i].line_group_id == dummy_hanchans[i].line_group_id
-            assert result[i].match_id == dummy_hanchans[i].match_id
-            assert result[i].raw_scores == dummy_hanchans[i].raw_scores
-            assert result[i].converted_scores == dummy_hanchans[i].converted_scores
-            assert result[i].status == dummy_hanchans[i].status
+        assert len(record_on_db) == len(dummy_hanchans)
+        for i in range(len(record_on_db)):
+            assert isinstance(record_on_db[i], Hanchan)
+            assert record_on_db[i].line_group_id == dummy_hanchans[i].line_group_id
+            assert record_on_db[i].match_id == dummy_hanchans[i].match_id
+            assert record_on_db[i].raw_scores == dummy_hanchans[i].raw_scores
+            assert record_on_db[i].converted_scores == dummy_hanchans[i].converted_scores
+            assert record_on_db[i].status == dummy_hanchans[i].status

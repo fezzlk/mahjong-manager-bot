@@ -8,7 +8,8 @@ class GroupService(IGroupService):
 
     def find_or_create(self, group_id: str) -> Group:
         with session_scope() as session:
-            group = group_repository.find_one_by_group_id(session, group_id)
+            group = group_repository.find_one_by_line_group_id(
+                session, group_id)
 
             if group is None:
                 group = Group(
@@ -49,7 +50,8 @@ class GroupService(IGroupService):
     def get_mode(self, line_group_id: str) -> GroupMode:
         with session_scope() as session:
             # find にし、複数件ヒットした場合にはエラーを返す
-            target = group_repository.find_one_by_group_id(session, line_group_id)
+            target = group_repository.find_one_by_line_group_id(
+                session, line_group_id)
 
             if target is None:
                 print(
@@ -97,7 +99,8 @@ class GroupService(IGroupService):
         line_group_id: str,
     ) -> str:
         with session_scope() as session:
-            target = group_repository.find_one_by_group_id(session, line_group_id)
+            target = group_repository.find_one_by_line_group_id(
+                session, line_group_id)
 
             if target is None:
                 print(

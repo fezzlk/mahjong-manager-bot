@@ -32,3 +32,4 @@ def test_execute(mocker):
 
     # Assert
     assert len(reply_service.texts) == 1
+    reply_service.reset()

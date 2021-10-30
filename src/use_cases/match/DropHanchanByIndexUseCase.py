@@ -19,8 +19,8 @@ class DropHanchanByIndexUseCase:
         hanchan_ids = current.hanchan_ids
         group_id = request_info_service.req_line_group_id
         hanchan_service.disabled_by_id(group_id, hanchan_ids[i - 1])
-        # reply_service.add_message(
-        #     f'id={target_id}の結果を削除しました。'
-        # )
+        reply_service.add_message(
+            f'hanchan id={hanchan_ids[i - 1]}の結果を削除しました。'
+        )
         hanchan_ids.pop(i - 1)
-        match_service.update_hanchan_ids(hanchan_ids)
+        match_service.update_hanchan_ids(hanchan_ids, line_group_id)

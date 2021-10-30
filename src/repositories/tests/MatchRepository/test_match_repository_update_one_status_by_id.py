@@ -19,10 +19,10 @@ def test_hit_1_record():
 
     # Act
     with session_scope() as session:
-        result = match_repository.find_one_by_line_group_id_and_status(
+        result = match_repository.update_one_status_by_id(
             session=session,
-            line_group_id=target_match.line_group_id,
-            status=target_match.status,
+            match_id=target_match._id,
+            status=0,
         )
 
     # Assert
@@ -31,26 +31,26 @@ def test_hit_1_record():
         assert result.line_group_id == target_match.line_group_id
         assert result.hanchan_ids == target_match.hanchan_ids
         assert result.users == target_match.users
-        assert result.status == target_match.status
+        assert result.status == 0
 
 
 def test_hit_0_record():
     # Arrange
-    dummy_matchs = generate_dummy_match_list()[1:3]
+    dummy_matchs = generate_dummy_match_list()[:2]
     with session_scope() as session:
         for dummy_match in dummy_matchs:
             match_repository.create(
                 session,
                 dummy_match,
             )
-    target_match = generate_dummy_match_list()[0]
+    target_match = generate_dummy_match_list()[2]
 
     # Act
     with session_scope() as session:
-        result = match_repository.find_one_by_line_group_id_and_status(
+        result = match_repository.update_one_status_by_id(
             session=session,
-            line_group_id=target_match.line_group_id,
-            status=target_match.status,
+            match_id=target_match._id,
+            status=0,
         )
 
     # Assert

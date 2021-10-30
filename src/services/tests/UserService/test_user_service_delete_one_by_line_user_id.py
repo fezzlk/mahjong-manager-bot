@@ -14,7 +14,7 @@ def test_success():
             user_repository.create(session, user)
 
     # Act
-    user_service.delete_one_by_line_user_id(dummy_user.line_user_id)
+    user_service.delete_by_line_user_id(dummy_user.line_user_id)
 
     # Assert
     with session_scope() as session:
@@ -33,7 +33,7 @@ def test_not_hit():
             user_repository.create(session, user)
 
     # Act
-    user_service.delete_one_by_line_user_id(dummy_user.line_user_id)
+    user_service.delete_by_line_user_id(dummy_user.line_user_id)
 
     # Assert
     with session_scope() as session:
