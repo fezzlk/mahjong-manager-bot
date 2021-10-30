@@ -41,7 +41,7 @@ class IHanchanRepository(metaclass=ABCMeta):
     def find_one_by_id_and_line_group_id(
         self,
         session: BaseSession,
-        target_id: str,
+        hanchan_id: str,
         line_group_id: str,
     ) -> Hanchan:
         pass

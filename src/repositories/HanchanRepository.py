@@ -71,14 +71,14 @@ class HanchanRepository:
     def find_one_by_id_and_line_group_id(
         self,
         session: BaseSession,
-        target_id: str,
+        hanchan_id: str,
         line_group_id: str,
     ) -> Hanchan:
         record = session\
             .query(HanchanSchema)\
             .filter(and_(
                 HanchanSchema.line_group_id == line_group_id,
-                HanchanSchema.id == target_id,
+                HanchanSchema.id == hanchan_id,
             ))\
             .first()
 
