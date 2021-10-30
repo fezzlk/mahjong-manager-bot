@@ -29,6 +29,6 @@ def test_execute(mocker):
 
     # Act
     use_case.execute()
-
+    print(reply_service.texts)
     # Assert
     assert len(reply_service.texts) == 1
