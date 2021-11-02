@@ -7,6 +7,7 @@ from services import (
     reply_service,
 )
 from repositories import session_scope, group_repository
+from linebot.models import TextSendMessage
 
 
 def test_execute(mocker):
@@ -23,4 +24,7 @@ def test_execute(mocker):
     with session_scope() as session:
         result = group_repository.find_all(session)
         assert len(result) == 1
+    assert len(reply_service.texts) == 1
+    assert isinstance(reply_service.texts[0], TextSendMessage)
+    assert reply_service.texts[0].text == 'こんにちは、今日は麻雀日和ですね。'
     reply_service.reset()
