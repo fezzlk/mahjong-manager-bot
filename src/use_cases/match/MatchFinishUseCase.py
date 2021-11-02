@@ -44,12 +44,13 @@ class MatchFinishUseCase:
         match_list = []
         for line_user_id, converted_score in sum_hanchans.items():
             name = user_service.get_name_by_line_user_id(line_user_id)
-            price = str(converted_score * int(config_service.get_value_by_key(line_group_id, key)[1]) * 10)
+            price = str(
+                converted_score * int(config_service.get_value_by_key(line_group_id, key)[1]) * 10)
             score = ("+" if converted_score > 0 else "") + str(converted_score)
             match_list.append(f'{name}: {price}円 ({score})')
 
         reply_service.add_message(
-            '対戦ID: ' + str(match_id) + '\n'.join(match_list)
+            '対戦ID: ' + str(match_id) + '\n' + '\n'.join(match_list)
         )
 
         match_service.archive(line_group_id)
