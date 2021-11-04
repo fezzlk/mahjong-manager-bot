@@ -44,24 +44,18 @@ def reset_db():
 
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
-    # GroupSchema.add_column(Engine, 'zoom_url')
-    # UserSchema.add_column(Engine, 'zoom_url')
-    # UserSchema.add_column(Engine, 'jantama_name')
-    # results_service.migrate()
     session = Session()
 
-    # # result = Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
-    Engine.execute('ALTER TABLE users RENAME COLUMN line_name TO line_user_name;')
-    # res = session\
-    #     .query(GroupSchema).all()
-    # for r in res:
-    #     h = GroupSchema(
-    #         id=r.id,
-    #         line_group_id=r.group_id,
-    #         mode=r.mode,
-    #         zoom_url=r.zoom_url,
-    #     )
-    #     session.add(h)
+    Engine.execute('SELECT setval(\'users_id_seq\', MAX(id)) FROM users;')
+    Engine.execute('SELECT setval(\'groups_id_seq\', MAX(id)) FROM groups;')
+    Engine.execute(
+        'SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
+    Engine.execute('SELECT setval(\'matches_id_seq\', MAX(id)) FROM matches;')
+    Engine.execute('SELECT setval(\'configs_id_seq\', MAX(id)) FROM configs;')
+    # table_name = request.form['table_name']
+    # before_name = request.form['before_name']
+    # after_name = request.form['after_name']
+    # Engine.execute(f'ALTER TABLE {table_name} RENAME COLUMN {before_name} TO {after_name};')
     session.commit()
 
     return redirect(url_for('views_blueprint.index', message='migrateしました'))
@@ -154,7 +148,13 @@ def delete_hanchans():
 @views_blueprint.route('/matches')
 def get_matches():
     data = get_matches_for_web_use_case.execute()
-    keys = ['_id', 'line_group_id', 'hanchan_ids', 'created_at', 'status', 'users']
+    keys = [
+        '_id',
+        'line_group_id',
+        'hanchan_ids',
+        'created_at',
+        'status',
+        'users']
     input_keys = ['line_group_id', 'hanchan_ids', 'status']
     return render_template(
         'model.html',
