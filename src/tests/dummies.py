@@ -17,7 +17,7 @@ def generate_dummy_config_list():
         Config(
             target_id=users[0].line_user_id,
             key='飛び賞',
-            value='10',
+            value='30',
             _id=1,
         ),
         Config(
@@ -29,13 +29,13 @@ def generate_dummy_config_list():
         Config(
             target_id=users[1].line_user_id,
             key='飛び賞',
-            value='10',
+            value='20',
             _id=3,
         ),
         Config(
             target_id=groups[0].line_group_id,
             key='飛び賞',
-            value='10',
+            value='0',
             _id=4,
         ),
         Config(
@@ -47,7 +47,7 @@ def generate_dummy_config_list():
         Config(
             target_id=groups[1].line_group_id,
             key='飛び賞',
-            value='10',
+            value='40',
             _id=6,
         ),
     ]
