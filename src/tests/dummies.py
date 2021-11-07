@@ -1,3 +1,5 @@
+from abc import ABCMeta, abstractmethod
+from typing import Dict, List
 from domains.Config import Config
 from domains.User import User, UserMode
 from domains.Group import Group, GroupMode
@@ -5,11 +7,39 @@ from domains.Hanchan import Hanchan
 from domains.Match import Match
 
 
-# list 内の既存のインスタンスは変更禁止、追加のみ可能
-# 使用側では find_all などの特殊な場合を除いて [:3] などを使い追加に影響しないようにする
+class IEvent(metaclass=ABCMeta):
+    @abstractmethod
+    def __init__(
+        self,
+        event_type: str,
+        source_type: str,
+        user_id: str,
+        group_id: str,
+        message_type: str,
+        text: str,
+        postback_data: str,
+        mode: str,
+    ):
+        pass
 
 
-def generate_dummy_config_list():
+class IProfile(metaclass=ABCMeta):
+    @abstractmethod
+    def __init__(
+        self,
+        display_name: str,
+        user_id: str,
+    ):
+        pass
+
+
+'''
+    list 内の既存のインスタンスは変更禁止、追加のみ可能
+    使用側では find_all などの特殊な場合を除いて [:3] などを使い追加に影響しないようにする
+'''
+
+
+def generate_dummy_config_list() -> List[Config]:
     users = generate_dummy_user_list()
     groups = generate_dummy_group_list()
 
@@ -17,43 +47,43 @@ def generate_dummy_config_list():
         Config(
             target_id=users[0].line_user_id,
             key='飛び賞',
-            value='10',
+            value='30',
             _id=1,
         ),
         Config(
             target_id=users[0].line_user_id,
             key='レート',
-            value='2',
+            value='点2',
             _id=2,
         ),
         Config(
             target_id=users[1].line_user_id,
             key='飛び賞',
-            value='10',
+            value='20',
             _id=3,
         ),
         Config(
             target_id=groups[0].line_group_id,
             key='飛び賞',
-            value='10',
+            value='0',
             _id=4,
         ),
         Config(
             target_id=groups[0].line_group_id,
             key='レート',
-            value='2',
+            value='点2',
             _id=5,
         ),
         Config(
             target_id=groups[1].line_group_id,
             key='飛び賞',
-            value='10',
+            value='40',
             _id=6,
         ),
     ]
 
 
-def generate_dummy_user_list():
+def generate_dummy_user_list() -> List[User]:
     return [
         User(
             line_user_name="test user1",
@@ -104,7 +134,7 @@ def generate_dummy_user_list():
     ]
 
 
-def generate_dummy_group_list():
+def generate_dummy_group_list() -> List[Group]:
     return [
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -134,7 +164,7 @@ def generate_dummy_group_list():
     ]
 
 
-def generate_dummy_hanchan_list():
+def generate_dummy_hanchan_list() -> List[Hanchan]:
     groups = generate_dummy_group_list()
 
     return [
@@ -182,7 +212,7 @@ def generate_dummy_hanchan_list():
     ]
 
 
-def generate_dummy_match_list():
+def generate_dummy_match_list() -> List[Match]:
     groups = generate_dummy_group_list()
 
     return [
@@ -224,7 +254,7 @@ def generate_dummy_match_list():
     ]
 
 
-def generate_dummy_follow_event():
+def generate_dummy_follow_event() -> IEvent:
     return Event(
         event_type='follow',
         source_type='user',
@@ -232,7 +262,7 @@ def generate_dummy_follow_event():
     )
 
 
-def generate_dummy_unfollow_event():
+def generate_dummy_unfollow_event() -> IEvent:
     return Event(
         event_type='unfollow',
         source_type='user',
@@ -240,7 +270,7 @@ def generate_dummy_unfollow_event():
     )
 
 
-def generate_dummy_join_event():
+def generate_dummy_join_event() -> IEvent:
     return Event(
         event_type='join',
         source_type='group',
@@ -249,7 +279,7 @@ def generate_dummy_join_event():
     )
 
 
-def generate_dummy_text_message_event_from_user():
+def generate_dummy_text_message_event_from_user() -> IEvent:
     return Event(
         event_type='message',
         source_type='user',
@@ -259,7 +289,7 @@ def generate_dummy_text_message_event_from_user():
     )
 
 
-def generate_dummy_text_message_event_from_group():
+def generate_dummy_text_message_event_from_group() -> IEvent:
     return Event(
         event_type='message',
         source_type='group',
@@ -270,14 +300,14 @@ def generate_dummy_text_message_event_from_group():
     )
 
 
-def generate_dummy_profile():
+def generate_dummy_profile() -> IProfile:
     return Profile(
         display_name='dummy_display_name',
         user_id='dummy_user_id',
     )
 
 
-def generate_dummy_points():
+def generate_dummy_points() -> Dict[str, int]:
     return {
         'dummy_user1': 10000,
         'dummy_user2': 20000,
@@ -287,7 +317,7 @@ def generate_dummy_points():
 
 
 # LINE messaging API に合わせるためフィールド名はキャメルケースにしている
-class Profile:
+class Profile(IProfile):
     def __init__(
         self,
         display_name='dummy_display_name',
@@ -297,7 +327,7 @@ class Profile:
         self.user_id = user_id
 
 
-class Event:
+class Event(IEvent):
     def __init__(
         self,
         event_type='message',
@@ -311,7 +341,10 @@ class Event:
     ):
         self.type = event_type
         self.replyToken = 'dummy_reply_token'
-        self.source = Source(user_id=user_id, source_type=source_type, group_id=group_id)
+        self.source = Source(
+            user_id=user_id,
+            source_type=source_type,
+            group_id=group_id)
         self.mode = mode
         if self.type == 'message':
             self.message = Message(text=text, message_type=message_type)

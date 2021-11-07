@@ -14,7 +14,7 @@ class ReplyGroupSettingsMenuUseCase:
         else:
             target_id = request_info_service.req_line_user_id
 
-        configs = config_service.get_by_target(target_id)
+        configs = config_service.get_current_settings_by_target(target_id)
 
         if body == '':
             s = [f'{key}: {str(value)}' for key, value in configs.items()]

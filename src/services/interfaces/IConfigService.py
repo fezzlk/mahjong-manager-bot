@@ -1,15 +1,15 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
+from typing import Dict, List
 from domains.Config import Config
 
 
 class IConfigService(metaclass=ABCMeta):
 
     @abstractmethod
-    def get_by_target(
+    def get_current_settings_by_target(
         self,
         target_id: str,
-    ) -> List[Config]:
+    ) -> Dict[str, str]:
         pass
 
     @abstractmethod
@@ -25,14 +25,10 @@ class IConfigService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update(
+    def update_setting(
         self,
         target_id: str,
         key: str,
         value: str,
     ) -> None:
-        pass
-
-    @abstractmethod
-    def delete(self, ids: List[str]) -> None:
         pass
