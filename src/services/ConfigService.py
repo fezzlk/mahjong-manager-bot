@@ -1,11 +1,16 @@
 from .interfaces.IConfigService import IConfigService
-from typing import List
+from typing import Dict, List
 from repositories import session_scope, config_repository
 from domains.Config import Config
 
-DEFAULT_CONFIGS = {'レート': '点3', '順位点': ','.join(['20', '10', '-10', '-20']),
-                   '飛び賞': '10', 'チップ': 'なし', '人数': '4',
-                   '端数計算方法': '3万点以下切り上げ/以上切り捨て'}
+DEFAULT_CONFIGS = {
+    'レート': '点3',
+    '順位点': ','.join(['20', '10', '-10', '-20']),
+    '飛び賞': '10',
+    'チップ': 'なし',
+    '人数': '4',
+    '端数計算方法': '3万点以下切り上げ/以上切り捨て',
+}
 
 
 class ConfigService(IConfigService):
@@ -38,10 +43,10 @@ class ConfigService(IConfigService):
         # 取得した config を返す
         return config.value
 
-    def get_by_target(
+    def get_current_settings_by_target(
         self,
         target_id: str,
-    ) -> List[Config]:
+    ) -> Dict[str, str]:
         # デフォルト config から変更されている config を取得
         with session_scope() as session:
             customized_configs = config_repository.find_by_target_id(
@@ -72,7 +77,8 @@ class ConfigService(IConfigService):
         """
         with session_scope() as session:
             # 既存の変更の削除
-            config_repository.delete_by_target_id_and_key(session, target_id, key)
+            config_repository.delete_by_target_id_and_key(
+                session, target_id, key)
 
             # リクエストの value がデフォルト値と異なる場合はレコードを作成
             if value != DEFAULT_CONFIGS[key]:

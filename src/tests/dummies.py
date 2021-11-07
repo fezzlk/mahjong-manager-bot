@@ -23,7 +23,7 @@ def generate_dummy_config_list():
         Config(
             target_id=users[0].line_user_id,
             key='レート',
-            value='2',
+            value='点2',
             _id=2,
         ),
         Config(
@@ -41,7 +41,7 @@ def generate_dummy_config_list():
         Config(
             target_id=groups[0].line_group_id,
             key='レート',
-            value='2',
+            value='点2',
             _id=5,
         ),
         Config(
@@ -311,7 +311,10 @@ class Event:
     ):
         self.type = event_type
         self.replyToken = 'dummy_reply_token'
-        self.source = Source(user_id=user_id, source_type=source_type, group_id=group_id)
+        self.source = Source(
+            user_id=user_id,
+            source_type=source_type,
+            group_id=group_id)
         self.mode = mode
         if self.type == 'message':
             self.message = Message(text=text, message_type=message_type)
