@@ -63,7 +63,7 @@ class ConfigService(IConfigService):
 
         return configs
 
-    def update(
+    def update_setting(
         self,
         target_id: str,
         key: str,
@@ -90,5 +90,5 @@ class ConfigService(IConfigService):
                 config_repository.create(session, new_config)
 
         print(
-            f'update:{key}:{value}:{target_id}'
+            f'update setting of "{target_id}": {key}:{value}'
         )

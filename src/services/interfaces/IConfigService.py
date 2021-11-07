@@ -25,14 +25,10 @@ class IConfigService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update(
+    def update_setting(
         self,
         target_id: str,
         key: str,
         value: str,
     ) -> None:
-        pass
-
-    @abstractmethod
-    def delete(self, ids: List[str]) -> None:
         pass
