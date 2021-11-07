@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from domains.Hanchan import Hanchan
 from domains.Match import Match
 
@@ -80,4 +80,11 @@ class IHanchanService(metaclass=ABCMeta):
         rounding_method: str = None,
         tobashita_player_id: str = None,
     ) -> Dict[str, int]:
+        pass
+
+    @abstractmethod
+    def get_point_and_name_from_text(
+        self,
+        text: str,
+    ) -> Tuple[str, str]:
         pass

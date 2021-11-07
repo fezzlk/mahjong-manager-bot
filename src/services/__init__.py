@@ -5,7 +5,6 @@ from .HanchanService import HanchanService
 from .MatchService import MatchService
 from .MessageService import MessageService
 from .OcrService import OcrService
-from .PointService import PointService
 from .ReplyService import ReplyService
 from .RichMenuService import RichMenuService
 from .GroupService import GroupService
@@ -17,7 +16,6 @@ hanchan_service = HanchanService()
 match_service = MatchService()
 message_service = MessageService()
 ocr_service = OcrService()
-point_service = PointService()
 reply_service = ReplyService()
 rich_menu_service = RichMenuService()
 group_service = GroupService()
