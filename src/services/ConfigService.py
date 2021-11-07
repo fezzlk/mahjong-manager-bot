@@ -92,9 +92,3 @@ class ConfigService(IConfigService):
         print(
             f'update:{key}:{value}:{target_id}'
         )
-
-    def delete(self, ids: List[str]) -> None:
-        with session_scope() as session:
-            config_repository.delete_by_ids(session, ids)
-
-        print(f'delete: id={ids}')
