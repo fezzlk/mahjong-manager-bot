@@ -68,12 +68,6 @@ class GroupService(IGroupService):
 
             return group_repository.find_by_ids(session, ids)
 
-    def delete(self, ids: List[int]) -> None:
-        with session_scope() as session:
-            group_repository.delete_by_ids(session, ids)
-
-        print(f'delete: id={ids}')
-
     def set_zoom_url(
         self,
         line_group_id: str,
