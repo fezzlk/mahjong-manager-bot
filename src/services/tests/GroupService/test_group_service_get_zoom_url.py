@@ -12,24 +12,14 @@ def test_success():
     with session_scope() as session:
         for record in dummy_groups:
             group_repository.create(session, record)
-    assert_zoom_url = [
-        "https://us01web.zoom.us/j/0123456789x?pwd=abcdefghijklmnopqrstuvwxyz",
-        "https://us01web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
-        "https://us01web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
-    ]
 
     # Act
-    result = group_service.set_zoom_url(
+    result = group_service.get_zoom_url(
         line_group_id=dummy_group.line_group_id,
-        zoom_url="https://us01web.zoom.us/j/0123456789x?pwd=abcdefghijklmnopqrstuvwxyz",
     )
 
     # Assert
-    assert result.zoom_url == assert_zoom_url[0]
-    with session_scope() as session:
-        records_on_db = group_repository.find_all(session)
-        for i, record in enumerate(records_on_db):
-            assert record.zoom_url == assert_zoom_url[i]
+    assert result == dummy_group.zoom_url
 
 
 def test_not_hit():
@@ -43,9 +33,8 @@ def test_not_hit():
                 group_repository.create(session, record)
 
         # Act
-        group_service.set_zoom_url(
+        group_service.get_zoom_url(
             line_group_id=dummy_group.line_group_id,
-            zoom_url="https://us01web.zoom.us/j/0123456789x?pwd=abcdefghijklmnopqrstuvwxyz",
         )
 
         # Assert

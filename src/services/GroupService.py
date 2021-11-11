@@ -83,8 +83,8 @@ class GroupService(IGroupService):
             if record is None:
                 print(
                     f'fail to set zoom url: group "{line_group_id}" is not found')
-                return None
-                
+                raise Exception('トークルームが登録されていません。招待し直してください。')
+
             print(f'set_zoom_url: {zoom_url} to {line_group_id}')
             return record
 
