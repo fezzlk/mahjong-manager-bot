@@ -24,6 +24,8 @@ class SetZoomUrlToGroupUseCase:
         result_zoom_url = group_service.set_zoom_url(line_group_id, zoom_url)
 
         if result_zoom_url is None:
+            reply_service.add_message(
+                'トークルームが登録されていません。招待し直してください。')
             return
 
         reply_service.add_message(
