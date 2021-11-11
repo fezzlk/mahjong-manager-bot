@@ -39,7 +39,3 @@ class IGroupService(metaclass=ABCMeta):
     @abstractmethod
     def get(self, ids: List[int] = None) -> List[Group]:
         pass
-
-    @abstractmethod
-    def delete(self, ids: List[int]) -> None:
-        pass
