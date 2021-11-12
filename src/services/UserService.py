@@ -10,12 +10,6 @@ from domains.User import User, UserMode
 
 class UserService(IUserService):
 
-    def delete_by_line_user_id(self, line_user_id: str) -> None:
-        with session_scope() as session:
-            user_repository.delete_by_line_user_id(session, line_user_id)
-
-            print(f'delete: {line_user_id}')
-
     def find_or_create_by_profile(
         self,
         profile: Profile,

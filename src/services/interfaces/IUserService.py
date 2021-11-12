@@ -36,10 +36,6 @@ class IUserService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def delete_by_line_user_id(self, line_user_id: str) -> None:
-        pass
-
-    @abstractmethod
     def get_zoom_url(self, line_user_id: str) -> str:
         pass
 
