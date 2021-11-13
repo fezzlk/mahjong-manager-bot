@@ -1,4 +1,3 @@
-from typing import List
 from .interfaces.IGroupService import IGroupService
 from domains.Group import Group, GroupMode
 from repositories import session_scope, group_repository
@@ -60,13 +59,6 @@ class GroupService(IGroupService):
                 raise Exception('トークルームが登録されていません。招待し直してください。')
 
             return target.mode
-
-    def get(self, ids: List[int] = None) -> List[Group]:
-        with session_scope() as session:
-            if ids is None:
-                return group_repository.find_all(session)
-
-            return group_repository.find_by_ids(session, ids)
 
     def set_zoom_url(
         self,
