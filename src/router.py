@@ -43,6 +43,7 @@ from use_cases import (
     drop_hanchan_by_index_use_case,
     disable_match_use_case,
     user_my_zoom_command_use_case,
+    reply_my_results_use_case,
 )
 from domains.Group import GroupMode
 
@@ -86,6 +87,7 @@ class RCommands(Enum):
     my_zoom = 'my_zoom'
     sum_matches = 'sum_matches'
     graph = 'graph'
+    my_results = 'my_results'
 
 
 def root(event: Event):
@@ -300,6 +302,9 @@ def routing_for_group_by_method(method, body):
         calculate_with_tobi_use_case.execute(
             tobashita_player_id=body
         )
+    # my results
+    elif method == RCommands.my_results.name:
+        reply_my_results_use_case.execute()
     # add results
     elif method == RCommands.add_result.name:
         add_point_by_Json_text_use_case.execute(body)
