@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from Entities.Group import Group, GroupMode
+from Domains.Entities.Group import Group, GroupMode
 
 
 class IGroupService(metaclass=ABCMeta):

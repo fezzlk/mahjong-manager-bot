@@ -1,8 +1,8 @@
 from typing import Dict, List, Tuple
 
-from repositories import session_scope, hanchan_repository
-from Entities.Hanchan import Hanchan
-from Entities.Match import Match
+from Repositories import session_scope, hanchan_repository
+from Domains.Entities.Hanchan import Hanchan
+from Domains.Entities.Match import Match
 from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']

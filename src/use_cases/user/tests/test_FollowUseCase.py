@@ -3,7 +3,7 @@ from tests.dummies import (
     generate_dummy_profile,
 )
 from use_cases import FollowUseCase
-from services import (
+from Services import (
     request_info_service,
     rich_menu_service,
     reply_service,

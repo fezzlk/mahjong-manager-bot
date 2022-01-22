@@ -1,4 +1,4 @@
-from services.MessageService import MessageService, finish_hanchan_messages
+from Services.MessageService import MessageService, finish_hanchan_messages
 
 
 def test_success():

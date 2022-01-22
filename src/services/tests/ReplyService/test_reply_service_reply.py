@@ -1,4 +1,4 @@
-from services.ReplyService import ReplyService
+from Services.ReplyService import ReplyService
 from tests.dummies import (
     generate_dummy_follow_event,
     generate_dummy_text_message_event_from_group,

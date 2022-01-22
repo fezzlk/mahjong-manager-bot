@@ -1,4 +1,4 @@
-from services import (
+from Services import (
     request_info_service,
     reply_service,
     user_service,
@@ -8,7 +8,7 @@ from services import (
     group_service,
     message_service,
 )
-from Entities.Group import GroupMode
+from Domains.Entities.Group import GroupMode
 
 
 class AddPointByTextUseCase:

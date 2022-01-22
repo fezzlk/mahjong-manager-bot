@@ -1,7 +1,7 @@
 from .interfaces.IConfigService import IConfigService
 from typing import Dict, List
-from repositories import session_scope, config_repository
-from Entities.Config import Config
+from Repositories import session_scope, config_repository
+from Domains.Entities.Config import Config
 
 DEFAULT_CONFIGS = {
     'レート': '点3',

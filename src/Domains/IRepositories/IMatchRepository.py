@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from Entities.Match import Match
+from Domains.Entities.Match import Match
 from sqlalchemy.orm.session import Session as BaseSession
 
 

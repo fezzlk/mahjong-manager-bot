@@ -3,7 +3,7 @@ from enum import Enum
 from linebot.models.events import Event
 
 from messaging_api_setting import line_bot_api
-from services import (
+from Services import (
     request_info_service,
     reply_service,
     message_service,
@@ -45,7 +45,7 @@ from use_cases import (
     user_my_zoom_command_use_case,
     reply_my_results_use_case,
 )
-from Entities.Group import GroupMode
+from Domains.Entities.Group import GroupMode
 
 
 class UCommands(Enum):

@@ -3,11 +3,11 @@ from tests.dummies import (
     generate_dummy_user_list,
 )
 from use_cases import UnfollowUseCase
-from services import (
+from Services import (
     request_info_service,
     reply_service,
 )
-from repositories import session_scope, UserRepository
+from Repositories import session_scope, UserRepository
 
 
 def test_execute(mocker):
