@@ -30,7 +30,7 @@ class CreateDummyUseCase:
                 group_repository.create(session, group)
             for config in configs:
                 config_repository.create(session, config)
-            for hanchan in hanchans:
-                hanchan_repository.create(session, hanchan)
             for match in matches:
                 match_repository.create(session, match)
+            for hanchan in hanchans:
+                hanchan_repository.create(session, hanchan)
