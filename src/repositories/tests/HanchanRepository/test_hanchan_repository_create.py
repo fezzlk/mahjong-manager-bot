@@ -1,4 +1,4 @@
-from domains.Hanchan import Hanchan
+from Entities.Hanchan import Hanchan
 from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,

@@ -1,64 +1,66 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from domains.Config import Config
+from Entities.Match import Match
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class IConfigRepository(metaclass=ABCMeta):
+class IMatchRepository(metaclass=ABCMeta):
 
     @abstractmethod
     def create(
         self,
         session: BaseSession,
-        new_config: Config,
-    ) -> Config:
-        pass
-
-    @abstractmethod
-    def delete_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[str],
-    ) -> int:
-        pass
-
-    @abstractmethod
-    def delete_by_target_id_and_key(
-        self,
-        session: BaseSession,
-        target_id: str,
-        key: str,
-    ) -> int:
+        new_match: Match,
+    ) -> Match:
         pass
 
     @abstractmethod
     def find_all(
         self,
         session: BaseSession,
-    ) -> List[Config]:
+    ) -> List[Match]:
         pass
 
     @abstractmethod
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: List[str],
-    ) -> List[Config]:
+        ids: List[Match],
+    ) -> List[Match]:
         pass
 
     @abstractmethod
-    def find_by_target_id(
+    def find_many_by_line_group_id_and_status(
         self,
         session: BaseSession,
-        target_id: str,
-    ) -> Config:
+        line_group_id: str,
+        status: int
+    ) -> List[Match]:
         pass
 
     @abstractmethod
-    def find_one_by_target_id_and_key(
+    def find_one_by_line_group_id_and_status(
         self,
         session: BaseSession,
-        target_id: str,
-        key: str,
-    ) -> Config:
+        line_group_id: str,
+        status: int,
+    ) -> Match:
+        pass
+
+    @abstractmethod
+    def update_one_hanchan_ids_by_id(
+        self,
+        session: BaseSession,
+        line_group_id: str,
+        hanchan_id: int,
+    ) -> Match:
+        pass
+
+    @abstractmethod
+    def update_one_status_by_id(
+        self,
+        session: BaseSession,
+        line_group_id: str,
+        status: int,
+    ) -> Match:
         pass

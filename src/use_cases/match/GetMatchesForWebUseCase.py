@@ -2,7 +2,7 @@ from typing import List
 from services import (
     match_service,
 )
-from domains.Match import Match
+from Entities.Match import Match
 
 
 class GetMatchesForWebUseCase:

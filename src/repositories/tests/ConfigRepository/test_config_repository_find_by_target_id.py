@@ -1,6 +1,6 @@
 from tests.dummies import generate_dummy_config_list
 from repositories import session_scope, config_repository
-from domains.Config import Config
+from Entities.Config import Config
 
 
 def test_hit_records():

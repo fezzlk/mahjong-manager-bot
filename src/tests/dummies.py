@@ -1,10 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List
-from domains.Config import Config
-from domains.User import User, UserMode
-from domains.Group import Group, GroupMode
-from domains.Hanchan import Hanchan
-from domains.Match import Match
+from Entities.Config import Config
+from Entities.User import User, UserMode
+from Entities.Group import Group, GroupMode
+from Entities.Hanchan import Hanchan
+from Entities.Match import Match
 
 
 class IEvent(metaclass=ABCMeta):

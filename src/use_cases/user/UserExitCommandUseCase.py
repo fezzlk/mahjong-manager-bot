@@ -1,4 +1,4 @@
-from domains.User import UserMode
+from Entities.User import UserMode
 from services import (
     user_service,
     reply_service,

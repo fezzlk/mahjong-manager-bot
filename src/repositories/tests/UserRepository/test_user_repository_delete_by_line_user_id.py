@@ -1,6 +1,6 @@
 from tests.dummies import generate_dummy_user_list
 from repositories import session_scope, user_repository
-from domains.User import User
+from Entities.User import User
 
 
 def test_hit_1_record():

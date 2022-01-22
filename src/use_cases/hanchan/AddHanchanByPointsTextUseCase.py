@@ -8,7 +8,7 @@ from services import (
     config_service,
     group_service,
 )
-from domains.Group import GroupMode
+from Entities.Group import GroupMode
 
 
 class AddHanchanByPointsTextUseCase:

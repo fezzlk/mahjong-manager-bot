@@ -1,6 +1,6 @@
 from typing import List
 from models import GroupSchema
-from domains.Group import Group, GroupMode
+from Entities.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 

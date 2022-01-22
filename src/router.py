@@ -45,7 +45,7 @@ from use_cases import (
     user_my_zoom_command_use_case,
     reply_my_results_use_case,
 )
-from domains.Group import GroupMode
+from Entities.Group import GroupMode
 
 
 class UCommands(Enum):

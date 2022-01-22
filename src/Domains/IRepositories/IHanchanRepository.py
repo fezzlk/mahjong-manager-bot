@@ -1,41 +1,49 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
-from domains.Match import Match
+from typing import Dict, List
+from Entities.Hanchan import Hanchan
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class IMatchRepository(metaclass=ABCMeta):
+class IHanchanRepository(metaclass=ABCMeta):
 
     @abstractmethod
     def create(
         self,
         session: BaseSession,
-        new_match: Match,
-    ) -> Match:
+        new_hanchan: Hanchan,
+    ) -> Hanchan:
+        pass
+
+    @abstractmethod
+    def delete_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[str],
+    ) -> int:
         pass
 
     @abstractmethod
     def find_all(
         self,
         session: BaseSession,
-    ) -> List[Match]:
+    ) -> List[Hanchan]:
         pass
 
     @abstractmethod
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: List[Match],
-    ) -> List[Match]:
+        ids: List[Hanchan],
+    ) -> List[Hanchan]:
         pass
 
     @abstractmethod
-    def find_many_by_line_group_id_and_status(
+    def find_one_by_id_and_line_group_id(
         self,
         session: BaseSession,
+        hanchan_id: str,
         line_group_id: str,
-        status: int
-    ) -> List[Match]:
+    ) -> Hanchan:
         pass
 
     @abstractmethod
@@ -44,23 +52,32 @@ class IMatchRepository(metaclass=ABCMeta):
         session: BaseSession,
         line_group_id: str,
         status: int,
-    ) -> Match:
+    ) -> Hanchan:
         pass
 
     @abstractmethod
-    def update_one_hanchan_ids_by_id(
+    def update_one_converted_scores_by_id(
         self,
         session: BaseSession,
-        line_group_id: str,
         hanchan_id: int,
-    ) -> Match:
+        converted_scores: Dict[str, int],
+    ) -> Hanchan:
+        pass
+
+    @abstractmethod
+    def update_one_raw_scores_by_id(
+        self,
+        session: BaseSession,
+        hanchan_id: int,
+        raw_scores: Dict[str, int],
+    ) -> Hanchan:
         pass
 
     @abstractmethod
     def update_one_status_by_id(
         self,
         session: BaseSession,
-        line_group_id: str,
+        hanchan_id: int,
         status: int,
-    ) -> Match:
+    ) -> Hanchan:
         pass

@@ -2,7 +2,7 @@ from typing import List
 from repositories import (
     user_repository, session_scope
 )
-from domains.User import User
+from Entities.User import User
 
 
 class GetUsersForWebUseCase:

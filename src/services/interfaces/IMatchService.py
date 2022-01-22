@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from domains.Match import Match
+from Entities.Match import Match
 
 
 class IMatchService(metaclass=ABCMeta):

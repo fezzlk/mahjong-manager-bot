@@ -1,17 +1,17 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from domains.User import User, UserMode
+from Entities.Config import Config
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class IUserRepository(metaclass=ABCMeta):
+class IConfigRepository(metaclass=ABCMeta):
 
     @abstractmethod
     def create(
         self,
         session: BaseSession,
-        new_user: User,
-    ) -> User:
+        new_config: Config,
+    ) -> Config:
         pass
 
     @abstractmethod
@@ -23,10 +23,11 @@ class IUserRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def delete_by_line_user_id(
+    def delete_by_target_id_and_key(
         self,
         session: BaseSession,
-        line_user_id: str,
+        target_id: str,
+        key: str,
     ) -> int:
         pass
 
@@ -34,7 +35,7 @@ class IUserRepository(metaclass=ABCMeta):
     def find_all(
         self,
         session: BaseSession,
-    ) -> List[User]:
+    ) -> List[Config]:
         pass
 
     @abstractmethod
@@ -42,39 +43,22 @@ class IUserRepository(metaclass=ABCMeta):
         self,
         session: BaseSession,
         ids: List[str],
-    ) -> List[User]:
+    ) -> List[Config]:
         pass
 
     @abstractmethod
-    def find_one_by_line_user_id(
+    def find_by_target_id(
         self,
         session: BaseSession,
-        line_user_id: str,
-    ) -> User:
+        target_id: str,
+    ) -> Config:
         pass
 
     @abstractmethod
-    def find_one_by_name(
+    def find_one_by_target_id_and_key(
         self,
         session: BaseSession,
-        line_user_name: str,
-    ) -> User:
-        pass
-
-    @abstractmethod
-    def update_one_mode_by_line_user_id(
-        self,
-        session: BaseSession,
-        line_user_id: str,
-        mode: UserMode,
-    ) -> User:
-        pass
-
-    @abstractmethod
-    def update_one_zoom_url_by_line_user_id(
-        self,
-        session: BaseSession,
-        line_user_id: str,
-        zoom_url: str,
-    ) -> User:
+        target_id: str,
+        key: str,
+    ) -> Config:
         pass
