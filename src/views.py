@@ -2,18 +2,19 @@ import os
 from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine, Session
 from models import Base
-from use_cases import (
-    get_configs_for_web_use_case,
-    get_hanchans_for_web_use_case,
-    get_matches_for_web_use_case,
-    get_groups_for_web_use_case,
-    get_users_for_web_use_case,
-    delete_configs_for_web_use_case,
-    delete_hanchans_for_web_use_case,
-    delete_matches_for_web_use_case,
-    delete_groups_for_web_use_case,
-    delete_users_for_web_use_case,
-)
+from use_cases.CreateDummyUseCase import CreateDummyUseCase
+
+from use_cases.config.GetConfigsForWebUseCase import GetConfigsForWebUseCase
+from use_cases.config.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
+from use_cases.match.GetMatchesForWebUseCase import GetMatchesForWebUseCase
+from use_cases.match.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
+from use_cases.group.GetGroupsForWebUseCase import GetGroupsForWebUseCase
+from use_cases.group.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
+from use_cases.hanchan.GetHanchansForWebUseCase import GetHanchansForWebUseCase
+from use_cases.hanchan.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
+from use_cases.user.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
+from use_cases.user.GetUsersForWebUseCase import GetUsersForWebUseCase
+
 from linebot import WebhookHandler, exceptions
 
 handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])
@@ -42,16 +43,21 @@ def reset_db():
     return redirect(url_for('views_blueprint.index', message='DBをリセットしました。'))
 
 
+@views_blueprint.route('/create_dummy', methods=['POST'])
+def create_dummy():
+    CreateDummyUseCase().execute()
+
+
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
     session = Session()
 
-    Engine.execute('SELECT setval(\'users_id_seq\', MAX(id)) FROM users;')
-    Engine.execute('SELECT setval(\'groups_id_seq\', MAX(id)) FROM groups;')
-    Engine.execute(
-        'SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
-    Engine.execute('SELECT setval(\'matches_id_seq\', MAX(id)) FROM matches;')
-    Engine.execute('SELECT setval(\'configs_id_seq\', MAX(id)) FROM configs;')
+    # Engine.execute('SELECT setval(\'users_id_seq\', MAX(id)) FROM users;')
+    # Engine.execute('SELECT setval(\'groups_id_seq\', MAX(id)) FROM groups;')
+    # Engine.execute(
+    #     'SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
+    # Engine.execute('SELECT setval(\'matches_id_seq\', MAX(id)) FROM matches;')
+    # Engine.execute('SELECT setval(\'configs_id_seq\', MAX(id)) FROM configs;')
     # table_name = request.form['table_name']
     # before_name = request.form['before_name']
     # after_name = request.form['after_name']
@@ -63,7 +69,7 @@ def migrate():
 
 @views_blueprint.route('/users')
 def get_users():
-    data = get_users_for_web_use_case.execute()
+    data = GetUsersForWebUseCase().execute()
     keys = ['_id', 'line_user_name', 'line_user_id', 'jantama_name',
             'zoom_url', 'mode', 'matches', 'groups']
     input_keys = ['line_user_name', 'line_user_id', 'zoom_url', 'jantama_name']
@@ -87,13 +93,13 @@ def create_users():
 @views_blueprint.route('/users/delete', methods=['POST'])
 def delete_users():
     target_id = request.args.get('target_id')
-    delete_users_for_web_use_case.execute([int(target_id)])
+    DeleteUsersForWebUseCase().execute([int(target_id)])
     return redirect(url_for('views_blueprint.get_users'))
 
 
 @views_blueprint.route('/groups')
 def get_groups():
-    data = get_groups_for_web_use_case.execute()
+    data = GetGroupsForWebUseCase().execute()
     keys = ['_id', 'line_group_id', 'zoom_url', 'mode', 'users']
     input_keys = ['line_group_id', 'zoom_url']
     return render_template(
@@ -113,13 +119,13 @@ def create_groups():
 @views_blueprint.route('/groups/delete', methods=['POST'])
 def delete_groups():
     target_id = request.args.get('target_id')
-    delete_groups_for_web_use_case.execute([int(target_id)])
+    DeleteGroupsForWebUseCase().execute([int(target_id)])
     return redirect(url_for('views_blueprint.get_groups'))
 
 
 @views_blueprint.route('/hanchans')
 def get_hanchans():
-    data = get_hanchans_for_web_use_case.execute()
+    data = GetHanchansForWebUseCase().execute()
     keys = ['_id', 'line_group_id', 'raw_scores',
             'converted_scores', 'match_id', 'status']
     input_keys = ['line_group_id', 'raw_scores',
@@ -141,13 +147,13 @@ def create_hanchans():
 @views_blueprint.route('/hanchans/delete', methods=['POST'])
 def delete_hanchans():
     target_id = request.args.get('target_id')
-    delete_hanchans_for_web_use_case.execute([int(target_id)])
+    DeleteHanchansForWebUseCase().execute([int(target_id)])
     return redirect(url_for('views_blueprint.get_hanchans'))
 
 
 @views_blueprint.route('/matches')
 def get_matches():
-    data = get_matches_for_web_use_case.execute()
+    data = GetMatchesForWebUseCase().execute()
     keys = [
         '_id',
         'line_group_id',
@@ -173,13 +179,13 @@ def create_matches():
 @views_blueprint.route('/matches/delete', methods=['POST'])
 def delete_matches():
     target_id = request.args.get('target_id')
-    delete_matches_for_web_use_case.execute([int(target_id)])
+    DeleteMatchesForWebUseCase().execute([int(target_id)])
     return redirect(url_for('views_blueprint.get_matches'))
 
 
 @views_blueprint.route('/configs')
 def get_configs():
-    data = get_configs_for_web_use_case.execute()
+    data = GetConfigsForWebUseCase().execute()
     keys = ['_id', 'key', 'value', 'target_id']
     input_keys = ['key', 'value', 'target_id']
     return render_template(
@@ -199,7 +205,7 @@ def create_configs():
 @views_blueprint.route('/configs/delete', methods=['POST'])
 def delete_configs():
     target_id = request.args.get('target_id')
-    delete_configs_for_web_use_case.execute([int(target_id)])
+    DeleteConfigsForWebUseCase().execute([int(target_id)])
     return redirect(url_for('views_blueprint.get_configs'))
 
 

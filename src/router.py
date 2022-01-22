@@ -9,42 +9,46 @@ from Services import (
     message_service,
     group_service,
 )
-from use_cases import (
-    follow_use_case,
-    unfollow_use_case,
-    join_group_use_case,
-    add_point_by_text_use_case,
-    add_hanchan_by_points_text_use_case,
-    add_point_by_Json_text_use_case,
-    start_input_use_case,
-    group_quit_use_case,
-    match_finish_use_case,
-    reply_user_mode_use_case,
-    reply_group_mode_use_case,
-    user_exit_command_use_case,
-    reply_fortune_use_case,
-    reply_sum_hanchans_use_case,
-    reply_matches_use_case,
-    reply_user_help_use_case,
-    reply_group_help_use_case,
-    set_my_zoom_url_to_group_use_case,
-    reply_github_url_use_case,
-    reply_group_settings_menu_use_case,
-    reply_others_menu_use_case,
-    reply_start_menu_use_case,
-    reply_sum_matches_by_ids_use_case,
-    reply_sum_hanchans__by_match_id_use_case,
-    set_zoom_url_to_user_use_case,
-    set_zoom_url_to_group_use_case,
-    calculate_with_tobi_use_case,
-    update_config_use_case,
-    input_result_from_image_use_case,
-    reply_group_zoom_url_use_case,
-    drop_hanchan_by_index_use_case,
-    disable_match_use_case,
-    user_my_zoom_command_use_case,
-    reply_my_results_use_case,
-)
+from use_cases.user.FollowUseCase import FollowUseCase
+from use_cases.user.UnfollowUseCase import UnfollowUseCase
+from use_cases.user.UserExitCommandUseCase import UserExitCommandUseCase
+from use_cases.user.SetZoomUrlToUserUseCase import SetZoomUrlToUserUseCase
+from use_cases.user.ReplyUserHelpUseCase import ReplyUserHelpUseCase
+from use_cases.user.ReplyUserModeUseCase import ReplyUserModeUseCase
+from use_cases.user.ReplyFortuneUseCase import ReplyFortuneUseCase
+from use_cases.user.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
+from use_cases.user.UserMyZoomCommandUseCase import UserMyZoomCommandUseCase
+
+from use_cases.group.JoinGroupUseCase import JoinGroupUseCase
+from use_cases.group.GroupQuitUseCase import GroupQuitUseCase
+from use_cases.group.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
+from use_cases.group.SetMyZoomUrlToGroupUseCase import SetMyZoomUrlToGroupUseCase
+from use_cases.group.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
+from use_cases.group.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
+from use_cases.group.ReplyStartMenuUseCase import ReplyStartMenuUseCase
+from use_cases.group.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
+from use_cases.group.ReplyGroupModeUseCase import ReplyGroupModeUseCase
+from use_cases.group.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCase
+
+from use_cases.hanchan.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
+from use_cases.hanchan.AddPointByJsonTextUseCase import AddPointByJsonTextUseCase
+from use_cases.hanchan.AddPointByTextUseCase import AddPointByTextUseCase
+from use_cases.hanchan.StartInputUseCase import StartInputUseCase
+from use_cases.hanchan.ReplySumHanchansUseCase import ReplySumHanchansUseCase
+from use_cases.hanchan.InputResultFromImageUseCase import InputResultFromImageUseCase
+from use_cases.hanchan.CalculateWithTobiUseCase import CalculateWithTobiUseCase
+
+from use_cases.match.ReplyMatchesUseCase import ReplyMatchesUseCase
+from use_cases.match.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
+from use_cases.match.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
+from use_cases.match.DisableMatchUseCase import DisableMatchUseCase
+from use_cases.match.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
+from use_cases.match.MatchFinishUseCase import MatchFinishUseCase
+
+from use_cases.match.ReplyMyResultsUseCase import ReplyMyResultsUseCase
+
+from use_cases.config.UpdateConfigUseCase import UpdateConfigUseCase
+
 from Domains.Entities.Group import GroupMode
 
 
@@ -102,12 +106,12 @@ def root(event: Event):
             elif event.message.type == 'image':
                 imageMessage(event)
         elif event.type == 'follow':
-            follow_use_case.execute()
+            FollowUseCase().execute()
         elif event.type == 'unfollow':
-            unfollow_use_case.execute()
+            UnfollowUseCase().execute()
             isEnabledReply = False
         elif event.type == 'join':
-            join_group_use_case.execute()
+            JoinGroupUseCase().execute()
         elif event.type == 'postback':
             postback(event)
 
@@ -139,7 +143,7 @@ def imageMessage(event: Event):
         message_content = line_bot_api.get_message_content(
             event.message.id
         )
-        input_result_from_image_use_case.execute(message_content.content)
+        InputResultFromImageUseCase().execute(message_content.content)
 
 
 def postback(event: Event):
@@ -173,7 +177,7 @@ def routing_by_text(event: Event):
     """wait mode"""
     # if zoom url, register to group
     if '.zoom.us' in text:
-        set_zoom_url_to_user_use_case.execute(text)
+        SetZoomUrlToUserUseCase().execute(text)
         return
 
     reply_service.add_message(
@@ -186,10 +190,10 @@ def routing_by_method(method: str, body: str):
 
     # mode
     if method == UCommands.mode.name:
-        reply_user_mode_use_case.execute()
+        ReplyUserModeUseCase().execute()
     # exit
     elif method == UCommands.exit.name:
-        user_exit_command_use_case.execute(
+        UserExitCommandUseCase().execute(
             request_info_service.req_line_user_id,
         )
     # payment
@@ -200,7 +204,7 @@ def routing_by_method(method: str, body: str):
         reply_service.add_message('分析機能は開発中です。')
     # fortune
     elif method == UCommands.fortune.name:
-        reply_fortune_use_case.execute()
+        ReplyFortuneUseCase().execute()
     # history
     elif method == UCommands.history.name:
         reply_service.add_message('対戦履歴機能は開発中です。')
@@ -209,13 +213,13 @@ def routing_by_method(method: str, body: str):
         reply_service.add_message('個人設定機能は開発中です。')
     # help
     elif method == UCommands.help.name:
-        reply_user_help_use_case.execute(UCommands)
+        ReplyUserHelpUseCase().execute(UCommands)
     # github
     elif method == UCommands.github.name:
-        reply_github_url_use_case.execute()
+        ReplyGitHubUrlUseCase().execute()
     # github
     elif method == UCommands.my_zoom.name:
-        user_my_zoom_command_use_case.execute()
+        UserMyZoomCommandUseCase().execute()
 
 
 def routing_for_group_by_text(event: Event):
@@ -238,7 +242,7 @@ def routing_for_group_by_text(event: Event):
     current_mode = group_service.get_mode(group_id)
     """input mode"""
     if current_mode.value == GroupMode.input.value:
-        add_point_by_text_use_case.execute(text)
+        AddPointByTextUseCase().execute(text)
         return
 
     """wait mode"""
@@ -246,81 +250,81 @@ def routing_for_group_by_text(event: Event):
 
     resultRows = [r for r in text.split('\n') if ':' in r]
     if len(resultRows) == 4:
-        add_hanchan_by_points_text_use_case.execute(text)
+        AddHanchanByPointsTextUseCase().execute(text)
 
     """if zoom url, register to group"""
     if '.zoom.us' in text:
-        set_zoom_url_to_group_use_case.execute(text)
+        SetZoomUrlToGroupUseCase().execute(text)
 
 
 def routing_for_group_by_method(method, body):
     """routing by method"""
     # input
     if method == RCommands.input.name:
-        start_input_use_case.execute()
+        StartInputUseCase().execute()
     # start menu
     elif method == RCommands.start.name:
-        reply_start_menu_use_case.execute()
+        ReplyStartMenuUseCase().execute()
     # mode
     elif method == RCommands.mode.name:
-        reply_group_mode_use_case.execute()
+        ReplyGroupModeUseCase().execute()
     # exit
     elif method == RCommands.exit.name:
-        group_quit_use_case.execute()
+        GroupQuitUseCase().execute()
     # help
     elif method == RCommands.help.name:
-        reply_group_help_use_case.execute(RCommands)
+        ReplyGroupHelpUseCase().execute(RCommands)
     # setting
     elif method == RCommands.setting.name:
-        reply_group_settings_menu_use_case.execute(body)
+        ReplyGroupSettingsMenuUseCase().execute(body)
     # results
     elif method == RCommands.results.name:
-        reply_sum_hanchans_use_case.execute()
+        ReplySumHanchansUseCase().execute()
     # results by match id
     elif method == RCommands.match.name:
-        reply_sum_hanchans__by_match_id_use_case.execute(body)
+        ReplySumHanchansByMatchIdUseCase().execute(body)
     # drop
     elif method == RCommands.drop.name:
-        drop_hanchan_by_index_use_case.execute(int(body))
+        DropHanchanByIndexUseCase().execute(int(body))
     # drop match
     elif method == RCommands.drop_m.name:
-        disable_match_use_case.execute()
+        DisableMatchUseCase().execute()
     # finish
     elif method == RCommands.finish.name:
-        match_finish_use_case.execute()
+        MatchFinishUseCase().execute()
     # fortune
     elif method == RCommands.fortune.name:
-        reply_fortune_use_case.execute()
+        ReplyFortuneUseCase().execute()
     # others menu
     elif method == RCommands.others.name:
-        reply_others_menu_use_case.execute()
+        ReplyOthersMenuUseCase().execute()
     # matches
     elif method == RCommands.matches.name:
-        reply_matches_use_case.execute()
+        ReplyMatchesUseCase().execute()
     # tobi
     elif method == RCommands.tobi.name:
-        calculate_with_tobi_use_case.execute(
+        CalculateWithTobiUseCase().execute(
             tobashita_player_id=body
         )
     # my results
     elif method == RCommands.my_results.name:
-        reply_my_results_use_case.execute()
+        ReplyMyResultsUseCase().execute()
     # add results
     elif method == RCommands.add_result.name:
-        add_point_by_Json_text_use_case.execute(body)
+        AddPointByJsonTextUseCase().execute(body)
     # update config
     elif method == RCommands.update_config.name:
         key = body.split(' ')[0]
         value = body.split(' ')[1]
-        update_config_use_case.execute(
+        UpdateConfigUseCase().execute(
             key, value
         )
     # zoom
     elif method == RCommands.zoom.name:
-        reply_group_zoom_url_use_case.execute()
+        ReplyGroupZoomUrlUseCase().execute()
     # my_zoom
     elif method == RCommands.my_zoom.name:
-        set_my_zoom_url_to_group_use_case.execute()
+        SetMyZoomUrlToGroupUseCase().execute()
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')
@@ -334,7 +338,7 @@ def routing_for_group_by_method(method, body):
         #             )
         #         ]
         #     args.remove('to')
-        reply_sum_matches_by_ids_use_case.execute(args)
+        ReplySumMatchesByIdsUseCase().execute(args)
     # # graphs
     # elif method == RCommands.graph.name:
     #     matches_use_cases.plot()
