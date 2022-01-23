@@ -1,5 +1,5 @@
 from typing import List
-from models import MatchSchema
+from models import MatchModel
 from sqlalchemy import and_
 from Domains.Entities.Match import Match
 from sqlalchemy.orm.session import Session as BaseSession
@@ -13,7 +13,7 @@ class MatchRepository:
         session: BaseSession,
         new_match: Match,
     ) -> Match:
-        record = MatchSchema(
+        record = MatchModel(
             line_group_id=new_match.line_group_id,
             hanchan_ids=new_match.hanchan_ids,
             status=new_match.status,
@@ -29,8 +29,8 @@ class MatchRepository:
         session: BaseSession,
     ) -> List[Match]:
         records = session\
-            .query(MatchSchema)\
-            .order_by(MatchSchema.id)\
+            .query(MatchModel)\
+            .order_by(MatchModel.id)\
             .all()
 
         return [
@@ -44,9 +44,9 @@ class MatchRepository:
         ids: List[Match],
     ) -> List[Match]:
         records = session\
-            .query(MatchSchema)\
-            .filter(MatchSchema.id.in_([int(s) for s in ids]))\
-            .order_by(MatchSchema.id)\
+            .query(MatchModel)\
+            .filter(MatchModel.id.in_([int(s) for s in ids]))\
+            .order_by(MatchModel.id)\
             .all()
 
         return [
@@ -61,10 +61,10 @@ class MatchRepository:
         status: int,
     ) -> List[Match]:
         records = session\
-            .query(MatchSchema).filter(and_(
-                MatchSchema.line_group_id == line_group_id,
-                MatchSchema.status == status,
-            )).order_by(MatchSchema.id.desc())\
+            .query(MatchModel).filter(and_(
+                MatchModel.line_group_id == line_group_id,
+                MatchModel.status == status,
+            )).order_by(MatchModel.id.desc())\
             .all()
 
         return [
@@ -79,10 +79,10 @@ class MatchRepository:
         status: int,
     ) -> Match:
         record = session\
-            .query(MatchSchema).filter(and_(
-                MatchSchema.line_group_id == line_group_id,
-                MatchSchema.status == status,
-            )).order_by(MatchSchema.id.desc())\
+            .query(MatchModel).filter(and_(
+                MatchModel.line_group_id == line_group_id,
+                MatchModel.status == status,
+            )).order_by(MatchModel.id.desc())\
             .first()
 
         if record is None:
@@ -97,7 +97,7 @@ class MatchRepository:
         hanchan_ids: List[int],
     ) -> Match:
         record = session\
-            .query(MatchSchema).filter(MatchSchema.id == match_id)\
+            .query(MatchModel).filter(MatchModel.id == match_id)\
             .first()
 
         if record is None:
@@ -114,7 +114,7 @@ class MatchRepository:
         status: int,
     ) -> Match:
         record = session\
-            .query(MatchSchema).filter(MatchSchema.id == match_id)\
+            .query(MatchModel).filter(MatchModel.id == match_id)\
             .first()
 
         if record is None:
@@ -124,7 +124,7 @@ class MatchRepository:
 
         return self._mapping_record_to_match_domain(record)
 
-    def _mapping_record_to_match_domain(self, record: MatchSchema) -> Match:
+    def _mapping_record_to_match_domain(self, record: MatchModel) -> Match:
         return Match(
             _id=record.id,
             line_group_id=record.line_group_id,
