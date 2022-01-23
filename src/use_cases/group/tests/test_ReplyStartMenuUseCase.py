@@ -1,4 +1,4 @@
-from use_cases import ReplyStartMenuUseCase
+from use_cases.group.ReplyStartMenuUseCase import ReplyStartMenuUseCase
 from Services import (
     reply_service,
 )

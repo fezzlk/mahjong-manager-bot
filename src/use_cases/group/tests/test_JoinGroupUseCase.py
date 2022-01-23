@@ -1,7 +1,7 @@
 from tests.dummies import (
     generate_dummy_join_event,
 )
-from use_cases import JoinGroupUseCase
+from use_cases.group.JoinGroupUseCase import JoinGroupUseCase
 from Services import (
     request_info_service,
     reply_service,

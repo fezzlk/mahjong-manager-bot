@@ -2,7 +2,7 @@ from tests.dummies import (
     generate_dummy_text_message_event_from_user,
     generate_dummy_profile,
 )
-from use_cases import FollowUseCase
+from use_cases.user.FollowUseCase import FollowUseCase
 from Services import (
     request_info_service,
     rich_menu_service,
