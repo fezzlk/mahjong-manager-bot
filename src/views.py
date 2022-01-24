@@ -1,5 +1,7 @@
 import os
+from typing import Dict, List
 from flask import Blueprint, abort, request, render_template, url_for, redirect
+from Domains.Entities.Hanchan import Hanchan
 from db_setting import Engine, Session
 from models import Base
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
@@ -48,10 +50,53 @@ def create_dummy():
     CreateDummyUseCase().execute()
 
 
+# @views_blueprint.route('/try', methods=['POST'])
+# def hogehoge():
+#     # from Repositories import user_repository
+#     # from Domains.Entities.User import User, UserMode
+#     session = Session()
+#     # user = User(
+#     #     line_user_name="test user6",
+#     #     line_user_id="U0123456789abcdefghijklmnopqrstu6",
+#     #     zoom_url="https://us00web.zoom.us/j/01234567896?pwd=abcdefghijklmnopqrstuvwxyz",
+#     #     mode=UserMode.wait,
+#     #     jantama_name="jantama user6",
+#     #     matches=[1],
+#     # )
+#     # user_repository.create(session, user)
+#     from models import UserMatchModel
+#     user_match = UserMatchModel(
+#         user_id=2,
+#         match_id=1,
+#     )
+#     session.add(user_match)
+#     session.commit()
+
+
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
     session = Session()
-
+    from models import UserMatchModel
+    from Repositories.HanchanRepository import HanchanRepository
+    from Services.UserService import UserService
+    from tests.dummies import Profile
+    repository = HanchanRepository()
+    service = UserService()
+    hanchans: List[Hanchan] = repository.find_all(session)
+    stock = []
+    for hanchan in hanchans:
+        if not isinstance(hanchan.converted_scores, Dict):
+            continue
+        for user_id in hanchan.converted_scores:
+            pro = Profile(display_name='', user_id=user_id)
+            res = service.find_or_create_by_profile(pro)
+            stock.append((res._id, hanchan.match_id))
+    for t in set(stock):
+        user_match = UserMatchModel(
+            user_id=t[0],
+            match_id=t[1],
+        )
+        session.add(user_match)
     # Engine.execute('SELECT setval(\'users_id_seq\', MAX(id)) FROM users;')
     # Engine.execute('SELECT setval(\'groups_id_seq\', MAX(id)) FROM groups;')
     # Engine.execute(
