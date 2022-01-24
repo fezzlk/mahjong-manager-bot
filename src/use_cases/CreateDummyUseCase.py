@@ -20,7 +20,7 @@ class CreateDummyUseCase:
         users = generate_dummy_user_list()[:5]
         configs = generate_dummy_config_list()[:6]
         groups = generate_dummy_group_list()[:3]
-        hanchans = generate_dummy_hanchan_list()[:4]
+        hanchans = generate_dummy_hanchan_list()[:7]
         matches = generate_dummy_match_list()[:5]
 
         with session_scope() as session:
