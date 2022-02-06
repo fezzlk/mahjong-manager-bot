@@ -3,6 +3,8 @@ from typing import Dict, List, Tuple
 from Repositories import session_scope, hanchan_repository
 from Domains.Entities.Hanchan import Hanchan
 from Domains.Entities.Match import Match
+from db_setting import Session
+from models import UserMatchModel
 from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']
@@ -145,6 +147,35 @@ class HanchanService(IHanchanService):
             print(
                 f'update hanchan: id={updated_hanchan._id}'
             )
+            from tests.dummies import Profile
+            from Services.UserService import UserService
+            service = UserService()
+
+            user_ids_in_hanchan = []
+            for user_line_id in updated_hanchan.converted_scores:
+                profile = Profile(display_name='', user_id=user_line_id)
+                user = service.find_or_create_by_profile(profile)
+                if user is not None:
+                    user_ids_in_hanchan.append(user._id)
+
+            # user_match の作成
+            user_matches = session\
+                .query(UserMatchModel)\
+                .filter(
+                    UserMatchModel.match_id == updated_hanchan.match_id,
+                )\
+                .all()
+            linked_user_ids = [um.user_id for um in user_matches]
+
+            target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
+
+            session = Session()
+            for user_id in target_user_ids:
+                user_match = UserMatchModel(
+                    user_id=user_id,
+                    match_id=updated_hanchan.match_id,
+                )
+                session.add(user_match)
 
             return updated_hanchan
 
