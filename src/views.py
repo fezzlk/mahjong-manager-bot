@@ -83,15 +83,15 @@ def migrate():
     repository = HanchanRepository()
     service = UserService()
     hanchans: List[Hanchan] = repository.find_all(session)
-    stock = []
+    target_user_match = []
     for hanchan in hanchans:
         if not isinstance(hanchan.converted_scores, Dict):
             continue
         for user_id in hanchan.converted_scores:
             pro = Profile(display_name='', user_id=user_id)
             res = service.find_or_create_by_profile(pro)
-            stock.append((res._id, hanchan.match_id))
-    for t in set(stock):
+            target_user_match.append((res._id, hanchan.match_id))
+    for t in set(target_user_match):
         user_match = UserMatchModel(
             user_id=t[0],
             match_id=t[1],
