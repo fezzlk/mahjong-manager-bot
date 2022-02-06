@@ -79,7 +79,7 @@ def migrate():
     from models import UserMatchModel
     from Repositories.HanchanRepository import HanchanRepository
     from Services.UserService import UserService
-    from tests.dummies import Profile
+    from Models.line.Profile import Profile
     repository = HanchanRepository()
     service = UserService()
     hanchans: List[Hanchan] = repository.find_all(session)

@@ -1,4 +1,3 @@
-from abc import ABCMeta, abstractmethod
 from typing import Dict, List
 from Domains.Entities.Config import Config
 from Domains.Entities.User import User, UserMode
@@ -6,31 +5,8 @@ from Domains.Entities.Group import Group, GroupMode
 from Domains.Entities.Hanchan import Hanchan
 from Domains.Entities.Match import Match
 
-
-class IEvent(metaclass=ABCMeta):
-    @abstractmethod
-    def __init__(
-        self,
-        event_type: str,
-        source_type: str,
-        user_id: str,
-        group_id: str,
-        message_type: str,
-        text: str,
-        postback_data: str,
-        mode: str,
-    ):
-        pass
-
-
-class IProfile(metaclass=ABCMeta):
-    @abstractmethod
-    def __init__(
-        self,
-        display_name: str,
-        user_id: str,
-    ):
-        pass
+from Models.line.Profile import Profile
+from Models.line.Event import Event
 
 
 '''
@@ -291,7 +267,7 @@ def generate_dummy_match_list() -> List[Match]:
     ]
 
 
-def generate_dummy_follow_event() -> IEvent:
+def generate_dummy_follow_event() -> Event:
     return Event(
         event_type='follow',
         source_type='user',
@@ -299,7 +275,7 @@ def generate_dummy_follow_event() -> IEvent:
     )
 
 
-def generate_dummy_unfollow_event() -> IEvent:
+def generate_dummy_unfollow_event() -> Event:
     return Event(
         event_type='unfollow',
         source_type='user',
@@ -307,7 +283,7 @@ def generate_dummy_unfollow_event() -> IEvent:
     )
 
 
-def generate_dummy_join_event() -> IEvent:
+def generate_dummy_join_event() -> Event:
     return Event(
         event_type='join',
         source_type='group',
@@ -316,7 +292,7 @@ def generate_dummy_join_event() -> IEvent:
     )
 
 
-def generate_dummy_text_message_event_from_user() -> IEvent:
+def generate_dummy_text_message_event_from_user() -> Event:
     return Event(
         event_type='message',
         source_type='user',
@@ -326,7 +302,7 @@ def generate_dummy_text_message_event_from_user() -> IEvent:
     )
 
 
-def generate_dummy_text_message_event_from_group() -> IEvent:
+def generate_dummy_text_message_event_from_group() -> Event:
     return Event(
         event_type='message',
         source_type='group',
@@ -337,7 +313,7 @@ def generate_dummy_text_message_event_from_group() -> IEvent:
     )
 
 
-def generate_dummy_profile() -> IProfile:
+def generate_dummy_profile() -> Profile:
     return Profile(
         display_name='dummy_display_name',
         user_id='dummy_user_id',
@@ -351,69 +327,3 @@ def generate_dummy_points() -> Dict[str, int]:
         'dummy_user3': 30000,
         'dummy_user4': 40000,
     }
-
-
-# LINE messaging API に合わせるためフィールド名はキャメルケースにしている
-class Profile(IProfile):
-    def __init__(
-        self,
-        display_name='dummy_display_name',
-        user_id='dummy_user_id'
-    ):
-        self.display_name = display_name
-        self.user_id = user_id
-
-
-class Event(IEvent):
-    def __init__(
-        self,
-        event_type='message',
-        source_type='user',
-        user_id=generate_dummy_user_list()[0].line_user_id,
-        group_id=generate_dummy_group_list()[0].line_group_id,
-        message_type='text',
-        text='dummy_text',
-        postback_data='dummy_postback_data',
-        mode='active',
-    ):
-        self.type = event_type
-        self.replyToken = 'dummy_reply_token'
-        self.source = Source(
-            user_id=user_id,
-            source_type=source_type,
-            group_id=group_id)
-        self.mode = mode
-        if self.type == 'message':
-            self.message = Message(text=text, message_type=message_type)
-        if self.type == 'postback':
-            self.postback == Postback(data=postback_data)
-
-
-class Source:
-    def __init__(
-        self,
-        user_id=generate_dummy_user_list()[0].line_user_id,
-        source_type='user',
-        group_id=generate_dummy_group_list()[0].line_group_id,
-    ):
-        self.type = source_type
-        self.user_id = user_id
-
-        if source_type == 'group':
-            self.group_id = group_id
-
-
-class Message:
-    def __init__(self, text='dummy_text', message_type='text'):
-        self.type = message_type
-        self.id = 'dummy_message_id'
-
-        if message_type == 'image':
-            self.contentProvider = {'type': 'line'}
-        elif message_type == 'text':
-            self.text = text
-
-
-class Postback:
-    def __init__(self, data=''):
-        self.data = data

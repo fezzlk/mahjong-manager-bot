@@ -147,7 +147,7 @@ class HanchanService(IHanchanService):
             print(
                 f'update hanchan: id={updated_hanchan._id}'
             )
-            from tests.dummies import Profile
+            from Models.line.Profile import Profile
             from Services.UserService import UserService
             service = UserService()
 
