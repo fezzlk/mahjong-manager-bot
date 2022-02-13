@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from Repositories import session_scope, hanchan_repository
 from Domains.Entities.Hanchan import Hanchan
@@ -79,11 +79,11 @@ class HanchanService(IHanchanService):
                 1
             )
 
-    def add_raw_score(
+    def add_or_drop_raw_score(
         self,
         line_group_id: str,
         line_user_id: str,
-        raw_score: int,
+        raw_score: Optional[int],
     ) -> Hanchan:
         with session_scope() as session:
             target = hanchan_repository.find_one_by_line_group_id_and_status(
@@ -99,7 +99,7 @@ class HanchanService(IHanchanService):
             if line_user_id is None:
                 raw_scores = {}
             elif raw_score is None:
-                raw_scores.pop(line_user_id)
+                raw_scores.pop(line_user_id, None)
             else:
                 raw_scores[line_user_id] = raw_score
 
@@ -110,21 +110,6 @@ class HanchanService(IHanchanService):
             )
 
             return updated_hanchan
-
-    def drop_raw_score(
-        self,
-        line_group_id: str,
-        line_user_id: str,
-    ) -> Hanchan:
-        with session_scope() as session:
-            hanchan = hanchan_repository.update_one_raw_scores_by_id(
-                session=session,
-                line_group_id=line_group_id,
-                line_user_id=line_user_id,
-                raw_score=None,
-            )
-
-            return hanchan
 
     def update_converted_score(
         self,

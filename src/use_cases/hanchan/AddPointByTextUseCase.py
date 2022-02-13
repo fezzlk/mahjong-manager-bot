@@ -28,9 +28,10 @@ class AddPointByTextUseCase:
             )
 
             if point == 'delete':
-                hanchan = hanchan_service.drop_raw_score(
+                hanchan = hanchan_service.add_or_drop_raw_score(
                     line_group_id,
                     target_line_user_id,
+                    raw_score=None,
                 )
 
                 res = [
@@ -38,7 +39,10 @@ class AddPointByTextUseCase:
                     for line_user_id, point in hanchan.raw_scores.items()
                 ]
 
-                reply_service.add_message("\n".join(res))
+                if len(res) == 0:
+                    reply_service.add_message("点数を入力してください")
+                else:
+                    reply_service.add_message("\n".join(res))
 
                 return
         else:
@@ -62,7 +66,7 @@ class AddPointByTextUseCase:
         if isMinus:
             point = '-' + point
 
-        hanchan = hanchan_service.add_raw_score(
+        hanchan = hanchan_service.add_or_drop_raw_score(
             line_group_id=line_group_id,
             line_user_id=target_line_user_id,
             raw_score=int(point),
