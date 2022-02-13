@@ -48,7 +48,7 @@ def reset_db():
 @views_blueprint.route('/create_dummy', methods=['POST'])
 def create_dummy():
     CreateDummyUseCase().execute()
-
+    return 'Done'
 
 # @views_blueprint.route('/try', methods=['POST'])
 # def hogehoge():
