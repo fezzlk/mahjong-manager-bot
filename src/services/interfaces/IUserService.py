@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
 from linebot.models.responses import Profile
-from domains.User import User, UserMode
+from Domains.Entities.User import User, UserMode
 
 
 class IUserService(metaclass=ABCMeta):
@@ -28,18 +27,6 @@ class IUserService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create(
-        self,
-        line_user_name: str,
-        line_user_id: str,
-    ) -> User:
-        pass
-
-    @abstractmethod
-    def delete_by_line_user_id(self, line_user_id: str) -> None:
-        pass
-
-    @abstractmethod
     def get_zoom_url(self, line_user_id: str) -> str:
         pass
 
@@ -61,18 +48,4 @@ class IUserService(metaclass=ABCMeta):
         line_user_id: str,
         mode: UserMode,
     ) -> User:
-        pass
-
-    @abstractmethod
-    def get(
-        self,
-        ids: List[int] = None,
-    ) -> List[User]:
-        pass
-
-    @abstractmethod
-    def delete(
-        self,
-        ids: List[int],
-    ) -> None:
         pass

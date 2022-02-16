@@ -1,11 +1,12 @@
 from typing import List
-from services import (
-    group_service,
+from Repositories import (
+    group_repository, session_scope
 )
-from domains.Group import Group
+from Domains.Entities.Group import Group
 
 
 class GetGroupsForWebUseCase:
 
     def execute(self) -> List[Group]:
-        return group_service.get()
+        with session_scope() as session:
+            return group_repository.find_all(session)

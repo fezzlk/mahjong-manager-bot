@@ -1,21 +1,13 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List, Tuple
-from domains.Hanchan import Hanchan
-from domains.Match import Match
+from Domains.Entities.Hanchan import Hanchan
+from Domains.Entities.Match import Match
 
 
 class IHanchanService(metaclass=ABCMeta):
 
     @abstractmethod
-    def drop_raw_score(
-        self,
-        line_group_id: str,
-        line_user_id: str,
-    ) -> Hanchan:
-        pass
-
-    @abstractmethod
-    def add_raw_score(
+    def add_or_drop_raw_score(
         self,
         line_group_id: str,
         line_user_id: str,

@@ -1,6 +1,6 @@
-from domains.Group import Group
+from Domains.Entities.Group import Group
 from tests.dummies import generate_dummy_group_list
-from repositories import session_scope, group_repository
+from Repositories import session_scope, group_repository
 
 
 def test_success():

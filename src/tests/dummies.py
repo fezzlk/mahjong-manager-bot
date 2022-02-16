@@ -1,36 +1,12 @@
-from abc import ABCMeta, abstractmethod
 from typing import Dict, List
-from domains.Config import Config
-from domains.User import User, UserMode
-from domains.Group import Group, GroupMode
-from domains.Hanchan import Hanchan
-from domains.Match import Match
+from Domains.Entities.Config import Config
+from Domains.Entities.User import User, UserMode
+from Domains.Entities.Group import Group, GroupMode
+from Domains.Entities.Hanchan import Hanchan
+from Domains.Entities.Match import Match
 
-
-class IEvent(metaclass=ABCMeta):
-    @abstractmethod
-    def __init__(
-        self,
-        event_type: str,
-        source_type: str,
-        user_id: str,
-        group_id: str,
-        message_type: str,
-        text: str,
-        postback_data: str,
-        mode: str,
-    ):
-        pass
-
-
-class IProfile(metaclass=ABCMeta):
-    @abstractmethod
-    def __init__(
-        self,
-        display_name: str,
-        user_id: str,
-    ):
-        pass
+from Models.line.Profile import Profile
+from Models.line.Event import Event
 
 
 '''
@@ -86,48 +62,57 @@ def generate_dummy_config_list() -> List[Config]:
 def generate_dummy_user_list() -> List[User]:
     return [
         User(
-            line_user_name="test user1",
+            line_user_name="test_user1",
             line_user_id="U0123456789abcdefghijklmnopqrstu1",
             zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
-            jantama_name="jantama user1",
+            jantama_name="jantama_user1",
             matches=[],
             _id=1,
         ),
         User(
-            line_user_name="test user2",
+            line_user_name="test_user2",
             line_user_id="U0123456789abcdefghijklmnopqrstu2",
             zoom_url="https://us00web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
-            jantama_name="jantama user2",
+            jantama_name="jantama_user2",
             matches=[],
             _id=2,
         ),
         User(
-            line_user_name="test user3",
+            line_user_name="test_user3",
             line_user_id="U0123456789abcdefghijklmnopqrstu3",
             zoom_url="https://us00web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
-            jantama_name="jantama user3",
+            jantama_name="jantama_user3",
             matches=[],
             _id=3,
         ),
         # same line_user_name _id=3
         User(
-            line_user_name="test user3",
+            line_user_name="test_user3",
             line_user_id="U0123456789abcdefghijklmnopqrstu4",
             zoom_url="https://us00web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
-            jantama_name="jantama user4",
+            jantama_name="jantama_user4",
             matches=[],
             _id=4,
         ),
         User(
-            line_user_name="test user5",
+            line_user_name="test_user5",
             line_user_id="dummy_user_id",
             zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait,
-            jantama_name="jantama user5",
+            jantama_name="jantama_user5",
+            matches=[],
+            _id=5,
+        ),
+        User(
+            line_user_name="test user6",
+            line_user_id="dummy_user_id",
+            zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
+            mode=UserMode.wait,
+            jantama_name="jantama user6",
             matches=[],
             _id=5,
         ),
@@ -166,6 +151,7 @@ def generate_dummy_group_list() -> List[Group]:
 
 def generate_dummy_hanchan_list() -> List[Hanchan]:
     groups = generate_dummy_group_list()
+    users = generate_dummy_user_list()
 
     return [
         Hanchan(
@@ -208,6 +194,42 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
             status=1,
             # same the other's id
             _id=4,
+        ),
+        Hanchan(
+            line_group_id=groups[0].line_group_id,
+            raw_scores={
+                users[0].line_user_id: 40000,
+                users[1].line_user_id: 30000,
+                users[2].line_user_id: 20000,
+                users[3].line_user_id: 10000,
+            },
+            converted_scores={
+                users[0].line_user_id: 50,
+                users[1].line_user_id: 10,
+                users[2].line_user_id: -20,
+                users[3].line_user_id: -40,
+            },
+            match_id=1,
+            status=1,
+            _id=1,
+        ),
+        Hanchan(
+            line_group_id=groups[0].line_group_id,
+            raw_scores={
+                users[0].line_user_id: 40000,
+                users[1].line_user_id: 30000,
+                users[2].line_user_id: 20000,
+                users[4].line_user_id: 10000,
+            },
+            converted_scores={
+                users[0].line_user_id: 50,
+                users[1].line_user_id: 10,
+                users[2].line_user_id: -20,
+                users[4].line_user_id: -40,
+            },
+            match_id=1,
+            status=1,
+            _id=1,
         ),
     ]
 
@@ -254,7 +276,7 @@ def generate_dummy_match_list() -> List[Match]:
     ]
 
 
-def generate_dummy_follow_event() -> IEvent:
+def generate_dummy_follow_event() -> Event:
     return Event(
         event_type='follow',
         source_type='user',
@@ -262,7 +284,7 @@ def generate_dummy_follow_event() -> IEvent:
     )
 
 
-def generate_dummy_unfollow_event() -> IEvent:
+def generate_dummy_unfollow_event() -> Event:
     return Event(
         event_type='unfollow',
         source_type='user',
@@ -270,7 +292,7 @@ def generate_dummy_unfollow_event() -> IEvent:
     )
 
 
-def generate_dummy_join_event() -> IEvent:
+def generate_dummy_join_event() -> Event:
     return Event(
         event_type='join',
         source_type='group',
@@ -279,7 +301,7 @@ def generate_dummy_join_event() -> IEvent:
     )
 
 
-def generate_dummy_text_message_event_from_user() -> IEvent:
+def generate_dummy_text_message_event_from_user() -> Event:
     return Event(
         event_type='message',
         source_type='user',
@@ -289,7 +311,7 @@ def generate_dummy_text_message_event_from_user() -> IEvent:
     )
 
 
-def generate_dummy_text_message_event_from_group() -> IEvent:
+def generate_dummy_text_message_event_from_group() -> Event:
     return Event(
         event_type='message',
         source_type='group',
@@ -300,7 +322,7 @@ def generate_dummy_text_message_event_from_group() -> IEvent:
     )
 
 
-def generate_dummy_profile() -> IProfile:
+def generate_dummy_profile() -> Profile:
     return Profile(
         display_name='dummy_display_name',
         user_id='dummy_user_id',
@@ -314,69 +336,3 @@ def generate_dummy_points() -> Dict[str, int]:
         'dummy_user3': 30000,
         'dummy_user4': 40000,
     }
-
-
-# LINE messaging API に合わせるためフィールド名はキャメルケースにしている
-class Profile(IProfile):
-    def __init__(
-        self,
-        display_name='dummy_display_name',
-        user_id='dummy_user_id'
-    ):
-        self.display_name = display_name
-        self.user_id = user_id
-
-
-class Event(IEvent):
-    def __init__(
-        self,
-        event_type='message',
-        source_type='user',
-        user_id=generate_dummy_user_list()[0].line_user_id,
-        group_id=generate_dummy_group_list()[0].line_group_id,
-        message_type='text',
-        text='dummy_text',
-        postback_data='dummy_postback_data',
-        mode='active',
-    ):
-        self.type = event_type
-        self.replyToken = 'dummy_reply_token'
-        self.source = Source(
-            user_id=user_id,
-            source_type=source_type,
-            group_id=group_id)
-        self.mode = mode
-        if self.type == 'message':
-            self.message = Message(text=text, message_type=message_type)
-        if self.type == 'postback':
-            self.postback == Postback(data=postback_data)
-
-
-class Source:
-    def __init__(
-        self,
-        user_id=generate_dummy_user_list()[0].line_user_id,
-        source_type='user',
-        group_id=generate_dummy_group_list()[0].line_group_id,
-    ):
-        self.type = source_type
-        self.user_id = user_id
-
-        if source_type == 'group':
-            self.group_id = group_id
-
-
-class Message:
-    def __init__(self, text='dummy_text', message_type='text'):
-        self.type = message_type
-        self.id = 'dummy_message_id'
-
-        if message_type == 'image':
-            self.contentProvider = {'type': 'line'}
-        elif message_type == 'text':
-            self.text = text
-
-
-class Postback:
-    def __init__(self, data=''):
-        self.data = data

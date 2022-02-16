@@ -1,7 +1,7 @@
-from domains.Match import Match
+from Domains.Entities.Match import Match
 from tests.dummies import generate_dummy_match_list
 from db_setting import Session
-from repositories import session_scope, match_repository
+from Repositories import session_scope, match_repository
 
 session = Session()
 

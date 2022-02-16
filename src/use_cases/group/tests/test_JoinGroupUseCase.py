@@ -1,12 +1,12 @@
 from tests.dummies import (
     generate_dummy_join_event,
 )
-from use_cases import JoinGroupUseCase
-from services import (
+from use_cases.group.JoinGroupUseCase import JoinGroupUseCase
+from Services import (
     request_info_service,
     reply_service,
 )
-from repositories import session_scope, group_repository
+from Repositories import session_scope, group_repository
 from linebot.models import TextSendMessage
 
 

@@ -1,8 +1,9 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
-from repositories import session_scope, hanchan_repository
-from domains.Hanchan import Hanchan
-from domains.Match import Match
+from Repositories import session_scope, hanchan_repository
+from Domains.Entities.Hanchan import Hanchan
+from Domains.Entities.Match import Match
+from models import UserMatchModel
 from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']
@@ -77,11 +78,11 @@ class HanchanService(IHanchanService):
                 1
             )
 
-    def add_raw_score(
+    def add_or_drop_raw_score(
         self,
         line_group_id: str,
         line_user_id: str,
-        raw_score: int,
+        raw_score: Optional[int],
     ) -> Hanchan:
         with session_scope() as session:
             target = hanchan_repository.find_one_by_line_group_id_and_status(
@@ -97,7 +98,7 @@ class HanchanService(IHanchanService):
             if line_user_id is None:
                 raw_scores = {}
             elif raw_score is None:
-                raw_scores.pop(line_user_id)
+                raw_scores.pop(line_user_id, None)
             else:
                 raw_scores[line_user_id] = raw_score
 
@@ -108,21 +109,6 @@ class HanchanService(IHanchanService):
             )
 
             return updated_hanchan
-
-    def drop_raw_score(
-        self,
-        line_group_id: str,
-        line_user_id: str,
-    ) -> Hanchan:
-        with session_scope() as session:
-            hanchan = hanchan_repository.update_one_raw_scores_by_id(
-                session=session,
-                line_group_id=line_group_id,
-                line_user_id=line_user_id,
-                raw_score=None,
-            )
-
-            return hanchan
 
     def update_converted_score(
         self,
@@ -145,8 +131,33 @@ class HanchanService(IHanchanService):
             print(
                 f'update hanchan: id={updated_hanchan._id}'
             )
+            from Models.line.Profile import Profile
+            from Services.UserService import UserService
+            service = UserService()
 
-            return updated_hanchan
+            user_ids_in_hanchan = []
+            for user_line_id in updated_hanchan.converted_scores:
+                profile = Profile(display_name='', user_id=user_line_id)
+                user = service.find_or_create_by_profile(profile)
+                if user is not None:
+                    user_ids_in_hanchan.append(user._id)
+
+            # user_match の作成
+            user_matches = session\
+                .query(UserMatchModel)\
+                .filter(
+                    UserMatchModel.match_id == updated_hanchan.match_id,
+                )\
+                .all()
+            linked_user_ids = [um.user_id for um in user_matches]
+            target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
+            for user_id in target_user_ids:
+                user_match = UserMatchModel(
+                    user_id=user_id,
+                    match_id=updated_hanchan.match_id,
+                )
+                session.add(user_match)
+        return updated_hanchan
 
     def update_status_active_hanchan(
         self,

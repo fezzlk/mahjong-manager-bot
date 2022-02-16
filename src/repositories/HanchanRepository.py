@@ -1,7 +1,7 @@
 from typing import Dict, List
-from models import HanchanSchema
+from models import HanchanModel
 from sqlalchemy import and_, desc
-from domains.Hanchan import Hanchan
+from Domains.Entities.Hanchan import Hanchan
 from sqlalchemy.orm.session import Session as BaseSession
 import json
 
@@ -13,7 +13,7 @@ class HanchanRepository:
         session: BaseSession,
         new_hanchan: Hanchan,
     ) -> Hanchan:
-        record = HanchanSchema(
+        record = HanchanModel(
             line_group_id=new_hanchan.line_group_id,
             match_id=new_hanchan.match_id,
             raw_scores=new_hanchan.raw_scores,
@@ -31,8 +31,8 @@ class HanchanRepository:
         ids: List[Hanchan],
     ) -> int:
         delete_count = session\
-            .query(HanchanSchema)\
-            .filter(HanchanSchema.id.in_(ids))\
+            .query(HanchanModel)\
+            .filter(HanchanModel.id.in_(ids))\
             .delete(synchronize_session=False)
 
         return delete_count
@@ -42,8 +42,8 @@ class HanchanRepository:
         session: BaseSession,
     ) -> List[Hanchan]:
         records = session\
-            .query(HanchanSchema)\
-            .order_by(HanchanSchema.id)\
+            .query(HanchanModel)\
+            .order_by(HanchanModel.id)\
             .all()
 
         return [
@@ -58,9 +58,9 @@ class HanchanRepository:
     ) -> List[Hanchan]:
         # TODO use map to filter
         records = session\
-            .query(HanchanSchema)\
-            .filter(HanchanSchema.id.in_([int(s) for s in ids]))\
-            .order_by(HanchanSchema.id)\
+            .query(HanchanModel)\
+            .filter(HanchanModel.id.in_([int(s) for s in ids]))\
+            .order_by(HanchanModel.id)\
             .all()
 
         return [
@@ -75,10 +75,10 @@ class HanchanRepository:
         line_group_id: str,
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema)\
+            .query(HanchanModel)\
             .filter(and_(
-                HanchanSchema.line_group_id == line_group_id,
-                HanchanSchema.id == hanchan_id,
+                HanchanModel.line_group_id == line_group_id,
+                HanchanModel.id == hanchan_id,
             ))\
             .first()
 
@@ -94,11 +94,11 @@ class HanchanRepository:
         status: int,
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(and_(
-                HanchanSchema.line_group_id == line_group_id,
-                HanchanSchema.status == status,
+            .query(HanchanModel).filter(and_(
+                HanchanModel.line_group_id == line_group_id,
+                HanchanModel.status == status,
             ))\
-            .order_by(desc(HanchanSchema.id))\
+            .order_by(desc(HanchanModel.id))\
             .first()
 
         if record is None:
@@ -113,7 +113,7 @@ class HanchanRepository:
         converted_scores: Dict[str, int],
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(HanchanSchema.id == hanchan_id)\
+            .query(HanchanModel).filter(HanchanModel.id == hanchan_id)\
             .first()
 
         if record is None:
@@ -130,7 +130,7 @@ class HanchanRepository:
         raw_scores: Dict[str, int],
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(HanchanSchema.id == hanchan_id)\
+            .query(HanchanModel).filter(HanchanModel.id == hanchan_id)\
             .first()
 
         if record is None:
@@ -147,7 +147,7 @@ class HanchanRepository:
         status: int,
     ) -> Hanchan:
         record = session\
-            .query(HanchanSchema).filter(HanchanSchema.id == hanchan_id)\
+            .query(HanchanModel).filter(HanchanModel.id == hanchan_id)\
             .first()
 
         if record is None:
@@ -159,7 +159,7 @@ class HanchanRepository:
 
     def _mapping_record_to_hanchan_domain(
         self,
-        record: HanchanSchema
+        record: HanchanModel
     ) -> Hanchan:
         return Hanchan(
             _id=record.id,

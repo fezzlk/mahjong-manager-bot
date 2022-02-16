@@ -1,6 +1,8 @@
-from services import (
+from Services import (
     request_info_service,
-    user_service,
+)
+from Repositories import (
+    user_repository, session_scope
 )
 
 
@@ -8,6 +10,8 @@ class UnfollowUseCase:
 
     def execute(self) -> None:
         """unfollow event"""
-        user_service.delete_by_line_user_id(
-            request_info_service.req_line_user_id
-        )
+        with session_scope() as session:
+            user_repository.delete_by_line_user_id(
+                session=session,
+                line_user_id=request_info_service.req_line_user_id,
+            )

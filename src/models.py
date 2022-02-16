@@ -1,26 +1,25 @@
 """models"""
 
-from sqlalchemy import Column, String, Integer, ForeignKey, Table, DateTime
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
 from db_setting import Base
 import json
 
 
-association_table_user_match = Table(
-    'user_match', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('match_id', Integer, ForeignKey('matches.id'))
-)
-
-association_table_user_group = Table(
-    'user_group', Base.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('group_id', Integer, ForeignKey('groups.id'))
-)
+class UserGroupModel(Base):
+    __tablename__ = 'user_group'
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    group_id = Column(Integer, ForeignKey('groups.id'), primary_key=True)
 
 
-class UserSchema(Base):
+class UserMatchModel(Base):
+    __tablename__ = 'user_match'
+    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+    match_id = Column(Integer, ForeignKey('matches.id'), primary_key=True)
+
+
+class UserModel(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -30,13 +29,13 @@ class UserSchema(Base):
     mode = Column(String(255), nullable=False)
     jantama_name = Column(String(255), nullable=True)
     matches = relationship(
-        "MatchSchema",
-        secondary=association_table_user_match,
+        "MatchModel",
+        secondary=UserMatchModel.__tablename__,
         back_populates="users"
     )
     groups = relationship(
-        "GroupSchema",
-        secondary=association_table_user_group,
+        "GroupModel",
+        secondary=UserGroupModel.__tablename__,
         back_populates="users"
     )
 
@@ -46,7 +45,7 @@ class UserSchema(Base):
         line_user_id,
         mode,
         zoom_url=None,
-        jantama_name=None
+        jantama_name=None,
     ):
         self.line_user_name = line_user_name
         self.zoom_url = zoom_url
@@ -59,10 +58,10 @@ class UserSchema(Base):
         column = Column(column_name, String(255), nullable=True)
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
-                       (UserSchema.__tablename__, column_name, column_type))
+                       (UserModel.__tablename__, column_name, column_type))
 
 
-class GroupSchema(Base):
+class GroupModel(Base):
     __tablename__ = 'groups'
 
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
@@ -70,8 +69,8 @@ class GroupSchema(Base):
     zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
     users = relationship(
-        "UserSchema",
-        secondary=association_table_user_group,
+        "UserModel",
+        secondary=UserGroupModel.__tablename__,
         back_populates="groups"
     )
 
@@ -93,10 +92,10 @@ class GroupSchema(Base):
         column = Column(column_name, String(255), nullable=True)
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
-                       (GroupSchema.__tablename__, column_name, column_type))
+                       (GroupModel.__tablename__, column_name, column_type))
 
 
-class HanchanSchema(Base):
+class HanchanModel(Base):
     __tablename__ = 'hanchans'
 
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
@@ -125,10 +124,10 @@ class HanchanSchema(Base):
         column = Column(column_name, String(255), nullable=True)
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
-                       (HanchanSchema.__tablename__, column_name, column_type))
+                       (HanchanModel.__tablename__, column_name, column_type))
 
 
-class MatchSchema(Base):
+class MatchModel(Base):
     __tablename__ = 'matches'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -136,8 +135,8 @@ class MatchSchema(Base):
     hanchan_ids = Column(String(255))
     status = Column(Integer, nullable=False)
     users = relationship(
-        "UserSchema",
-        secondary=association_table_user_match,
+        "UserModel",
+        secondary=UserMatchModel.__tablename__,
         back_populates="matches"
     )
     created_at = Column(
@@ -156,10 +155,10 @@ class MatchSchema(Base):
         column = Column(column_name, String(255), nullable=True)
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
-                       (MatchSchema.__tablename__, column_name, column_type))
+                       (MatchModel.__tablename__, column_name, column_type))
 
 
-class ConfigSchema(Base):
+class ConfigModel(Base):
     __tablename__ = 'configs'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -178,4 +177,4 @@ class ConfigSchema(Base):
         column_name = column.compile(dialect=engine.dialect)
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
-                       (ConfigSchema.__tablename__, column_name, column_type))
+                       (ConfigModel.__tablename__, column_name, column_type))

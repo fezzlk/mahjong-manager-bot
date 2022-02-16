@@ -1,8 +1,8 @@
 from typing import List
-from services import (
+from Services import (
     hanchan_service,
 )
-from domains.Hanchan import Hanchan
+from Domains.Entities.Hanchan import Hanchan
 
 
 class GetHanchansForWebUseCase:

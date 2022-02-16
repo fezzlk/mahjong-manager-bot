@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
-from domains.Group import Group, GroupMode
+from Domains.Entities.Group import Group, GroupMode
 
 
 class IGroupService(metaclass=ABCMeta):
@@ -34,8 +33,4 @@ class IGroupService(metaclass=ABCMeta):
         self,
         line_group_id: str,
     ) -> str:
-        pass
-
-    @abstractmethod
-    def get(self, ids: List[int] = None) -> List[Group]:
         pass

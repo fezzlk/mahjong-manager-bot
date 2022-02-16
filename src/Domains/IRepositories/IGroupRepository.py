@@ -1,66 +1,64 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from domains.Match import Match
+from Domains.Entities.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class IMatchRepository(metaclass=ABCMeta):
+class IGroupRepository(metaclass=ABCMeta):
 
     @abstractmethod
     def create(
         self,
         session: BaseSession,
-        new_match: Match,
-    ) -> Match:
+        new_group: Group,
+    ) -> Group:
+        pass
+
+    @abstractmethod
+    def delete_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[Group],
+    ) -> int:
         pass
 
     @abstractmethod
     def find_all(
         self,
         session: BaseSession,
-    ) -> List[Match]:
+    ) -> List[Group]:
         pass
 
     @abstractmethod
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: List[Match],
-    ) -> List[Match]:
+        ids: List[str],
+    ) -> List[Group]:
         pass
 
     @abstractmethod
-    def find_many_by_line_group_id_and_status(
+    def find_one_by_line_group_id(
         self,
         session: BaseSession,
-        line_group_id: str,
-        status: int
-    ) -> List[Match]:
+        line_group_id: int,
+    ) -> Group:
         pass
 
     @abstractmethod
-    def find_one_by_line_group_id_and_status(
+    def update_one_mode_by_line_group_id(
         self,
         session: BaseSession,
         line_group_id: str,
-        status: int,
-    ) -> Match:
+        mode: GroupMode,
+    ) -> Group:
         pass
 
     @abstractmethod
-    def update_one_hanchan_ids_by_id(
+    def update_one_zoom_url_by_line_group_id(
         self,
         session: BaseSession,
         line_group_id: str,
-        hanchan_id: int,
-    ) -> Match:
-        pass
-
-    @abstractmethod
-    def update_one_status_by_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        status: int,
-    ) -> Match:
+        zoom_url: str,
+    ) -> Group:
         pass

@@ -1,11 +1,11 @@
 from tests.dummies import (
     generate_dummy_config_list,
 )
-from services import (
+from Services import (
     config_service,
 )
-from services.ConfigService import DEFAULT_CONFIGS
-from repositories import session_scope, config_repository
+from Services.ConfigService import DEFAULT_CONFIGS
+from Repositories import session_scope, config_repository
 
 
 def test_success_to_original_from_default():
