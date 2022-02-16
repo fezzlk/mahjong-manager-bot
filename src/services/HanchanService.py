@@ -3,7 +3,6 @@ from typing import Dict, List, Optional, Tuple
 from Repositories import session_scope, hanchan_repository
 from Domains.Entities.Hanchan import Hanchan
 from Domains.Entities.Match import Match
-from db_setting import Session
 from models import UserMatchModel
 from .interfaces.IHanchanService import IHanchanService
 
@@ -151,18 +150,14 @@ class HanchanService(IHanchanService):
                 )\
                 .all()
             linked_user_ids = [um.user_id for um in user_matches]
-
             target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
-
-            session = Session()
             for user_id in target_user_ids:
                 user_match = UserMatchModel(
                     user_id=user_id,
                     match_id=updated_hanchan.match_id,
                 )
                 session.add(user_match)
-
-            return updated_hanchan
+        return updated_hanchan
 
     def update_status_active_hanchan(
         self,
