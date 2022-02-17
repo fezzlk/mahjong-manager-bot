@@ -17,18 +17,18 @@ class AddHanchanByPointsTextUseCase:
         line_group_id = request_info_service.req_line_group_id
         rows = [r for r in text.split('\n') if ':' in r]
         points = {}
-        yakuman_user_line_ids = []
+        yakuman_line_user_ids = []
         for r in rows:
             user_name, point = r.split(':')
-            user_line_id = user_service.get_line_user_id_by_name(user_name)
-            yakuman_user_line_ids.extend([user_line_id] * point.count('+'))
+            line_user_id = user_service.get_line_user_id_by_name(user_name)
+            yakuman_line_user_ids.extend([line_user_id] * point.count('+'))
             point = point.replace('+', '')
-            points[user_line_id] = int(point)
+            points[line_user_id] = int(point)
 
-        if len(yakuman_user_line_ids):
+        if len(yakuman_line_user_ids):
             hanchan_service.create_yakuman_users_to_current(
                 line_group_id=line_group_id,
-                yakuman_user_line_ids=yakuman_user_line_ids,
+                yakuman_line_user_ids=yakuman_line_user_ids,
             )
             reply_service.add_message(
                 "役満おめでとうございます！\nよければどの役満を出したのかチャットで送ってください！")

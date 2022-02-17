@@ -136,8 +136,8 @@ class HanchanService(IHanchanService):
             service = UserService()
 
             user_ids_in_hanchan = []
-            for user_line_id in updated_hanchan.converted_scores:
-                profile = Profile(display_name='', user_id=user_line_id)
+            for line_user_id in updated_hanchan.converted_scores:
+                profile = Profile(display_name='', user_id=line_user_id)
                 user = service.find_or_create_by_profile(profile)
                 if user is not None:
                     user_ids_in_hanchan.append(user._id)
@@ -299,13 +299,26 @@ class HanchanService(IHanchanService):
     def create_yakuman_users_to_current(
         self,
         line_group_id: str,
-        yakuman_user_line_ids: List[str],
+        yakuman_line_user_ids: List[str],
     ) -> None:
         current = self.get_current(line_group_id)
         with session_scope() as session:
-            for user_line_id in yakuman_user_line_ids:
+            for line_user_id in yakuman_line_user_ids:
                 yakuman_user = YakumanUserModel(
-                    line_user_id=user_line_id,
+                    line_user_id=line_user_id,
                     hanchan_id=current._id
                 )
                 session.add(yakuman_user)
+
+    def get_yakuman_line_user_ids_by_hanchan_ids(
+        self,
+        ids: List[int],
+    ) -> List[str]:
+        with session_scope() as session:
+            record = session\
+                .query(YakumanUserModel)\
+                .filter(and_(
+                    HanchanModel.line_group_id == line_group_id,
+                    HanchanModel.id == hanchan_id,
+                ))\
+                .first()

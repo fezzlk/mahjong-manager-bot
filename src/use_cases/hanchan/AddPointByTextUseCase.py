@@ -57,11 +57,11 @@ class AddPointByTextUseCase:
             point = point[1:]
             isMinus = True
 
-        yakuman_user_line_ids = [target_line_user_id] * point.count('+')
-        if len(yakuman_user_line_ids):
+        yakuman_line_user_ids = [target_line_user_id] * point.count('+')
+        if len(yakuman_line_user_ids):
             hanchan_service.create_yakuman_users_to_current(
                 line_group_id=line_group_id,
-                yakuman_user_line_ids=yakuman_user_line_ids,
+                yakuman_line_user_ids=yakuman_line_user_ids,
             )
             reply_service.add_message(
                 "役満おめでとうございます！\nよければどの役満を出したのかチャットで送ってください！")
