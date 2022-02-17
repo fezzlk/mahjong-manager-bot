@@ -16,7 +16,6 @@ class YakumanUserRepository:
             hanchan_id=new_yakuman_user.hanchan_id
         )
         session.add(record)
-        session.commit()
         new_yakuman_user._id = record.id
         return new_yakuman_user
 
