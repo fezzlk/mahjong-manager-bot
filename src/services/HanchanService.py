@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple
 from Repositories import session_scope, hanchan_repository
 from Domains.Entities.Hanchan import Hanchan
 from Domains.Entities.Match import Match
-from models import UserMatchModel
+from models import UserMatchModel, YakumanUserModel
 from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']
@@ -295,3 +295,17 @@ class HanchanService(IHanchanService):
         # 名前のみによるメッセージでの削除機能自体をやめるか
         elif len(s) == 1:
             return 'delete', s[0]
+
+    def create_yakuman_users_to_current(
+        self,
+        line_group_id: str,
+        yakuman_user_line_ids: List[str],
+    ) -> None:
+        current = self.get_current(line_group_id)
+        with session_scope() as session:
+            for user_line_id in yakuman_user_line_ids:
+                yakuman_user = YakumanUserModel(
+                    line_user_id=user_line_id,
+                    hanchan_id=current._id
+                )
+                session.add(yakuman_user)
