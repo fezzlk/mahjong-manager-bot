@@ -13,6 +13,13 @@ class UserGroupModel(Base):
     group_id = Column(Integer, ForeignKey('groups.id'), primary_key=True)
 
 
+class YakumanUserModel(Base):
+    __tablename__ = 'yakuman_user'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    line_user_id = Column(String(255), nullable=False)
+    hanchan_id = Column(Integer, ForeignKey('hanchans.id'))
+
+
 class UserMatchModel(Base):
     __tablename__ = 'user_match'
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
