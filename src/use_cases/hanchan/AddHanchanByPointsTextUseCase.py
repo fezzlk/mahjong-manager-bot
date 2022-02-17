@@ -14,15 +14,25 @@ from Domains.Entities.Group import GroupMode
 class AddHanchanByPointsTextUseCase:
 
     def execute(self, text) -> None:
+        line_group_id = request_info_service.req_line_group_id
         rows = [r for r in text.split('\n') if ':' in r]
         points = {}
+        yakuman_user_line_ids = []
         for r in rows:
-            col = r.split(':')
-            points[
-                user_service.get_line_user_id_by_name(col[0])
-            ] = int(col[1])
+            user_name, point = r.split(':')
+            user_line_id = user_service.get_line_user_id_by_name(user_name)
+            yakuman_user_line_ids.extend([user_line_id] * point.count('+'))
+            point = point.replace('+', '')
+            points[user_line_id] = int(point)
 
-        line_group_id = request_info_service.req_line_group_id
+        if len(yakuman_user_line_ids):
+            hanchan_service.create_yakuman_users_to_current(
+                line_group_id=line_group_id,
+                yakuman_user_line_ids=yakuman_user_line_ids,
+            )
+            reply_service.add_message(
+                "役満おめでとうございます！\nよければどの役満を出したのかチャットで送ってください！")
+
         current_match = match_service.get_or_create_current(line_group_id)
         hanchan_service.create(points, line_group_id, current_match)
 
@@ -125,10 +135,6 @@ class AddHanchanByPointsTextUseCase:
 
             # ルームを待機モードにする
             group_service.chmod(line_group_id, GroupMode.wait)
-
-            reply_service.add_message(
-                '始める時は「_start」と入力してください。'
-            )
 
         elif len(points) > 4:
             reply_service.add_message(

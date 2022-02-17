@@ -57,6 +57,17 @@ class AddPointByTextUseCase:
             point = point[1:]
             isMinus = True
 
+        yakuman_user_line_ids = [target_line_user_id] * point.count('+')
+        if len(yakuman_user_line_ids):
+            hanchan_service.create_yakuman_users_to_current(
+                line_group_id=line_group_id,
+                yakuman_user_line_ids=yakuman_user_line_ids,
+            )
+            reply_service.add_message(
+                "役満おめでとうございます！\nよければどの役満を出したのかチャットで送ってください！")
+
+        point = point.replace('+', '')
+
         if not point.isdigit():
             reply_service.add_message(
                 '点数は整数で入力してください。',
@@ -180,10 +191,6 @@ class AddPointByTextUseCase:
 
             # ルームを待機モードにする
             group_service.chmod(line_group_id, GroupMode.wait)
-
-            reply_service.add_message(
-                '始める時は「_start」と入力してください。'
-            )
 
         elif len(points) > 4:
             reply_service.add_message(
