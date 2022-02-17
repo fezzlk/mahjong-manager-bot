@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Tuple
+from Domains.Entities.YakumanUser import YakumanUser
 
-from Repositories import session_scope, hanchan_repository
+from Repositories import session_scope, hanchan_repository, yakuman_user_repository
 from Domains.Entities.Hanchan import Hanchan
 from Domains.Entities.Match import Match
 from models import UserMatchModel, YakumanUserModel
@@ -308,17 +309,16 @@ class HanchanService(IHanchanService):
                     line_user_id=line_user_id,
                     hanchan_id=current._id
                 )
-                session.add(yakuman_user)
+                yakuman_user_repository.create(
+                    session=session,
+                    new_yakuman_user=yakuman_user
+                )
 
     def get_yakuman_line_user_ids_by_hanchan_ids(
         self,
-        ids: List[int],
+        hanchan_ids: List[int],
     ) -> List[str]:
         with session_scope() as session:
-            record = session\
-                .query(YakumanUserModel)\
-                .filter(and_(
-                    HanchanModel.line_group_id == line_group_id,
-                    HanchanModel.id == hanchan_id,
-                ))\
-                .first()
+            yakuman_users: List[YakumanUser] = yakuman_user_repository.find_by_hanchan_ids(
+                session=session, hanchan_ids=hanchan_ids)
+            return [yakuman_user.line_user_id for yakuman_user in yakuman_users]

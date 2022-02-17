@@ -7,12 +7,14 @@ from .UserRepository import UserRepository
 from .HanchanRepository import HanchanRepository
 from .MatchRepository import MatchRepository
 from .GroupRepository import GroupRepository
+from .YakumanUserRepository import YakumanUserRepository
 
 config_repository = ConfigRepository()
 user_repository = UserRepository()
 hanchan_repository = HanchanRepository()
 match_repository = MatchRepository()
 group_repository = GroupRepository()
+yakuman_user_repository = YakumanUserRepository()
 
 
 @contextmanager
