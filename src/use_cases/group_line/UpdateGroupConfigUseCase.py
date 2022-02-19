@@ -5,7 +5,7 @@ from Services import (
 )
 
 
-class UpdateConfigUseCase:
+class UpdateGroupConfigUseCase:
 
     def execute(self, key: str, value: str):
         """

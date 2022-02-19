@@ -9,45 +9,45 @@ from Services import (
     message_service,
     group_service,
 )
-from use_cases.user.FollowUseCase import FollowUseCase
-from use_cases.user.UnfollowUseCase import UnfollowUseCase
-from use_cases.user.UserExitCommandUseCase import UserExitCommandUseCase
-from use_cases.user.SetZoomUrlToUserUseCase import SetZoomUrlToUserUseCase
-from use_cases.user.ReplyUserHelpUseCase import ReplyUserHelpUseCase
-from use_cases.user.ReplyUserModeUseCase import ReplyUserModeUseCase
-from use_cases.user.ReplyFortuneUseCase import ReplyFortuneUseCase
-from use_cases.user.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
-from use_cases.user.UserMyZoomCommandUseCase import UserMyZoomCommandUseCase
+from use_cases.personal_line.FollowUseCase import FollowUseCase
+from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
+from use_cases.personal_line.UserExitCommandUseCase import UserExitCommandUseCase
+from use_cases.personal_line.SetZoomUrlToUserUseCase import SetZoomUrlToUserUseCase
+from use_cases.personal_line.ReplyUserHelpUseCase import ReplyUserHelpUseCase
+from use_cases.personal_line.ReplyUserModeUseCase import ReplyUserModeUseCase
+from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
+from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
+from use_cases.personal_line.UserMyZoomCommandUseCase import UserMyZoomCommandUseCase
 
-from use_cases.group.JoinGroupUseCase import JoinGroupUseCase
-from use_cases.group.GroupQuitUseCase import GroupQuitUseCase
-from use_cases.group.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
-from use_cases.group.SetMyZoomUrlToGroupUseCase import SetMyZoomUrlToGroupUseCase
-from use_cases.group.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
-from use_cases.group.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
-from use_cases.group.ReplyStartMenuUseCase import ReplyStartMenuUseCase
-from use_cases.group.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
-from use_cases.group.ReplyGroupModeUseCase import ReplyGroupModeUseCase
-from use_cases.group.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCase
+from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
+from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
+from use_cases.group_line.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
+from use_cases.group_line.SetMyZoomUrlToGroupUseCase import SetMyZoomUrlToGroupUseCase
+from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
+from use_cases.group_line.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
+from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
+from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
+from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
+from use_cases.group_line.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCase
 
-from use_cases.hanchan.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
-from use_cases.hanchan.AddPointByJsonTextUseCase import AddPointByJsonTextUseCase
-from use_cases.hanchan.AddPointByTextUseCase import AddPointByTextUseCase
-from use_cases.hanchan.StartInputUseCase import StartInputUseCase
-from use_cases.hanchan.ReplySumHanchansUseCase import ReplySumHanchansUseCase
-from use_cases.hanchan.InputResultFromImageUseCase import InputResultFromImageUseCase
-from use_cases.hanchan.CalculateWithTobiUseCase import CalculateWithTobiUseCase
+from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
+from use_cases.group_line.AddPointByJsonTextUseCase import AddPointByJsonTextUseCase
+from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
+from use_cases.group_line.StartInputUseCase import StartInputUseCase
+from use_cases.group_line.ReplySumHanchansUseCase import ReplySumHanchansUseCase
+from use_cases.group_line.InputResultFromImageUseCase import InputResultFromImageUseCase
+from use_cases.group_line.CalculateWithTobiUseCase import CalculateWithTobiUseCase
 
-from use_cases.match.ReplyMatchesUseCase import ReplyMatchesUseCase
-from use_cases.match.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
-from use_cases.match.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
-from use_cases.match.DisableMatchUseCase import DisableMatchUseCase
-from use_cases.match.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
-from use_cases.match.MatchFinishUseCase import MatchFinishUseCase
+from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
+from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
+from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
+from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
+from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
+from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
 
-from use_cases.match.ReplyMyResultsUseCase import ReplyMyResultsUseCase
+from use_cases.group_line.ReplyMyResultsUseCase import ReplyMyResultsUseCase
 
-from use_cases.config.UpdateConfigUseCase import UpdateConfigUseCase
+from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
 
 from Domains.Entities.Group import GroupMode
 
@@ -316,7 +316,7 @@ def routing_for_group_by_method(method, body):
     elif method == RCommands.update_config.name:
         key = body.split(' ')[0]
         value = body.split(' ')[1]
-        UpdateConfigUseCase().execute(
+        UpdateGroupConfigUseCase().execute(
             key, value
         )
     # zoom
