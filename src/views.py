@@ -6,16 +6,16 @@ from db_setting import Engine, Session
 from models import Base
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
-from use_cases.config.GetConfigsForWebUseCase import GetConfigsForWebUseCase
-from use_cases.config.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
-from use_cases.match.GetMatchesForWebUseCase import GetMatchesForWebUseCase
-from use_cases.match.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
-from use_cases.group.GetGroupsForWebUseCase import GetGroupsForWebUseCase
-from use_cases.group.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
-from use_cases.hanchan.GetHanchansForWebUseCase import GetHanchansForWebUseCase
-from use_cases.hanchan.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
-from use_cases.user.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
-from use_cases.user.GetUsersForWebUseCase import GetUsersForWebUseCase
+from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
+from use_cases.web.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
+from use_cases.web.GetMatchesForWebUseCase import GetMatchesForWebUseCase
+from use_cases.web.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
+from use_cases.web.GetGroupsForWebUseCase import GetGroupsForWebUseCase
+from use_cases.web.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
+from use_cases.web.GetHanchansForWebUseCase import GetHanchansForWebUseCase
+from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
+from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
+from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
 
 from linebot import WebhookHandler, exceptions
 
