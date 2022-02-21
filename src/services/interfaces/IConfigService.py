@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List
-from domains.Config import Config
+from typing import Dict
 
 
 class IConfigService(metaclass=ABCMeta):
@@ -10,10 +9,6 @@ class IConfigService(metaclass=ABCMeta):
         self,
         target_id: str,
     ) -> Dict[str, str]:
-        pass
-
-    @abstractmethod
-    def get(self, ids: List[str] = None) -> List[Config]:
         pass
 
     @abstractmethod

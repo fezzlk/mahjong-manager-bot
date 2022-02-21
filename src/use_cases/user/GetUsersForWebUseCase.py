@@ -1,6 +1,6 @@
 from typing import List
-from services import (
-    user_service,
+from repositories import (
+    user_repository, session_scope
 )
 from domains.User import User
 
@@ -8,4 +8,5 @@ from domains.User import User
 class GetUsersForWebUseCase:
 
     def execute(self) -> List[User]:
-        return user_service.get()
+        with session_scope() as session:
+            return user_repository.find_all(session)

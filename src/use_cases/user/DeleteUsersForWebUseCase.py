@@ -1,10 +1,14 @@
 from typing import List
-from services import (
-    user_service,
+from repositories import (
+    user_repository, session_scope,
 )
 
 
 class DeleteUsersForWebUseCase:
 
     def execute(self, ids: List[int]) -> None:
-        user_service.delete(ids)
+        with session_scope() as session:
+            user_repository.delete_by_ids(
+                session=session,
+                ids=ids,
+            )

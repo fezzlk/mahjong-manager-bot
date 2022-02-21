@@ -41,6 +41,7 @@ from .match.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from .match.MatchFinishUseCase import MatchFinishUseCase
 from .match.GetMatchesForWebUseCase import GetMatchesForWebUseCase
 from .match.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
+from .match.ReplyMyResultsUseCase import ReplyMyResultsUseCase
 
 from .config.UpdateConfigUseCase import UpdateConfigUseCase
 from .config.GetConfigsForWebUseCase import GetConfigsForWebUseCase
@@ -89,3 +90,4 @@ update_config_use_case = UpdateConfigUseCase()
 input_result_from_image_use_case = InputResultFromImageUseCase()
 reply_sum_matches_by_ids_use_case = ReplySumMatchesByIdsUseCase()
 disable_match_use_case = DisableMatchUseCase()
+reply_my_results_use_case = ReplyMyResultsUseCase()

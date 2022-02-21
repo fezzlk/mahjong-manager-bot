@@ -1,6 +1,5 @@
 """user"""
 
-from typing import List
 from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
@@ -9,12 +8,6 @@ from domains.User import User, UserMode
 
 
 class UserService(IUserService):
-
-    def delete_by_line_user_id(self, line_user_id: str) -> None:
-        with session_scope() as session:
-            user_repository.delete_by_line_user_id(session, line_user_id)
-
-            print(f'delete: {line_user_id}')
 
     def find_or_create_by_profile(
         self,
@@ -26,20 +19,13 @@ class UserService(IUserService):
                 profile.user_id,
             )
 
-        if target is None:
-            target = self.create(profile.display_name, profile.user_id)
+        if target is not None:
+            return target
 
-        return target
-
-    def create(
-        self,
-        line_user_name: str,
-        line_user_id: str,
-    ) -> User:
         with session_scope() as session:
             new_user = User(
-                line_user_name=line_user_name,
-                line_user_id=line_user_id,
+                line_user_name=profile.display_name,
+                line_user_id=profile.user_id,
                 zoom_url=None,
                 mode=UserMode.wait,
                 jantama_name=None,
@@ -49,28 +35,11 @@ class UserService(IUserService):
                 new_user,
             )
 
-            print(f'create: {new_user.line_user_id} {new_user.line_user_name}')
+            print(
+                f'create: {new_user.line_user_id} {new_user.line_user_name}'
+            )
 
             return new_user
-
-    def delete(
-        self,
-        ids: List[int],
-    ) -> None:
-        with session_scope() as session:
-            user_repository.delete_by_ids(session, ids)
-
-        print(f'delete: id={ids}')
-
-    def get(
-        self,
-        ids: List[int] = None,
-    ) -> List[User]:
-        with session_scope() as session:
-            if ids is None:
-                return user_repository.find_all(session)
-
-            return user_repository.find_by_ids(session, ids)
 
     def get_name_by_line_user_id(
         self,
