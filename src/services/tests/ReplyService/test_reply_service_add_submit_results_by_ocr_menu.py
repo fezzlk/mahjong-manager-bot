@@ -1,4 +1,4 @@
-from Services.ReplyService import ReplyService
+from services.ReplyService import ReplyService
 from tests.dummies import generate_dummy_points
 
 

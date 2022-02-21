@@ -1,8 +1,8 @@
 from typing import List
-from Repositories import (
+from repositories import (
     config_repository, session_scope
 )
-from Domains.Entities.Config import Config
+from domains.entities.Config import Config
 
 
 class GetConfigsForWebUseCase:

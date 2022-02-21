@@ -1,8 +1,8 @@
 from typing import List
-from Repositories import (
+from repositories import (
     user_repository, session_scope
 )
-from Domains.Entities.User import User
+from domains.entities.User import User
 
 
 class GetUsersForWebUseCase:

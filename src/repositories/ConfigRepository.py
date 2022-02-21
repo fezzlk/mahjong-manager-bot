@@ -1,7 +1,7 @@
 from typing import List
-from Domains.IRepositories.IConfigRepository import IConfigRepository
-from models import ConfigModel
-from Domains.Entities.Config import Config
+from domains.IRepositories.IConfigRepository import IConfigRepository
+from db_models import ConfigModel
+from domains.entities.Config import Config
 from sqlalchemy import and_
 from sqlalchemy.orm.session import Session as BaseSession
 

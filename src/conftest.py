@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from db_setting import Engine
-from models import Base
+from db_models import Base
 import pytest
 
 @pytest.fixture(scope='function', autouse=True)

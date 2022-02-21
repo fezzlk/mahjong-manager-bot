@@ -1,6 +1,6 @@
 import pytest
-from Services.GroupService import GroupService
-from Repositories import session_scope, group_repository
+from services.GroupService import GroupService
+from repositories import session_scope, group_repository
 from tests.dummies import generate_dummy_group_list
 
 

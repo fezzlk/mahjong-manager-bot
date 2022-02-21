@@ -5,7 +5,7 @@ from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from Repositories import (
+from repositories import (
     config_repository,
     user_repository,
     hanchan_repository,

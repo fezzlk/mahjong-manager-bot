@@ -1,12 +1,12 @@
 from typing import Dict, List
-from Domains.Entities.Config import Config
-from Domains.Entities.User import User, UserMode
-from Domains.Entities.Group import Group, GroupMode
-from Domains.Entities.Hanchan import Hanchan
-from Domains.Entities.Match import Match
+from domains.entities.Config import Config
+from domains.entities.User import User, UserMode
+from domains.entities.Group import Group, GroupMode
+from domains.entities.Hanchan import Hanchan
+from domains.entities.Match import Match
 
-from Models.line.Profile import Profile
-from Models.line.Event import Event
+from models.line.Profile import Profile
+from models.line.Event import Event
 
 
 '''

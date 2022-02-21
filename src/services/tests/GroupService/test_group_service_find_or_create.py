@@ -1,7 +1,7 @@
-from Services.GroupService import GroupService
-from Repositories import session_scope, group_repository
+from services.GroupService import GroupService
+from repositories import session_scope, group_repository
 from tests.dummies import generate_dummy_group_list
-from Domains.Entities.Group import Group
+from domains.entities.Group import Group
 
 
 def test_create_new_user():

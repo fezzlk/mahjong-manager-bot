@@ -1,4 +1,4 @@
-from Services.MessageService import MessageService, wait_messages
+from services.MessageService import MessageService, wait_messages
 
 
 def test_success():

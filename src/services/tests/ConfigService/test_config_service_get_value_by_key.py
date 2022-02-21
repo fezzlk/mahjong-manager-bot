@@ -3,10 +3,10 @@ from typing import Tuple
 from tests.dummies import (
     generate_dummy_config_list,
 )
-from Services import (
+from services import (
     config_service,
 )
-from Repositories import session_scope, config_repository
+from repositories import session_scope, config_repository
 
 
 @pytest.fixture(params=[

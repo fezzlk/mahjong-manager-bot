@@ -1,11 +1,11 @@
-from Services import (
+from services import (
     request_info_service,
     reply_service,
     group_service,
     hanchan_service,
     match_service,
 )
-from Domains.Entities.Group import GroupMode
+from domains.entities.Group import GroupMode
 
 
 class StartInputUseCase:

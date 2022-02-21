@@ -1,4 +1,4 @@
-from Services.RequestInfoService import RequestInfoService
+from services.RequestInfoService import RequestInfoService
 from tests.dummies import (
     generate_dummy_follow_event,
 )

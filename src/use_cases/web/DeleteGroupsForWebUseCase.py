@@ -1,5 +1,5 @@
 from typing import List
-from Repositories import (
+from repositories import (
     group_repository, session_scope
 )
 

@@ -1,9 +1,9 @@
 from typing import Dict, List, Optional, Tuple
 
-from Repositories import session_scope, hanchan_repository
-from Domains.Entities.Hanchan import Hanchan
-from Domains.Entities.Match import Match
-from models import UserMatchModel
+from repositories import session_scope, hanchan_repository
+from domains.entities.Hanchan import Hanchan
+from domains.entities.Match import Match
+from db_models import UserMatchModel
 from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']
@@ -131,8 +131,8 @@ class HanchanService(IHanchanService):
             print(
                 f'update hanchan: id={updated_hanchan._id}'
             )
-            from Models.line.Profile import Profile
-            from Services.UserService import UserService
+            from models.line.Profile import Profile
+            from services.UserService import UserService
             service = UserService()
 
             user_ids_in_hanchan = []

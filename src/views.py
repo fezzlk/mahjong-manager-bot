@@ -1,9 +1,9 @@
 import os
 from typing import Dict, List
 from flask import Blueprint, abort, request, render_template, url_for, redirect
-from Domains.Entities.Hanchan import Hanchan
+from domains.entities.Hanchan import Hanchan
 from db_setting import Engine, Session
-from models import Base
+from db_models import Base
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
 from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
@@ -52,8 +52,8 @@ def create_dummy():
 
 # @views_blueprint.route('/try', methods=['POST'])
 # def hogehoge():
-#     # from Repositories import user_repository
-#     # from Domains.Entities.User import User, UserMode
+#     # from repositories import user_repository
+#     # from domains.entities.User import User, UserMode
 #     session = Session()
 #     # user = User(
 #     #     line_user_name="test user6",
@@ -76,10 +76,10 @@ def create_dummy():
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
     session = Session()
-    from models import UserMatchModel
+    from db_models import UserMatchModel
     from Repositories.HanchanRepository import HanchanRepository
-    from Services.UserService import UserService
-    from Models.line.Profile import Profile
+    from services.UserService import UserService
+    from models.line.Profile import Profile
     repository = HanchanRepository()
     service = UserService()
     hanchans: List[Hanchan] = repository.find_all(session)

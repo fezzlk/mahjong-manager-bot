@@ -2,9 +2,9 @@ from tests.dummies import (
     generate_dummy_user_list,
     generate_dummy_profile,
 )
-from Services import UserService
+from services import UserService
 from messaging_api_setting import line_bot_api
-from Repositories import (
+from repositories import (
     user_repository, session_scope
 )
 

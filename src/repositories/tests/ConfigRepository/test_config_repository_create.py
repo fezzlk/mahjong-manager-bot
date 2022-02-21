@@ -1,6 +1,6 @@
-from Domains.Entities.Config import Config
+from domains.entities.Config import Config
 from tests.dummies import generate_dummy_config_list
-from Repositories import session_scope, config_repository
+from repositories import session_scope, config_repository
 
 
 def test_success():

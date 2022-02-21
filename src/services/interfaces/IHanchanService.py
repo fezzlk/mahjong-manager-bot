@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List, Tuple
-from Domains.Entities.Hanchan import Hanchan
-from Domains.Entities.Match import Match
+from domains.entities.Hanchan import Hanchan
+from domains.entities.Match import Match
 
 
 class IHanchanService(metaclass=ABCMeta):

@@ -1,7 +1,7 @@
 from typing import Dict, List
-from models import HanchanModel
+from db_models import HanchanModel
 from sqlalchemy import and_, desc
-from Domains.Entities.Hanchan import Hanchan
+from domains.entities.Hanchan import Hanchan
 from sqlalchemy.orm.session import Session as BaseSession
 import json
 

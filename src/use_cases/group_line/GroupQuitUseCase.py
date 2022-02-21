@@ -1,5 +1,5 @@
-from Domains.Entities.Group import GroupMode
-from Services import (
+from domains.entities.Group import GroupMode
+from services import (
     request_info_service,
     reply_service,
     group_service,

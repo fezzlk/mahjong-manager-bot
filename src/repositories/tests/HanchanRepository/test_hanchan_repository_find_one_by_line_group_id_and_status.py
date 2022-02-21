@@ -3,8 +3,8 @@ from tests.dummies import (
     generate_dummy_match_list,
 )
 from db_setting import Session
-from Repositories import session_scope, hanchan_repository, match_repository
-from Domains.Entities.Hanchan import Hanchan
+from repositories import session_scope, hanchan_repository, match_repository
+from domains.entities.Hanchan import Hanchan
 
 session = Session()
 

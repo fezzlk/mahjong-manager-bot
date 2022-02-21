@@ -1,7 +1,7 @@
-from Services import (
+from services import (
     request_info_service,
 )
-from Repositories import (
+from repositories import (
     user_repository, session_scope
 )
 

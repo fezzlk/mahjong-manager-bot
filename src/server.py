@@ -17,7 +17,7 @@ logger = logging.create_logger(app)
 
 
 from db_setting import Engine
-from models import Base
+from db_models import Base
 Base.metadata.create_all(bind=Engine)
 
 from views import views_blueprint

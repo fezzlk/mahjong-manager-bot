@@ -1,4 +1,4 @@
-from Services.RichMenuService import RichMenuService
+from services.RichMenuService import RichMenuService
 from tests.dummies import (
     generate_dummy_user_list,
 )

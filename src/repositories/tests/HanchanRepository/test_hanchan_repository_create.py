@@ -1,9 +1,9 @@
-from Domains.Entities.Hanchan import Hanchan
+from domains.entities.Hanchan import Hanchan
 from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from Repositories import session_scope, hanchan_repository, match_repository
+from repositories import session_scope, hanchan_repository, match_repository
 
 
 def test_success():

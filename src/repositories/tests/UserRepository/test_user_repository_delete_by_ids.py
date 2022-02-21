@@ -1,6 +1,6 @@
 from tests.dummies import generate_dummy_user_list
-from Repositories import session_scope, user_repository
-from Domains.Entities.User import User
+from repositories import session_scope, user_repository
+from domains.entities.User import User
 
 
 def test_hit_with_ids():
