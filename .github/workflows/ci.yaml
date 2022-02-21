@@ -116,6 +116,10 @@ jobs:
           python -m pip install -r requirements.txt
           # python -m pip install -r requirements.dev.txt
           python -m pip install pytest pytest-cov pytest-mock
+      - name: set pythonpath
+        run: |
+        # this does not work.
+        export PYTHONPATH=$PYTHONPATH:/home/runner/work/mahjong-manager-bot
       - name: Test with pytest
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
