@@ -1,7 +1,7 @@
 """calculate"""
 
-from domains.Group import GroupMode
-from services import (
+from Domains.Entities.Group import GroupMode
+from Services import (
     request_info_service,
     user_service,
     reply_service,
@@ -58,14 +58,12 @@ class CalculateWithTobiUseCase:
         # config の取得(by target で撮っちゃって良い)
         # 計算の実行
         calculate_result = hanchan_service.run_calculate(
-            points=points,
-            ranking_prize=[
-                int(s) for s in config_service.get_value_by_key(line_group_id, '順位点').split(',')
-            ],
-            tobi_prize=int(config_service.get_value_by_key(line_group_id, '飛び賞')),
-            rounding_method=config_service.get_value_by_key(line_group_id, '端数計算方法'),
-            tobashita_player_id=tobashita_player_id,
-        )
+            points=points, ranking_prize=[
+                int(s) for s in config_service.get_value_by_key(
+                    line_group_id, '順位点').split(',')], tobi_prize=int(
+                config_service.get_value_by_key(
+                    line_group_id, '飛び賞')), rounding_method=config_service.get_value_by_key(
+                        line_group_id, '端数計算方法'), tobashita_player_id=tobashita_player_id, )
 
         line_group_id = request_info_service.req_line_group_id
 
@@ -101,7 +99,8 @@ class CalculateWithTobiUseCase:
         ):
             name = user_service.get_name_by_line_user_id(r[0])
             score = ("+" if r[1] > 0 else "") + str(r[1])
-            sum_score = ("+" if sum_hanchans[r[0]] > 0 else "") + str(sum_hanchans[r[0]])
+            sum_score = ("+" if sum_hanchans[r[0]]
+                         > 0 else "") + str(sum_hanchans[r[0]])
             score_text_list.append(
                 f'{name}: {score} ({sum_score})'
             )

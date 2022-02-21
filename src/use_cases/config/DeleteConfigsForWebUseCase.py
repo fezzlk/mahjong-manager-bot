@@ -1,5 +1,5 @@
 from typing import List
-from repositories import config_repository, session_scope
+from Repositories import config_repository, session_scope
 
 
 class DeleteConfigsForWebUseCase:

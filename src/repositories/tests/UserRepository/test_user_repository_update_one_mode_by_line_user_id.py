@@ -1,6 +1,6 @@
 # UserMode が 一種類しかないため使われない
 # from tests.dummies import generate_dummy_user_list
-# from repositories import session_scope, user_repository
+# from Repositories import session_scope, user_repository
 # from domains.User import User, UserMode
 
 

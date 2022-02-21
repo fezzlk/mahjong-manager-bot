@@ -1,4 +1,4 @@
-"""services"""
+"""Services"""
 from .RequestInfoService import RequestInfoService
 from .ConfigService import ConfigService
 from .HanchanService import HanchanService

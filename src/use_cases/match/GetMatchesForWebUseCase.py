@@ -1,8 +1,8 @@
 from typing import List
-from services import (
+from Services import (
     match_service,
 )
-from domains.Match import Match
+from Domains.Entities.Match import Match
 
 
 class GetMatchesForWebUseCase:

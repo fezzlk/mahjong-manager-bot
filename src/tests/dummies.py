@@ -1,10 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List
-from domains.Config import Config
-from domains.User import User, UserMode
-from domains.Group import Group, GroupMode
-from domains.Hanchan import Hanchan
-from domains.Match import Match
+from Domains.Entities.Config import Config
+from Domains.Entities.User import User, UserMode
+from Domains.Entities.Group import Group, GroupMode
+from Domains.Entities.Hanchan import Hanchan
+from Domains.Entities.Match import Match
 
 
 class IEvent(metaclass=ABCMeta):
@@ -166,6 +166,7 @@ def generate_dummy_group_list() -> List[Group]:
 
 def generate_dummy_hanchan_list() -> List[Hanchan]:
     groups = generate_dummy_group_list()
+    users = generate_dummy_user_list()
 
     return [
         Hanchan(
@@ -208,6 +209,42 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
             status=1,
             # same the other's id
             _id=4,
+        ),
+        Hanchan(
+            line_group_id=groups[0].line_group_id,
+            raw_scores={
+                users[0].line_user_id: 40000,
+                users[1].line_user_id: 30000,
+                users[2].line_user_id: 20000,
+                users[3].line_user_id: 10000,
+            },
+            converted_scores={
+                users[0].line_user_id: 50,
+                users[1].line_user_id: 10,
+                users[2].line_user_id: -20,
+                users[3].line_user_id: -40,
+            },
+            match_id=1,
+            status=1,
+            _id=1,
+        ),
+        Hanchan(
+            line_group_id=groups[0].line_group_id,
+            raw_scores={
+                users[0].line_user_id: 40000,
+                users[1].line_user_id: 30000,
+                users[2].line_user_id: 20000,
+                users[4].line_user_id: 10000,
+            },
+            converted_scores={
+                users[0].line_user_id: 50,
+                users[1].line_user_id: 10,
+                users[2].line_user_id: -20,
+                users[4].line_user_id: -40,
+            },
+            match_id=1,
+            status=1,
+            _id=1,
         ),
     ]
 

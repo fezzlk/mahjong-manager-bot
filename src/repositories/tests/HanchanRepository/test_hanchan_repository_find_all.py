@@ -2,8 +2,8 @@ from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from repositories import session_scope, hanchan_repository, match_repository
-from domains.Hanchan import Hanchan
+from Repositories import session_scope, hanchan_repository, match_repository
+from Domains.Entities.Hanchan import Hanchan
 
 
 def test_success_find_records():

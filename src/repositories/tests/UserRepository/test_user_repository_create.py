@@ -1,6 +1,6 @@
-from domains.User import User
+from Domains.Entities.User import User
 from tests.dummies import generate_dummy_user_list
-from repositories import session_scope, user_repository
+from Repositories import session_scope, user_repository
 
 
 def test_success():

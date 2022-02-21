@@ -1,4 +1,4 @@
-from services.MessageService import MessageService, HAI
+from Services.MessageService import MessageService, HAI
 from tests.dummies import generate_dummy_user_list
 
 

@@ -1,5 +1,5 @@
-from domains.User import UserMode
-from services import (
+from Domains.Entities.User import UserMode
+from Services import (
     user_service,
     reply_service,
 )

@@ -1,6 +1,6 @@
 from typing import List
-from models import UserSchema
-from domains.User import User, UserMode
+from models import UserModel
+from Domains.Entities.User import User, UserMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
@@ -11,7 +11,7 @@ class UserRepository:
         session: BaseSession,
         new_user: User,
     ) -> User:
-        record = UserSchema(
+        record = UserModel(
             line_user_name=new_user.line_user_name,
             line_user_id=new_user.line_user_id,
             zoom_url=new_user.zoom_url,
@@ -29,8 +29,8 @@ class UserRepository:
         ids: List[str],
     ) -> int:
         delete_count = session\
-            .query(UserSchema)\
-            .filter(UserSchema.id.in_(ids))\
+            .query(UserModel)\
+            .filter(UserModel.id.in_(ids))\
             .delete(synchronize_session=False)
 
         return delete_count
@@ -41,8 +41,8 @@ class UserRepository:
         line_user_id: str,
     ) -> int:
         delete_count = session\
-            .query(UserSchema)\
-            .filter(UserSchema.line_user_id == line_user_id)\
+            .query(UserModel)\
+            .filter(UserModel.line_user_id == line_user_id)\
             .delete()
 
         return delete_count
@@ -52,8 +52,8 @@ class UserRepository:
         session: BaseSession,
     ) -> List[User]:
         records = session\
-            .query(UserSchema)\
-            .order_by(UserSchema.id)\
+            .query(UserModel)\
+            .order_by(UserModel.id)\
             .all()
 
         return [
@@ -67,9 +67,9 @@ class UserRepository:
         ids: List[str],
     ) -> List[User]:
         records = session\
-            .query(UserSchema)\
-            .filter(UserSchema.id.in_(ids))\
-            .order_by(UserSchema.id)\
+            .query(UserModel)\
+            .filter(UserModel.id.in_(ids))\
+            .order_by(UserModel.id)\
             .all()
 
         return [
@@ -83,8 +83,8 @@ class UserRepository:
         line_user_id: str,
     ) -> User:
         record = session\
-            .query(UserSchema)\
-            .filter(UserSchema.line_user_id == line_user_id)\
+            .query(UserModel)\
+            .filter(UserModel.line_user_id == line_user_id)\
             .first()
 
         if record is None:
@@ -98,8 +98,8 @@ class UserRepository:
         line_user_name: str,
     ) -> User:
         records = session\
-            .query(UserSchema)\
-            .filter(UserSchema.line_user_name == line_user_name)\
+            .query(UserModel)\
+            .filter(UserModel.line_user_name == line_user_name)\
             .all()
 
         if len(records) == 0:
@@ -117,8 +117,8 @@ class UserRepository:
         mode: UserMode,
     ) -> User:
         record = session\
-            .query(UserSchema)\
-            .filter(UserSchema.line_user_id == line_user_id)\
+            .query(UserModel)\
+            .filter(UserModel.line_user_id == line_user_id)\
             .first()
 
         if record is None:
@@ -135,8 +135,8 @@ class UserRepository:
         zoom_url: str,
     ) -> User:
         record = session\
-            .query(UserSchema)\
-            .filter(UserSchema.line_user_id == line_user_id)\
+            .query(UserModel)\
+            .filter(UserModel.line_user_id == line_user_id)\
             .first()
 
         if record is None:
@@ -146,7 +146,7 @@ class UserRepository:
 
         return self._mapping_record_to_user_domain(record)
 
-    def _mapping_record_to_user_domain(self, record: UserSchema) -> User:
+    def _mapping_record_to_user_domain(self, record: UserModel) -> User:
         return User(
             _id=record.id,
             line_user_name=record.line_user_name,
