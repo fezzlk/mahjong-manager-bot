@@ -122,4 +122,4 @@ jobs:
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
         run: |
-          python -m pytest --cov=src src/ # basedir の変化によるモジュールインポートエラーを回避 https://qiita.com/kiyo27/items/442e1b3a36491c67b196#python--m-pytest--%E3%81%A7%E5%AE%9F%E8%A1%8C
+          pytest --cov=src src/
