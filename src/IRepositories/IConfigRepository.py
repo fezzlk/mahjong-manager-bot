@@ -1,24 +1,33 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from domains.entities.Group import Group, GroupMode
+from entities.Config import Config
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class IGroupRepository(metaclass=ABCMeta):
+class IConfigRepository(metaclass=ABCMeta):
 
     @abstractmethod
     def create(
         self,
         session: BaseSession,
-        new_group: Group,
-    ) -> Group:
+        new_config: Config,
+    ) -> Config:
         pass
 
     @abstractmethod
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: List[Group],
+        ids: List[str],
+    ) -> int:
+        pass
+
+    @abstractmethod
+    def delete_by_target_id_and_key(
+        self,
+        session: BaseSession,
+        target_id: str,
+        key: str,
     ) -> int:
         pass
 
@@ -26,7 +35,7 @@ class IGroupRepository(metaclass=ABCMeta):
     def find_all(
         self,
         session: BaseSession,
-    ) -> List[Group]:
+    ) -> List[Config]:
         pass
 
     @abstractmethod
@@ -34,31 +43,22 @@ class IGroupRepository(metaclass=ABCMeta):
         self,
         session: BaseSession,
         ids: List[str],
-    ) -> List[Group]:
+    ) -> List[Config]:
         pass
 
     @abstractmethod
-    def find_one_by_line_group_id(
+    def find_by_target_id(
         self,
         session: BaseSession,
-        line_group_id: int,
-    ) -> Group:
+        target_id: str,
+    ) -> Config:
         pass
 
     @abstractmethod
-    def update_one_mode_by_line_group_id(
+    def find_one_by_target_id_and_key(
         self,
         session: BaseSession,
-        line_group_id: str,
-        mode: GroupMode,
-    ) -> Group:
-        pass
-
-    @abstractmethod
-    def update_one_zoom_url_by_line_group_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        zoom_url: str,
-    ) -> Group:
+        target_id: str,
+        key: str,
+    ) -> Config:
         pass

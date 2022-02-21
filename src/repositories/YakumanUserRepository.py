@@ -1,6 +1,6 @@
 from typing import List
 from db_models import YakumanUserModel
-from domains.entities.YakumanUser import YakumanUser
+from entities.YakumanUser import YakumanUser
 from sqlalchemy.orm.session import Session as BaseSession
 
 

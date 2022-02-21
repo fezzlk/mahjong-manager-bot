@@ -5,7 +5,7 @@ from services import (
     hanchan_service,
     match_service,
 )
-from domains.entities.Group import GroupMode
+from entities.Group import GroupMode
 
 
 class StartInputUseCase:

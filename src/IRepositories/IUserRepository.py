@@ -1,17 +1,17 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from domains.entities.Config import Config
+from entities.User import User, UserMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class IConfigRepository(metaclass=ABCMeta):
+class IUserRepository(metaclass=ABCMeta):
 
     @abstractmethod
     def create(
         self,
         session: BaseSession,
-        new_config: Config,
-    ) -> Config:
+        new_user: User,
+    ) -> User:
         pass
 
     @abstractmethod
@@ -23,11 +23,10 @@ class IConfigRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def delete_by_target_id_and_key(
+    def delete_by_line_user_id(
         self,
         session: BaseSession,
-        target_id: str,
-        key: str,
+        line_user_id: str,
     ) -> int:
         pass
 
@@ -35,7 +34,7 @@ class IConfigRepository(metaclass=ABCMeta):
     def find_all(
         self,
         session: BaseSession,
-    ) -> List[Config]:
+    ) -> List[User]:
         pass
 
     @abstractmethod
@@ -43,22 +42,39 @@ class IConfigRepository(metaclass=ABCMeta):
         self,
         session: BaseSession,
         ids: List[str],
-    ) -> List[Config]:
+    ) -> List[User]:
         pass
 
     @abstractmethod
-    def find_by_target_id(
+    def find_one_by_line_user_id(
         self,
         session: BaseSession,
-        target_id: str,
-    ) -> Config:
+        line_user_id: str,
+    ) -> User:
         pass
 
     @abstractmethod
-    def find_one_by_target_id_and_key(
+    def find_one_by_name(
         self,
         session: BaseSession,
-        target_id: str,
-        key: str,
-    ) -> Config:
+        line_user_name: str,
+    ) -> User:
+        pass
+
+    @abstractmethod
+    def update_one_mode_by_line_user_id(
+        self,
+        session: BaseSession,
+        line_user_id: str,
+        mode: UserMode,
+    ) -> User:
+        pass
+
+    @abstractmethod
+    def update_one_zoom_url_by_line_user_id(
+        self,
+        session: BaseSession,
+        line_user_id: str,
+        zoom_url: str,
+    ) -> User:
         pass

@@ -2,7 +2,7 @@ from typing import List
 from services import (
     hanchan_service,
 )
-from domains.entities.Hanchan import Hanchan
+from entities.Hanchan import Hanchan
 
 
 class GetHanchansForWebUseCase:

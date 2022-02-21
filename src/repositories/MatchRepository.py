@@ -1,7 +1,7 @@
 from typing import List
 from db_models import MatchModel
 from sqlalchemy import and_
-from domains.entities.Match import Match
+from entities.Match import Match
 from sqlalchemy.orm.session import Session as BaseSession
 import json
 

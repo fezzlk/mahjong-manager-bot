@@ -1,32 +1,24 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from domains.entities.User import User, UserMode
+from entities.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class IUserRepository(metaclass=ABCMeta):
+class IGroupRepository(metaclass=ABCMeta):
 
     @abstractmethod
     def create(
         self,
         session: BaseSession,
-        new_user: User,
-    ) -> User:
+        new_group: Group,
+    ) -> Group:
         pass
 
     @abstractmethod
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: List[str],
-    ) -> int:
-        pass
-
-    @abstractmethod
-    def delete_by_line_user_id(
-        self,
-        session: BaseSession,
-        line_user_id: str,
+        ids: List[Group],
     ) -> int:
         pass
 
@@ -34,7 +26,7 @@ class IUserRepository(metaclass=ABCMeta):
     def find_all(
         self,
         session: BaseSession,
-    ) -> List[User]:
+    ) -> List[Group]:
         pass
 
     @abstractmethod
@@ -42,39 +34,31 @@ class IUserRepository(metaclass=ABCMeta):
         self,
         session: BaseSession,
         ids: List[str],
-    ) -> List[User]:
+    ) -> List[Group]:
         pass
 
     @abstractmethod
-    def find_one_by_line_user_id(
+    def find_one_by_line_group_id(
         self,
         session: BaseSession,
-        line_user_id: str,
-    ) -> User:
+        line_group_id: int,
+    ) -> Group:
         pass
 
     @abstractmethod
-    def find_one_by_name(
+    def update_one_mode_by_line_group_id(
         self,
         session: BaseSession,
-        line_user_name: str,
-    ) -> User:
+        line_group_id: str,
+        mode: GroupMode,
+    ) -> Group:
         pass
 
     @abstractmethod
-    def update_one_mode_by_line_user_id(
+    def update_one_zoom_url_by_line_group_id(
         self,
         session: BaseSession,
-        line_user_id: str,
-        mode: UserMode,
-    ) -> User:
-        pass
-
-    @abstractmethod
-    def update_one_zoom_url_by_line_user_id(
-        self,
-        session: BaseSession,
-        line_user_id: str,
+        line_group_id: str,
         zoom_url: str,
-    ) -> User:
+    ) -> Group:
         pass
