@@ -124,7 +124,7 @@ jobs:
         run: |
           PYTHONPATH=$(pwd) pytest --cov=src src/
 
-  test:
+  log:
     runs-on: ubuntu-latest
     strategy:
       matrix:
