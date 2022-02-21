@@ -122,7 +122,6 @@ jobs:
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
         run: |
-          echo {path}}"
           PYTHONPATH=$(pwd) pytest --cov=src src/
 
   test:
