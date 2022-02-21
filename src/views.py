@@ -1,7 +1,6 @@
 import os
 from typing import Dict, List
 from flask import Blueprint, abort, request, render_template, url_for, redirect
-from domains.entities.Hanchan import Hanchan
 from db_setting import Engine, Session
 from db_models import Base
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
@@ -82,7 +81,7 @@ def migrate():
     from models.line.Profile import Profile
     repository = HanchanRepository()
     service = UserService()
-    hanchans: List[Hanchan] = repository.find_all(session)
+    hanchans: List = repository.find_all(session)
     target_user_match = []
     for hanchan in hanchans:
         if not isinstance(hanchan.converted_scores, Dict):
