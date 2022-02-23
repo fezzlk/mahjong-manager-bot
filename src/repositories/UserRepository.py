@@ -1,10 +1,11 @@
 from typing import List
 from db_models import UserModel
+from domains.IRepositories.IUserRepository import IUserRepository
 from domains.entities.User import User, UserMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class UserRepository:
+class UserRepository(IUserRepository):
 
     def create(
         self,

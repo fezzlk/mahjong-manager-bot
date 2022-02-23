@@ -1,5 +1,5 @@
 from typing import List
-from IRepositories.IConfigRepository import IConfigRepository
+from domains.IRepositories.IConfigRepository import IConfigRepository
 from db_models import ConfigModel
 from domains.entities.Config import Config
 from sqlalchemy import and_
