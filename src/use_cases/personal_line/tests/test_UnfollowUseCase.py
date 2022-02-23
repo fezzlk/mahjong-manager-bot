@@ -3,7 +3,7 @@ from tests.dummies import (
     generate_dummy_user_list,
 )
 from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
-from services import (
+from ApplicationService import (
     request_info_service,
     reply_service,
 )

@@ -1,8 +1,10 @@
-from services import (
-    request_info_service,
-    reply_service,
+from DomainService import (
     user_service,
     group_service,
+)
+from ApplicationService import (
+    request_info_service,
+    reply_service,
 )
 
 

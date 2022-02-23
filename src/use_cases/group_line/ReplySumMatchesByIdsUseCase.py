@@ -1,10 +1,13 @@
 from typing import List
-from services import (
-    reply_service,
+from DomainService import (
     match_service,
     hanchan_service,
     user_service,
     config_service,
+)
+
+from ApplicationService import (
+    reply_service,
     request_info_service,
 )
 

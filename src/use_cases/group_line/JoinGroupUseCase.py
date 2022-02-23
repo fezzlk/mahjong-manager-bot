@@ -1,7 +1,9 @@
-from services import (
+from DomainService import (
+    group_service,
+)
+from ApplicationService import (
     request_info_service,
     reply_service,
-    group_service,
 )
 
 

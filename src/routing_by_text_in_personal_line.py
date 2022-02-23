@@ -1,6 +1,6 @@
 from enum import Enum
 
-from services import (
+from ApplicationService import (
     request_info_service,
     reply_service,
     message_service,

@@ -1,9 +1,12 @@
 from enum import Enum
 
-from services import (
+from DomainService import (
+    group_service,
+)
+
+from ApplicationService import (
     request_info_service,
     reply_service,
-    group_service,
 )
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 

@@ -1,9 +1,11 @@
 from DomainModel.entities.Group import GroupMode
-from services import (
-    request_info_service,
-    reply_service,
+from DomainService import (
     group_service,
     hanchan_service,
+)
+from ApplicationService import (
+    request_info_service,
+    reply_service,
 )
 
 

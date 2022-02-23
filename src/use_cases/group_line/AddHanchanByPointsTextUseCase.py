@@ -1,12 +1,14 @@
-from services import (
-    request_info_service,
-    reply_service,
+from DomainService import (
     user_service,
     hanchan_service,
-    message_service,
     match_service,
     config_service,
     group_service,
+)
+from ApplicationService import (
+    request_info_service,
+    reply_service,
+    message_service,
 )
 from DomainModel.entities.Group import GroupMode
 
