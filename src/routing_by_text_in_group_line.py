@@ -18,7 +18,6 @@ from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
 from use_cases.group_line.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCase
 
 from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
-from use_cases.group_line.AddPointByJsonTextUseCase import AddPointByJsonTextUseCase
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 from use_cases.group_line.ReplySumHanchansUseCase import ReplySumHanchansUseCase
@@ -151,9 +150,6 @@ def routing_for_group_by_method(method, body):
     # my results
     elif method == RCommands.my_results.name:
         ReplyMyResultsUseCase().execute()
-    # add results
-    elif method == RCommands.add_result.name:
-        AddPointByJsonTextUseCase().execute(body)
     # update config
     elif method == RCommands.update_config.name:
         key = body.split(' ')[0]
