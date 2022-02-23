@@ -53,7 +53,7 @@ def generate_dummy_config_list() -> List[Config]:
         Config(
             target_id=groups[1].line_group_id,
             key='飛び賞',
-            value='40',
+            value='10',
             _id=6,
         ),
     ]

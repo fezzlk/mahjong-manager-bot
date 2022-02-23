@@ -19,12 +19,6 @@ GROUP_SETTING_DICT: Dict[str, List[str]] = {
     ],
 }
 
-GROUP_SETTING_KEYS = GROUP_SETTING_DICT.keys()
-
-GROUP_SETTING_VALUES = set([])
-for _, v in GROUP_SETTING_DICT.items():
-    GROUP_SETTING_VALUES |= set(v)
-
 
 @dataclass()
 class Config:
@@ -41,10 +35,10 @@ class Config:
         _id=None,
     ):
 
-        if key not in GROUP_SETTING_KEYS:
+        if key not in GROUP_SETTING_DICT.keys():
             raise ValueError(f'設定キー "{key}" が不適切です。')
 
-        if value not in GROUP_SETTING_VALUES:
+        if value not in GROUP_SETTING_DICT[key]:
             raise ValueError(f'設定値 "{value}" が不適切です。')
 
         self._id = _id
