@@ -84,7 +84,8 @@ def handle_image_message(event):
 @ handler.add(PostbackEvent)
 @ handle_event_decorater
 def handle_postback(event):
+    text = event.postback.data
     if event.source.type == 'room' or event.source.type == 'group':
-        routing_by_text_in_group_line(event.postback.data)
+        routing_by_text_in_group_line(text)
     elif event.source.type == 'user':
-        routing_by_text_in_personal_line(event.postback.data)
+        routing_by_text_in_personal_line(text)
