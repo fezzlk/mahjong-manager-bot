@@ -5,8 +5,8 @@ from entities.Group import Group, GroupMode
 from entities.Hanchan import Hanchan
 from entities.Match import Match
 
-from models.Profile import Profile
-from models.Event import Event
+from line_models.Profile import Profile
+from line_models.Event import Event
 
 
 '''
