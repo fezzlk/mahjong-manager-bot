@@ -2,7 +2,7 @@ from typing import List
 from repositories import (
     config_repository, session_scope
 )
-from entities.Config import Config
+from domains.entities.Config import Config
 
 
 class GetConfigsForWebUseCase:

@@ -1,4 +1,4 @@
-from entities.Group import GroupMode
+from domains.entities.Group import GroupMode
 from services import (
     request_info_service,
     reply_service,

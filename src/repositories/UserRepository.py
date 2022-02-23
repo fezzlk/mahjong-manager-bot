@@ -1,6 +1,6 @@
 from typing import List
 from db_models import UserModel
-from entities.User import User, UserMode
+from domains.entities.User import User, UserMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 

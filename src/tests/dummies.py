@@ -1,9 +1,9 @@
 from typing import Dict, List
-from entities.Config import Config
-from entities.User import User, UserMode
-from entities.Group import Group, GroupMode
-from entities.Hanchan import Hanchan
-from entities.Match import Match
+from domains.entities.Config import Config
+from domains.entities.User import User, UserMode
+from domains.entities.Group import Group, GroupMode
+from domains.entities.Hanchan import Hanchan
+from domains.entities.Match import Match
 
 from line_models.Profile import Profile
 from line_models.Event import Event

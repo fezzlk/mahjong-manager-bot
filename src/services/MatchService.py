@@ -2,7 +2,7 @@ from typing import List
 
 from .interfaces.IMatchService import IMatchService
 from repositories import session_scope, match_repository
-from entities.Match import Match
+from domains.entities.Match import Match
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 

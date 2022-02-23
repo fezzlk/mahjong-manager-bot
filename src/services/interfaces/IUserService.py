@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from linebot.models.responses import Profile
-from entities.User import User, UserMode
+from domains.entities.User import User, UserMode
 
 
 class IUserService(metaclass=ABCMeta):

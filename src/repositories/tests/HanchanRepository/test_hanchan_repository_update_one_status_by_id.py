@@ -3,7 +3,7 @@ from tests.dummies import (
     generate_dummy_match_list,
 )
 from repositories import session_scope, hanchan_repository, match_repository
-from entities.Hanchan import Hanchan
+from domains.entities.Hanchan import Hanchan
 
 
 def test_hit():

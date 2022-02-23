@@ -2,7 +2,7 @@ from typing import List
 from repositories import (
     group_repository, session_scope
 )
-from entities.Group import Group
+from domains.entities.Group import Group
 
 
 class GetGroupsForWebUseCase:

@@ -1,4 +1,4 @@
-from entities.User import User
+from domains.entities.User import User
 from tests.dummies import generate_dummy_user_list
 from repositories import session_scope, user_repository
 

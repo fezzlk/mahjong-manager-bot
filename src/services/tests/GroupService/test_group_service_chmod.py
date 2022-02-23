@@ -1,4 +1,4 @@
-from entities.Group import GroupMode
+from domains.entities.Group import GroupMode
 from services.GroupService import GroupService
 from repositories import session_scope, group_repository
 from tests.dummies import generate_dummy_group_list

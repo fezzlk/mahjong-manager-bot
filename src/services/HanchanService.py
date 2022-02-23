@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional, Tuple
 
 from repositories import session_scope, hanchan_repository
-from entities.Hanchan import Hanchan
-from entities.Match import Match
+from domains.entities.Hanchan import Hanchan
+from domains.entities.Match import Match
 from db_models import UserMatchModel
 from .interfaces.IHanchanService import IHanchanService
 
