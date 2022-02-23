@@ -2,12 +2,18 @@ from services import (
     ocr_service,
     reply_service,
 )
+from linebot.models.events import Event
+from messaging_api_setting import line_bot_api
 
 
 class InputResultFromImageUseCase:
 
-    def execute(self, image_content: str) -> None:
-        ocr_service.run(image_content)
+    def execute(self, event: Event) -> None:
+        message_content = line_bot_api.get_message_content(
+            event.message.id
+        )
+
+        ocr_service.run(message_content.content)
         if ocr_service.isResultImage():
             results = ocr_service.get_points()
             if results is None:

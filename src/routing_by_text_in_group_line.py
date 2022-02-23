@@ -1,25 +1,12 @@
 from enum import Enum
 
-from linebot.models.events import Event
-
-from messaging_api_setting import line_bot_api
 from services import (
     request_info_service,
     reply_service,
-    message_service,
     group_service,
 )
-from use_cases.personal_line.FollowUseCase import FollowUseCase
-from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
-from use_cases.personal_line.UserExitCommandUseCase import UserExitCommandUseCase
-from use_cases.personal_line.SetZoomUrlToUserUseCase import SetZoomUrlToUserUseCase
-from use_cases.personal_line.ReplyUserHelpUseCase import ReplyUserHelpUseCase
-from use_cases.personal_line.ReplyUserModeUseCase import ReplyUserModeUseCase
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
-from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
-from use_cases.personal_line.UserMyZoomCommandUseCase import UserMyZoomCommandUseCase
 
-from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
 from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
 from use_cases.group_line.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
 from use_cases.group_line.SetMyZoomUrlToGroupUseCase import SetMyZoomUrlToGroupUseCase
@@ -35,7 +22,6 @@ from use_cases.group_line.AddPointByJsonTextUseCase import AddPointByJsonTextUse
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 from use_cases.group_line.ReplySumHanchansUseCase import ReplySumHanchansUseCase
-from use_cases.group_line.InputResultFromImageUseCase import InputResultFromImageUseCase
 from use_cases.group_line.CalculateWithTobiUseCase import CalculateWithTobiUseCase
 
 from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
@@ -50,21 +36,6 @@ from use_cases.group_line.ReplyMyResultsUseCase import ReplyMyResultsUseCase
 from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
 
 from domains.entities.Group import GroupMode
-
-
-class UCommands(Enum):
-    """Commands for personal user"""
-
-    exit = 'exit'
-    mode = 'mode'
-    payment = 'payment'
-    analysis = 'analysis'
-    fortune = 'fortune'
-    history = 'history'
-    help = 'help'
-    setting = 'setting'
-    github = 'github'
-    my_zoom = 'my_zoom'
 
 
 class RCommands(Enum):
@@ -94,137 +65,8 @@ class RCommands(Enum):
     my_results = 'my_results'
 
 
-def root(event: Event):
-    print(f'receive {event.type} event')
-    request_info_service.set_req_info(event)
-    isEnabledReply = True
-
-    try:
-        if event.type == 'message':
-            if event.message.type == 'text':
-                textMessage(event)
-            elif event.message.type == 'image':
-                imageMessage(event)
-        elif event.type == 'follow':
-            FollowUseCase().execute()
-        elif event.type == 'unfollow':
-            UnfollowUseCase().execute()
-            isEnabledReply = False
-        elif event.type == 'join':
-            JoinGroupUseCase().execute()
-        elif event.type == 'postback':
-            postback(event)
-
-    except BaseException as err:
-        print(err)
-        reply_service.add_message(str(err))
-
-    if isEnabledReply:
-        reply_service.reply(event)
-    request_info_service.delete_req_info()
-
-
-def textMessage(event: Event):
-    """receive text message event"""
-    if event.source.type == 'room' or event.source.type == 'group':
-        routing_for_group_by_text(event)
-    elif event.source.type == 'user':
-        routing_by_text(event)
-    else:
-        print(
-            f'error: message.source.type: {event.source.type}'
-        )
-        raise BaseException('this source type is not supported')
-
-
-def imageMessage(event: Event):
-    """receive image message event"""
-    if event.source.type == 'room' or event.source.type == 'group':
-        message_content = line_bot_api.get_message_content(
-            event.message.id
-        )
-        InputResultFromImageUseCase().execute(message_content.content)
-
-
-def postback(event: Event):
-    """postback event"""
-
-    text: str = event.postback.data
-    method = text[1:].split()[0]
-    body = text[len(method) + 2:]
-    if event.source.type == 'room' or event.source.type == 'group':
-        routing_for_group_by_method(method, body)
-    elif event.source.type == 'user':
-        routing_by_method(method, body)
-
-
-def routing_by_text(event: Event):
-    """routing by text for personal chat"""
-    text = event.message.text
-    if (text[0] == '_') & (len(text) > 1):
-        method = text[1:].split()[0]
-        if method in [c.name for c in UCommands]:
-            body = text[len(method) + 2:]
-            routing_by_method(method, body)
-            return
-        else:
-            reply_service.add_message(
-                '使い方がわからない場合はメニューの中の「使い方」を押してください。'
-            )
-            return
-
-    """routing by text on each mode"""
-    """wait mode"""
-    # if zoom url, register to group
-    if '.zoom.us' in text:
-        SetZoomUrlToUserUseCase().execute(text)
-        return
-
-    reply_service.add_message(
-        message_service.get_wait_massage()
-    )
-
-
-def routing_by_method(method: str, body: str):
-    """routing by method for personal chat"""
-
-    # mode
-    if method == UCommands.mode.name:
-        ReplyUserModeUseCase().execute()
-    # exit
-    elif method == UCommands.exit.name:
-        UserExitCommandUseCase().execute(
-            request_info_service.req_line_user_id,
-        )
-    # payment
-    elif method == UCommands.payment.name:
-        reply_service.add_message('支払い機能は開発中です。')
-    # analysis
-    elif method == UCommands.analysis.name:
-        reply_service.add_message('分析機能は開発中です。')
-    # fortune
-    elif method == UCommands.fortune.name:
-        ReplyFortuneUseCase().execute()
-    # history
-    elif method == UCommands.history.name:
-        reply_service.add_message('対戦履歴機能は開発中です。')
-    # setting
-    elif method == UCommands.setting.name:
-        reply_service.add_message('個人設定機能は開発中です。')
-    # help
-    elif method == UCommands.help.name:
-        ReplyUserHelpUseCase().execute(UCommands)
-    # github
-    elif method == UCommands.github.name:
-        ReplyGitHubUrlUseCase().execute()
-    # github
-    elif method == UCommands.my_zoom.name:
-        UserMyZoomCommandUseCase().execute()
-
-
-def routing_for_group_by_text(event: Event):
+def routing_by_text_in_group_line(text: str):
     """routing by text"""
-    text = event.message.text
     if (text[0] == '_') & (len(text) > 1):
         method = text[1:].split()[0]
         if method in [c.name for c in RCommands]:
