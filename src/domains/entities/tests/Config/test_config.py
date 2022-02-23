@@ -1,8 +1,6 @@
 from typing import Tuple
 import pytest
 from domains.entities.Config import Config
-from tests.dummies import generate_dummy_config_list
-from repositories import session_scope, config_repository
 
 
 @pytest.fixture(params=[
