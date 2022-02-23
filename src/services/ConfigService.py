@@ -1,8 +1,8 @@
-from domains.entities.Config import DEFAULT_CONFIGS
+from DomainModel.entities.Config import DEFAULT_CONFIGS
 from .interfaces.IConfigService import IConfigService
 from typing import Dict, List
 from repositories import session_scope, config_repository
-from domains.entities.Config import Config
+from DomainModel.entities.Config import Config
 
 
 class ConfigService(IConfigService):

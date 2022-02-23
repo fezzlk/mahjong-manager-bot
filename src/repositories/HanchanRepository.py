@@ -1,8 +1,8 @@
 from typing import Dict, List
 from db_models import HanchanModel
 from sqlalchemy import and_, desc
-from domains.IRepositories.IHanchanRepository import IHanchanRepository
-from domains.entities.Hanchan import Hanchan
+from DomainModel.IRepositories.IHanchanRepository import IHanchanRepository
+from DomainModel.entities.Hanchan import Hanchan
 from sqlalchemy.orm.session import Session as BaseSession
 import json
 

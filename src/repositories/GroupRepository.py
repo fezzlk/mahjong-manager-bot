@@ -1,7 +1,7 @@
 from typing import List
 from db_models import GroupModel
-from domains.IRepositories.IGroupRepository import IGroupRepository
-from domains.entities.Group import Group, GroupMode
+from DomainModel.IRepositories.IGroupRepository import IGroupRepository
+from DomainModel.entities.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 

@@ -1,6 +1,6 @@
 """calculate"""
 
-from domains.entities.Group import GroupMode
+from DomainModel.entities.Group import GroupMode
 from services import (
     request_info_service,
     user_service,

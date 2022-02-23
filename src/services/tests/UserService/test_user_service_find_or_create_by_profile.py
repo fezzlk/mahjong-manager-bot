@@ -1,7 +1,7 @@
 from services.UserService import UserService
 from repositories import session_scope, user_repository
 from tests.dummies import generate_dummy_profile, generate_dummy_user_list
-from domains.entities.User import User
+from DomainModel.entities.User import User
 
 
 def test_create_new_user():

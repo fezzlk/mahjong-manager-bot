@@ -1,6 +1,6 @@
 from typing import Tuple
 import pytest
-from domains.entities.Config import Config
+from DomainModel.entities.Config import Config
 
 
 @pytest.fixture(params=[

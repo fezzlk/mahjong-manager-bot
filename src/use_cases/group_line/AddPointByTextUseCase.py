@@ -8,7 +8,7 @@ from services import (
     group_service,
     message_service,
 )
-from domains.entities.Group import GroupMode
+from DomainModel.entities.Group import GroupMode
 
 
 class AddPointByTextUseCase:

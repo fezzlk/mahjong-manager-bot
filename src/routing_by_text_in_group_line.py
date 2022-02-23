@@ -34,7 +34,7 @@ from use_cases.group_line.ReplyMyResultsUseCase import ReplyMyResultsUseCase
 
 from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
 
-from domains.entities.Group import GroupMode
+from DomainModel.entities.Group import GroupMode
 
 
 class RCommands(Enum):

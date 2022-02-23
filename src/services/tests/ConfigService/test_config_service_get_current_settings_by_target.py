@@ -4,7 +4,7 @@ from tests.dummies import (
 from services import (
     config_service,
 )
-from domains.entities.Config import DEFAULT_CONFIGS
+from DomainModel.entities.Config import DEFAULT_CONFIGS
 from repositories import session_scope, config_repository
 
 

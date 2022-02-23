@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List
-from domains.entities.Hanchan import Hanchan
+from DomainModel.entities.Hanchan import Hanchan
 from sqlalchemy.orm.session import Session as BaseSession
 
 

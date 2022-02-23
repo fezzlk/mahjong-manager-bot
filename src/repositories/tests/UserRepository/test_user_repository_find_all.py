@@ -1,6 +1,6 @@
 from tests.dummies import generate_dummy_user_list
 from repositories import session_scope, user_repository
-from domains.entities.User import User
+from DomainModel.entities.User import User
 
 
 def test_success_find_records():

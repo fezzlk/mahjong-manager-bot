@@ -4,7 +4,7 @@ from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
 from messaging_api_setting import line_bot_api
-from domains.entities.User import User, UserMode
+from DomainModel.entities.User import User, UserMode
 
 
 class UserService(IUserService):

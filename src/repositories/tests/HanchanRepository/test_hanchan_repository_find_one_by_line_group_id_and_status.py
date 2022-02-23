@@ -4,7 +4,7 @@ from tests.dummies import (
 )
 from db_setting import Session
 from repositories import session_scope, hanchan_repository, match_repository
-from domains.entities.Hanchan import Hanchan
+from DomainModel.entities.Hanchan import Hanchan
 
 session = Session()
 

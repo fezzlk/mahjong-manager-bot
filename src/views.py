@@ -52,7 +52,7 @@ def create_dummy():
 # @views_blueprint.route('/try', methods=['POST'])
 # def hogehoge():
 #     # from repositories import user_repository
-#     # from domains.entities.User import User, UserMode
+#     # from DomainModel.entities.User import User, UserMode
 #     session = Session()
 #     # user = User(
 #     #     line_user_name="test user6",

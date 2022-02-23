@@ -1,7 +1,7 @@
 from typing import List
 from db_models import UserModel
-from domains.IRepositories.IUserRepository import IUserRepository
-from domains.entities.User import User, UserMode
+from DomainModel.IRepositories.IUserRepository import IUserRepository
+from DomainModel.entities.User import User, UserMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 

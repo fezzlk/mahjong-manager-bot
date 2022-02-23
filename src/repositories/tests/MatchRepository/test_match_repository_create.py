@@ -1,4 +1,4 @@
-from domains.entities.Match import Match
+from DomainModel.entities.Match import Match
 from tests.dummies import generate_dummy_match_list
 from db_setting import Session
 from repositories import session_scope, match_repository

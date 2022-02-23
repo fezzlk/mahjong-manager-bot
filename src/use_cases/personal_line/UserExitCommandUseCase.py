@@ -1,4 +1,4 @@
-from domains.entities.User import UserMode
+from DomainModel.entities.User import UserMode
 from services import (
     user_service,
     reply_service,

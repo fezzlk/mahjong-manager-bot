@@ -1,5 +1,5 @@
 from .interfaces.IGroupService import IGroupService
-from domains.entities.Group import Group, GroupMode
+from DomainModel.entities.Group import Group, GroupMode
 from repositories import session_scope, group_repository
 
 

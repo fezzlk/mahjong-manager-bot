@@ -1,4 +1,4 @@
-from domains.entities.Group import Group
+from DomainModel.entities.Group import Group
 from tests.dummies import generate_dummy_group_list
 from repositories import session_scope, group_repository
 
