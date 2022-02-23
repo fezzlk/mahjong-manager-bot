@@ -26,12 +26,3 @@ class Group:
         self.line_group_id = line_group_id
         self.mode = mode
         self.zoom_url = zoom_url
-
-# TODO: 値オブジェクト化
-# line_group_id は LINE Group ID または LINE Group ID, R or Gから始まる
-
-# zoom_url: url
-
-# mode: Enum
-
-# users: User[], その LINE Group の参加者(不要)

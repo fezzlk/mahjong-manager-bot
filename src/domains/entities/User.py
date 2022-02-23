@@ -37,16 +37,3 @@ class User:
         self.jantama_name = jantama_name
         self.matches = matches
         self.groups = groups
-
-# TODO: 値オブジェクト化
-# line_user_name: LINE account name
-
-# line_user_id は LINE Account の ID, Uから始まる
-
-# zoom_url: url
-
-# mode: Enum
-
-# jantama_name は雀魂のアカウント名
-
-# matches: Match[]

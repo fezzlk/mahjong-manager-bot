@@ -28,13 +28,7 @@ class Match:
         self.status = status
         self.created_at = created_at
 
-# TODO: 値オブジェクト化
-# line_group_id は対戦結果が投稿された LINE Group ID, Rから始まる
-
-# hanchan_ids は Hanchan._id: int の 配列
 
 # status は Enum(0: disabled, 1: active, 2: archived)
-
-# users: User[] 対戦参加ユーザーの配列
 
 # created_at は対戦開始日
