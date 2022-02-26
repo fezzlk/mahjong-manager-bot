@@ -125,6 +125,18 @@ class MatchRepository(IMatchRepository):
 
         return self._mapping_record_to_match_domain(record)
 
+    def delete_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[int],
+    ) -> int:
+        delete_count = session\
+            .query(MatchModel)\
+            .filter(MatchModel.id.in_(ids))\
+            .delete(synchronize_session=False)
+
+        return delete_count
+
     def _mapping_record_to_match_domain(self, record: MatchModel) -> Match:
         return Match(
             _id=record.id,

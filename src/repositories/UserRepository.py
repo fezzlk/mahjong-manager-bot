@@ -27,7 +27,7 @@ class UserRepository(IUserRepository):
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: List[str],
+        ids: List[int],
     ) -> int:
         delete_count = session\
             .query(UserModel)\

@@ -1,5 +1,3 @@
-from typing import List
-
 from .interfaces.IMatchService import IMatchService
 from repositories import session_scope, match_repository
 from DomainModel.entities.Match import Match
@@ -13,8 +11,16 @@ class MatchService(IMatchService):
         current = self.get_current(line_group_id)
 
         if current is None:
-            self.create(line_group_id)
-            current = self.get_current(line_group_id)
+            with session_scope() as session:
+                new_match = Match(
+                    line_group_id=line_group_id,
+                    hanchan_ids=[],
+                    status=1,
+                )
+                match_repository.create(session, new_match)
+
+                print(f'create match: group "{line_group_id}"')
+                current = new_match
 
         return current
 
@@ -25,18 +31,6 @@ class MatchService(IMatchService):
                 line_group_id=line_group_id,
                 status=1,
             )
-
-    def create(self, line_group_id: str) -> Match:
-        with session_scope() as session:
-            new_match = Match(
-                line_group_id=line_group_id,
-                hanchan_ids=[],
-                status=1,
-            )
-            match_repository.create(session, new_match)
-
-            print(f'create match: group "{line_group_id}"')
-            return new_match
 
     def add_hanchan_id(
         self,
@@ -51,7 +45,7 @@ class MatchService(IMatchService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found match')
 
             hanchan_ids = target.hanchan_ids
             hanchan_ids.append(hanchan_id)
@@ -68,7 +62,7 @@ class MatchService(IMatchService):
 
             return updated_match
 
-    def update_hanchan_ids(self, hanchan_ids, line_group_id):
+    def update_hanchan_ids_of_current(self, hanchan_ids, line_group_id):
         with session_scope() as session:
             target = match_repository.find_one_by_line_group_id_and_status(
                 session=session,
@@ -77,7 +71,7 @@ class MatchService(IMatchService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found match')
 
             target.hanchan_ids = hanchan_ids
 
@@ -91,16 +85,7 @@ class MatchService(IMatchService):
             )
             return updated_match
 
-    def count_results(self, line_group_id: str) -> int:
-        current = self.get_current(line_group_id)
-        if current is None:
-            print(
-                'current match is not found'
-            )
-            return 0
-        return len(current.hanchan_ids)
-
-    def update_status_active_match(
+    def update_current_status(
         self,
         line_group_id: str,
         status: int,
@@ -113,7 +98,7 @@ class MatchService(IMatchService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found match')
 
             updated_match = match_repository.update_one_status_by_id(
                 session=session,
@@ -128,21 +113,10 @@ class MatchService(IMatchService):
             return updated_match
 
     def archive(self, line_group_id: str) -> Match:
-        return self.update_status_active_match(line_group_id, 2)
+        return self.update_current_status(line_group_id, 2)
 
     def disable(self, line_group_id: str) -> Match:
-        return self.update_status_active_match(line_group_id, 0)
-
-    def get_archived(
-        self,
-        line_group_id: str,
-    ) -> List[Match]:
-        with session_scope() as session:
-            matches = match_repository.find_many_by_line_group_id_and_status(
-                session, line_group_id, 2)
-            if len(matches) == 0:
-                return None
-            return matches
+        return self.update_current_status(line_group_id, 0)
 
     def remove_hanchan_id(
         self,
@@ -156,7 +130,7 @@ class MatchService(IMatchService):
             )
 
             if len(target) == 0:
-                return None
+                raise ValueError('Not found match')
 
             hanchan_ids = target[0].hanchan_ids
             if hanchan_id in hanchan_ids:
@@ -169,11 +143,3 @@ class MatchService(IMatchService):
             )
 
             return updated_match
-
-    def delete(self, target_ids: List[int]) -> None:
-        with session_scope() as session:
-            targets = match_repository.find_by_ids(session, target_ids)
-            for target in targets:
-                session.delete(target)
-            print(f'delete: id={target_ids}')
-            return targets

@@ -18,7 +18,7 @@ class IConfigRepository(metaclass=ABCMeta):
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: List[str],
+        ids: List[int],
     ) -> int:
         pass
 

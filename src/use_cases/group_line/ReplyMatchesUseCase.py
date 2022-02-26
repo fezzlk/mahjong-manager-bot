@@ -1,5 +1,4 @@
 from DomainService import (
-    match_service,
     hanchan_service,
     user_service,
     config_service,
@@ -10,14 +9,17 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
+from repositories import session_scope, match_repository
 
 
 class ReplyMatchesUseCase:
 
     def execute(self) -> None:
         line_group_id = request_info_service.req_line_group_id
-        matches = match_service.get_archived(line_group_id)
-        if matches is None:
+        with session_scope() as session:
+            archived_matches = match_repository.find_many_by_line_group_id_and_status(
+                session, line_group_id, 2)
+        if len(archived_matches) == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
@@ -25,7 +27,7 @@ class ReplyMatchesUseCase:
 
         reply_service.add_message(
             '最近の4試合の結果を表示します。詳細は「_match <ID>」')
-        for match in matches[:4]:
+        for match in archived_matches[:4]:
 
             ids = match.hanchan_ids
             match_id = match._id

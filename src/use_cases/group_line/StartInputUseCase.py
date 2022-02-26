@@ -20,11 +20,12 @@ class StartInputUseCase:
             return
 
         current_match = match_service.get_or_create_current(line_group_id)
-        hanchan_service.create({}, line_group_id, current_match)
+        hanchan_service.create(
+            {}, line_group_id, current_match)
 
         group_service.chmod(
             line_group_id,
             GroupMode.input,
         )
         reply_service.add_message(
-            f'第{match_service.count_results(line_group_id)+1}回戦お疲れ様です。各自点数を入力してください。\n（同点の場合は上家が高くなるように数点追加してください）')
+            f'第{len(current_match.hanchan_ids)+1}回戦お疲れ様です。各自点数を入力してください。\n（同点の場合は上家が高くなるように数点追加してください）')
