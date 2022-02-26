@@ -1,5 +1,3 @@
-from typing import List
-
 from .interfaces.IMatchService import IMatchService
 from repositories import session_scope, match_repository
 from DomainModel.entities.Match import Match
@@ -145,11 +143,3 @@ class MatchService(IMatchService):
             )
 
             return updated_match
-
-    def delete(self, target_ids: List[int]) -> None:
-        with session_scope() as session:
-            targets = match_repository.find_by_ids(session, target_ids)
-            for target in targets:
-                session.delete(target)
-            print(f'delete: id={target_ids}')
-            return targets

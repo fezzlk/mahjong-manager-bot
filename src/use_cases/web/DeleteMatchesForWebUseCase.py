@@ -1,14 +1,9 @@
 from typing import List
-from DomainService import (
-    match_service,
-    hanchan_service,
-)
+from repositories import session_scope, match_repository
 
 
 class DeleteMatchesForWebUseCase:
 
     def execute(self, target_ids: List[int]) -> None:
-        targets = match_service.delete(target_ids)
-        for target in targets:
-            hanchan_service.delete(target.hanchan_ids)
-        print(f'delete match: id={target_ids}')
+        with session_scope() as session:
+            match_repository.delete_by_ids(session, target_ids)
