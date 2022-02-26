@@ -38,13 +38,6 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_archived(
-        self,
-        line_group_id: str,
-    ) -> List[Match]:
-        pass
-
-    @abstractmethod
     def remove_hanchan_id(
         self,
         match_id: int,

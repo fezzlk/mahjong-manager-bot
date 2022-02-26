@@ -64,7 +64,7 @@ class MatchService(IMatchService):
 
             return updated_match
 
-    def update_hanchan_ids(self, hanchan_ids, line_group_id):
+    def update_hanchan_ids_of_current(self, hanchan_ids, line_group_id):
         with session_scope() as session:
             target = match_repository.find_one_by_line_group_id_and_status(
                 session=session,
@@ -120,17 +120,6 @@ class MatchService(IMatchService):
     def disable(self, line_group_id: str) -> Match:
         return self.update_current_status(line_group_id, 0)
 
-    def get_archived(
-        self,
-        line_group_id: str,
-    ) -> List[Match]:
-        with session_scope() as session:
-            matches = match_repository.find_many_by_line_group_id_and_status(
-                session, line_group_id, 2)
-            if len(matches) == 0:
-                return None
-            return matches
-
     def remove_hanchan_id(
         self,
         match_id: int,
@@ -143,7 +132,7 @@ class MatchService(IMatchService):
             )
 
             if len(target) == 0:
-                return None
+                raise ValueError('Not found match')
 
             hanchan_ids = target[0].hanchan_ids
             if hanchan_id in hanchan_ids:

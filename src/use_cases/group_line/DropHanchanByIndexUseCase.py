@@ -26,4 +26,4 @@ class DropHanchanByIndexUseCase:
             f'hanchan id={hanchan_ids[i - 1]}の結果を削除しました。'
         )
         hanchan_ids.pop(i - 1)
-        match_service.update_hanchan_ids(hanchan_ids, line_group_id)
+        match_service.remove_hanchan_id(hanchan_ids, line_group_id)
