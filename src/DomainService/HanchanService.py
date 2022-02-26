@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Tuple
-from Domains.Entities.YakumanUser import YakumanUser
+from DomainModel.entities.YakumanUser import YakumanUser
 
-from repositories import session_scope, hanchan_repository
+from repositories import session_scope, hanchan_repository, yakuman_user_repository
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
 from db_models import UserMatchModel
@@ -305,7 +305,7 @@ class HanchanService(IHanchanService):
         current = self.get_current(line_group_id)
         with session_scope() as session:
             for line_user_id in yakuman_line_user_ids:
-                yakuman_user = YakumanUserModel(
+                yakuman_user = YakumanUser(
                     line_user_id=line_user_id,
                     hanchan_id=current._id
                 )

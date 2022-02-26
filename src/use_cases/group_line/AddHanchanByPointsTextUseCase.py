@@ -13,15 +13,25 @@ from use_cases.group_line.CalculateUseCase import CalculateUseCase
 class AddHanchanByPointsTextUseCase:
 
     def execute(self, text) -> None:
+        line_group_id = request_info_service.req_line_group_id
         rows = [r for r in text.split('\n') if ':' in r]
         points = {}
+        yakuman_line_user_ids = []
         for r in rows:
-            col = r.split(':')
-            points[
-                user_service.get_line_user_id_by_name(col[0])
-            ] = int(col[1])
+            user_name, point = r.split(':')
+            line_user_id = user_service.get_line_user_id_by_name(user_name)
+            yakuman_line_user_ids.extend([line_user_id] * point.count('+'))
+            point = point.replace('+', '')
+            points[line_user_id] = int(point)
 
-        line_group_id = request_info_service.req_line_group_id
+        if len(yakuman_line_user_ids):
+            hanchan_service.create_yakuman_users_to_current(
+                line_group_id=line_group_id,
+                yakuman_line_user_ids=yakuman_line_user_ids,
+            )
+            reply_service.add_message(
+                "役満おめでとうございます！\nよければどの役満を出したのかチャットで送ってください！")
+
         current_match = match_service.get_or_create_current(line_group_id)
         hanchan_service.create(points, line_group_id, current_match)
 
