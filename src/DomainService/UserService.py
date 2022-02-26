@@ -95,7 +95,7 @@ class UserService(IUserService):
         mode: UserMode,
     ) -> User:
         if mode not in UserMode:
-            raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
+            raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
             user = user_repository.update_one_mode_by_line_user_id(
@@ -115,7 +115,7 @@ class UserService(IUserService):
 
             if target is None:
                 print(f'user is not found: {line_user_id}')
-                raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
+                raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
 
             return target.mode
 
@@ -131,6 +131,10 @@ class UserService(IUserService):
                 zoom_url=zoom_url,
             )
 
+        if user is None:
+            print(f'user is not found: {line_user_id}')
+            raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
+
         print(f'set_user_url: {user.zoom_url} to {line_user_id}')
         return user
 
@@ -141,7 +145,7 @@ class UserService(IUserService):
 
             if target is None:
                 print(f'user_services: user "{line_user_id}" is not found')
-                raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
+                raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
 
             if target.zoom_url is None:
                 print(
