@@ -1,12 +1,12 @@
 from typing import Dict, List
-from Domains.Entities.Config import Config
-from Domains.Entities.User import User, UserMode
-from Domains.Entities.Group import Group, GroupMode
-from Domains.Entities.Hanchan import Hanchan
-from Domains.Entities.Match import Match
+from DomainModel.entities.Config import Config
+from DomainModel.entities.User import User, UserMode
+from DomainModel.entities.Group import Group, GroupMode
+from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Match import Match
 
-from Models.line.Profile import Profile
-from Models.line.Event import Event
+from line_models.Profile import Profile
+from line_models.Event import Event
 
 
 '''
@@ -53,7 +53,7 @@ def generate_dummy_config_list() -> List[Config]:
         Config(
             target_id=groups[1].line_group_id,
             key='飛び賞',
-            value='40',
+            value='10',
             _id=6,
         ),
     ]
