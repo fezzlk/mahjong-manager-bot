@@ -1,27 +1,27 @@
-"""calculate"""
-
-from DomainModel.entities.Group import GroupMode
 from DomainService import (
     user_service,
+    hanchan_service,
+    config_service,
     match_service,
     group_service,
-    config_service,
-    hanchan_service,
 )
 from ApplicationService import (
     request_info_service,
     reply_service,
     message_service,
 )
+from DomainModel.entities.Group import GroupMode
 
 
-class CalculateWithTobiUseCase:
+class CalculateUseCase:
 
-    def execute(self, tobashita_player_id: str) -> None:
-        """
-        得点計算の準備および結果の格納
-        """
+    def execute(
+        self,
+        tobashita_player_id: str = None,
+    ) -> None:
+        # 得点計算の準備および結果の格納
         line_group_id = request_info_service.req_line_group_id
+
         # 現在 active な result (current)のポイントを計算対象にする
         current = hanchan_service.get_current(line_group_id)
         if current is None:
@@ -35,52 +35,64 @@ class CalculateWithTobiUseCase:
         # 4人分の点数がない、または超えている場合中断する
         if len(points) != 4:
             reply_service.add_message(
-                '四人分の点数を入力してください。点数を取り消したい場合は @{ユーザー名} と送ってください。')
+                '四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。'
+            )
             return
+
         # 点数合計が 100000~100099 の範囲になければ中断する
         if int(sum(points.values()) / 100) != 1000:
             reply_service.add_message(
-                f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。')
+                f'点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。'
+            )
             return
+
         # 点数が全て異なっているかチェックし、同点があったら中断する
         if len(set(points.values())) != 4:
             reply_service.add_message(
-                '同点のユーザーがいます。上家が1点でも高くなるよう修正してください。')
+                '同点のユーザーがいます。上家が1点でも高くなるよう修正してください。'
+            )
             return
 
-        # 飛び賞が発生し、飛ばしたプレイヤーが未指定の場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
-        if (any(x < 0 for x in points.values())) & (
-                tobashita_player_id is None):
+        # 飛び賞が発生した場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
+        if any(x < 0 for x in points.values()):
             reply_service.add_tobi_menu([
                 {'id': p_id, 'name': user_service.get_name_by_line_user_id(p_id), }
                 for p_id in points.keys() if points[p_id] > 0
             ])
             return
 
-        # config の取得(by target で撮っちゃって良い)
+        # config の取得
+        ranking_prize = config_service.get_value_by_key(
+            line_group_id, '順位点')
+        rounding_method = config_service.get_value_by_key(
+            line_group_id, '端数計算方法')
+        tobi_prize = config_service.get_value_by_key(
+            line_group_id, '飛び賞')
+
         # 計算の実行
         calculate_result = hanchan_service.run_calculate(
-            points=points, ranking_prize=[
-                int(s) for s in config_service.get_value_by_key(
-                    line_group_id, '順位点').split(',')], tobi_prize=int(
-                config_service.get_value_by_key(
-                    line_group_id, '飛び賞')), rounding_method=config_service.get_value_by_key(
-                        line_group_id, '端数計算方法'), tobashita_player_id=tobashita_player_id, )
-
-        line_group_id = request_info_service.req_line_group_id
+            points=points,
+            ranking_prize=[
+                int(s) for s in ranking_prize.split(',')
+            ],
+            tobi_prize=int(tobi_prize),
+            rounding_method=rounding_method,
+            tobashita_player_id=tobashita_player_id,
+        )
 
         # その半荘の結果を更新
-        hanchan_service.update_converted_score(line_group_id, calculate_result)
+        updated_hanchan = hanchan_service.update_converted_score(
+            line_group_id, calculate_result)
 
         # 総合結果に半荘結果を追加
-        current_hanchan = hanchan_service.get_current(line_group_id)
-        match_service.add_hanchan_id(line_group_id, current_hanchan._id)
+        current_match = match_service.add_hanchan_id(
+            line_group_id, updated_hanchan._id)
 
         # 結果の表示
-        hanchan = hanchan_service.get_current(line_group_id)
-        converted_scores = hanchan.converted_scores
-        current_match = match_service.get_current(line_group_id)
-        hanchans = hanchan_service.find_by_ids(current_match.hanchan_ids)
+        converted_scores = updated_hanchan.converted_scores
+        hanchans = hanchan_service.find_by_ids(
+            current_match.hanchan_ids,
+        )
         sum_hanchans = {}
         for r in hanchans:
             converted_scores = r.converted_scores
@@ -101,8 +113,8 @@ class CalculateWithTobiUseCase:
         ):
             name = user_service.get_name_by_line_user_id(r[0])
             score = ("+" if r[1] > 0 else "") + str(r[1])
-            sum_score = ("+" if sum_hanchans[r[0]]
-                         > 0 else "") + str(sum_hanchans[r[0]])
+            sum_score = (
+                "+" if sum_hanchans[r[0]] > 0 else "") + str(sum_hanchans[r[0]])
             score_text_list.append(
                 f'{name}: {score} ({sum_score})'
             )
@@ -121,5 +133,7 @@ class CalculateWithTobiUseCase:
         group_service.chmod(line_group_id, GroupMode.wait)
 
         reply_service.add_message(
-            '始める時は「_start」と入力してください。')
+            '始める時は「_start」と入力してください。'
+        )
+
         return

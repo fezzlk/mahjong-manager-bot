@@ -9,6 +9,7 @@ from ApplicationService import (
     reply_service,
 )
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
+from use_cases.group_line.CalculateUseCase import CalculateUseCase
 
 from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
 from use_cases.group_line.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
@@ -24,7 +25,6 @@ from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPoint
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 from use_cases.group_line.ReplySumHanchansUseCase import ReplySumHanchansUseCase
-from use_cases.group_line.CalculateWithTobiUseCase import CalculateWithTobiUseCase
 
 from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
 from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
@@ -147,7 +147,7 @@ def routing_for_group_by_method(method, body):
         ReplyMatchesUseCase().execute()
     # tobi
     elif method == RCommands.tobi.name:
-        CalculateWithTobiUseCase().execute(
+        CalculateUseCase().execute(
             tobashita_player_id=body
         )
     # my results
