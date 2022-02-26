@@ -29,7 +29,7 @@ class HanchanRepository(IHanchanRepository):
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: List[Hanchan],
+        ids: List[int],
     ) -> int:
         delete_count = session\
             .query(HanchanModel)\

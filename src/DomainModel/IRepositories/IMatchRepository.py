@@ -64,3 +64,11 @@ class IMatchRepository(metaclass=ABCMeta):
         status: int,
     ) -> Match:
         pass
+
+    @abstractmethod
+    def delete_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[int],
+    ) -> int:
+        pass

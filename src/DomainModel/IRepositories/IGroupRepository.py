@@ -18,7 +18,7 @@ class IGroupRepository(metaclass=ABCMeta):
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: List[Group],
+        ids: List[int],
     ) -> int:
         pass
 
