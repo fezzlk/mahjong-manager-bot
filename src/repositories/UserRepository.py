@@ -86,6 +86,7 @@ class UserRepository(IUserRepository):
         record = session\
             .query(UserModel)\
             .filter(UserModel.line_user_id == line_user_id)\
+            .order_by(UserModel.id)\
             .first()
 
         if record is None:
@@ -101,8 +102,8 @@ class UserRepository(IUserRepository):
         records = session\
             .query(UserModel)\
             .filter(UserModel.line_user_name == line_user_name)\
+            .order_by(UserModel.id)\
             .all()
-
         return [
             self._mapping_record_to_user_domain(record)
             for record in records
@@ -117,6 +118,7 @@ class UserRepository(IUserRepository):
         record = session\
             .query(UserModel)\
             .filter(UserModel.line_user_id == line_user_id)\
+            .order_by(UserModel.id)\
             .first()
 
         if record is None:
@@ -135,6 +137,7 @@ class UserRepository(IUserRepository):
         record = session\
             .query(UserModel)\
             .filter(UserModel.line_user_id == line_user_id)\
+            .order_by(UserModel.id)\
             .first()
 
         if record is None:
