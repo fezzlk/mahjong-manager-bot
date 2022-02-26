@@ -7,7 +7,7 @@ from DomainModel.entities.Group import GroupMode
 
 # def test_success(): 現在 UserMode が一種類しかないため
 def test_fail_with_invalid_mode():
-    with pytest.raises(BaseException):
+    with pytest.raises(ValueError):
         # Arrange
         user_service = UserService()
         dummy_user = generate_dummy_user_list()[4]

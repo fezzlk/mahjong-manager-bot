@@ -95,7 +95,7 @@ class UserService(IUserService):
         mode: UserMode,
     ) -> User:
         if mode not in UserMode:
-            raise BaseException(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
+            raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
         with session_scope() as session:
             user = user_repository.update_one_mode_by_line_user_id(
@@ -115,7 +115,7 @@ class UserService(IUserService):
 
             if target is None:
                 print(f'user is not found: {line_user_id}')
-                raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
+                raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
 
             return target.mode
 
