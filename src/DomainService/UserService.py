@@ -1,5 +1,6 @@
 """user"""
 
+from werkzeug.exceptions import NotFound
 from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
@@ -75,13 +76,18 @@ class UserService(IUserService):
         line_user_name: str,
     ) -> str:
         with session_scope() as session:
-            target = user_repository.find_one_by_name(session, line_user_name)
+            users = user_repository.find_by_name(session, line_user_name)
 
-            if target is None:
+            if len(users) == 0:
                 print(f'user({line_user_name}) is not found')
-                return line_user_name
+                raise NotFound(f'user({line_user_name}) is not found')
 
-            return target.line_user_id
+            if len(users) > 1:
+                print(f'"{line_user_name}" は複数存在しているため名前からLINE IDを一意に取得できません。')
+                raise ValueError(
+                    f'"{line_user_name}" は複数存在しているため名前からLINE IDを一意に取得できません。')
+
+            return users[0].line_user_id
 
     def chmod(
         self,
