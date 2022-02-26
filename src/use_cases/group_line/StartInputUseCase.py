@@ -1,6 +1,5 @@
 from DomainService import (
     group_service,
-    hanchan_service,
     match_service,
 )
 from ApplicationService import (
