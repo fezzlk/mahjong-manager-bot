@@ -195,15 +195,6 @@ class HanchanService(IHanchanService):
     def disable(self, line_group_id: str) -> Hanchan:
         return self.update_status_active_hanchan(line_group_id, 0)
 
-    def get(self, ids: List[int] = None) -> List[Hanchan]:
-        with session_scope() as session:
-            if ids is None:
-                targets = hanchan_repository.find_all(session)
-            else:
-                targets = hanchan_repository.find_by_ids(session, ids)
-
-            return targets
-
     def delete(self, ids: List[int]) -> List[Hanchan]:
         with session_scope() as session:
             targets = hanchan_repository.find_by_ids(session, ids)

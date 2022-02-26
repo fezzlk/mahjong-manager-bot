@@ -1,6 +1,5 @@
 from typing import List
 from DomainService import (
-    match_service,
     hanchan_service,
     user_service,
     config_service,
@@ -10,13 +9,15 @@ from ApplicationService import (
     reply_service,
     request_info_service,
 )
+from repositories import session_scope, match_repository
 
 
 class ReplySumMatchesByIdsUseCase:
 
     def execute(self, ids: List[str]) -> None:
         formatted_id_list = sorted(list(set(ids)))
-        matches = match_service.get(ids)
+        with session_scope() as session:
+            matches = match_repository.find_by_ids(session=session, ids=ids)
         if len(matches) == 0:
             reply_service.add_message(
                 '該当する対戦結果がありません。'

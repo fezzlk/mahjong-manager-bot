@@ -61,9 +61,5 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get(self, target_ids: List[int]) -> List[Match]:
-        pass
-
-    @abstractmethod
     def delete(self, target_ids: List[int]) -> None:
         pass

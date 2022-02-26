@@ -1,19 +1,11 @@
 from DomainModel.entities.Config import DEFAULT_CONFIGS
 from .interfaces.IConfigService import IConfigService
-from typing import Dict, List
+from typing import Dict
 from repositories import session_scope, config_repository
 from DomainModel.entities.Config import Config
 
 
 class ConfigService(IConfigService):
-    def get(self, ids: List[int] = None) -> List[Config]:
-        with session_scope() as session:
-            # config.id を指定してなければ全ての config を取得
-            if ids is None:
-                return config_repository.find_all(session)
-
-            # id に合致する config を取得
-            return config_repository.find_by_ids(session, ids)
 
     def get_value_by_key(
         self,
