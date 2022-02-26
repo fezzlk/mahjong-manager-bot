@@ -18,7 +18,7 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_status_active_match(
+    def update_current_status(
         self,
         line_group_id: str,
         status: int,

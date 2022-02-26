@@ -47,8 +47,7 @@ class MatchService(IMatchService):
             )
 
             if target is None:
-                raise ValueError(
-                    'match_service.add_hanchan_id: Not found match')
+                raise ValueError('Not found match')
 
             hanchan_ids = target.hanchan_ids
             hanchan_ids.append(hanchan_id)
@@ -74,8 +73,7 @@ class MatchService(IMatchService):
             )
 
             if target is None:
-                raise ValueError(
-                    'match_service.add_hanchan_id: Not found match')
+                raise ValueError('Not found match')
 
             target.hanchan_ids = hanchan_ids
 
@@ -89,7 +87,7 @@ class MatchService(IMatchService):
             )
             return updated_match
 
-    def update_status_active_match(
+    def update_current_status(
         self,
         line_group_id: str,
         status: int,
@@ -102,7 +100,7 @@ class MatchService(IMatchService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found match')
 
             updated_match = match_repository.update_one_status_by_id(
                 session=session,
@@ -117,10 +115,10 @@ class MatchService(IMatchService):
             return updated_match
 
     def archive(self, line_group_id: str) -> Match:
-        return self.update_status_active_match(line_group_id, 2)
+        return self.update_current_status(line_group_id, 2)
 
     def disable(self, line_group_id: str) -> Match:
-        return self.update_status_active_match(line_group_id, 0)
+        return self.update_current_status(line_group_id, 0)
 
     def get_archived(
         self,
