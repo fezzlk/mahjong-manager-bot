@@ -14,10 +14,6 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def count_results(self, line_group_id: str) -> int:
-        pass
-
-    @abstractmethod
     def get_current(self, line_group_id: str) -> Match:
         pass
 
@@ -42,7 +38,7 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create(self, line_group_id: str) -> Match:
+    def create_with_line_group_id(self, line_group_id: str) -> Match:
         pass
 
     @abstractmethod

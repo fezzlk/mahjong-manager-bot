@@ -12,7 +12,8 @@ class DropHanchanByIndexUseCase:
 
     def execute(self, i: int) -> None:
         line_group_id = request_info_service.req_line_group_id
-        if match_service.count_results(line_group_id) == 0:
+        current_match = match_service.get_current(line_group_id=line_group_id)
+        if current_match is None or len(current_match.hanchan_ids) == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )

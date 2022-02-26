@@ -13,8 +13,7 @@ class MatchService(IMatchService):
         current = self.get_current(line_group_id)
 
         if current is None:
-            self.create(line_group_id)
-            current = self.get_current(line_group_id)
+            current = self.create_with_line_group_id(line_group_id)
 
         return current
 
@@ -26,7 +25,7 @@ class MatchService(IMatchService):
                 status=1,
             )
 
-    def create(self, line_group_id: str) -> Match:
+    def create_with_line_group_id(self, line_group_id: str) -> Match:
         with session_scope() as session:
             new_match = Match(
                 line_group_id=line_group_id,
@@ -90,15 +89,6 @@ class MatchService(IMatchService):
                 f'update hanchan ids of match: match_id={updated_match._id}'
             )
             return updated_match
-
-    def count_results(self, line_group_id: str) -> int:
-        current = self.get_current(line_group_id)
-        if current is None:
-            print(
-                'current match is not found'
-            )
-            return 0
-        return len(current.hanchan_ids)
 
     def update_status_active_match(
         self,
