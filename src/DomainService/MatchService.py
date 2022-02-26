@@ -74,7 +74,8 @@ class MatchService(IMatchService):
             )
 
             if target is None:
-                return None
+                raise ValueError(
+                    'match_service.add_hanchan_id: Not found match')
 
             target.hanchan_ids = hanchan_ids
 
