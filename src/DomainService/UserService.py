@@ -131,6 +131,10 @@ class UserService(IUserService):
                 zoom_url=zoom_url,
             )
 
+        if user is None:
+            print(f'user is not found: {line_user_id}')
+            raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
+
         print(f'set_user_url: {user.zoom_url} to {line_user_id}')
         return user
 
