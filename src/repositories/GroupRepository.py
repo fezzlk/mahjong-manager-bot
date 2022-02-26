@@ -1,10 +1,11 @@
 from typing import List
-from models import GroupModel
-from Domains.Entities.Group import Group, GroupMode
+from db_models import GroupModel
+from DomainModel.IRepositories.IGroupRepository import IGroupRepository
+from DomainModel.entities.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class GroupRepository:
+class GroupRepository(IGroupRepository):
 
     def create(
         self,

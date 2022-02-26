@@ -1,21 +1,20 @@
 import os
 from typing import Dict, List
 from flask import Blueprint, abort, request, render_template, url_for, redirect
-from Domains.Entities.Hanchan import Hanchan
 from db_setting import Engine, Session
-from models import Base
+from db_models import Base
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
-from use_cases.config.GetConfigsForWebUseCase import GetConfigsForWebUseCase
-from use_cases.config.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
-from use_cases.match.GetMatchesForWebUseCase import GetMatchesForWebUseCase
-from use_cases.match.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
-from use_cases.group.GetGroupsForWebUseCase import GetGroupsForWebUseCase
-from use_cases.group.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
-from use_cases.hanchan.GetHanchansForWebUseCase import GetHanchansForWebUseCase
-from use_cases.hanchan.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
-from use_cases.user.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
-from use_cases.user.GetUsersForWebUseCase import GetUsersForWebUseCase
+from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
+from use_cases.web.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
+from use_cases.web.GetMatchesForWebUseCase import GetMatchesForWebUseCase
+from use_cases.web.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
+from use_cases.web.GetGroupsForWebUseCase import GetGroupsForWebUseCase
+from use_cases.web.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
+from use_cases.web.GetHanchansForWebUseCase import GetHanchansForWebUseCase
+from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
+from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
+from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
 
 from linebot import WebhookHandler, exceptions
 
@@ -52,8 +51,8 @@ def create_dummy():
 
 # @views_blueprint.route('/try', methods=['POST'])
 # def hogehoge():
-#     # from Repositories import user_repository
-#     # from Domains.Entities.User import User, UserMode
+#     # from repositories import user_repository
+#     # from DomainModel.entities.User import User, UserMode
 #     session = Session()
 #     # user = User(
 #     #     line_user_name="test user6",
@@ -76,13 +75,13 @@ def create_dummy():
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
     session = Session()
-    from models import UserMatchModel
+    from db_models import UserMatchModel
     from Repositories.HanchanRepository import HanchanRepository
-    from Services.UserService import UserService
-    from Models.line.Profile import Profile
+    from DomainService.UserService import UserService
+    from line_models.Profile import Profile
     repository = HanchanRepository()
     service = UserService()
-    hanchans: List[Hanchan] = repository.find_all(session)
+    hanchans: List = repository.find_all(session)
     target_user_match = []
     for hanchan in hanchans:
         if not isinstance(hanchan.converted_scores, Dict):

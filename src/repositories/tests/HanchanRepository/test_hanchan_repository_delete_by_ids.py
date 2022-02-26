@@ -2,8 +2,8 @@ from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from Repositories import session_scope, hanchan_repository, match_repository
-from Domains.Entities.Hanchan import Hanchan
+from repositories import session_scope, hanchan_repository, match_repository
+from DomainModel.entities.Hanchan import Hanchan
 
 
 def test_hit_with_ids():

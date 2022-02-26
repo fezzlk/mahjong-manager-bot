@@ -1,12 +1,13 @@
 from typing import List
-from models import MatchModel
+from db_models import MatchModel
 from sqlalchemy import and_
-from Domains.Entities.Match import Match
+from DomainModel.IRepositories.IMatchRepository import IMatchRepository
+from DomainModel.entities.Match import Match
 from sqlalchemy.orm.session import Session as BaseSession
 import json
 
 
-class MatchRepository:
+class MatchRepository(IMatchRepository):
 
     def create(
         self,
