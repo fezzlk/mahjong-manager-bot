@@ -38,10 +38,6 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create_with_line_group_id(self, line_group_id: str) -> Match:
-        pass
-
-    @abstractmethod
     def get_archived(
         self,
         line_group_id: str,

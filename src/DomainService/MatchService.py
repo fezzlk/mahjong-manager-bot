@@ -13,7 +13,16 @@ class MatchService(IMatchService):
         current = self.get_current(line_group_id)
 
         if current is None:
-            current = self.create_with_line_group_id(line_group_id)
+            with session_scope() as session:
+                new_match = Match(
+                    line_group_id=line_group_id,
+                    hanchan_ids=[],
+                    status=1,
+                )
+                match_repository.create(session, new_match)
+
+                print(f'create match: group "{line_group_id}"')
+                current = new_match
 
         return current
 
@@ -24,18 +33,6 @@ class MatchService(IMatchService):
                 line_group_id=line_group_id,
                 status=1,
             )
-
-    def create_with_line_group_id(self, line_group_id: str) -> Match:
-        with session_scope() as session:
-            new_match = Match(
-                line_group_id=line_group_id,
-                hanchan_ids=[],
-                status=1,
-            )
-            match_repository.create(session, new_match)
-
-            print(f'create match: group "{line_group_id}"')
-            return new_match
 
     def add_hanchan_id(
         self,
@@ -50,7 +47,8 @@ class MatchService(IMatchService):
             )
 
             if target is None:
-                return None
+                raise ValueError(
+                    'match_service.add_hanchan_id: Not found match')
 
             hanchan_ids = target.hanchan_ids
             hanchan_ids.append(hanchan_id)
