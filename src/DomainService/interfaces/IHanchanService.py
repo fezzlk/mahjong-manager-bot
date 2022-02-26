@@ -23,13 +23,6 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def find_by_ids(
-        self,
-        ids: List[str],
-    ) -> List[Hanchan]:
-        pass
-
-    @abstractmethod
     def update_status_active_hanchan(
         self,
         line_group_id: str,

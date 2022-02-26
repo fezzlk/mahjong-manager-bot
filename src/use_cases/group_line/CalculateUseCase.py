@@ -11,6 +11,7 @@ from ApplicationService import (
     message_service,
 )
 from DomainModel.entities.Group import GroupMode
+from repositories import session_scope, hanchan_repository
 
 
 class CalculateUseCase:
@@ -23,7 +24,12 @@ class CalculateUseCase:
         line_group_id = request_info_service.req_line_group_id
 
         # 現在 active な result (current)のポイントを計算対象にする
-        current = hanchan_service.get_current(line_group_id)
+        with session_scope() as session:
+            current = hanchan_repository.find_one_by_line_group_id_and_status(
+                session,
+                line_group_id,
+                1
+            )
         if current is None:
             print(
                 'current points is not found.'
@@ -90,9 +96,10 @@ class CalculateUseCase:
 
         # 結果の表示
         converted_scores = updated_hanchan.converted_scores
-        hanchans = hanchan_service.find_by_ids(
-            current_match.hanchan_ids,
-        )
+        with session_scope() as session:
+            hanchans = hanchan_repository.find_by_ids(
+                session, current_match.hanchan_ids)
+
         sum_hanchans = {}
         for r in hanchans:
             converted_scores = r.converted_scores

@@ -38,21 +38,6 @@ class HanchanService(IHanchanService):
 
             return updated_hanchan
 
-    def find_by_ids(
-        self,
-        ids: List[str],
-    ) -> List[Hanchan]:
-        with session_scope() as session:
-            return hanchan_repository.find_by_ids(session, ids)
-
-    def get_current(self, line_group_id):
-        with session_scope() as session:
-            return hanchan_repository.find_one_by_line_group_id_and_status(
-                session,
-                line_group_id,
-                1
-            )
-
     def add_or_drop_raw_score(
         self,
         line_group_id: str,
@@ -60,6 +45,9 @@ class HanchanService(IHanchanService):
         raw_score: Optional[int],
     ) -> Hanchan:
         with session_scope() as session:
+            if line_user_id is None:
+                raise ValueError('line_user_id is required')
+
             target = hanchan_repository.find_one_by_line_group_id_and_status(
                 session=session,
                 line_group_id=line_group_id,
@@ -67,12 +55,11 @@ class HanchanService(IHanchanService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found hanchan')
 
             raw_scores = target.raw_scores
-            if line_user_id is None:
-                raw_scores = {}
-            elif raw_score is None:
+
+            if raw_score is None:
                 raw_scores.pop(line_user_id, None)
             else:
                 raw_scores[line_user_id] = raw_score

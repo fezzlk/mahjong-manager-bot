@@ -1,6 +1,5 @@
 from typing import List
 from DomainService import (
-    hanchan_service,
     user_service,
     config_service,
 )
@@ -9,7 +8,7 @@ from ApplicationService import (
     reply_service,
     request_info_service,
 )
-from repositories import session_scope, match_repository
+from repositories import session_scope, match_repository, hanchan_repository
 
 
 class ReplySumMatchesByIdsUseCase:
@@ -33,7 +32,9 @@ class ReplySumMatchesByIdsUseCase:
             match_id = ','.join(formatted_id_list)
             is_required_sum = True
             date = ''
-            hanchans = hanchan_service.find_by_ids(ids)
+            with session_scope() as session:
+                hanchans = hanchan_repository.find_by_ids(
+                    session, ids)
 
             sum_hanchans = {}
             for i in range(len(ids)):
