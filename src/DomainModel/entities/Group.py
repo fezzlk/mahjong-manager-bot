@@ -10,7 +10,6 @@ class GroupMode(Enum):
 @dataclass()
 class Group:
     _id: int
-    # line_group_id is unique
     line_group_id: str
     zoom_url: str
     mode: GroupMode

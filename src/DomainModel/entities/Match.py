@@ -29,6 +29,6 @@ class Match:
         self.created_at = created_at
 
 
-# status は Enum(0: disabled, 1: active, 2: archived)
+# status は 0: disabled, 1: active, 2: archived
 
 # created_at は対戦開始日

@@ -33,4 +33,4 @@ class Hanchan:
 # converted_scores は計算後の1半荘のスコア
 # Dictionary(key: user_line_id, value: converted_score)
 
-# status は Enum(0: disabled, 1: active, 2: archived)
+# status は 0: disabled, 1: active, 2: archived
