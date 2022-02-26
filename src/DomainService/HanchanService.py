@@ -24,7 +24,7 @@ class HanchanService(IHanchanService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found hanchan')
 
             updated_hanchan = hanchan_repository.update_one_status_by_id(
                 session,
