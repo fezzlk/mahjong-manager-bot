@@ -48,7 +48,7 @@ class Config:
             raise ValueError(f'設定キー "{key}" が不適切です。')
 
         if value not in GROUP_SETTING_DICT[key]:
-            raise ValueError(f'設定値 "{value}" が不適切です。')
+            raise ValueError(f'設定キー "{key}" に対して設定値 "{value}" が不適切です。')
 
         self._id = _id
         self.target_id = target_id
