@@ -145,7 +145,7 @@ class UserService(IUserService):
 
             if target is None:
                 print(f'user_services: user "{line_user_id}" is not found')
-                raise Exception('ユーザーが登録されていません。友達登録をし直してください。')
+                raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
 
             if target.zoom_url is None:
                 print(
