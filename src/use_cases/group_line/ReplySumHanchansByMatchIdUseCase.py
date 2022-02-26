@@ -1,17 +1,21 @@
 from DomainService import (
-    match_service,
     hanchan_service,
     user_service,
 )
 from ApplicationService import (
     reply_service,
 )
+from repositories import session_scope, match_repository
 
 
 class ReplySumHanchansByMatchIdUseCase:
 
     def execute(self, match_id: int) -> None:
-        match = match_service.get(match_id)
+        with session_scope() as session:
+            match = match_repository.find_by_ids(
+                session=session,
+                ids=[match_id],
+            )
 
         ids = match.hanchan_ids
         date = match.created_at.strftime('%Y-%m-%d') + '\n',

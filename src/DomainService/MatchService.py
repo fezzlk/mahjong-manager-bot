@@ -144,13 +144,6 @@ class MatchService(IMatchService):
                 return None
             return matches
 
-    def get(self, target_ids: List[int] = None) -> List[Match]:
-        with session_scope() as session:
-            if target_ids is None:
-                return match_repository.find_all(session)
-            else:
-                return match_repository.find_by_ids(session, target_ids)
-
     def remove_hanchan_id(
         self,
         match_id: int,

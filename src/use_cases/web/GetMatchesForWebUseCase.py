@@ -1,11 +1,10 @@
 from typing import List
-from DomainService import (
-    match_service,
-)
 from DomainModel.entities.Match import Match
+from repositories import session_scope, match_repository
 
 
 class GetMatchesForWebUseCase:
 
     def execute(self) -> List[Match]:
-        return match_service.get()
+        with session_scope() as session:
+            return match_repository.find_all(session=session)
