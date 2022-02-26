@@ -54,7 +54,7 @@ class IUserRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def find_one_by_name(
+    def find_by_name(
         self,
         session: BaseSession,
         line_user_name: str,

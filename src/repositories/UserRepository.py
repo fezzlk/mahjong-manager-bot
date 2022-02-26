@@ -93,23 +93,20 @@ class UserRepository(IUserRepository):
 
         return self._mapping_record_to_user_domain(record)
 
-    def find_one_by_name(
+    def find_by_name(
         self,
         session: BaseSession,
         line_user_name: str,
-    ) -> User:
+    ) -> List[User]:
         records = session\
             .query(UserModel)\
             .filter(UserModel.line_user_name == line_user_name)\
             .all()
 
-        if len(records) == 0:
-            return None
-
-        if len(records) > 1:
-            print("warning: find multi users by line_user_name")
-
-        return self._mapping_record_to_user_domain(records[0])
+        return [
+            self._mapping_record_to_user_domain(record)
+            for record in records
+        ]
 
     def update_one_mode_by_line_user_id(
         self,
