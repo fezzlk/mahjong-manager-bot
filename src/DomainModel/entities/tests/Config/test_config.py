@@ -46,12 +46,13 @@ def test_success(case1):
 
 @pytest.fixture(params=[
     ('U0123456789abcdefghijklmnopqrstu1', 'dummy', '10'),
+    ('U0123456789abcdefghijklmnopqrstu1', 'レート', '10'),  # '10' not in 'レート'
 ])
 def case2(request) -> Tuple[str, str, str]:
     return request.param
 
 
-def test_fail_with_invalid_key(case2):
+def test_fail_with_invalid_params(case2):
     with pytest.raises(ValueError):
         # Arrange
 
@@ -60,28 +61,6 @@ def test_fail_with_invalid_key(case2):
             target_id=case2[0],
             key=case2[1],
             value=case2[2],
-            _id=1,
-        )
-
-        # Assert
-
-
-@pytest.fixture(params=[
-    ('U0123456789abcdefghijklmnopqrstu1', 'レート', '10'),
-])
-def case3(request) -> Tuple[str, str, str]:
-    return request.param
-
-
-def test_fail_with_invalid_value(case3):
-    with pytest.raises(ValueError):
-        # Arrange
-
-        # Act
-        Config(
-            target_id=case3[0],
-            key=case3[1],
-            value=case3[2],
             _id=1,
         )
 
