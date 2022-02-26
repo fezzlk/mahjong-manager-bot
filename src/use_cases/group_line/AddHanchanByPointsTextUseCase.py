@@ -1,12 +1,13 @@
 from DomainService import (
     user_service,
-    hanchan_service,
     match_service,
 )
 from ApplicationService import (
     request_info_service,
     reply_service,
 )
+from repositories import session_scope, hanchan_repository
+from DomainModel.entities.Hanchan import Hanchan
 from use_cases.group_line.CalculateUseCase import CalculateUseCase
 
 
@@ -23,8 +24,18 @@ class AddHanchanByPointsTextUseCase:
 
         line_group_id = request_info_service.req_line_group_id
         current_match = match_service.get_or_create_current(line_group_id)
-        hanchan_service.create(points, line_group_id, current_match)
-
+        new_hanchan = Hanchan(
+            line_group_id=line_group_id,
+            raw_scores=points,
+            converted_scores='',
+            match_id=current_match._id,
+            status=1,
+        )
+        with session_scope() as session:
+            hanchan_repository.create(
+                session,
+                new_hanchan,
+            )
         if len(points) == 4:
             CalculateUseCase().execute()
         else:

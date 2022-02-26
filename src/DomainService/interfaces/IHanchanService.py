@@ -47,15 +47,6 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create(
-        self,
-        raw_scores: Dict[str, int],
-        line_group_id: str,
-        related_match: Match,
-    ) -> Hanchan:
-        pass
-
-    @abstractmethod
     def delete(self, ids: List[int]) -> List[Hanchan]:
         pass
 

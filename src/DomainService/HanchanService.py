@@ -2,7 +2,6 @@ from typing import Dict, List, Optional, Tuple
 
 from repositories import session_scope, hanchan_repository
 from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.Match import Match
 from db_models import UserMatchModel
 from .interfaces.IHanchanService import IHanchanService
 
@@ -10,30 +9,6 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 
 
 class HanchanService(IHanchanService):
-    def create(
-        self,
-        raw_scores: Dict[str, int],
-        line_group_id: str,
-        related_match: Match,
-    ) -> Hanchan:
-        new_hanchan = Hanchan(
-            line_group_id=line_group_id,
-            raw_scores=raw_scores,
-            converted_scores='',
-            match_id=related_match._id,
-            status=1,
-        )
-        with session_scope() as session:
-            hanchan_repository.create(
-                session,
-                new_hanchan,
-            )
-
-        print(
-            f'create hanchan: to group "{line_group_id}"'
-        )
-
-        return new_hanchan
 
     def disabled_by_id(
         self,
