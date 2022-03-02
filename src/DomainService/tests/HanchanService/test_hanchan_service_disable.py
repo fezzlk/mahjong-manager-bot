@@ -57,17 +57,7 @@ dummy_hanchans = [
 ]
 
 
-@pytest.fixture(params=[
-    # (index_of_dummy_hanchans)
-    (0),
-    (1),
-    (2),
-])
-def case(request) -> int:
-    return request.param
-
-
-def test_success(case):
+def test_success():
     # Arrange
     hanchan_service = HanchanService()
     target_hanchan = dummy_hanchans[0]
@@ -79,15 +69,14 @@ def test_success(case):
             hanchan_repository.create(session, dummy_hanchan)
 
     # Act
-    result: Hanchan = hanchan_service.update_status_active_hanchan(
+    result: Hanchan = hanchan_service.disable(
         line_group_id=target_hanchan.line_group_id,
-        status=case,
     )
 
     # Assert
     assert result._id == target_hanchan._id
     assert result.line_group_id == target_hanchan.line_group_id
-    assert result.status == case
+    assert result.status == 0
 
 
 def test_fail_invalid_line_group_id():
@@ -103,9 +92,8 @@ def test_fail_invalid_line_group_id():
                 hanchan_repository.create(session, dummy_hanchan)
 
         # Act
-        hanchan_service.update_status_active_hanchan(
+        hanchan_service.disable(
             line_group_id=target_hanchan.line_group_id,
-            status=0,
         )
 
         # Assert
@@ -124,9 +112,8 @@ def test_fail_not_active():
                 hanchan_repository.create(session, dummy_hanchan)
 
         # Act
-        hanchan_service.update_status_active_hanchan(
+        hanchan_service.disable(
             line_group_id=target_hanchan.line_group_id,
-            status=0,
         )
 
         # Assert

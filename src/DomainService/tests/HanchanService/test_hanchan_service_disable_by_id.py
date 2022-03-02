@@ -90,7 +90,7 @@ def test_success(case):
     assert result.status == 0
 
 
-def test_fail_invalid_line_group_i():
+def test_fail_invalid_line_group_id():
     with pytest.raises(ValueError):
         # Arrange
         hanchan_service = HanchanService()
