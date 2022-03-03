@@ -39,10 +39,6 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def delete(self, ids: List[int]) -> List[Hanchan]:
-        pass
-
-    @abstractmethod
     def run_calculate(
         self,
         points: Dict[str, int],

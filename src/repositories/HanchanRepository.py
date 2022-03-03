@@ -30,13 +30,20 @@ class HanchanRepository(IHanchanRepository):
         self,
         session: BaseSession,
         ids: List[int],
-    ) -> int:
-        delete_count = session\
+    ) -> List[Hanchan]:
+        records = session\
             .query(HanchanModel)\
-            .filter(HanchanModel.id.in_(ids))\
-            .delete(synchronize_session=False)
+            .filter(HanchanModel.id.in_([int(s) for s in ids]))\
+            .order_by(HanchanModel.id)\
+            .all()
 
-        return delete_count
+        for record in records:
+            session.delete(record)
+
+        return [
+            self._mapping_record_to_hanchan_domain(record)
+            for record in records
+        ]
 
     def find_all(
         self,

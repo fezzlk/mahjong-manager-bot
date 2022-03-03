@@ -128,15 +128,6 @@ class HanchanService(IHanchanService):
     def disable(self, line_group_id: str) -> Hanchan:
         return self.update_status_active_hanchan(line_group_id, 0)
 
-    def delete(self, ids: List[int]) -> List[Hanchan]:
-        with session_scope() as session:
-            targets = hanchan_repository.find_by_ids(session, ids)
-            for target in targets:
-                session.delete(target)
-
-            print(f'delete: id={ids}')
-            return targets
-
     def run_calculate(
         self,
         points: Dict[str, int],
