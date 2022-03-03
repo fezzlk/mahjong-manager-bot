@@ -2,7 +2,6 @@ from typing import Dict, List, Optional, Tuple
 
 from repositories import session_scope, hanchan_repository
 from DomainModel.entities.Hanchan import Hanchan
-from db_models import UserMatchModel
 from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']
@@ -72,7 +71,7 @@ class HanchanService(IHanchanService):
 
             return updated_hanchan
 
-    def update_converted_score(
+    def update_current_converted_score(
         self,
         line_group_id: str,
         converted_scores: Dict[str, int],
@@ -85,7 +84,7 @@ class HanchanService(IHanchanService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found hanchan')
 
             updated_hanchan = hanchan_repository.update_one_converted_scores_by_id(
                 session=session, hanchan_id=target._id, converted_scores=converted_scores)
@@ -93,32 +92,7 @@ class HanchanService(IHanchanService):
             print(
                 f'update hanchan: id={updated_hanchan._id}'
             )
-            from line_models.Profile import Profile
-            from DomainService.UserService import UserService
-            service = UserService()
 
-            user_ids_in_hanchan = []
-            for user_line_id in updated_hanchan.converted_scores:
-                profile = Profile(display_name='', user_id=user_line_id)
-                user = service.find_or_create_by_profile(profile)
-                if user is not None:
-                    user_ids_in_hanchan.append(user._id)
-
-            # user_match の作成
-            user_matches = session\
-                .query(UserMatchModel)\
-                .filter(
-                    UserMatchModel.match_id == updated_hanchan.match_id,
-                )\
-                .all()
-            linked_user_ids = [um.user_id for um in user_matches]
-            target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
-            for user_id in target_user_ids:
-                user_match = UserMatchModel(
-                    user_id=user_id,
-                    match_id=updated_hanchan.match_id,
-                )
-                session.add(user_match)
         return updated_hanchan
 
     def update_status_active_hanchan(

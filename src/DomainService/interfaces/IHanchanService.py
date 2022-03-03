@@ -15,7 +15,7 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_converted_score(
+    def update_current_converted_score(
         self,
         line_group_id: str,
         converted_scores: Dict[str, int],

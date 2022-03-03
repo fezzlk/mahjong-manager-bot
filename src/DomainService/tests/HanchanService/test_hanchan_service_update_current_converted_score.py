@@ -56,18 +56,15 @@ dummy_hanchans = [
     ),
 ]
 
-
-@pytest.fixture(params=[
-    # (after status)
-    (0),
-    (1),
-    (2),
-])
-def case(request) -> int:
-    return request.param
+dummy_converted_score = {
+    'a': 50,
+    'b': 10,
+    'c': -20,
+    'd': -40,
+}
 
 
-def test_success(case):
+def test_success():
     # Arrange
     hanchan_service = HanchanService()
     target_hanchan = dummy_hanchans[0]
@@ -79,15 +76,17 @@ def test_success(case):
             hanchan_repository.create(session, dummy_hanchan)
 
     # Act
-    result: Hanchan = hanchan_service.update_status_active_hanchan(
+    result: Hanchan = hanchan_service.update_current_converted_score(
         line_group_id=target_hanchan.line_group_id,
-        status=case,
+        converted_scores=dummy_converted_score,
     )
 
     # Assert
     assert result._id == target_hanchan._id
     assert result.line_group_id == target_hanchan.line_group_id
-    assert result.status == case
+    assert len(result.converted_scores) == len(dummy_converted_score)
+    for key in dummy_converted_score:
+        assert result.converted_scores[key] == dummy_converted_score[key]
 
 
 def test_fail_invalid_line_group_id():
@@ -103,9 +102,9 @@ def test_fail_invalid_line_group_id():
                 hanchan_repository.create(session, dummy_hanchan)
 
         # Act
-        hanchan_service.update_status_active_hanchan(
+        hanchan_service.update_current_converted_score(
             line_group_id=target_hanchan.line_group_id,
-            status=0,
+            converted_scores=dummy_converted_score,
         )
 
         # Assert
@@ -124,9 +123,9 @@ def test_fail_not_active():
                 hanchan_repository.create(session, dummy_hanchan)
 
         # Act
-        hanchan_service.update_status_active_hanchan(
+        hanchan_service.update_current_converted_score(
             line_group_id=target_hanchan.line_group_id,
-            status=0,
+            converted_scores=dummy_converted_score,
         )
 
         # Assert
