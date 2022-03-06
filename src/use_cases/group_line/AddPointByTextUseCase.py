@@ -18,31 +18,36 @@ class AddPointByTextUseCase:
         line_group_id = request_info_service.req_line_group_id
 
         if text[0] == '@':
-            point, target_user = hanchan_service.get_point_and_name_from_text(
-                text[1:]
-            )
-            target_line_user_id = user_service.get_line_user_id_by_name(
-                target_user
-            )
-
-            if point == 'delete':
-                hanchan = hanchan_service.add_or_drop_raw_score(
-                    line_group_id,
-                    target_line_user_id,
-                    raw_score=None,
+            if len(text[1:].split()) >= 2:
+                # ユーザー名に空白がある場合を考慮し、最後の要素をポイント、そのほかをユーザー名として判断する
+                point = text[1:].split()[-1]
+                target_user = text[1:(-1 * len(point))].strip()
+                target_line_user_id = user_service.get_line_user_id_by_name(
+                    target_user
                 )
-
-                res = [
-                    f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
-                    for line_user_id, point in hanchan.raw_scores.items()
-                ]
-
-                if len(res) == 0:
-                    reply_service.add_message("点数を入力してください")
-                else:
-                    reply_service.add_message("\n".join(res))
-
+            else:
+                reply_service.add_message(
+                    'ユーザーを指定する場合は「@[ユーザー名] [点数]」と入力してください。')
                 return
+
+            # if point == 'delete':
+            #     hanchan = hanchan_service.add_or_drop_raw_score(
+            #         line_group_id,
+            #         target_line_user_id,
+            #         raw_score=None,
+            #     )
+
+            #     res = [
+            #         f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
+            #         for line_user_id, point in hanchan.raw_scores.items()
+            #     ]
+
+            #     if len(res) == 0:
+            #         reply_service.add_message("点数を入力してください")
+            #     else:
+            #         reply_service.add_message("\n".join(res))
+
+            #     return
         else:
             target_line_user_id = request_info_service.req_line_user_id
             point = text
