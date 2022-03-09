@@ -56,6 +56,7 @@ dummy_converted_scores_list = [
     {'a': -70, 'b': -55, 'c': -32, 'd': 157},
     {'a': -40, 'b': 6, 'c': -15, 'd': 49},
     {'a': -40, 'b': 5, 'c': -15, 'd': 50},
+    {'a': 50, 'b': 10, 'c': -20, 'd': -40},
 ]
 
 
@@ -84,6 +85,7 @@ dummy_converted_scores_list = [
     (3, 0, 1, 0, 3, 14),
     (4, 0, 0, 0, 0, 15),
     (5, 0, 0, 0, 0, 16),
+    (6, 0, 0, 0, 0, 17),
 ])
 def case(request) -> int:
     return request.param
