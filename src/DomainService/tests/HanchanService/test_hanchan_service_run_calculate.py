@@ -35,7 +35,7 @@ dummy_rounding_method = [
     '切り上げ',
 ]
 
-dummy_tobashita_player_ids = [None, 'c', 'a']
+dummy_tobashita_player_ids = [None, 'c', 'a', 'd']
 
 dummy_converted_scores_list = [
     {'a': -40, 'b': -20, 'c': 10, 'd': 50},
@@ -49,6 +49,10 @@ dummy_converted_scores_list = [
     {'a': -40, 'b': -20, 'c': 10, 'd': 50},
     {'a': -70, 'b': -20, 'c': 20, 'd': 70},
     {'a': -60, 'b': -20, 'c': 10, 'd': 70},
+    {'a': -50, 'b': -70, 'c': 10, 'd': 110},
+    {'a': -60, 'b': -80, 'c': 30, 'd': 110},
+    {'a': -60, 'b': -45, 'c': -22, 'd': 127},
+    {'a': -70, 'b': -55, 'c': -32, 'd': 157},
 ]
 
 
@@ -71,6 +75,10 @@ dummy_converted_scores_list = [
     (0, 0, 0, 0, 1, 8),
     (1, 0, 1, 0, 1, 9),
     (1, 0, 1, 0, 2, 10),
+    (2, 0, 1, 0, 0, 11),
+    (2, 0, 1, 0, 1, 12),
+    (3, 0, 1, 0, 0, 13),
+    (3, 0, 1, 0, 3, 14),
 ])
 def case(request) -> int:
     return request.param
