@@ -1,6 +1,5 @@
 from DomainService import (
     user_service,
-    hanchan_service,
     match_service,
     config_service,
 )
@@ -8,6 +7,7 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
+from repositories import session_scope, hanchan_repository
 
 
 class MatchFinishUseCase:
@@ -25,7 +25,9 @@ class MatchFinishUseCase:
         ids = current.hanchan_ids
         match_id = current._id
 
-        hanchans = hanchan_service.find_by_ids(ids)
+        with session_scope() as session:
+            hanchans = hanchan_repository.find_by_ids(
+                session, ids)
 
         sum_hanchans = {}
         for i in range(len(ids)):

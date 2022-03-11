@@ -1,13 +1,14 @@
 from DomainService import (
     group_service,
-    hanchan_service,
     match_service,
 )
 from ApplicationService import (
     request_info_service,
     reply_service,
 )
+from repositories import session_scope, hanchan_repository
 from DomainModel.entities.Group import GroupMode
+from DomainModel.entities.Hanchan import Hanchan
 
 
 class StartInputUseCase:
@@ -20,8 +21,18 @@ class StartInputUseCase:
             return
 
         current_match = match_service.get_or_create_current(line_group_id)
-        hanchan_service.create(
-            {}, line_group_id, current_match)
+        new_hanchan = Hanchan(
+            line_group_id=line_group_id,
+            raw_scores={},
+            converted_scores='',
+            match_id=current_match._id,
+            status=1,
+        )
+        with session_scope() as session:
+            hanchan_repository.create(
+                session,
+                new_hanchan,
+            )
 
         group_service.chmod(
             line_group_id,

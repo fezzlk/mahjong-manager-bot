@@ -19,7 +19,7 @@ class IHanchanRepository(metaclass=ABCMeta):
         self,
         session: BaseSession,
         ids: List[int],
-    ) -> int:
+    ) -> List[Hanchan]:
         pass
 
     @abstractmethod

@@ -1,39 +1,13 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from repositories import session_scope, hanchan_repository
 from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.Match import Match
-from db_models import UserMatchModel
 from .interfaces.IHanchanService import IHanchanService
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
 class HanchanService(IHanchanService):
-    def create(
-        self,
-        raw_scores: Dict[str, int],
-        line_group_id: str,
-        related_match: Match,
-    ) -> Hanchan:
-        new_hanchan = Hanchan(
-            line_group_id=line_group_id,
-            raw_scores=raw_scores,
-            converted_scores='',
-            match_id=related_match._id,
-            status=1,
-        )
-        with session_scope() as session:
-            hanchan_repository.create(
-                session,
-                new_hanchan,
-            )
-
-        print(
-            f'create hanchan: to group "{line_group_id}"'
-        )
-
-        return new_hanchan
 
     def disabled_by_id(
         self,
@@ -49,7 +23,7 @@ class HanchanService(IHanchanService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found hanchan')
 
             updated_hanchan = hanchan_repository.update_one_status_by_id(
                 session,
@@ -63,21 +37,6 @@ class HanchanService(IHanchanService):
 
             return updated_hanchan
 
-    def find_by_ids(
-        self,
-        ids: List[str],
-    ) -> List[Hanchan]:
-        with session_scope() as session:
-            return hanchan_repository.find_by_ids(session, ids)
-
-    def get_current(self, line_group_id):
-        with session_scope() as session:
-            return hanchan_repository.find_one_by_line_group_id_and_status(
-                session,
-                line_group_id,
-                1
-            )
-
     def add_or_drop_raw_score(
         self,
         line_group_id: str,
@@ -85,6 +44,9 @@ class HanchanService(IHanchanService):
         raw_score: Optional[int],
     ) -> Hanchan:
         with session_scope() as session:
+            if line_user_id is None:
+                raise ValueError('line_user_id is required')
+
             target = hanchan_repository.find_one_by_line_group_id_and_status(
                 session=session,
                 line_group_id=line_group_id,
@@ -92,12 +54,11 @@ class HanchanService(IHanchanService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found hanchan')
 
             raw_scores = target.raw_scores
-            if line_user_id is None:
-                raw_scores = {}
-            elif raw_score is None:
+
+            if raw_score is None:
                 raw_scores.pop(line_user_id, None)
             else:
                 raw_scores[line_user_id] = raw_score
@@ -110,7 +71,7 @@ class HanchanService(IHanchanService):
 
             return updated_hanchan
 
-    def update_converted_score(
+    def update_current_converted_score(
         self,
         line_group_id: str,
         converted_scores: Dict[str, int],
@@ -123,7 +84,7 @@ class HanchanService(IHanchanService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found hanchan')
 
             updated_hanchan = hanchan_repository.update_one_converted_scores_by_id(
                 session=session, hanchan_id=target._id, converted_scores=converted_scores)
@@ -131,32 +92,7 @@ class HanchanService(IHanchanService):
             print(
                 f'update hanchan: id={updated_hanchan._id}'
             )
-            from line_models.Profile import Profile
-            from DomainService.UserService import UserService
-            service = UserService()
 
-            user_ids_in_hanchan = []
-            for user_line_id in updated_hanchan.converted_scores:
-                profile = Profile(display_name='', user_id=user_line_id)
-                user = service.find_or_create_by_profile(profile)
-                if user is not None:
-                    user_ids_in_hanchan.append(user._id)
-
-            # user_match の作成
-            user_matches = session\
-                .query(UserMatchModel)\
-                .filter(
-                    UserMatchModel.match_id == updated_hanchan.match_id,
-                )\
-                .all()
-            linked_user_ids = [um.user_id for um in user_matches]
-            target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
-            for user_id in target_user_ids:
-                user_match = UserMatchModel(
-                    user_id=user_id,
-                    match_id=updated_hanchan.match_id,
-                )
-                session.add(user_match)
         return updated_hanchan
 
     def update_status_active_hanchan(
@@ -172,16 +108,13 @@ class HanchanService(IHanchanService):
             )
 
             if target is None:
-                return None
+                raise ValueError('Not found hanchan')
 
             updated_hanchan = hanchan_repository.update_one_status_by_id(
                 session=session,
                 hanchan_id=target._id,
                 status=status,
             )
-
-            if updated_hanchan is None:
-                return None
 
             print(
                 f'{STATUS_LIST[updated_hanchan.status]} hanchan: id={updated_hanchan._id}'
@@ -194,15 +127,6 @@ class HanchanService(IHanchanService):
 
     def disable(self, line_group_id: str) -> Hanchan:
         return self.update_status_active_hanchan(line_group_id, 0)
-
-    def delete(self, ids: List[int]) -> List[Hanchan]:
-        with session_scope() as session:
-            targets = hanchan_repository.find_by_ids(session, ids)
-            for target in targets:
-                session.delete(target)
-
-            print(f'delete: id={ids}')
-            return targets
 
     def run_calculate(
         self,
@@ -274,15 +198,15 @@ class HanchanService(IHanchanService):
                     )
         return result
 
-    def get_point_and_name_from_text(
-        self,
-        text: str,
-    ) -> Tuple[str, str]:
-        s = text.split()
-        if len(s) >= 2:
-            # ユーザー名に空白がある場合を考慮し、最後の要素をポイント、そのほかをユーザー名として判断する
-            return s[-1], ' '.join(s[:-1])
-        # fixme: ユーザー名「taro 100」の点数を削除しようとした場合に上の条件にひっかかる
-        # 名前のみによるメッセージでの削除機能自体をやめるか
-        elif len(s) == 1:
-            return 'delete', s[0]
+    # def get_point_and_name_from_text(
+    #     self,
+    #     text: str,
+    # ) -> Tuple[str, str]:
+    #     s = text.split()
+    #     if len(s) >= 2:
+    #         # ユーザー名に空白がある場合を考慮し、最後の要素をポイント、そのほかをユーザー名として判断する
+    #         return s[-1], ' '.join(s[:-1])
+    #     # fixme: ユーザー名「taro 100」の点数を削除しようとした場合に上の条件にひっかかる
+    #     # 名前のみによるメッセージでの削除機能自体をやめるか(更新できるから削除は需要ない)
+    #     elif len(s) == 1:
+    #         return 'delete', s[0]

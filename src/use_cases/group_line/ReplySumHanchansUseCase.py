@@ -1,12 +1,12 @@
 from DomainService import (
     match_service,
-    hanchan_service,
     user_service,
 )
 from ApplicationService import (
     reply_service,
     request_info_service,
 )
+from repositories import session_scope, hanchan_repository
 
 
 class ReplySumHanchansUseCase:
@@ -22,7 +22,9 @@ class ReplySumHanchansUseCase:
 
         ids = match.hanchan_ids
         date = match.created_at.strftime('%Y-%m-%d')
-        hanchans = hanchan_service.find_by_ids(ids)
+        with session_scope() as session:
+            hanchans = hanchan_repository.find_by_ids(
+                session, ids)
 
         hanchans_list = []
         sum_hanchans = {}

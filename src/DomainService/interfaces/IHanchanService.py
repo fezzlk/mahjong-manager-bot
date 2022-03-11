@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List, Tuple
+from typing import Dict, List
 from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.Match import Match
 
 
 class IHanchanService(metaclass=ABCMeta):
@@ -16,18 +15,11 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_converted_score(
+    def update_current_converted_score(
         self,
         line_group_id: str,
         converted_scores: Dict[str, int],
     ) -> Hanchan:
-        pass
-
-    @abstractmethod
-    def find_by_ids(
-        self,
-        ids: List[str],
-    ) -> List[Hanchan]:
         pass
 
     @abstractmethod
@@ -47,19 +39,6 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create(
-        self,
-        raw_scores: Dict[str, int],
-        line_group_id: str,
-        related_match: Match,
-    ) -> Hanchan:
-        pass
-
-    @abstractmethod
-    def delete(self, ids: List[int]) -> List[Hanchan]:
-        pass
-
-    @abstractmethod
     def run_calculate(
         self,
         points: Dict[str, int],
@@ -68,11 +47,4 @@ class IHanchanService(metaclass=ABCMeta):
         rounding_method: str = None,
         tobashita_player_id: str = None,
     ) -> Dict[str, int]:
-        pass
-
-    @abstractmethod
-    def get_point_and_name_from_text(
-        self,
-        text: str,
-    ) -> Tuple[str, str]:
         pass
