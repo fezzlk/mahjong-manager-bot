@@ -30,24 +30,6 @@ class AddPointByTextUseCase:
                     'ユーザーを指定する場合は「@[ユーザー名] [点数]」と入力してください。')
                 return
 
-            # if point == 'delete':
-            #     hanchan = hanchan_service.add_or_drop_raw_score(
-            #         line_group_id,
-            #         target_line_user_id,
-            #         raw_score=None,
-            #     )
-
-            #     res = [
-            #         f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
-            #         for line_user_id, point in hanchan.raw_scores.items()
-            #     ]
-
-            #     if len(res) == 0:
-            #         reply_service.add_message("点数を入力してください")
-            #     else:
-            #         reply_service.add_message("\n".join(res))
-
-            #     return
         else:
             target_line_user_id = request_info_service.req_line_user_id
             point = text
