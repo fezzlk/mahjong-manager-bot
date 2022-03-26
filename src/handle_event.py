@@ -30,7 +30,7 @@ def handle_event_decorater(function):
 
         try:
             request_info_service.set_req_info(event)
-            function(*args, **kwargs)
+            function(args)
 
         except BaseException as err:
             print(err)
