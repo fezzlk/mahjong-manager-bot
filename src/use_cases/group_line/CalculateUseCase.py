@@ -63,7 +63,8 @@ class CalculateUseCase:
                 return
 
             # 飛び賞が発生した場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
-            if any(x < 0 for x in points.values()):
+            if any(x < 0 for x in points.values()
+                   ) and tobashita_player_id is None:
                 reply_service.add_tobi_menu([
                     {'id': p_id, 'name': user_service.get_name_by_line_user_id(p_id), }
                     for p_id in points.keys() if points[p_id] > 0
