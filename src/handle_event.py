@@ -1,6 +1,7 @@
 """
 LINE messaging API handler
 """
+import os
 from views import handler
 from routing_by_text_in_group_line import routing_by_text_in_group_line
 from routing_by_text_in_personal_line import routing_by_text_in_personal_line
@@ -27,16 +28,26 @@ from use_cases.group_line.InputResultFromImageUseCase import (
 def handle_event_decorater(function):
     def handle_event(*args, **kwargs):
         event = args[0]
-        print(f'receive {event.type} event')
+        print('receipt an event:')
+        print(event)
 
         try:
             request_info_service.set_req_info(event)
             function(args[0])
 
         except BaseException as err:
-            print(err)
-            reply_service.add_message(str(err))
-
+            print('an error occured:')
+            print(err.with_traceback)
+            reply_service.push_a_message(
+                to=os.environ.get('SERVER_ADMIN_LINE_USER_ID'),
+                message=str(err),
+            )
+            reply_service.push_a_message(
+                to=os.environ.get('SERVER_ADMIN_LINE_USER_ID'),
+                message='heroku logs -a mahjong-manager -t',
+            )
+            reply_service.reset()
+            reply_service.add_message(text='システムエラーが発生しました。')
         reply_service.reply(event)
         request_info_service.delete_req_info()
 
@@ -77,7 +88,7 @@ def handle_text_message(event):
 @ handle_event_decorater
 def handle_image_message(event):
     if event.source.type == 'room' or event.source.type == 'group':
-        InputResultFromImageUseCase().execute()
+        InputResultFromImageUseCase().execute(event)
     else:
         raise BaseException('this source type is not supported')
 
