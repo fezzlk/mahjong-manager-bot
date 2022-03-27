@@ -16,7 +16,6 @@ from repositories import (
     group_repository,
     session_scope,
 )
-from src.use_cases.group_line.CalculateUseCase import CalculateUseCase
 
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
