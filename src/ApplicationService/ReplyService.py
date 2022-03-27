@@ -1,3 +1,4 @@
+from ctypes import Union
 from typing import Dict, List
 from linebot.models import (
     TextSendMessage,
@@ -16,9 +17,9 @@ from linebot.models.events import Event
 class ReplyService(IReplyService):
 
     def __init__(self):
-        self.texts = []
-        self.buttons = []
-        self.images = []
+        self.texts: List[TextSendMessage] = []
+        self.buttons: List[Union[TemplateSendMessage, ButtonsTemplate]] = []
+        self.images: List[ImageSendMessage] = []
 
     def add_message(
         self,
