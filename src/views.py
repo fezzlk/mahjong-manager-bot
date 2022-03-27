@@ -16,7 +16,7 @@ from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
 
 from linebot import WebhookHandler, exceptions
-from src import env_var
+import env_var
 
 handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)
 views_blueprint = Blueprint('views_blueprint', __name__, url_prefix='/')

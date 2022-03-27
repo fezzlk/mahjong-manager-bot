@@ -1,5 +1,5 @@
 from linebot import LineBotApi
-from src import env_var
+import env_var
 
 line_bot_api: LineBotApi = None
 

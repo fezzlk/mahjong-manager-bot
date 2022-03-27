@@ -1,7 +1,7 @@
 """ocr"""
 
 import json
-from src import env_var
+import env_var
 from typing import Dict
 from google.cloud import vision
 from google.oauth2 import service_account

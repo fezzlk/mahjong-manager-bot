@@ -22,7 +22,7 @@ from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
 from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
 from use_cases.group_line.InputResultFromImageUseCase import (
     InputResultFromImageUseCase)
-from src import env_var
+import env_var
 
 
 def handle_event_decorater(function):
