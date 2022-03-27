@@ -1,7 +1,6 @@
 """
 LINE messaging API handler
 """
-import os
 from views import handler
 from routing_by_text_in_group_line import routing_by_text_in_group_line
 from routing_by_text_in_personal_line import routing_by_text_in_personal_line
@@ -23,6 +22,7 @@ from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
 from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
 from use_cases.group_line.InputResultFromImageUseCase import (
     InputResultFromImageUseCase)
+from src import env_var
 
 
 def handle_event_decorater(function):
@@ -39,11 +39,11 @@ def handle_event_decorater(function):
             print('an error occured:')
             print(err.with_traceback)
             reply_service.push_a_message(
-                to=os.environ.get('SERVER_ADMIN_LINE_USER_ID'),
+                to=env_var.SERVER_ADMIN_LINE_USER_ID,
                 message=str(err),
             )
             reply_service.push_a_message(
-                to=os.environ.get('SERVER_ADMIN_LINE_USER_ID'),
+                to=env_var.SERVER_ADMIN_LINE_USER_ID,
                 message='heroku logs -a mahjong-manager -t',
             )
             reply_service.reset()
