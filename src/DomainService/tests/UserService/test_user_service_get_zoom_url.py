@@ -1,4 +1,3 @@
-from werkzeug.exceptions import NotFound
 import pytest
 from DomainService.UserService import UserService
 from repositories import session_scope, user_repository
@@ -24,7 +23,7 @@ def test_success():
 
 
 def test_fail_with_invalid_mode():
-    with pytest.raises(NotFound):
+    with pytest.raises(ValueError):
         # Arrange
         user_service = UserService()
         target_user = dummy_users[0]

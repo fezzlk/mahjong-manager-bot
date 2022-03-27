@@ -4,7 +4,6 @@ from repositories import (
     user_repository, session_scope
 )
 from tests.dummies import generate_dummy_user_list
-from werkzeug.exceptions import NotFound
 
 dummy_users = generate_dummy_user_list()[0:3]
 
@@ -30,7 +29,7 @@ def test_success():
 
 
 def test_fail_not_found():
-    with pytest.raises(NotFound):
+    with pytest.raises(ValueError):
         # Arrage
         user_service = UserService()
 
