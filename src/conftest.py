@@ -13,7 +13,14 @@ import pytest
 
 import server
 
+from ApplicationService import (
+    reply_service,
+    request_info_service,
+)
+
 @pytest.fixture(scope='function', autouse=True)
-def reset_db():
+def reset_db_and_services():
     Base.metadata.drop_all(bind=Engine)
     Base.metadata.create_all(bind=Engine)
+    request_info_service.delete_req_info()
+    reply_service.reset()
