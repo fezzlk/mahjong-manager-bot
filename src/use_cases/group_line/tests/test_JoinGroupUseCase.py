@@ -27,4 +27,3 @@ def test_execute(mocker):
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextSendMessage)
     assert reply_service.texts[0].text == 'こんにちは、今日は麻雀日和ですね。'
-    reply_service.reset()

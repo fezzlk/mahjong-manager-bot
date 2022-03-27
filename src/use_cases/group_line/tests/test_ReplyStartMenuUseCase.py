@@ -15,4 +15,3 @@ def test_execute():
     # Assert
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateSendMessage)
-    reply_service.reset()

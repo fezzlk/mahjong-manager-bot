@@ -29,4 +29,3 @@ def test_execute(mocker):
     with session_scope() as session:
         result = user_repository.find_all(session)
         assert len(result) == 0
-    reply_service.reset()
