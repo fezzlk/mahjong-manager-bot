@@ -1,4 +1,3 @@
-import os
 from typing import Dict, List
 from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine, Session
@@ -17,8 +16,9 @@ from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
 
 from linebot import WebhookHandler, exceptions
+import env_var
 
-handler = WebhookHandler(os.environ["YOUR_CHANNEL_SECRET"])
+handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)
 views_blueprint = Blueprint('views_blueprint', __name__, url_prefix='/')
 
 

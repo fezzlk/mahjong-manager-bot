@@ -1,7 +1,7 @@
 """ocr"""
 
 import json
-import os
+import env_var
 from typing import Dict
 from google.cloud import vision
 from google.oauth2 import service_account
@@ -13,7 +13,7 @@ class OcrService:
     def __init__(self):
         self.result = None
         self.client = None
-        credentials_raw = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+        credentials_raw = env_var.GOOGLE_APPLICATION_CREDENTIALS
         if credentials_raw is not None:
             service_account_info = json.loads(
                 credentials_raw, strict=False
