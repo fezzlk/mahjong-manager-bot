@@ -311,6 +311,9 @@ class ReplyService(IReplyService):
             )
         self.reset()
 
+    def push_a_message(self, to: str, message: str) -> None:
+        line_bot_api.push_message(to, [TextSendMessage(text=message)])
+
     def reset(self) -> None:
         self.texts = []
         self.buttons = []

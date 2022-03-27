@@ -5,12 +5,11 @@ from tests.dummies import (
 from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
 from ApplicationService import (
     request_info_service,
-    reply_service,
 )
 from repositories import session_scope, UserRepository
 
 
-def test_execute(mocker):
+def test_execute():
     # Arrage
     dummy_event = generate_dummy_unfollow_event()
     request_info_service.set_req_info(event=dummy_event)
