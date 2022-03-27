@@ -20,7 +20,8 @@ from ApplicationService import (
 from use_cases.personal_line.FollowUseCase import FollowUseCase
 from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
 from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
-from use_cases.group_line.InputResultFromImageUseCase import InputResultFromImageUseCase
+from use_cases.group_line.InputResultFromImageUseCase import (
+    InputResultFromImageUseCase)
 
 
 def handle_event_decorater(function):
