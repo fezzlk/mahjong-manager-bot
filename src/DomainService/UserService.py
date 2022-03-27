@@ -1,6 +1,5 @@
 """user"""
 
-from werkzeug.exceptions import NotFound
 from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
@@ -80,7 +79,7 @@ class UserService(IUserService):
 
             if len(users) == 0:
                 print(f'user({line_user_name}) is not found')
-                raise NotFound(f'user({line_user_name}) is not found')
+                raise ValueError(f'user({line_user_name}) is not found')
 
             if len(users) > 1:
                 print(f'"{line_user_name}" は複数存在しているため名前からLINE IDを一意に取得できません。')
@@ -115,7 +114,7 @@ class UserService(IUserService):
 
             if target is None:
                 print(f'user is not found: {line_user_id}')
-                raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
+                raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
 
             return target.mode
 
@@ -133,7 +132,7 @@ class UserService(IUserService):
 
         if user is None:
             print(f'user is not found: {line_user_id}')
-            raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
+            raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
 
         print(f'set_user_url: {user.zoom_url} to {line_user_id}')
         return user
@@ -145,7 +144,7 @@ class UserService(IUserService):
 
             if target is None:
                 print(f'user_services: user "{line_user_id}" is not found')
-                raise NotFound('ユーザーが登録されていません。友達登録をし直してください。')
+                raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
 
             if target.zoom_url is None:
                 print(
