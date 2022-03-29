@@ -147,6 +147,27 @@ class UserRepository(IUserRepository):
 
         return self._mapping_record_to_user_domain(record)
 
+    def update(
+        self,
+        session: BaseSession,
+        target: User,
+    ) -> int:
+        updated = UserModel(
+            line_user_name=target.line_user_name,
+            line_user_id=target.line_user_id,
+            zoom_url=target.zoom_url,
+            mode=target.mode.value,
+            jantama_name=target.jantama_name,
+        ).__dict__
+        updated.pop('_sa_instance_state')
+
+        result: int = session\
+            .query(UserModel)\
+            .filter(UserModel.id == target._id)\
+            .update(updated)
+
+        return result
+
     def _mapping_record_to_user_domain(self, record: UserModel) -> User:
         return User(
             _id=record.id,

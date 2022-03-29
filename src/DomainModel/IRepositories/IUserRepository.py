@@ -78,3 +78,11 @@ class IUserRepository(metaclass=ABCMeta):
         zoom_url: str,
     ) -> User:
         pass
+
+    @abstractmethod
+    def update(
+        self,
+        session: BaseSession,
+        target: User,
+    ) -> int:
+        pass
