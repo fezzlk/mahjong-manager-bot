@@ -211,7 +211,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
             },
             match_id=1,
             status=1,
-            _id=1,
+            _id=6,
         ),
         Hanchan(
             line_group_id=groups[0].line_group_id,
@@ -229,7 +229,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
             },
             match_id=1,
             status=1,
-            _id=1,
+            _id=7,
         ),
     ]
 
@@ -240,14 +240,14 @@ def generate_dummy_match_list() -> List[Match]:
     return [
         Match(
             line_group_id=groups[0].line_group_id,
-            hanchan_ids=[],
+            hanchan_ids=[1, 2, 3, 6, 7],
             users=[],
             status=1,
             _id=1,
         ),
         Match(
             line_group_id=groups[0].line_group_id,
-            hanchan_ids=[],
+            hanchan_ids=[4],
             users=[],
             status=2,
             _id=2,
@@ -268,7 +268,7 @@ def generate_dummy_match_list() -> List[Match]:
         ),
         Match(
             line_group_id=groups[1].line_group_id,
-            hanchan_ids=[],
+            hanchan_ids=[4],
             users=[],
             status=0,
             _id=5,
