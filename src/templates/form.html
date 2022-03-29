@@ -1,14 +1,14 @@
-{% macro render(title, keys) -%}
-<form action="{{ url_for('views_blueprint.create_'+title) }}" method="post">
-    {% for k in keys %}
-    <p>
-        <label for="{{ k }}">{{ k }}:</label>
-        <input type="text" name="{{ k }}" id="{{ k }}">
-    </p>
-    {% endfor %}
-    <p>
-        <input type="submit" value="追加"><input type="reset" value="リセット">
-    </p>
+{% macro render(submit_to, keys, init_data) -%}
+<form action="{{ url_for('views_blueprint.'+submit_to) }}" method="post">
+  {% for k in keys %}
+  <p>
+    <label for="{{ k }}">{{ k }}:</label>
+    <input type="text" name="{{ k }}" id="{{ k }}" value="{{ init_data[k] }}" />
+  </p>
+  {% endfor %}
+  <p>
+    <input type="submit" value="登録" /><input type="reset" value="リセット" />
+  </p>
 </form>
 
 {%- endmacro %}

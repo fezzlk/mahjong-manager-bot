@@ -1,4 +1,5 @@
 from typing import Dict, List
+from xml.dom import NotFoundErr
 from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine, Session
 from db_models import Base
@@ -14,6 +15,7 @@ from use_cases.web.GetHanchansForWebUseCase import GetHanchansForWebUseCase
 from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
 from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
+from use_cases.web.GetUserForWebUseCase import GetUserForWebUseCase
 
 from linebot import WebhookHandler, exceptions
 import env_var
@@ -118,14 +120,35 @@ def get_users():
     return render_template(
         'model.html',
         title='users',
+        submit_to='create_user',
         keys=keys,
         input_keys=input_keys,
         data=data
     )
 
 
+@views_blueprint.route('/users/<_id>')
+def users_detail(_id):
+    data = GetUserForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = [
+        '_id',
+        'line_user_name',
+        'line_user_id',
+        'zoom_url',
+        'jantama_name']
+    return render_template(
+        'detail.html',
+        title='user_detail',
+        submit_to='update_user',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/users/create', methods=['POST'])
-def create_users():
+def create_user():
     # line_user_name = request.form['line_user_name']
     # user_id = request.form['user_id']
     # user_use_cases.create(line_user_name, user_id)
@@ -139,6 +162,14 @@ def delete_users():
     return redirect(url_for('views_blueprint.get_users'))
 
 
+@views_blueprint.route('/users/update', methods=['POST'])
+def update_user():
+    target_id = request.args.get('_id')
+    print('target_id')
+    print(target_id)
+    return redirect(url_for('views_blueprint.get_users'))
+
+
 @views_blueprint.route('/groups')
 def get_groups():
     data = GetGroupsForWebUseCase().execute()
@@ -147,6 +178,7 @@ def get_groups():
     return render_template(
         'model.html',
         title='groups',
+        submit_to='create_group',
         keys=keys,
         input_keys=input_keys,
         data=data
@@ -154,8 +186,12 @@ def get_groups():
 
 
 @views_blueprint.route('/groups/create', methods=['POST'])
-def create_groups():
+def create_group():
     return redirect(url_for('views_blueprint.get_groups'))
+
+# @views_blueprint.route('/groups/<user_id>', methods=['POST'])
+# def create_groups():
+#     return redirect(url_for('views_blueprint.get_groups'))
 
 
 @views_blueprint.route('/groups/delete', methods=['POST'])
@@ -175,6 +211,7 @@ def get_hanchans():
     return render_template(
         'model.html',
         title='hanchans',
+        submit_to='create_hanchan',
         keys=keys,
         input_keys=input_keys,
         data=data
@@ -182,7 +219,7 @@ def get_hanchans():
 
 
 @views_blueprint.route('/hanchans/create', methods=['POST'])
-def create_hanchans():
+def create_hanchan():
     return redirect(url_for('views_blueprint.get_hanchans'))
 
 
@@ -207,6 +244,7 @@ def get_matches():
     return render_template(
         'model.html',
         title='matches',
+        submit_to='create_match',
         keys=keys,
         input_keys=input_keys,
         data=data
@@ -214,7 +252,7 @@ def get_matches():
 
 
 @views_blueprint.route('/matches/create', methods=['POST'])
-def create_matches():
+def create_match():
     return redirect(url_for('views_blueprint.get_matches'))
 
 
@@ -233,6 +271,7 @@ def get_configs():
     return render_template(
         'model.html',
         title='configs',
+        submit_to='create_config',
         keys=keys,
         input_keys=input_keys,
         data=data
@@ -240,7 +279,7 @@ def get_configs():
 
 
 @views_blueprint.route('/configs/create', methods=['POST'])
-def create_configs():
+def create_config():
     return redirect(url_for('views_blueprint.get_configs'))
 
 
