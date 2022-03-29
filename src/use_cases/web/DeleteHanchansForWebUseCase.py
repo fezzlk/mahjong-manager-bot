@@ -12,5 +12,5 @@ class DeleteHanchansForWebUseCase:
             deleted_hanchans = hanchan_repository.delete_by_ids(session, ids)
             for deleted_hanchan in deleted_hanchans:
                 match_service.remove_hanchan_id(
-                    deleted_hanchan.match_id, deleted_hanchan.id
+                    deleted_hanchan.match_id, deleted_hanchan._id
                 )
