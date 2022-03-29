@@ -76,19 +76,17 @@ def create_dummy():
 def migrate():
     session = Session()
     from db_models import UserMatchModel
-    from Repositories.HanchanRepository import HanchanRepository
-    from DomainService.UserService import UserService
+    from repositories import hanchan_repository
     from line_models.Profile import Profile
-    repository = HanchanRepository()
-    service = UserService()
-    hanchans: List = repository.find_all(session)
+    from DomainService import user_service
+    hanchans: List = hanchan_repository.find_all(session)
     target_user_match = []
     for hanchan in hanchans:
         if not isinstance(hanchan.converted_scores, Dict):
             continue
         for user_id in hanchan.converted_scores:
             pro = Profile(display_name='', user_id=user_id)
-            res = service.find_or_create_by_profile(pro)
+            res = user_service.find_or_create_by_profile(pro)
             target_user_match.append((res._id, hanchan.match_id))
     for t in set(target_user_match):
         user_match = UserMatchModel(
