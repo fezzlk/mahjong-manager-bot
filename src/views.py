@@ -16,6 +16,10 @@ from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCas
 from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
 from use_cases.web.GetUserForWebUseCase import GetUserForWebUseCase
+from use_cases.web.GetGroupForWebUseCase import GetGroupForWebUseCase
+from use_cases.web.GetHanchanForWebUseCase import GetHanchanForWebUseCase
+from use_cases.web.GetMatchForWebUseCase import GetMatchForWebUseCase
+from use_cases.web.GetConfigForWebUseCase import GetConfigForWebUseCase
 
 from linebot import WebhookHandler, exceptions
 import env_var
@@ -155,18 +159,15 @@ def create_user():
     return redirect(url_for('views_blueprint.get_users'))
 
 
+@views_blueprint.route('/users/update', methods=['POST'])
+def update_user():
+    return redirect(url_for('views_blueprint.get_users'))
+
+
 @views_blueprint.route('/users/delete', methods=['POST'])
 def delete_users():
     target_id = request.args.get('target_id')
     DeleteUsersForWebUseCase().execute([int(target_id)])
-    return redirect(url_for('views_blueprint.get_users'))
-
-
-@views_blueprint.route('/users/update', methods=['POST'])
-def update_user():
-    target_id = request.args.get('_id')
-    print('target_id')
-    print(target_id)
     return redirect(url_for('views_blueprint.get_users'))
 
 
@@ -185,13 +186,29 @@ def get_groups():
     )
 
 
+@views_blueprint.route('/groups/<_id>')
+def groups_detail(_id):
+    data = GetGroupForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'line_group_id', 'zoom_url']
+    return render_template(
+        'detail.html',
+        title='groups',
+        submit_to='create_group',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/groups/create', methods=['POST'])
 def create_group():
     return redirect(url_for('views_blueprint.get_groups'))
 
-# @views_blueprint.route('/groups/<user_id>', methods=['POST'])
-# def create_groups():
-#     return redirect(url_for('views_blueprint.get_groups'))
+
+@views_blueprint.route('/groups/update', methods=['POST'])
+def update_group():
+    return redirect(url_for('views_blueprint.get_groups'))
 
 
 @views_blueprint.route('/groups/delete', methods=['POST'])
@@ -218,8 +235,29 @@ def get_hanchans():
     )
 
 
+@views_blueprint.route('/hanchans/<_id>')
+def hanchans_detail(_id):
+    data = GetHanchanForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'line_group_id', 'raw_scores',
+                  'converted_scores', 'match_id', 'status']
+    return render_template(
+        'detail.html',
+        title='hanchans',
+        submit_to='create_hanchan',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/hanchans/create', methods=['POST'])
 def create_hanchan():
+    return redirect(url_for('views_blueprint.get_hanchans'))
+
+
+@views_blueprint.route('/hanchans/update', methods=['POST'])
+def update_hanchan():
     return redirect(url_for('views_blueprint.get_hanchans'))
 
 
@@ -251,8 +289,28 @@ def get_matches():
     )
 
 
+@views_blueprint.route('/matches/<_id>')
+def matches_detail(_id):
+    data = GetMatchForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'line_group_id', 'hanchan_ids', 'status']
+    return render_template(
+        'detail.html',
+        title='matches',
+        submit_to='create_match',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/matches/create', methods=['POST'])
 def create_match():
+    return redirect(url_for('views_blueprint.get_matches'))
+
+
+@views_blueprint.route('/matches/update', methods=['POST'])
+def update_match():
     return redirect(url_for('views_blueprint.get_matches'))
 
 
@@ -278,8 +336,28 @@ def get_configs():
     )
 
 
+@views_blueprint.route('/configs/<_id>')
+def configs_detail(_id):
+    data = GetConfigForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'key', 'value', 'target_id']
+    return render_template(
+        'detail.html',
+        title='configs',
+        submit_to='create_config',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/configs/create', methods=['POST'])
 def create_config():
+    return redirect(url_for('views_blueprint.get_configs'))
+
+
+@views_blueprint.route('/configs/update', methods=['POST'])
+def update_config():
     return redirect(url_for('views_blueprint.get_configs'))
 
 

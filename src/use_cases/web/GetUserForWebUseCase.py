@@ -8,8 +8,8 @@ class GetUserForWebUseCase:
 
     def execute(self, _id) -> User:
         with session_scope() as session:
-            users = user_repository.find_by_ids(session, [_id])
-            if len(users) > 0:
-                return users[0]
+            records = user_repository.find_by_ids(session, [_id])
+            if len(records) > 0:
+                return records[0]
             else:
                 None
