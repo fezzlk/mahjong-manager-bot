@@ -122,9 +122,9 @@ class ConfigRepository(IConfigRepository):
         target: Config,
     ) -> int:
         updated = ConfigModel(
-            line_group_id=target.line_group_id,
-            mode=target.mode.value,
-            zoom_url=target.zoom_url,
+            target_id=target.target_id,
+            key=target.key,
+            value=target.value,
         ).__dict__
         updated.pop('_sa_instance_state')
 
