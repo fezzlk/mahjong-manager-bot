@@ -118,6 +118,25 @@ class GroupRepository(IGroupRepository):
 
         return self._mapping_record_to_group_domain(record)
 
+    def update(
+        self,
+        session: BaseSession,
+        target: Group,
+    ) -> int:
+        updated = GroupModel(
+            line_group_id=target.line_group_id,
+            mode=target.mode.value,
+            zoom_url=target.zoom_url,
+        ).__dict__
+        updated.pop('_sa_instance_state')
+
+        result: int = session\
+            .query(GroupModel)\
+            .filter(GroupModel.id == target._id)\
+            .update(updated)
+
+        return result
+
     def _mapping_record_to_group_domain(self, record: GroupModel) -> Group:
         return Group(
             line_group_id=record.line_group_id,

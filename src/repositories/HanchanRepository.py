@@ -165,6 +165,27 @@ class HanchanRepository(IHanchanRepository):
 
         return self._mapping_record_to_hanchan_domain(record)
 
+    def update(
+        self,
+        session: BaseSession,
+        target: Hanchan,
+    ) -> int:
+        updated = HanchanModel(
+            line_group_id=target.line_group_id,
+            match_id=target.match_id,
+            raw_scores=target.raw_scores,
+            converted_scores=target.converted_scores,
+            status=target.status,
+        ).__dict__
+        updated.pop('_sa_instance_state')
+
+        result: int = session\
+            .query(HanchanModel)\
+            .filter(HanchanModel.id == target._id)\
+            .update(updated)
+
+        return result
+
     def _mapping_record_to_hanchan_domain(
         self,
         record: HanchanModel
