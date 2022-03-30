@@ -81,3 +81,11 @@ class IHanchanRepository(metaclass=ABCMeta):
         status: int,
     ) -> Hanchan:
         pass
+
+    @abstractmethod
+    def update(
+        self,
+        session: BaseSession,
+        target: Hanchan,
+    ) -> int:
+        pass
