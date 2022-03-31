@@ -20,6 +20,12 @@ from use_cases.web.GetGroupForWebUseCase import GetGroupForWebUseCase
 from use_cases.web.GetHanchanForWebUseCase import GetHanchanForWebUseCase
 from use_cases.web.GetMatchForWebUseCase import GetMatchForWebUseCase
 from use_cases.web.GetConfigForWebUseCase import GetConfigForWebUseCase
+from use_cases.web.UpdateUserForWebUseCase import UpdateUserForWebUseCase
+from use_cases.web.UpdateGroupForWebUseCase import UpdateGroupForWebUseCase
+from use_cases.web.UpdateHanchanForWebUseCase import UpdateHanchanForWebUseCase
+from use_cases.web.UpdateMatchForWebUseCase import UpdateMatchForWebUseCase
+from use_cases.web.UpdateConfigForWebUseCase import UpdateConfigForWebUseCase
+
 
 from linebot import WebhookHandler, exceptions
 import env_var
@@ -120,7 +126,11 @@ def get_users():
     data = GetUsersForWebUseCase().execute()
     keys = ['_id', 'line_user_name', 'line_user_id', 'jantama_name',
             'zoom_url', 'mode', 'matches', 'groups']
-    input_keys = ['line_user_name', 'line_user_id', 'zoom_url', 'jantama_name']
+    input_keys = [
+        'line_user_name',
+        'line_user_id',
+        'zoom_url',
+        'jantama_name']
     return render_template(
         'model.html',
         title='users',
@@ -140,6 +150,7 @@ def users_detail(_id):
         '_id',
         'line_user_name',
         'line_user_id',
+        'mode',
         'zoom_url',
         'jantama_name']
     return render_template(
@@ -161,6 +172,7 @@ def create_user():
 
 @views_blueprint.route('/users/update', methods=['POST'])
 def update_user():
+    UpdateUserForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_users'))
 
 
@@ -195,7 +207,7 @@ def groups_detail(_id):
     return render_template(
         'detail.html',
         title='groups',
-        submit_to='create_group',
+        submit_to='update_group',
         input_keys=input_keys,
         init_data=data
     )
@@ -208,6 +220,7 @@ def create_group():
 
 @views_blueprint.route('/groups/update', methods=['POST'])
 def update_group():
+    UpdateGroupForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_groups'))
 
 
@@ -245,7 +258,7 @@ def hanchans_detail(_id):
     return render_template(
         'detail.html',
         title='hanchans',
-        submit_to='create_hanchan',
+        submit_to='update_hanchan',
         input_keys=input_keys,
         init_data=data
     )
@@ -258,6 +271,7 @@ def create_hanchan():
 
 @views_blueprint.route('/hanchans/update', methods=['POST'])
 def update_hanchan():
+    UpdateHanchanForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_hanchans'))
 
 
@@ -298,7 +312,7 @@ def matches_detail(_id):
     return render_template(
         'detail.html',
         title='matches',
-        submit_to='create_match',
+        submit_to='update_match',
         input_keys=input_keys,
         init_data=data
     )
@@ -311,6 +325,7 @@ def create_match():
 
 @views_blueprint.route('/matches/update', methods=['POST'])
 def update_match():
+    UpdateMatchForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_matches'))
 
 
@@ -345,7 +360,7 @@ def configs_detail(_id):
     return render_template(
         'detail.html',
         title='configs',
-        submit_to='create_config',
+        submit_to='update_config',
         input_keys=input_keys,
         init_data=data
     )
@@ -358,6 +373,7 @@ def create_config():
 
 @views_blueprint.route('/configs/update', methods=['POST'])
 def update_config():
+    UpdateConfigForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_configs'))
 
 
