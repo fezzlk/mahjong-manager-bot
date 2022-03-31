@@ -18,7 +18,6 @@ class UserMatchRepository(IUserMatchRepository):
         )
         session.add(record)
         session.commit()
-        new_user_match._id = record.id
         return new_user_match
 
     def find_by_user_ids(
@@ -29,7 +28,7 @@ class UserMatchRepository(IUserMatchRepository):
         records = session\
             .query(UserMatchModel)\
             .filter(UserMatchModel.user_id.in_(user_ids))\
-            .order_by(UserMatchModel.id)\
+            .order_by(UserMatchModel.user_id)\
             .all()
 
         return [
