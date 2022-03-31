@@ -12,7 +12,7 @@ from ApplicationService import (
     message_service,
 )
 from DomainModel.entities.Group import GroupMode
-from repositories import session_scope, hanchan_repository
+from repositories import session_scope, hanchan_repository, user_match_repository
 
 from line_models.Profile import Profile
 
@@ -110,12 +110,13 @@ class CalculateUseCase:
                 .all()
             linked_user_ids = [um.user_id for um in user_matches]
             target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
-            for user_id in target_user_ids:
-                user_match = UserMatchModel(
-                    user_id=user_id,
-                    match_id=updated_hanchan.match_id,
-                )
-                session.add(user_match)
+            with session_scope() as session:
+                for user_id in target_user_ids:
+                    user_match = UserMatchModel(
+                        user_id=user_id,
+                        match_id=updated_hanchan.match_id,
+                    )
+                    user_match_repository.create(session, user_match)
 
             # 総合結果に半荘結果を追加
             current_match = match_service.add_hanchan_id(

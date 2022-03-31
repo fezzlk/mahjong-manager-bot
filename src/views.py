@@ -3,6 +3,7 @@ from xml.dom import NotFoundErr
 from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine, Session
 from db_models import Base
+from repositories import user_match_repository
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
 from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
@@ -105,7 +106,7 @@ def migrate():
             user_id=t[0],
             match_id=t[1],
         )
-        session.add(user_match)
+        user_match_repository.create(session, user_match)
     # Engine.execute('SELECT setval(\'users_id_seq\', MAX(id)) FROM users;')
     # Engine.execute('SELECT setval(\'groups_id_seq\', MAX(id)) FROM groups;')
     # Engine.execute(
@@ -116,7 +117,6 @@ def migrate():
     # before_name = request.form['before_name']
     # after_name = request.form['after_name']
     # Engine.execute(f'ALTER TABLE {table_name} RENAME COLUMN {before_name} TO {after_name};')
-    session.commit()
 
     return redirect(url_for('views_blueprint.index', message='migrateしました'))
 
