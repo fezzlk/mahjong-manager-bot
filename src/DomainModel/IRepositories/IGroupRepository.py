@@ -62,3 +62,11 @@ class IGroupRepository(metaclass=ABCMeta):
         zoom_url: str,
     ) -> Group:
         pass
+
+    @abstractmethod
+    def update(
+        self,
+        session: BaseSession,
+        target: Group,
+    ) -> int:
+        pass

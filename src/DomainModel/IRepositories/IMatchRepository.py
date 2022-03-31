@@ -72,3 +72,11 @@ class IMatchRepository(metaclass=ABCMeta):
         ids: List[int],
     ) -> int:
         pass
+
+    @abstractmethod
+    def update(
+        self,
+        session: BaseSession,
+        target: Match,
+    ) -> int:
+        pass

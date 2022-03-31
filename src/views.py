@@ -1,4 +1,5 @@
 from typing import Dict, List
+from xml.dom import NotFoundErr
 from flask import Blueprint, abort, request, render_template, url_for, redirect
 from db_setting import Engine, Session
 from db_models import Base
@@ -14,6 +15,17 @@ from use_cases.web.GetHanchansForWebUseCase import GetHanchansForWebUseCase
 from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
 from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
+from use_cases.web.GetUserForWebUseCase import GetUserForWebUseCase
+from use_cases.web.GetGroupForWebUseCase import GetGroupForWebUseCase
+from use_cases.web.GetHanchanForWebUseCase import GetHanchanForWebUseCase
+from use_cases.web.GetMatchForWebUseCase import GetMatchForWebUseCase
+from use_cases.web.GetConfigForWebUseCase import GetConfigForWebUseCase
+from use_cases.web.UpdateUserForWebUseCase import UpdateUserForWebUseCase
+from use_cases.web.UpdateGroupForWebUseCase import UpdateGroupForWebUseCase
+from use_cases.web.UpdateHanchanForWebUseCase import UpdateHanchanForWebUseCase
+from use_cases.web.UpdateMatchForWebUseCase import UpdateMatchForWebUseCase
+from use_cases.web.UpdateConfigForWebUseCase import UpdateConfigForWebUseCase
+
 
 from linebot import WebhookHandler, exceptions
 import env_var
@@ -76,19 +88,17 @@ def create_dummy():
 def migrate():
     session = Session()
     from db_models import UserMatchModel
-    from Repositories.HanchanRepository import HanchanRepository
-    from DomainService.UserService import UserService
+    from repositories import hanchan_repository
     from line_models.Profile import Profile
-    repository = HanchanRepository()
-    service = UserService()
-    hanchans: List = repository.find_all(session)
+    from DomainService import user_service
+    hanchans: List = hanchan_repository.find_all(session)
     target_user_match = []
     for hanchan in hanchans:
         if not isinstance(hanchan.converted_scores, Dict):
             continue
         for user_id in hanchan.converted_scores:
             pro = Profile(display_name='', user_id=user_id)
-            res = service.find_or_create_by_profile(pro)
+            res = user_service.find_or_create_by_profile(pro)
             target_user_match.append((res._id, hanchan.match_id))
     for t in set(target_user_match):
         user_match = UserMatchModel(
@@ -116,21 +126,53 @@ def get_users():
     data = GetUsersForWebUseCase().execute()
     keys = ['_id', 'line_user_name', 'line_user_id', 'jantama_name',
             'zoom_url', 'mode', 'matches', 'groups']
-    input_keys = ['line_user_name', 'line_user_id', 'zoom_url', 'jantama_name']
+    input_keys = [
+        'line_user_name',
+        'line_user_id',
+        'zoom_url',
+        'jantama_name']
     return render_template(
         'model.html',
         title='users',
+        submit_to='create_user',
         keys=keys,
         input_keys=input_keys,
         data=data
     )
 
 
+@views_blueprint.route('/users/<_id>')
+def users_detail(_id):
+    data = GetUserForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = [
+        '_id',
+        'line_user_name',
+        'line_user_id',
+        'mode',
+        'zoom_url',
+        'jantama_name']
+    return render_template(
+        'detail.html',
+        title='user_detail',
+        submit_to='update_user',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/users/create', methods=['POST'])
-def create_users():
+def create_user():
     # line_user_name = request.form['line_user_name']
     # user_id = request.form['user_id']
     # user_use_cases.create(line_user_name, user_id)
+    return redirect(url_for('views_blueprint.get_users'))
+
+
+@views_blueprint.route('/users/update', methods=['POST'])
+def update_user():
+    UpdateUserForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_users'))
 
 
@@ -149,14 +191,36 @@ def get_groups():
     return render_template(
         'model.html',
         title='groups',
+        submit_to='create_group',
         keys=keys,
         input_keys=input_keys,
         data=data
     )
 
 
+@views_blueprint.route('/groups/<_id>')
+def groups_detail(_id):
+    data = GetGroupForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'line_group_id', 'zoom_url']
+    return render_template(
+        'detail.html',
+        title='groups',
+        submit_to='update_group',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/groups/create', methods=['POST'])
-def create_groups():
+def create_group():
+    return redirect(url_for('views_blueprint.get_groups'))
+
+
+@views_blueprint.route('/groups/update', methods=['POST'])
+def update_group():
+    UpdateGroupForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_groups'))
 
 
@@ -177,14 +241,37 @@ def get_hanchans():
     return render_template(
         'model.html',
         title='hanchans',
+        submit_to='create_hanchan',
         keys=keys,
         input_keys=input_keys,
         data=data
     )
 
 
+@views_blueprint.route('/hanchans/<_id>')
+def hanchans_detail(_id):
+    data = GetHanchanForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'line_group_id', 'raw_scores',
+                  'converted_scores', 'match_id', 'status']
+    return render_template(
+        'detail.html',
+        title='hanchans',
+        submit_to='update_hanchan',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/hanchans/create', methods=['POST'])
-def create_hanchans():
+def create_hanchan():
+    return redirect(url_for('views_blueprint.get_hanchans'))
+
+
+@views_blueprint.route('/hanchans/update', methods=['POST'])
+def update_hanchan():
+    UpdateHanchanForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_hanchans'))
 
 
@@ -209,14 +296,36 @@ def get_matches():
     return render_template(
         'model.html',
         title='matches',
+        submit_to='create_match',
         keys=keys,
         input_keys=input_keys,
         data=data
     )
 
 
+@views_blueprint.route('/matches/<_id>')
+def matches_detail(_id):
+    data = GetMatchForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'line_group_id', 'hanchan_ids', 'status']
+    return render_template(
+        'detail.html',
+        title='matches',
+        submit_to='update_match',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/matches/create', methods=['POST'])
-def create_matches():
+def create_match():
+    return redirect(url_for('views_blueprint.get_matches'))
+
+
+@views_blueprint.route('/matches/update', methods=['POST'])
+def update_match():
+    UpdateMatchForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_matches'))
 
 
@@ -235,14 +344,36 @@ def get_configs():
     return render_template(
         'model.html',
         title='configs',
+        submit_to='create_config',
         keys=keys,
         input_keys=input_keys,
         data=data
     )
 
 
+@views_blueprint.route('/configs/<_id>')
+def configs_detail(_id):
+    data = GetConfigForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'key', 'value', 'target_id']
+    return render_template(
+        'detail.html',
+        title='configs',
+        submit_to='update_config',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
 @views_blueprint.route('/configs/create', methods=['POST'])
-def create_configs():
+def create_config():
+    return redirect(url_for('views_blueprint.get_configs'))
+
+
+@views_blueprint.route('/configs/update', methods=['POST'])
+def update_config():
+    UpdateConfigForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_configs'))
 
 

@@ -116,6 +116,25 @@ class ConfigRepository(IConfigRepository):
 
         return self._mapping_record_to_config_domain(record)
 
+    def update(
+        self,
+        session: BaseSession,
+        target: Config,
+    ) -> int:
+        updated = ConfigModel(
+            target_id=target.target_id,
+            key=target.key,
+            value=target.value,
+        ).__dict__
+        updated.pop('_sa_instance_state')
+
+        result: int = session\
+            .query(ConfigModel)\
+            .filter(ConfigModel.id == target._id)\
+            .update(updated)
+
+        return result
+
     def _mapping_record_to_config_domain(self, record: ConfigModel) -> Config:
         return Config(
             target_id=record.target_id,

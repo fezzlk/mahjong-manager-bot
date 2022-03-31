@@ -137,6 +137,25 @@ class MatchRepository(IMatchRepository):
 
         return delete_count
 
+    def update(
+        self,
+        session: BaseSession,
+        target: Match,
+    ) -> int:
+        updated = MatchModel(
+            line_group_id=target.line_group_id,
+            hanchan_ids=target.hanchan_ids,
+            status=target.status,
+        ).__dict__
+        updated.pop('_sa_instance_state')
+
+        result: int = session\
+            .query(MatchModel)\
+            .filter(MatchModel.id == target._id)\
+            .update(updated)
+
+        return result
+
     def _mapping_record_to_match_domain(self, record: MatchModel) -> Match:
         return Match(
             _id=record.id,

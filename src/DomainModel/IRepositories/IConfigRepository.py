@@ -62,3 +62,11 @@ class IConfigRepository(metaclass=ABCMeta):
         key: str,
     ) -> Config:
         pass
+
+    @abstractmethod
+    def update(
+        self,
+        session: BaseSession,
+        target: Config,
+    ) -> int:
+        pass
