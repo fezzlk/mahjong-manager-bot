@@ -6,12 +6,14 @@ from .ConfigRepository import ConfigRepository
 from .UserRepository import UserRepository
 from .HanchanRepository import HanchanRepository
 from .MatchRepository import MatchRepository
+from .UserMatchRepository import UserMatchRepository
 from .GroupRepository import GroupRepository
 
 config_repository = ConfigRepository()
 user_repository = UserRepository()
 hanchan_repository = HanchanRepository()
 match_repository = MatchRepository()
+user_match_repository = UserMatchRepository()
 group_repository = GroupRepository()
 
 
