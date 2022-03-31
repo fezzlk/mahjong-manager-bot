@@ -39,7 +39,6 @@ class UserMatchRepository(IUserMatchRepository):
     def _mapping_record_to_user_match_domain(
             self, record: UserMatchModel) -> UserMatch:
         return UserMatch(
-            _id=record.id,
             user_id=record.user_id,
             match_id=record.match_id,
         )
