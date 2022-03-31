@@ -1,6 +1,9 @@
 from .interfaces.IGroupService import IGroupService
 from DomainModel.entities.Group import Group, GroupMode
 from repositories import session_scope, group_repository
+from ApplicationService import (
+    reply_service,
+)
 
 
 class GroupService(IGroupService):
@@ -53,10 +56,10 @@ class GroupService(IGroupService):
                 session, line_group_id)
 
             if target is None:
-                print(
-                    'failed to get mode: group is not found'
+                reply_service.add_message(
+                    'トークルームが登録されていません。招待し直してください。'
                 )
-                raise Exception('トークルームが登録されていません。招待し直してください。')
+                return
 
             return target.mode
 
