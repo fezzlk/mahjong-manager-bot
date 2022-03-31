@@ -3,7 +3,7 @@ from tests.dummies import (
     generate_dummy_match_list,
 )
 from repositories import session_scope, hanchan_repository, match_repository
-from domains.Hanchan import Hanchan
+from DomainModel.entities.Hanchan import Hanchan
 
 
 def test_hit_with_ids():
@@ -34,7 +34,13 @@ def test_hit_with_ids():
         )
 
     # Assert
-    assert result == len(ids)
+    assert len(result) == len(ids)
+    for i in range(len(result)):
+        assert result[i].line_group_id == target_hanchans[i].line_group_id
+        assert result[i].match_id == target_hanchans[i].match_id
+        assert result[i].raw_scores == target_hanchans[i].raw_scores
+        assert result[i].converted_scores == target_hanchans[i].converted_scores
+        assert result[i].status == target_hanchans[i].status
     with session_scope() as session:
         record_on_db = hanchan_repository.find_all(
             session,
@@ -74,7 +80,7 @@ def test_hit_0_record():
         )
 
     # Assert
-    assert result == 0
+    assert len(result) == 0
     with session_scope() as session:
         record_on_db = hanchan_repository.find_all(
             session,

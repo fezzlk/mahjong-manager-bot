@@ -1,17 +1,18 @@
 from typing import List
-from models import GroupSchema
-from domains.Group import Group, GroupMode
+from db_models import GroupModel
+from DomainModel.IRepositories.IGroupRepository import IGroupRepository
+from DomainModel.entities.Group import Group, GroupMode
 from sqlalchemy.orm.session import Session as BaseSession
 
 
-class GroupRepository:
+class GroupRepository(IGroupRepository):
 
     def create(
         self,
         session: BaseSession,
         new_group: Group,
     ) -> Group:
-        record = GroupSchema(
+        record = GroupModel(
             line_group_id=new_group.line_group_id,
             mode=new_group.mode.value,
             zoom_url=new_group.zoom_url,
@@ -24,11 +25,11 @@ class GroupRepository:
     def delete_by_ids(
         self,
         session: BaseSession,
-        ids: List[str],
+        ids: List[int],
     ) -> int:
         delete_count = session\
-            .query(GroupSchema)\
-            .filter(GroupSchema.id.in_(ids))\
+            .query(GroupModel)\
+            .filter(GroupModel.id.in_(ids))\
             .delete(synchronize_session=False)
 
         return delete_count
@@ -38,8 +39,8 @@ class GroupRepository:
         session: BaseSession,
     ) -> List[Group]:
         records = session\
-            .query(GroupSchema)\
-            .order_by(GroupSchema.id)\
+            .query(GroupModel)\
+            .order_by(GroupModel.id)\
             .all()
 
         return [
@@ -53,9 +54,9 @@ class GroupRepository:
         ids: List[str],
     ) -> List[Group]:
         records = session\
-            .query(GroupSchema)\
-            .filter(GroupSchema.id.in_(ids))\
-            .order_by(GroupSchema.id)\
+            .query(GroupModel)\
+            .filter(GroupModel.id.in_(ids))\
+            .order_by(GroupModel.id)\
             .all()
 
         return [
@@ -69,8 +70,8 @@ class GroupRepository:
         line_group_id: int,
     ) -> Group:
         record = session\
-            .query(GroupSchema)\
-            .filter(GroupSchema.line_group_id == line_group_id)\
+            .query(GroupModel)\
+            .filter(GroupModel.line_group_id == line_group_id)\
             .first()
 
         if record is None:
@@ -88,8 +89,8 @@ class GroupRepository:
             raise ValueError
 
         record = session\
-            .query(GroupSchema)\
-            .filter(GroupSchema.line_group_id == line_group_id)\
+            .query(GroupModel)\
+            .filter(GroupModel.line_group_id == line_group_id)\
             .first()
 
         if record is None:
@@ -106,8 +107,8 @@ class GroupRepository:
         zoom_url: str,
     ) -> Group:
         record = session\
-            .query(GroupSchema)\
-            .filter(GroupSchema.line_group_id == line_group_id)\
+            .query(GroupModel)\
+            .filter(GroupModel.line_group_id == line_group_id)\
             .first()
 
         if record is None:
@@ -117,7 +118,26 @@ class GroupRepository:
 
         return self._mapping_record_to_group_domain(record)
 
-    def _mapping_record_to_group_domain(self, record: GroupSchema) -> Group:
+    def update(
+        self,
+        session: BaseSession,
+        target: Group,
+    ) -> int:
+        updated = GroupModel(
+            line_group_id=target.line_group_id,
+            mode=target.mode.value,
+            zoom_url=target.zoom_url,
+        ).__dict__
+        updated.pop('_sa_instance_state')
+
+        result: int = session\
+            .query(GroupModel)\
+            .filter(GroupModel.id == target._id)\
+            .update(updated)
+
+        return result
+
+    def _mapping_record_to_group_domain(self, record: GroupModel) -> Group:
         return Group(
             line_group_id=record.line_group_id,
             zoom_url=record.zoom_url,

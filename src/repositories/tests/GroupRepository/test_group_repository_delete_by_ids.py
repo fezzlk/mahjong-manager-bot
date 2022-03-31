@@ -1,6 +1,6 @@
 from tests.dummies import generate_dummy_group_list
 from repositories import session_scope, group_repository
-from domains.Group import Group
+from DomainModel.entities.Group import Group
 
 
 def test_hit_with_ids():
