@@ -76,6 +76,26 @@ class HanchanRepository(IHanchanRepository):
             for record in records
         ]
 
+    def find_archived_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[Hanchan],
+    ) -> List[Hanchan]:
+        # TODO use map to filter
+        records = session\
+            .query(HanchanModel)\
+            .filter(and_(
+                HanchanModel.id.in_([int(s) for s in ids]),
+                HanchanModel.status == 2,
+            ))\
+            .order_by(HanchanModel.id)\
+            .all()
+
+        return [
+            self._mapping_record_to_hanchan_domain(record)
+            for record in records
+        ]
+
     def find_one_by_id_and_line_group_id(
         self,
         session: BaseSession,

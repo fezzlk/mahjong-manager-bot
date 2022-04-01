@@ -55,6 +55,25 @@ class MatchRepository(IMatchRepository):
             for record in records
         ]
 
+    def find_archived_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[Match],
+    ) -> List[Match]:
+        records = session\
+            .query(MatchModel)\
+            .filter(and_(
+                MatchModel.id.in_([int(s) for s in ids]),
+                MatchModel.status == 2,
+            ))\
+            .order_by(MatchModel.id)\
+            .all()
+
+        return [
+            self._mapping_record_to_match_domain(record)
+            for record in records
+        ]
+
     def find_many_by_line_group_id_and_status(
         self,
         session: BaseSession,
