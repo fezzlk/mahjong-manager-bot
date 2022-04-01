@@ -12,6 +12,7 @@ from use_cases.personal_line.ReplyUserModeUseCase import ReplyUserModeUseCase
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
 from use_cases.personal_line.UserMyZoomCommandUseCase import UserMyZoomCommandUseCase
+from use_cases.personal_line.ReplyHistoryUseCase import ReplyHistoryUseCase
 
 
 class UCommands(Enum):
@@ -77,7 +78,7 @@ def routing_by_method(method: str, body: str):
         ReplyFortuneUseCase().execute()
     # history
     elif method == UCommands.history.name:
-        reply_service.add_message('対戦履歴機能は開発中です。')
+        ReplyHistoryUseCase().execute()
     # setting
     elif method == UCommands.setting.name:
         reply_service.add_message('個人設定機能は開発中です。')
@@ -87,6 +88,6 @@ def routing_by_method(method: str, body: str):
     # github
     elif method == UCommands.github.name:
         ReplyGitHubUrlUseCase().execute()
-    # github
+    # my_zoom
     elif method == UCommands.my_zoom.name:
         UserMyZoomCommandUseCase().execute()
