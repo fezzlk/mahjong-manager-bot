@@ -30,6 +30,14 @@ class IMatchRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def find_archived_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[Match],
+    ) -> List[Match]:
+        pass
+
+    @abstractmethod
     def find_many_by_line_group_id_and_status(
         self,
         session: BaseSession,

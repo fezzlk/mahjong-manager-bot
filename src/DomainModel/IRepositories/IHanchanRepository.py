@@ -38,6 +38,14 @@ class IHanchanRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def find_archived_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[Hanchan],
+    ) -> List[Hanchan]:
+        pass
+
+    @abstractmethod
     def find_one_by_id_and_line_group_id(
         self,
         session: BaseSession,

@@ -33,8 +33,6 @@ from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
 
-from use_cases.group_line.ReplyMyResultsUseCase import ReplyMyResultsUseCase
-
 from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
 
 from DomainModel.entities.Group import GroupMode
@@ -150,9 +148,6 @@ def routing_for_group_by_method(method, body):
         CalculateUseCase().execute(
             tobashita_player_id=body
         )
-    # my results
-    elif method == RCommands.my_results.name:
-        ReplyMyResultsUseCase().execute()
     # update config
     elif method == RCommands.update_config.name:
         key = body.split(' ')[0]
