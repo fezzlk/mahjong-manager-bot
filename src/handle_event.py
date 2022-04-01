@@ -23,6 +23,7 @@ from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
 from use_cases.group_line.InputResultFromImageUseCase import (
     InputResultFromImageUseCase)
 import env_var
+import traceback
 
 
 def handle_event_decorater(function):
@@ -36,8 +37,7 @@ def handle_event_decorater(function):
             function(args[0])
 
         except BaseException as err:
-            print('an error occured:')
-            print(err.with_traceback)
+            traceback.print_exc()
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
                 message=str(err),
