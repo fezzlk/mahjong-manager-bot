@@ -65,7 +65,9 @@ class ReplyHistoryUseCase:
             for match in matches:
                 score = 0
                 for hanchan_id in match.hanchan_ids:
-                    score += dict_c_results[hanchan_id][req_line_id]
+                    if hanchan_id in dict_c_results:
+                        if req_line_id in dict_c_results[hanchan_id]:
+                            score += dict_c_results[hanchan_id][req_line_id]
                 total += score
                 strScore = ('+' + str(score)) if score > 0 else str(score)
                 message += match.created_at.strftime(
