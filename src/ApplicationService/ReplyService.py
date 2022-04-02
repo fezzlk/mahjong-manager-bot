@@ -7,11 +7,13 @@ from linebot.models import (
     ButtonsTemplate,
     PostbackAction,
 )
+import env_var
 
 import json
 from messaging_api_setting import line_bot_api
 from .interfaces.IReplyService import IReplyService
 from linebot.models.events import Event
+from linebot.exceptions import LineBotApiError
 
 
 class ReplyService(IReplyService):
@@ -305,10 +307,23 @@ class ReplyService(IReplyService):
         if (len(contents) == 0):
             return
         if hasattr(event, 'reply_token'):
-            line_bot_api.reply_message(
-                event.reply_token,
-                contents,
-            )
+            try:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    contents,
+                )
+            except LineBotApiError as err:
+                print('リプライに失敗しました。')
+                # contents の内容が原因でリプライが失敗した時のためのハンドリング
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    [TextSendMessage(text='システムエラーが発生しました。')],
+                )
+                self.push_a_message(
+                    to=env_var.SERVER_ADMIN_LINE_USER_ID,
+                    message=str(err),
+                )
+
         self.reset()
 
     def push_a_message(self, to: str, message: str) -> None:
