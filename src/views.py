@@ -62,31 +62,39 @@ def create_dummy():
     CreateDummyUseCase().execute()
     return 'Done'
 
-# @views_blueprint.route('/try', methods=['POST'])
-# def hogehoge():
-#     # from repositories import user_repository
-#     # from DomainModel.entities.User import User, UserMode
-#     session = Session()
-#     # user = User(
-#     #     line_user_name="test user6",
-#     #     line_user_id="U0123456789abcdefghijklmnopqrstu6",
-#     #     zoom_url="https://us00web.zoom.us/j/01234567896?pwd=abcdefghijklmnopqrstuvwxyz",
-#     #     mode=UserMode.wait,
-#     #     jantama_name="jantama user6",
-#     #     matches=[1],
-#     # )
-#     # user_repository.create(session, user)
-#     from models import UserMatchModel
-#     user_match = UserMatchModel(
-#         user_id=2,
-#         match_id=1,
-#     )
-#     session.add(user_match)
-#     session.commit()
-
 
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
+    from repositories import match_repository, session_scope
+    with session_scope() as session:
+        matches = match_repository.find_all(session)
+        for m in matches:
+            m.hanchan_ids = list(map(int, m.hanchan_ids))
+            match_repository.update(session, m)
+
+    return redirect(url_for('views_blueprint.index', message='migrateしました'))
+
+
+@views_blueprint.route('/migrate_reset_sequence', methods=['POST'])
+def migrate_reset_sequence():
+    table_name = request.form['table_name']  # ex. users
+    Engine.execute(
+        f'SELECT setval(\'{table_name}_id_seq\', MAX(id)) FROM {table_name};')
+
+
+@views_blueprint.route('/migrate_rename_columns', methods=['POST'])
+def migrate_rename_columns():
+    table_name = request.form['table_name']
+    before_name = request.form['before_name']
+    after_name = request.form['after_name']
+    Engine.execute(
+        f'ALTER TABLE {table_name} RENAME COLUMN {before_name} TO {after_name};')
+
+    return redirect(url_for('views_blueprint.index', message='migrateしました'))
+
+
+@views_blueprint.route('/migrate_create_user_match', methods=['POST'])
+def migrate_create_user_match():
     session = Session()
     from db_models import UserMatchModel
     from repositories import hanchan_repository
@@ -107,16 +115,6 @@ def migrate():
             match_id=t[1],
         )
         user_match_repository.create(session, user_match)
-    # Engine.execute('SELECT setval(\'users_id_seq\', MAX(id)) FROM users;')
-    # Engine.execute('SELECT setval(\'groups_id_seq\', MAX(id)) FROM groups;')
-    # Engine.execute(
-    #     'SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
-    # Engine.execute('SELECT setval(\'matches_id_seq\', MAX(id)) FROM matches;')
-    # Engine.execute('SELECT setval(\'configs_id_seq\', MAX(id)) FROM configs;')
-    # table_name = request.form['table_name']
-    # before_name = request.form['before_name']
-    # after_name = request.form['after_name']
-    # Engine.execute(f'ALTER TABLE {table_name} RENAME COLUMN {before_name} TO {after_name};')
 
     return redirect(url_for('views_blueprint.index', message='migrateしました'))
 
