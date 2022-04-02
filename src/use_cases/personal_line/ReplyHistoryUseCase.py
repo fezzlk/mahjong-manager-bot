@@ -111,7 +111,7 @@ class ReplyHistoryUseCase:
             plt.clf()
             plt.close()
 
-            path = 'uploads/personal_history/{req_line_id}.png'
+            path = f'uploads/personal_history/{req_line_id}.png'
             image_url = f'{env_var.SERVER_URL}{path}'
             print('$$$$$$$$reply image')
             print(image_url)
