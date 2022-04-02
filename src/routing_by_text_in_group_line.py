@@ -34,6 +34,7 @@ from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUse
 from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
 
 from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
+from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
 
 from DomainModel.entities.Group import GroupMode
 
@@ -63,6 +64,7 @@ class RCommands(Enum):
     sum_matches = 'sum_matches'
     graph = 'graph'
     my_results = 'my_results'
+    history = 'history'
 
 
 def routing_by_text_in_group_line(text: str):
@@ -161,6 +163,12 @@ def routing_for_group_by_method(method, body):
     # my_zoom
     elif method == RCommands.my_zoom.name:
         SetMyZoomUrlToGroupUseCase().execute()
+    # history
+    elif method == RCommands.history.name:
+        user_names = body.split('@')[1:]
+        ReplyMultiHistoryUseCase().execute(
+            [name.strip() for name in user_names]
+        )
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')
