@@ -1,6 +1,15 @@
 from typing import Dict, List
 from xml.dom import NotFoundErr
-from flask import Blueprint, abort, request, render_template, url_for, redirect
+from flask import (
+    Blueprint,
+    abort,
+    request,
+    render_template,
+    url_for,
+    redirect,
+    send_from_directory,
+)
+
 from db_setting import Engine, Session
 from db_models import Base
 from repositories import user_match_repository
@@ -393,3 +402,9 @@ def callback():
     except exceptions.InvalidSignatureError:
         abort(400)
     return 'OK'
+
+
+@views_blueprint.route('/uploads/<path:filename>')
+def download_file(filename: str):
+    return send_from_directory("uploads/",
+                               filename, as_attachment=True)
