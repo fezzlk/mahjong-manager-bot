@@ -113,6 +113,4 @@ class ReplyHistoryUseCase:
 
             path = f'uploads/personal_history/{req_line_id}.png'
             image_url = f'{env_var.SERVER_URL}{path}'
-            print('$$$$$$$$reply image')
-            print(image_url)
             reply_service.add_image(image_url)
