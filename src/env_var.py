@@ -12,3 +12,9 @@ YOUR_CHANNEL_SECRET = os.getenv('YOUR_CHANNEL_SECRET')
 DATABASE_URL = os.getenv('DATABASE_URL')
 GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 SERVER_ADMIN_LINE_USER_ID = os.getenv('SERVER_ADMIN_LINE_USER_ID')
+
+tmp_db_url = os.getenv('DATABASE_URL')
+DATABASE_URL = tmp_db_url + ("/" if tmp_db_url[-1] != "/" else "")
+
+tmp_server_url = os.getenv('SERVER_URL')
+SERVER_URL = tmp_server_url + ("/" if tmp_server_url[-1] != "/" else "")
