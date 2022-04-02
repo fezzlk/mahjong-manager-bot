@@ -24,10 +24,6 @@ import japanize_matplotlib
 class ReplyMultiHistoryUseCase:
 
     def execute(self, user_names: List[str]) -> None:
-        reply_service.add_message(
-            '対戦履歴を表示します'
-        )
-
         req_line_id = request_info_service.req_line_user_id
         messages_stock = []
         user_ids: List[int] = []
@@ -64,9 +60,10 @@ class ReplyMultiHistoryUseCase:
                     line_id_name_dict[req_line_id] = user.line_user_name
                     user_ids.append(user._id)
 
-            reply_service.add_message(
-                messages_stock
-            )
+            if len(messages_stock) > 0:
+                reply_service.add_message(
+                    '\n'.join(messages_stock)
+                )
 
             um_total: List[UserMatch] = []
             for user_id in user_ids:
