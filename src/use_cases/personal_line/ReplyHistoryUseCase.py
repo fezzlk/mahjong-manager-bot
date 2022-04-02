@@ -1,3 +1,5 @@
+from datetime import datetime
+import env_var
 from ApplicationService import request_info_service, reply_service
 from repositories import (
     user_match_repository,
@@ -62,6 +64,9 @@ class ReplyHistoryUseCase:
 
             message = ''
             total = 0
+
+            history = [[datetime(2021, 2, 1)], [0]]
+
             for match in matches:
                 score = 0
                 for hanchan_id in match.hanchan_ids:
@@ -73,6 +78,9 @@ class ReplyHistoryUseCase:
                 message += match.created_at.strftime(
                     "%Y/%m/%d") + ': ' + strScore + '\n'
 
+                history[0].append(match.created_at)
+                history[1].append(total)
+
             reply_service.add_message(
                 message
             )
@@ -81,3 +89,28 @@ class ReplyHistoryUseCase:
             reply_service.add_message(
                 '累計: ' + strTotal
             )
+
+            import matplotlib.pyplot as plt
+            fig = plt.figure()
+            plt.xlim([datetime(2021, 2, 1), datetime.today()])
+            plt.step(history[0], history[1], where='post')
+            try:
+                fig.savefig(f"src/uploads/personal_history/{req_line_id}.png")
+            except FileNotFoundError:
+                reply_service.reset()
+                reply_service.add_message(text='システムエラーが発生しました。')
+                messages = [
+                    '対戦履歴の画像アップロードに失敗しました',
+                    '送信者: ' + req_line_id,
+                ]
+                reply_service.push_a_message(
+                    to=env_var.SERVER_ADMIN_LINE_USER_ID,
+                    message='\n'.join(messages),
+                )
+                return
+            plt.clf()
+            plt.close()
+
+            path = 'uploads/personal_history/{req_line_id}.png'
+            image_url = f'{env_var.SERVER_URL}{path}'
+            reply_service.add_image(image_url)
