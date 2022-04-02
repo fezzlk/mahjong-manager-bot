@@ -4,6 +4,8 @@ from ApplicationService import (
     reply_service,
     request_info_service,
 )
+from DomainModel.entities.User import User
+from DomainService import user_service
 from DomainModel.entities.UserMatch import UserMatch
 from repositories import (
     user_match_repository,
@@ -23,8 +25,8 @@ class ReplyMultiHistoryUseCase:
 
     def execute(self, user_names: List[str]) -> None:
         req_line_id = request_info_service.req_line_user_id
-        messages = []
-        um_total: List[UserMatch] = []
+        messages_stock = []
+        user_ids: List[int] = []
         user_line_ids: List[str] = []
         line_id_name_dict: Dict[str, str] = {}
 
@@ -36,17 +38,38 @@ class ReplyMultiHistoryUseCase:
                 )
 
                 if len(users) == 0:
-                    messages.append(f'{user_name} は登録されていません。')
+                    messages_stock.append(f'{user_name} は登録されていません。')
                     continue
                 elif len(users) > 1:
-                    messages.append(f'{user_name} は複数存在しています。(1人分だけ出します')
+                    messages_stock.append(f'{user_name} は複数存在しています。(1人分だけ出します')
 
                 user = users[0]
                 line_id_name_dict[user.line_user_id] = user_name
                 user_line_ids.append(user.line_user_id)
+                user_ids.append(user._id)
+
+            if req_line_id not in user_line_ids:
+                user: User = user_repository.find_one_by_line_user_id(
+                    session,
+                    req_line_id,
+                )
+                if user is None:
+                    messages_stock.append(f'送信者のユーザー情報がありません。')
+                else:
+                    user_line_ids.append(req_line_id)
+                    line_id_name_dict[req_line_id] = user.line_user_name
+                    user_ids.append(user._id)
+
+            if len(messages_stock) > 0:
+                reply_service.add_message(
+                    '\n'.join(messages_stock)
+                )
+
+            um_total: List[UserMatch] = []
+            for user_id in user_ids:
                 um_total += user_match_repository.find_by_user_ids(
                     session,
-                    [user._id],
+                    [user_id],
                 )
 
             matches = match_repository.find_archived_by_ids(
@@ -76,7 +99,6 @@ class ReplyMultiHistoryUseCase:
 
             dict_c_results = {h._id: h.converted_scores for h in all_hanchans}
 
-            message = ''
             total_dict = {line_id: 0 for line_id in user_line_ids}
             history_dict = {line_id: [
                 [datetime(2021, 2, 1)], [0]] for line_id in user_line_ids}
@@ -124,7 +146,3 @@ class ReplyMultiHistoryUseCase:
             path = f'uploads/group_history/{req_line_id}.png'
             image_url = f'{env_var.SERVER_URL}{path}'
             reply_service.add_image(image_url)
-
-            reply_service.add_message(
-                message
-            )
