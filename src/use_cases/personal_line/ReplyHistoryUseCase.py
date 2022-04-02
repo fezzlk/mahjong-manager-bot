@@ -1,5 +1,5 @@
 from datetime import datetime
-from src import env_var
+import env_var
 from ApplicationService import request_info_service, reply_service
 from repositories import (
     user_match_repository,
