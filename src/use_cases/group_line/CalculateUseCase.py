@@ -12,7 +12,11 @@ from ApplicationService import (
     message_service,
 )
 from DomainModel.entities.Group import GroupMode
-from repositories import session_scope, hanchan_repository, user_match_repository
+from repositories import (
+    session_scope,
+    hanchan_repository,
+    user_match_repository,
+)
 
 from line_models.Profile import Profile
 
@@ -36,6 +40,9 @@ class CalculateUseCase:
             if current is None:
                 print(
                     'current points is not found.'
+                )
+                reply_service.add_message(
+                    '計算対象の半荘が見つかりません。'
                 )
                 return
             points = current.raw_scores
