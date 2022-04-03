@@ -6,6 +6,7 @@ from DomainModel.entities.Match import Match
 from DomainModel.entities.Config import Config
 from DomainModel.entities.User import User, UserMode
 from DomainModel.entities.Group import Group, GroupMode
+from DomainService import hanchan_service
 
 from repositories import (
     session_scope,
@@ -72,7 +73,7 @@ dummy_users = [
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
-    mode=GroupMode.wait,
+    mode=GroupMode.input,
     _id=1,
 )
 
@@ -95,9 +96,23 @@ dummy_archived_hanchan = Hanchan(
     converted_scores={},
     match_id=1,
     status=2,
-    _id=1,
+    _id=3,
 )
 
+dummy_disabled_hanchan = Hanchan(
+    line_group_id=dummy_group.line_group_id,
+    raw_scores={
+        dummy_users[0].line_user_id: 40000,
+        dummy_users[1].line_user_id: 30000,
+        dummy_users[2].line_user_id: 20000,
+        dummy_users[3].line_user_id: 10000,
+    },
+    converted_scores={},
+    match_id=1,
+    status=2,
+    _id=4,
+)
+dummy_disabled_hanchan
 dummy_current_hanchan = Hanchan(
     line_group_id=dummy_group.line_group_id,
     raw_scores={
@@ -228,19 +243,42 @@ def test_success_update_user_matches():
         reply_service.reset()
 
 
-# def test_success_not_active_hanchan():
-#     # Arrange
-#     use_case = CalculateUseCase()
-#     dummy_tobashita_player_id = 'a'
+def test_success_not_current_hanchan(mocker):
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(session, dummy_archived_hanchan)
+        hanchan_repository.create(session, dummy_disabled_hanchan)
 
-#     # Act
-#     result = use_case.execute(tobashita_player_id=dummy_tobashita_player_id)
+    mock = mocker.patch.object(
+        hanchan_service,
+        'run_calculate',
+        return_value=None,
+    )
 
-#     # Assert
-#     expected = dummy_converted_scores_list1[case1[1]]
-#     assert len(result) == len(expected)
-#     for key in result:
-#         assert result[key] == expected[key]
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert mock.call_count == 0
+    with session_scope() as session:
+        um = user_match_repository.find_by_user_ids(
+            session,
+            [1, 2, 3, 4]
+        )
+        assert len(um) == 0
+        assert len(reply_service.texts) == 1
+        assert reply_service.texts[0].text == "計算対象の半荘が見つかりません。"
+        group = group_repository.find_one_by_line_group_id(
+            session, dummy_group.line_group_id)
+        assert group.mode == GroupMode.input
+
+        reply_service.reset()
 
 
 # def test_success_does_not_have_4_points():
