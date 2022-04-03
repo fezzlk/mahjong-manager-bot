@@ -1,4 +1,5 @@
 import pytest
+from DomainModel.entities.UserMatch import UserMatch
 from use_cases.group_line.CalculateUseCase import CalculateUseCase
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
@@ -48,7 +49,6 @@ dummy_users = [
         matches=[],
         _id=3,
     ),
-    # same line_user_name _id=3
     User(
         line_user_name="test_user4",
         line_user_id="U0123456789abcdefghijklmnopqrstu4",
@@ -57,6 +57,15 @@ dummy_users = [
         jantama_name="jantama_user4",
         matches=[],
         _id=4,
+    ),
+    User(
+        line_user_name="test_user5",
+        line_user_id="U0123456789abcdefghijklmnopqrstu5",
+        zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
+        mode=UserMode.wait,
+        jantama_name="jantama_user5",
+        matches=[],
+        _id=5,
     ),
 ]
 
@@ -96,6 +105,20 @@ dummy_current_hanchan = Hanchan(
         dummy_users[1].line_user_id: 30000,
         dummy_users[2].line_user_id: 20000,
         dummy_users[3].line_user_id: 10000,
+    },
+    converted_scores={},
+    match_id=1,
+    status=1,
+    _id=2,
+)
+
+dummy_current_hanchan_with_other_user = Hanchan(
+    line_group_id=dummy_group.line_group_id,
+    raw_scores={
+        dummy_users[0].line_user_id: 40000,
+        dummy_users[1].line_user_id: 30000,
+        dummy_users[2].line_user_id: 20000,
+        dummy_users[4].line_user_id: 10000,
     },
     converted_scores={},
     match_id=1,
@@ -171,6 +194,36 @@ def test_success():
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.wait
+
+        reply_service.reset()
+
+
+def test_success_update_user_matches():
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(session, dummy_archived_hanchan)
+        hanchan_repository.create(
+            session, dummy_current_hanchan_with_other_user)
+        for user_id in [1, 2, 3, 4]:
+            um = UserMatch(user_id, dummy_match._id)
+            user_match_repository.create(session, um)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    with session_scope() as session:
+        um = user_match_repository.find_by_user_ids(
+            session,
+            [1, 2, 3, 4, 5]
+        )
+        assert len(um) == 5
 
         reply_service.reset()
 
