@@ -7,7 +7,7 @@ from DomainModel.entities.Config import Config
 from DomainModel.entities.User import User, UserMode
 from DomainModel.entities.Group import Group, GroupMode
 from DomainService import hanchan_service
-
+from copy import deepcopy
 from repositories import (
     session_scope,
     user_repository,
@@ -93,10 +93,14 @@ dummy_archived_hanchan = Hanchan(
         dummy_users[2].line_user_id: 20000,
         dummy_users[3].line_user_id: 10000,
     },
-    converted_scores={},
+    converted_scores={
+        dummy_users[0].line_user_id: 50,
+        dummy_users[1].line_user_id: 10,
+        dummy_users[2].line_user_id: -20,
+        dummy_users[3].line_user_id: -40,
+    },
     match_id=1,
     status=2,
-    _id=3,
 )
 
 dummy_disabled_hanchan = Hanchan(
@@ -107,16 +111,20 @@ dummy_disabled_hanchan = Hanchan(
         dummy_users[2].line_user_id: 20000,
         dummy_users[3].line_user_id: 10000,
     },
-    converted_scores={},
+    converted_scores={
+        dummy_users[0].line_user_id: 50,
+        dummy_users[1].line_user_id: 10,
+        dummy_users[2].line_user_id: -20,
+        dummy_users[3].line_user_id: -40,
+    },
     match_id=1,
-    status=2,
-    _id=4,
+    status=0,
 )
-dummy_disabled_hanchan
+
 dummy_current_hanchan = Hanchan(
     line_group_id=dummy_group.line_group_id,
     raw_scores={
-        dummy_users[0].line_user_id: 40000,
+        dummy_users[0].line_user_id: 40010,
         dummy_users[1].line_user_id: 30000,
         dummy_users[2].line_user_id: 20000,
         dummy_users[3].line_user_id: 10000,
@@ -124,7 +132,6 @@ dummy_current_hanchan = Hanchan(
     converted_scores={},
     match_id=1,
     status=1,
-    _id=2,
 )
 
 dummy_current_hanchan_with_other_user = Hanchan(
@@ -138,7 +145,59 @@ dummy_current_hanchan_with_other_user = Hanchan(
     converted_scores={},
     match_id=1,
     status=1,
-    _id=2,
+)
+
+dummy_current_hanchan_has_5_points = Hanchan(
+    line_group_id=dummy_group.line_group_id,
+    raw_scores={
+        dummy_users[0].line_user_id: 40000,
+        dummy_users[1].line_user_id: 30000,
+        dummy_users[2].line_user_id: 20000,
+        dummy_users[3].line_user_id: 10000,
+        dummy_users[4].line_user_id: 0,
+    },
+    converted_scores={},
+    match_id=1,
+    status=1,
+)
+
+dummy_current_hanchan_has_invalid_sum_point = Hanchan(
+    line_group_id=dummy_group.line_group_id,
+    raw_scores={
+        dummy_users[0].line_user_id: 50000,
+        dummy_users[1].line_user_id: 30000,
+        dummy_users[2].line_user_id: 20000,
+        dummy_users[3].line_user_id: 10000,
+    },
+    converted_scores={},
+    match_id=1,
+    status=1,
+)
+
+dummy_current_hanchan_has_tai = Hanchan(
+    line_group_id=dummy_group.line_group_id,
+    raw_scores={
+        dummy_users[0].line_user_id: 35000,
+        dummy_users[1].line_user_id: 35000,
+        dummy_users[2].line_user_id: 20000,
+        dummy_users[3].line_user_id: 10000,
+    },
+    converted_scores={},
+    match_id=1,
+    status=1,
+)
+
+dummy_current_hanchan_has_minus_point = Hanchan(
+    line_group_id=dummy_group.line_group_id,
+    raw_scores={
+        dummy_users[0].line_user_id: 60000,
+        dummy_users[1].line_user_id: 30000,
+        dummy_users[2].line_user_id: 20000,
+        dummy_users[3].line_user_id: -10000,
+    },
+    converted_scores={},
+    match_id=1,
+    status=1,
 )
 
 dummy_configs = [
@@ -209,8 +268,41 @@ def test_success():
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.wait
+        match = match_repository.find_all(session)[0]
+        print(match.hanchan_ids)
+        assert len(match.hanchan_ids) == 1
+        expected_hanchan_ids = [1]
+        for i in range(len(match.hanchan_ids)):
+            assert match.hanchan_ids[i] == expected_hanchan_ids[i]
 
         reply_service.reset()
+
+
+def test_success_assert_sum_point_in_match():
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        dm = deepcopy(dummy_match)
+        dm.hanchan_ids = [1]
+        match_repository.create(session, dm)
+        hanchan_repository.create(session, dummy_archived_hanchan)
+        hanchan_repository.create(session, dummy_disabled_hanchan)
+        hanchan_repository.create(
+            session, dummy_current_hanchan_with_other_user)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    with session_scope() as session:
+        print(hanchan_repository.find_all(session))
+    assert reply_service.texts[1].text == "test_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user5: -40 (-40)"
+
+    reply_service.reset()
 
 
 def test_success_update_user_matches():
@@ -281,86 +373,178 @@ def test_success_not_current_hanchan(mocker):
         reply_service.reset()
 
 
-# def test_success_does_not_have_4_points():
-#     # Arrange
-#     use_case = CalculateUseCase()
-#     dummy_tobashita_player_id = 'a'
+def test_success_does_not_have_4_points():
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(session, dummy_current_hanchan_has_5_points)
 
-#     # Act
-#     result = use_case.execute(tobashita_player_id=dummy_tobashita_player_id)
+    # Act
+    use_case.execute()
 
-#     # Assert
-#     expected = dummy_converted_scores_list1[case1[1]]
-#     assert len(result) == len(expected)
-#     for key in result:
-#         assert result[key] == expected[key]
+    # Assert
+    with session_scope() as session:
+        hanchan = hanchan_repository.find_all(session)[0]
+        assert len(hanchan.converted_scores) == 0
+        assert hanchan.status == 1
+        um = user_match_repository.find_by_user_ids(
+            session,
+            [1, 2, 3, 4]
+        )
+        assert len(um) == 0
+        assert len(reply_service.texts) == 1
+        assert reply_service.texts[0].text == "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
+        group = group_repository.find_one_by_line_group_id(
+            session, dummy_group.line_group_id)
+        assert group.mode == GroupMode.input
 
-
-# def test_success_does_invalid_sum_point():
-#     # Arrange
-#     use_case = CalculateUseCase()
-#     dummy_tobashita_player_id = 'a'
-
-#     # Act
-#     result = use_case.execute(tobashita_player_id=dummy_tobashita_player_id)
-
-#     # Assert
-#     expected = dummy_converted_scores_list1[case1[1]]
-#     assert len(result) == len(expected)
-#     for key in result:
-#         assert result[key] == expected[key]
-
-
-# def test_success_with_tobi():
-#     # Arrange
-#     use_case = CalculateUseCase()
-#     dummy_tobashita_player_id = 'a'
-
-#     # Act
-#     result = use_case.execute(tobashita_player_id=dummy_tobashita_player_id)
-
-#     # Assert
-#     expected = dummy_converted_scores_list1[case1[1]]
-#     assert len(result) == len(expected)
-#     for key in result:
-#         assert result[key] == expected[key]
+        reply_service.reset()
 
 
-# def test_success_reply_tobi_menu():
-#     # Arrange
-#     use_case = CalculateUseCase()
-#     with session_scope() as session:
-#         group_repository.create(session, dummy_group)
-#         for dummy_user in dummy_users:
-#             user_repository.create(session, dummy_user)
-#         match_repository.create(session, dummy_match)
-#         hanchan_repository.create(session, dummy_hanchans[0])
+def test_success_does_invalid_sum_point():
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(
+            session, dummy_current_hanchan_has_invalid_sum_point)
 
-#     # Act
-#     result = use_case.execute()
+    # Act
+    use_case.execute()
 
-#     # Assert
-#     expected = dummy_converted_scores_list1[case1[1]]
-#     assert len(result) == len(expected)
-#     for key in result:
-#         assert result[key] == expected[key]
+    # Assert
+    with session_scope() as session:
+        hanchan = hanchan_repository.find_all(session)[0]
+        assert len(hanchan.converted_scores) == 0
+        assert hanchan.status == 1
+        um = user_match_repository.find_by_user_ids(
+            session,
+            [1, 2, 3, 4]
+        )
+        assert len(um) == 0
+        assert len(reply_service.texts) == 1
+        assert reply_service.texts[0].text == "点数の合計が110000点です。合計100000点+αになるように修正してください。"
+        group = group_repository.find_one_by_line_group_id(
+            session, dummy_group.line_group_id)
+        assert group.mode == GroupMode.input
 
+        reply_service.reset()
+
+
+def test_success_has_tai():
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(
+            session, dummy_current_hanchan_has_tai)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    with session_scope() as session:
+        hanchan = hanchan_repository.find_all(session)[0]
+        assert len(hanchan.converted_scores) == 0
+        assert hanchan.status == 1
+        um = user_match_repository.find_by_user_ids(
+            session,
+            [1, 2, 3, 4]
+        )
+        assert len(um) == 0
+        assert len(reply_service.texts) == 1
+        assert reply_service.texts[0].text == "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。"
+        group = group_repository.find_one_by_line_group_id(
+            session, dummy_group.line_group_id)
+        assert group.mode == GroupMode.input
+
+        reply_service.reset()
+
+
+def test_success_reply_tobi_menu(mocker):
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(
+            session, dummy_current_hanchan_has_minus_point)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.buttons) == 1
+    with session_scope() as session:
+        hanchan = hanchan_repository.find_all(session)[0]
+        assert len(hanchan.converted_scores) == 0
+        assert hanchan.status == 1
+        um = user_match_repository.find_by_user_ids(
+            session,
+            [1, 2, 3, 4]
+        )
+        assert len(um) == 0
+        group = group_repository.find_one_by_line_group_id(
+            session, dummy_group.line_group_id)
+        assert group.mode == GroupMode.input
+
+        reply_service.reset()
+
+
+def test_success_with_tobi():
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(
+            session, dummy_current_hanchan_has_minus_point)
+
+    # Act
+    use_case.execute(tobashita_player_id=dummy_users[0].line_user_id)
+
+    # Assert
+    expected_c_scores = {
+        dummy_users[0].line_user_id: 80,
+        dummy_users[1].line_user_id: 10,
+        dummy_users[2].line_user_id: -20,
+        dummy_users[3].line_user_id: -70,
+    }
+    with session_scope() as session:
+        hanchan = hanchan_repository.find_all(session)[0]
+        for k in expected_c_scores:
+            assert hanchan.converted_scores[k] == expected_c_scores[k]
+        assert hanchan.status == 2
+        um = user_match_repository.find_by_user_ids(
+            session,
+            [1, 2, 3, 4]
+        )
+        assert len(um) == 4
+        assert len(reply_service.texts) == 4
+        assert reply_service.texts[1].text == "test_user1: +80 (+80)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -70 (-70)"
+        group = group_repository.find_one_by_line_group_id(
+            session, dummy_group.line_group_id)
+        assert group.mode == GroupMode.wait
+
+        reply_service.reset()
 
 # def test_success_other_configs():
-#     # Arrange
-#     use_case = CalculateUseCase()
-#     with session_scope() as session:
-#         group_repository.create(session, dummy_group)
-#         for dummy_user in dummy_users:
-#             user_repository.create(session, dummy_user)
-#         match_repository.create(session, dummy_match)
-#         hanchan_repository.create(session, dummy_hanchans[0])
-
-#     # Act
-#     result = use_case.execute()
-
-#     # Assert
-#     expected = dummy_converted_scores_list1[case1[1]]
-#     assert len(result) == len(expected)
-#     for key in result:
-#         assert result[key] == expected[key]
