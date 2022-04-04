@@ -1,3 +1,4 @@
+from typing import List, Tuple
 import pytest
 from DomainModel.entities.UserMatch import UserMatch
 from use_cases.group_line.CalculateUseCase import CalculateUseCase
@@ -14,6 +15,7 @@ from repositories import (
     hanchan_repository,
     match_repository,
     group_repository,
+    config_repository,
     user_match_repository,
 )
 
@@ -199,37 +201,6 @@ dummy_current_hanchan_has_minus_point = Hanchan(
     match_id=1,
     status=1,
 )
-
-dummy_configs = [
-    Config(
-        target_id=dummy_users[0].line_user_id,
-        key='飛び賞',
-        value='30',
-        _id=1,
-    ),
-    Config(
-        target_id=dummy_users[0].line_user_id,
-        key='飛び賞',
-        value='30',
-        _id=1,
-    ),
-    Config(
-        target_id=dummy_users[0].line_user_id,
-        key='飛び賞',
-        value='30',
-        _id=1,
-    ),
-]
-
-
-@ pytest.fixture(params=[
-    # index of (
-    # dummy_points_list,
-    # dummy_converted_scores_list)
-    (0),
-])
-def case1(request) -> int:
-    return request.param
 
 
 def test_success():
@@ -547,4 +518,79 @@ def test_success_with_tobi():
 
         reply_service.reset()
 
-# def test_success_other_configs():
+
+dummy_configs = [
+    Config(
+        target_id=dummy_group.line_group_id,
+        key='順位点',
+        value=','.join(['30', '10', '-10', '-30']),
+    ),
+    Config(
+        target_id=dummy_group.line_group_id,
+        key='飛び賞',
+        value='30',
+    ),
+    Config(
+        target_id=dummy_group.line_group_id,
+        key='端数計算方法',
+        value='五捨六入',
+    ),
+]
+
+
+@ pytest.fixture(params=[
+    # Tuple(
+    # dummy_configs,
+    # expected_arg1,
+    # expected_arg2,
+    # expected_arg3,
+    # )
+    ([dummy_configs[0]], [30, 10, -10, -30], 10, '3万点以下切り上げ/以上切り捨て'),
+    ([dummy_configs[1]], [20, 10, -10, -20], 30, '3万点以下切り上げ/以上切り捨て'),
+    ([dummy_configs[2]], [20, 10, -10, -20], 10, '五捨六入'),
+    (dummy_configs, [30, 10, -10, -30], 30, '五捨六入'),
+])
+def case(request) -> Tuple[List[Config], List[int], int, str]:
+    return request.param
+
+
+def test_success_other_configs(mocker, case):
+    # Arrange
+    use_case = CalculateUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    with session_scope() as session:
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(
+            session, dummy_current_hanchan)
+        for dummy_config in case[0]:
+            config_repository.create(session, dummy_config)
+    mock = mocker.patch.object(
+        hanchan_service,
+        'run_calculate',
+        return_value={
+            dummy_users[0].line_user_id: 50,
+            dummy_users[1].line_user_id: 10,
+            dummy_users[2].line_user_id: -20,
+            dummy_users[3].line_user_id: -40,
+        },
+    )
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    mock.assert_called_with(
+        points={
+            dummy_users[0].line_user_id: 40010,
+            dummy_users[1].line_user_id: 30000,
+            dummy_users[2].line_user_id: 20000,
+            dummy_users[3].line_user_id: 10000,
+        },
+        ranking_prize=case[1],
+        tobi_prize=case[2],
+        rounding_method=case[3],
+        tobashita_player_id=None,
+    )
