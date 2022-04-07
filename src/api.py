@@ -10,6 +10,7 @@ from repositories import (
 )
 import json
 from datetime import datetime
+from flask_jwt import jwt_required, current_identity
 api_blueprint = Blueprint('api_blueprint', __name__, url_prefix='/_api')
 
 
@@ -26,36 +27,51 @@ def convert_to_json(records: List) -> str:
     )
 
 
-@api_blueprint.route('/users')
-def api_get_users():
+@api_blueprint.route('/users/all')
+@ jwt_required
+def api_get_all_users():
+    print('current_identity')
+    print(current_identity)
     with session_scope() as session:
         records = user_repository.find_all(session)
         return convert_to_json(records)
 
 
-@api_blueprint.route('/groups')
-def api_get_groups():
+@api_blueprint.route('/groups/all')
+@ jwt_required
+def api_get_all_groups():
+    print('current_identity')
+    print(current_identity)
     with session_scope() as session:
         records = group_repository.find_all(session)
         return convert_to_json(records)
 
 
-@api_blueprint.route('/hanchans')
-def api_get_hanchans():
+@api_blueprint.route('/hanchans/all')
+@ jwt_required
+def api_get_all_hanchans():
+    print('current_identity')
+    print(current_identity)
     with session_scope() as session:
         records = hanchan_repository.find_all(session)
         return convert_to_json(records)
 
 
-@api_blueprint.route('/matches')
-def api_get_matches():
+@api_blueprint.route('/matches/all')
+@ jwt_required
+def api_get_all_matches():
+    print('current_identity')
+    print(current_identity)
     with session_scope() as session:
         records = match_repository.find_all(session)
         return convert_to_json(records)
 
 
-@api_blueprint.route('/configs')
-def api_get_configs():
+@api_blueprint.route('/configs/all')
+@ jwt_required
+def api_get_all_configs():
+    print('current_identity')
+    print(current_identity)
     with session_scope() as session:
         records = config_repository.find_all(session)
         return convert_to_json(records)
