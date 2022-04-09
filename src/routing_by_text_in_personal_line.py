@@ -5,6 +5,7 @@ from ApplicationService import (
     reply_service,
     message_service,
 )
+from use_cases.personal_line.ReplyTokenUseCase import ReplyTokenUseCase
 from use_cases.personal_line.UserExitCommandUseCase import UserExitCommandUseCase
 from use_cases.personal_line.SetZoomUrlToUserUseCase import SetZoomUrlToUserUseCase
 from use_cases.personal_line.ReplyUserHelpUseCase import ReplyUserHelpUseCase
@@ -28,6 +29,7 @@ class UCommands(Enum):
     setting = 'setting'
     github = 'github'
     my_zoom = 'my_zoom'
+    token = 'token'
 
 
 def routing_by_text_in_personal_line(text: str):
@@ -91,3 +93,6 @@ def routing_by_method(method: str, body: str):
     # my_zoom
     elif method == UCommands.my_zoom.name:
         UserMyZoomCommandUseCase().execute()
+    # token
+    elif method == UCommands.token.name:
+        ReplyTokenUseCase().execute()

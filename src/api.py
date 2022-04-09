@@ -87,11 +87,3 @@ def api_get_all_configs():
     with session_scope() as session:
         records = config_repository.find_all(session)
         return convert_to_json(records)
-
-
-@api_blueprint.route('/test')
-def api_test():
-    import requests
-    response = requests.get('http://localhost:5000')
-    print(response.text)
-    return 'hoge'
