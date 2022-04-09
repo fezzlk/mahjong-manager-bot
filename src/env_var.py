@@ -16,6 +16,6 @@ SERVER_ADMIN_LINE_USER_ID = os.getenv('SERVER_ADMIN_LINE_USER_ID')
 tmp_server_url = os.getenv('SERVER_URL')
 SERVER_URL = None
 if tmp_server_url is None:
-    print('Warning: env var "tmp_server_url" is not set.')
+    print('Warning: env var "SERVER_URL" is not set.')
 else:
     SERVER_URL = tmp_server_url + ("/" if tmp_server_url[-1] != "/" else "")
