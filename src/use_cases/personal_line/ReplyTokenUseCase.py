@@ -29,7 +29,7 @@ class ReplyTokenUseCase:
             user = user_repository.find_one_by_line_user_id(
                 session, line_user_id)
         response = requests.post(
-            env_var.SERVER_URL + 'auth',
+            env_var.SERVER_URL + env_var.JWT_AUTH_PATH,
             json={
                 '_id': user._id,
                 'line_user_id': line_user_id,

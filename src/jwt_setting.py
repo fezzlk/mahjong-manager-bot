@@ -3,6 +3,7 @@ from repositories import user_repository, session_scope
 from flask_jwt import JWT
 from werkzeug.security import safe_str_cmp
 from datetime import timedelta, datetime
+import env_var
 
 
 def authenticate(_id: str, line_user_id: str):
@@ -36,7 +37,8 @@ def register_jwt(app: Flask):
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=300)  # トークンの有効期間
     app.config['JWT_NOT_BEFORE_DELTA'] = timedelta(
         seconds=0)   # トークンの使用を開始する相対時間
-    app.config['JWT_AUTH_URL_RULE'] = '/auth'                   # 認証エンドポイントURL
+    app.config['JWT_AUTH_URL_RULE'] = '/' + \
+        env_var.JWT_AUTH_PATH                   # 認証エンドポイントURL
     # 認証エンドポイントURL
     app.config['JWT_AUTH_USERNAME_KEY'] = '_id'
     # 認証エンドポイントURL
