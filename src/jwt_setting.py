@@ -5,9 +5,9 @@ from werkzeug.security import safe_str_cmp
 from datetime import timedelta, datetime
 
 
-def authenticate(line_user_name, line_user_id):
+def authenticate(_id: str, line_user_id: str):
     with session_scope() as session:
-        users = user_repository.find_by_name(session, line_user_name)
+        users = user_repository.find_by_ids(session, [int(_id)])
         if len(users) != 1:
             raise ValueError('ユーザーがいないか、複数存在します。')
         user = users[0]
@@ -38,7 +38,7 @@ def register_jwt(app: Flask):
         seconds=0)   # トークンの使用を開始する相対時間
     app.config['JWT_AUTH_URL_RULE'] = '/auth'                   # 認証エンドポイントURL
     # 認証エンドポイントURL
-    app.config['JWT_AUTH_USERNAME_KEY'] = 'line_user_name'
+    app.config['JWT_AUTH_USERNAME_KEY'] = '_id'
     # 認証エンドポイントURL
     app.config['JWT_AUTH_PASSWORD_KEY'] = 'line_user_id'
 
