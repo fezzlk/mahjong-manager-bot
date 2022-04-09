@@ -2,7 +2,7 @@ from flask import Flask
 from repositories import user_repository, session_scope
 from flask_jwt import JWT
 from werkzeug.security import safe_str_cmp
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 
 def authenticate(line_user_name, line_user_id):
@@ -11,7 +11,9 @@ def authenticate(line_user_name, line_user_id):
         if len(users) != 1:
             raise ValueError('ユーザーがいないか、複数存在します。')
         user = users[0]
-        if safe_str_cmp(user.line_user_id.encode('utf-8'), line_user_id.encode('utf-8')):
+        if safe_str_cmp(
+                user.line_user_id.encode('utf-8'),
+                line_user_id.encode('utf-8')):
             return user
 
 
@@ -32,9 +34,22 @@ def register_jwt(app: Flask):
     app.config['JWT_ALGORITHM'] = 'HS256'                       # 暗号化署名のアルゴリズム
     app.config['JWT_LEEWAY'] = 0                                # 有効期限に対する余裕時間
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=300)  # トークンの有効期間
-    app.config['JWT_NOT_BEFORE_DELTA'] = timedelta(seconds=0)   # トークンの使用を開始する相対時間
+    app.config['JWT_NOT_BEFORE_DELTA'] = timedelta(
+        seconds=0)   # トークンの使用を開始する相対時間
     app.config['JWT_AUTH_URL_RULE'] = '/auth'                   # 認証エンドポイントURL
-    app.config['JWT_AUTH_USERNAME_KEY'] = 'line_user_name'                   # 認証エンドポイントURL
-    app.config['JWT_AUTH_PASSWORD_KEY'] = 'line_user_id'                   # 認証エンドポイントURL
+    # 認証エンドポイントURL
+    app.config['JWT_AUTH_USERNAME_KEY'] = 'line_user_name'
+    # 認証エンドポイントURL
+    app.config['JWT_AUTH_PASSWORD_KEY'] = 'line_user_id'
 
-    return JWT(app, authenticate, identity)
+    jwt = JWT(app, authenticate, identity)
+
+    @jwt.jwt_payload_handler
+    def make_payload(identity):
+        iat = datetime.utcnow()
+        exp = iat + app.config.get('JWT_EXPIRATION_DELTA')
+        nbf = iat + app.config.get('JWT_NOT_BEFORE_DELTA')
+        identity = getattr(identity, '_id')
+        return {'exp': exp, 'iat': iat, 'nbf': nbf, 'identity': identity}
+
+    return jwt

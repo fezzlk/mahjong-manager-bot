@@ -1,5 +1,6 @@
 from typing import List
 from flask import Blueprint
+from DomainModel.entities.User import User
 from repositories import (
     session_scope,
     user_repository,
@@ -28,50 +29,55 @@ def convert_to_json(records: List) -> str:
 
 
 @api_blueprint.route('/users/all')
-@ jwt_required
+@ jwt_required()
 def api_get_all_users():
-    print('current_identity')
-    print(current_identity)
+    req_user: User = current_identity
+    print(f'Receive a request from user_id = {req_user._id}')
+
     with session_scope() as session:
         records = user_repository.find_all(session)
         return convert_to_json(records)
 
 
 @api_blueprint.route('/groups/all')
-@ jwt_required
+@ jwt_required()
 def api_get_all_groups():
-    print('current_identity')
-    print(current_identity)
+    req_user: User = current_identity
+    print(f'Receive a request from user_id = {req_user._id}')
+    
     with session_scope() as session:
         records = group_repository.find_all(session)
         return convert_to_json(records)
 
 
 @api_blueprint.route('/hanchans/all')
-@ jwt_required
+@ jwt_required()
 def api_get_all_hanchans():
-    print('current_identity')
-    print(current_identity)
+    req_user: User = current_identity
+    print(f'Receive a request from user_id = {req_user._id}')
+    
     with session_scope() as session:
         records = hanchan_repository.find_all(session)
         return convert_to_json(records)
 
 
 @api_blueprint.route('/matches/all')
-@ jwt_required
+@ jwt_required()
 def api_get_all_matches():
-    print('current_identity')
-    print(current_identity)
+    req_user: User = current_identity
+    print(f'Receive a request from user_id = {req_user._id}')
+    
     with session_scope() as session:
         records = match_repository.find_all(session)
         return convert_to_json(records)
 
 
 @api_blueprint.route('/configs/all')
-@ jwt_required
+@ jwt_required()
 def api_get_all_configs():
-    print('current_identity')
-    print(current_identity)
+    req_user: User = current_identity
+    print(f'Receive a request from user_id = {req_user._id}')
+    
     with session_scope() as session:
         records = config_repository.find_all(session)
         return convert_to_json(records)
