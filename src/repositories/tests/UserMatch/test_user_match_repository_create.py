@@ -61,4 +61,5 @@ def test_success():
             session,
         )
         assert len(record_on_db) == 1
-        assert record_on_db[0].user_id == dummy_user._id
+        assert record_on_db[0].user_id == dummy_user_match.user_id
+        assert record_on_db[0].match_id == dummy_user_match.match_id
