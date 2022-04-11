@@ -84,8 +84,52 @@ def test_success():
 
     # Act
     with session_scope() as session:
-        result = user_match_repository.find_all(
+        result = user_match_repository.find_by_user_ids(
             session,
+            user_ids=[1],
+        )
+
+    # Assert
+    expected_user_matches = [
+        UserMatch(
+            user_id=1,
+            match_id=1,
+        ),
+        UserMatch(
+            user_id=1,
+            match_id=2,
+        ),
+    ]
+    assert len(result) == len(expected_user_matches)
+    for i in range(len(result)):
+        assert result[i].user_id == expected_user_matches[i].user_id
+        assert result[i].match_id == expected_user_matches[i].match_id
+
+
+def test_success_multi():
+    # Arrange
+    with session_scope() as session:
+        for dummy_user in dummy_users:
+            user_repository.create(
+                session,
+                dummy_user,
+            )
+        for dummy_match in dummy_matches:
+            match_repository.create(
+                session,
+                dummy_match,
+            )
+        for dummy_user_match in dummy_user_matches:
+            user_match_repository.create(
+                session,
+                dummy_user_match,
+            )
+
+    # Act
+    with session_scope() as session:
+        result = user_match_repository.find_by_user_ids(
+            session,
+            user_ids=[1, 2],
         )
 
     # Assert
