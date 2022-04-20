@@ -1,4 +1,3 @@
-from typing import List
 from DomainService import (
     user_service,
     hanchan_service,
