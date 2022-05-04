@@ -16,6 +16,7 @@ from repositories import (
 )
 import env_var
 import itertools
+from messaging_api_setting import line_bot_api
 
 # flake8: noqa
 import japanize_matplotlib
@@ -23,42 +24,34 @@ import japanize_matplotlib
 
 class ReplyMultiHistoryUseCase:
 
-    def execute(self, user_names: List[str]) -> None:
+    def execute(self) -> None:
         req_line_id = request_info_service.req_line_user_id
+        mention_line_ids = request_info_service.mention_line_ids
         messages_stock = []
         user_ids: List[int] = []
-        user_line_ids: List[str] = []
+        active_user_line_ids: List[str] = []
         line_id_name_dict: Dict[str, str] = {}
 
+        mention_line_ids.append(req_line_id)
+
         with session_scope() as session:
-            for user_name in user_names:
-                users = user_repository.find_by_name(
+            for line_id in set(mention_line_ids):
+                user = user_repository.find_one_by_line_user_id(
                     session,
-                    user_name,
+                    line_id,
                 )
 
-                if len(users) == 0:
-                    messages_stock.append(f'{user_name} は登録されていません。')
-                    continue
-                elif len(users) > 1:
-                    messages_stock.append(f'{user_name} は複数存在しています。(1人分だけ出します')
-
-                user = users[0]
-                line_id_name_dict[user.line_user_id] = user_name
-                user_line_ids.append(user.line_user_id)
-                user_ids.append(user._id)
-
-            if req_line_id not in user_line_ids:
-                user: User = user_repository.find_one_by_line_user_id(
-                    session,
-                    req_line_id,
-                )
                 if user is None:
-                    messages_stock.append(f'送信者のユーザー情報がありません。')
-                else:
-                    user_line_ids.append(req_line_id)
-                    line_id_name_dict[req_line_id] = user.line_user_name
-                    user_ids.append(user._id)
+                    profile = line_bot_api.get_profile(
+                        line_id,
+                    )
+                    messages_stock.append(
+                        f'{profile.display_name} は友達登録されていません。')
+                    continue
+
+                line_id_name_dict[user.line_user_id] = user.line_user_name
+                active_user_line_ids.append(user.line_user_id)
+                user_ids.append(user._id)
 
             if len(messages_stock) > 0:
                 reply_service.add_message(
