@@ -92,11 +92,11 @@ class ReplyMultiHistoryUseCase:
 
             dict_c_results = {h._id: h.converted_scores for h in all_hanchans}
 
-            total_dict = {line_id: 0 for line_id in user_line_ids}
+            total_dict = {line_id: 0 for line_id in active_user_line_ids}
             history_dict = {line_id: [
-                [datetime(2021, 2, 1)], [0]] for line_id in user_line_ids}
+                [datetime(2021, 2, 1)], [0]] for line_id in active_user_line_ids}
 
-            for line_id in user_line_ids:
+            for line_id in active_user_line_ids:
                 for match in matches:
                     score = 0
                     for hanchan_id in match.hanchan_ids:
@@ -111,7 +111,7 @@ class ReplyMultiHistoryUseCase:
             fig = plt.figure()
             plt.xlim([datetime(2021, 2, 1), datetime.today()])
 
-            for line_id in user_line_ids:
+            for line_id in active_user_line_ids:
                 plt.step(
                     history_dict[line_id][0],
                     history_dict[line_id][1],
