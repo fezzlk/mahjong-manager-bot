@@ -165,10 +165,7 @@ def routing_for_group_by_method(method, body):
         SetMyZoomUrlToGroupUseCase().execute()
     # history
     elif method == RCommands.history.name:
-        user_names = body.split('@')[1:]
-        ReplyMultiHistoryUseCase().execute(
-            [name.strip() for name in user_names]
-        )
+        ReplyMultiHistoryUseCase().execute()
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')
