@@ -141,8 +141,6 @@ dummy_match = Match(
     #   expected_reply,
     # )
     (0, '1000', 'test_user1: 1000', {dummy_users[0].line_user_id: 1000}),
-    (0, '@test_user2 1000', 'test_user2: 1000',
-     {dummy_users[1].line_user_id: 1000}),
     (1, '2000', 'test_user1: 2000', {dummy_users[0].line_user_id: 2000}),
     (2, '1000', 'test_user2: 2000\ntest_user1: 1000', {
      dummy_users[0].line_user_id: 1000, dummy_users[1].line_user_id: 2000}),
@@ -214,40 +212,89 @@ def test_execute_not_int_point(case2):
             assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
 
 
-@ pytest.fixture(params=[
-    # sent_text,
-    '@hoge 1000',
-])
-def case3(request) -> str:
-    return request.param
+def test_execute_with_mention():
+    # Arrage
+    use_case = AddPointByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    request_info_service.mention_line_ids = [
+        'U0123456789abcdefghijklmnopqrstu1']
+    with session_scope() as session:
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(session, dummy_hanchans[0])
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+
+    # Act
+    use_case.execute(text='@test_user1 1000')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == 'test_user1: 1000'
+    with session_scope() as session:
+        hanchans = hanchan_repository.find_all(session)
+        expected_raw_scores = {'U0123456789abcdefghijklmnopqrstu1': 1000}
+        assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
+        for k in expected_raw_scores:
+            assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
 
 
-def test_execute_not_registered_user(case3):
-    with pytest.raises(ValueError):
-        # Arrage
-        use_case = AddPointByTextUseCase()
-        request_info_service.req_line_group_id = dummy_group.line_group_id
-        request_info_service.req_line_user_id = dummy_users[0].line_user_id
-        with session_scope() as session:
-            match_repository.create(session, dummy_match)
-            hanchan_repository.create(session, dummy_hanchans[0])
-            group_repository.create(session, dummy_group)
-            for dummy_user in dummy_users:
-                user_repository.create(session, dummy_user)
+def test_execute_multi_mentions():
+    # Arrage
+    use_case = AddPointByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    request_info_service.mention_line_ids = [
+        'U0123456789abcdefghijklmnopqrstu1',
+        'U0123456789abcdefghijklmnopqrstu2',
+    ]
+    with session_scope() as session:
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(session, dummy_hanchans[0])
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
 
-        # Act
-        use_case.execute(text=case3)
+    # Act
+    use_case.execute(text='@dummy1 @dummy2 1000')
 
-        # Assert
-        assert len(reply_service.texts) == 1
-        assert reply_service.texts[0].type == 'text'
-        assert reply_service.texts[0].text == '点数は整数で入力してください。'
-        with session_scope() as session:
-            hanchans = hanchan_repository.find_all(session)
-            expected_raw_scores = dummy_hanchans[0].raw_scores
-            assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
-            for k in expected_raw_scores:
-                assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == 'ユーザーを指定する場合はメンションをつけてメッセージの末尾に点数を入力してください。1回につき1人を指定するようにしてください。'
+    with session_scope() as session:
+        hanchans = hanchan_repository.find_all(session)
+        assert len(hanchans[0].raw_scores) == 0
+
+
+def test_execute_not_registered_user():
+    # Arrage
+    use_case = AddPointByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    request_info_service.mention_line_ids = ['dummy_line_id']
+    with session_scope() as session:
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(session, dummy_hanchans[0])
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+
+    # Act
+    use_case.execute(text='@dummy 1000')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == 'dummy_line_id: 1000'
+    with session_scope() as session:
+        hanchans = hanchan_repository.find_all(session)
+        expected_raw_scores = {'dummy_line_id': 1000}
+        assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
+        for k in expected_raw_scores:
+            assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
 
 
 def test_execute_fourth_input():

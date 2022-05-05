@@ -20,6 +20,20 @@ class UserMatchRepository(IUserMatchRepository):
         session.commit()
         return new_user_match
 
+    def find_all(
+        self,
+        session: BaseSession,
+    ) -> List[UserMatch]:
+        records = session\
+            .query(UserMatchModel)\
+            .order_by(UserMatchModel.user_id)\
+            .all()
+
+        return [
+            self._mapping_record_to_user_match_domain(record)
+            for record in records
+        ]
+
     def find_by_user_ids(
         self,
         session: BaseSession,
