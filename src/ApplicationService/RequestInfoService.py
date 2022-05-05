@@ -22,6 +22,10 @@ class RequestInfoService:
             self.req_line_group_id = event.source.room_id
         if event.source.type == 'group':
             self.req_line_group_id = event.source.group_id
+        if event.type == 'message' and event.message.mention is not None:
+            mentionees = event.message.mention.mentionees
+            for mentionee in mentionees:
+                self.mention_line_ids.append(mentionee.user_id)
 
     """
     メッセージ送信元情報の削除
