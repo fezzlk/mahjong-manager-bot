@@ -16,8 +16,6 @@ ADMIN_LINE_USER_ID_LIST_JSON = os.getenv('ADMIN_LINE_USER_ID_LIST_JSON')
 JWT_AUTH_PATH = os.getenv('JWT_AUTH_PATH', 'auth')
 
 tmp_server_url = os.getenv('SERVER_URL')
-SERVER_URL = None
 if tmp_server_url is None:
-    print('Warning: env var "SERVER_URL" is not set.')
-else:
-    SERVER_URL = tmp_server_url + ("/" if tmp_server_url[-1] != "/" else "")
+    raise RuntimeError('env var "SERVER_URL" is not set.')
+SERVER_URL = tmp_server_url + ("/" if tmp_server_url[-1] != "/" else "")
