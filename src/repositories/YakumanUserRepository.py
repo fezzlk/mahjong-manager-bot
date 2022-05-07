@@ -19,12 +19,25 @@ class YakumanUserRepository:
         new_yakuman_user._id = record.id
         return new_yakuman_user
 
+    def find_by_user_ids(
+        self,
+        session: BaseSession,
+        user_ids: List[int],
+    ) -> List[YakumanUser]:
+        records = session.query(YakumanUserModel).filter(
+            YakumanUserModel.user_id.in_([int(s) for s in user_ids])) .all()
+
+        return [
+            self._mapping_record_to_domain(record)
+            for record in records
+        ]
+
     def find_by_hanchan_ids(
         self,
         session: BaseSession,
         hanchan_ids: List[int],
     ) -> List[YakumanUser]:
-        records = session .query(YakumanUserModel) .filter(
+        records = session.query(YakumanUserModel).filter(
             YakumanUserModel.hanchan_id.in_([int(s) for s in hanchan_ids])) .all()
 
         return [

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass()
-class Group:
+class YakumanUser:
     user_id: int
     hanchan_id: int
 
