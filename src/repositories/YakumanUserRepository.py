@@ -19,6 +19,20 @@ class YakumanUserRepository:
         new_yakuman_user._id = record.id
         return new_yakuman_user
 
+    def find_all(
+        self,
+        session: BaseSession,
+    ) -> List[YakumanUser]:
+        records = session\
+            .query(YakumanUserModel)\
+            .order_by(YakumanUserModel.user_id)\
+            .all()
+
+        return [
+            self._mapping_record_to_domain(record)
+            for record in records
+        ]
+
     def find_by_user_ids(
         self,
         session: BaseSession,

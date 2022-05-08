@@ -15,21 +15,28 @@ from db_models import Base
 from repositories import user_match_repository
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
-from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
-from use_cases.web.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
-from use_cases.web.GetMatchesForWebUseCase import GetMatchesForWebUseCase
-from use_cases.web.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
-from use_cases.web.GetGroupsForWebUseCase import GetGroupsForWebUseCase
-from use_cases.web.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
-from use_cases.web.GetHanchansForWebUseCase import GetHanchansForWebUseCase
-from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
-from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
+from use_cases.web.GetYakumanUsersForWebUseCase import GetYakumanUsersForWebUseCase
+from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
+from use_cases.web.GetHanchansForWebUseCase import GetHanchansForWebUseCase
+from use_cases.web.GetGroupsForWebUseCase import GetGroupsForWebUseCase
+from use_cases.web.GetMatchesForWebUseCase import GetMatchesForWebUseCase
+from use_cases.web.GetUserMatchesForWebUseCase import GetUserMatchesForWebUseCase
+
 from use_cases.web.GetUserForWebUseCase import GetUserForWebUseCase
+from use_cases.web.GetYakumanUserForWebUseCase import GetYakumanUserForWebUseCase
 from use_cases.web.GetGroupForWebUseCase import GetGroupForWebUseCase
 from use_cases.web.GetHanchanForWebUseCase import GetHanchanForWebUseCase
 from use_cases.web.GetMatchForWebUseCase import GetMatchForWebUseCase
+from use_cases.web.GetUserMatchForWebUseCase import GetUserMatchForWebUseCase
 from use_cases.web.GetConfigForWebUseCase import GetConfigForWebUseCase
+
+from use_cases.web.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
+from use_cases.web.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
+from use_cases.web.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
+from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
+from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
+
 from use_cases.web.UpdateUserForWebUseCase import UpdateUserForWebUseCase
 from use_cases.web.UpdateGroupForWebUseCase import UpdateGroupForWebUseCase
 from use_cases.web.UpdateHanchanForWebUseCase import UpdateHanchanForWebUseCase
@@ -389,6 +396,102 @@ def delete_configs():
     target_id = request.args.get('target_id')
     DeleteConfigsForWebUseCase().execute([int(target_id)])
     return redirect(url_for('views_blueprint.get_configs'))
+
+
+@views_blueprint.route('/user_matches')
+def get_user_matches():
+    data = GetUserMatchesForWebUseCase().execute()
+    keys = ['_id', 'user_id', 'match_id']
+    input_keys = ['user_id', 'match_id']
+    return render_template(
+        'model.html',
+        title='user_matches',
+        submit_to='create_user_match',
+        keys=keys,
+        input_keys=input_keys,
+        data=data
+    )
+
+
+@views_blueprint.route('/user_matches/<_id>')
+def user_matches_detail(_id):
+    data = GetUserMatchForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'user_id', 'match_id']
+    return render_template(
+        'detail.html',
+        title='user_matches',
+        submit_to='update_user_match',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
+@views_blueprint.route('/user_matches/create', methods=['POST'])
+def create_user_match():
+    return redirect(url_for('views_blueprint.get_user_matches'))
+
+
+@views_blueprint.route('/user_matches/update', methods=['POST'])
+def update_user_match():
+    # UpdateUserMatchForWebUseCase().execute()
+    return redirect(url_for('views_blueprint.get_user_matches'))
+
+
+@views_blueprint.route('/user_matches/delete', methods=['POST'])
+def delete_user_matches():
+    # target_id = request.args.get('target_id')
+    # DeleteUserMatchForWebUseCase().execute([int(target_id)])
+    return redirect(url_for('views_blueprint.user_matches'))
+
+
+@views_blueprint.route('/yakuman_users')
+def get_yakuman_users():
+    data = GetYakumanUsersForWebUseCase().execute()
+    keys = ['_id', 'user_id', 'hanchan_id']
+    input_keys = ['user_id', 'hanchan_id']
+    return render_template(
+        'model.html',
+        title='yakuman_users',
+        submit_to='create_yakuman_user',
+        keys=keys,
+        input_keys=input_keys,
+        data=data
+    )
+
+
+@views_blueprint.route('/yakuman_users/<_id>')
+def yakuman_users_detail(_id):
+    data = GetYakumanUserForWebUseCase().execute(_id)
+    if data is None:
+        raise NotFoundErr()
+    input_keys = ['_id', 'user_id', 'hanchan_id']
+    return render_template(
+        'detail.html',
+        title='yakuman_users',
+        submit_to='update_yakuman_user',
+        input_keys=input_keys,
+        init_data=data
+    )
+
+
+@views_blueprint.route('/yakuman_users/create', methods=['POST'])
+def create_yakuman_user():
+    return redirect(url_for('views_blueprint.get_yakuman_users'))
+
+
+@views_blueprint.route('/yakuman_users/update', methods=['POST'])
+def update_yakuman_user():
+    # UpdateYakumanUserForWebUseCase().execute()
+    return redirect(url_for('views_blueprint.get_yakuman_users'))
+
+
+@views_blueprint.route('/yakuman_users/delete', methods=['POST'])
+def delete_yakuman_users():
+    # target_id = request.args.get('target_id')
+    # DeleteYakumanUserForWebUseCase().execute([int(target_id)])
+    return redirect(url_for('views_blueprint.get_yakuman_users'))
 
 
 @views_blueprint.route("/callback", methods=['POST'])

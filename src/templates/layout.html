@@ -1,20 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-<title>{{ title }}</title>
-<link rel="stylesheet" type="text/css" href="../static/style.css">
-<meta charset="utf-8"/>
-</head>
-<body>
+  <head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
+    <meta charset="utf-8" />
+  </head>
+  <body>
     <div>
-        <a href="/">home</a>
-        <a href="/users">users</a>
-        <a href="/groups">groups</a>
-        <a href="/hanchans">hanchans</a>
-        <a href="/matches">matches</a>
-        <a href="/configs">configs</a>
+      <a href="/">home</a>
+      <a href="/users">users</a>
+      <a href="/groups">groups</a>
+      <a href="/hanchans">hanchans</a>
+      <a href="/matches">matches</a>
+      <a href="/configs">configs</a>
+      <a href="/user_matches">user_matches</a>
+      <a href="/yakuman_users">yakuman_users</a>
     </div>
-    {% block content %}
-    {% endblock %}
-</body>
+    {% block content %} {% endblock %}
+  </body>
 </html>

@@ -22,7 +22,7 @@ class UserMatchModel(Base):
 class YakumanUserModel(Base):
     __tablename__ = 'yakuman_user'
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    hanchan_id = Column(Integer, ForeignKey('hanchan.id'), primary_key=True)
+    hanchan_id = Column(Integer, ForeignKey('hanchans.id'), primary_key=True)
 
 
 class UserModel(Base):
