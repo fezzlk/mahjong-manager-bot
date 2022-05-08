@@ -61,7 +61,7 @@ class ConfigRepository(IConfigRepository):
             .all()
 
         return [
-            self._mapping_record_to_config_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -77,7 +77,7 @@ class ConfigRepository(IConfigRepository):
             .all()
 
         return [
-            self._mapping_record_to_config_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -93,7 +93,7 @@ class ConfigRepository(IConfigRepository):
             .all()
 
         return [
-            self._mapping_record_to_config_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -114,7 +114,7 @@ class ConfigRepository(IConfigRepository):
         if record is None:
             return None
 
-        return self._mapping_record_to_config_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update(
         self,
@@ -135,7 +135,7 @@ class ConfigRepository(IConfigRepository):
 
         return result
 
-    def _mapping_record_to_config_domain(self, record: ConfigModel) -> Config:
+    def _mapping_record_to_domain(self, record: ConfigModel) -> Config:
         return Config(
             target_id=record.target_id,
             key=record.key,

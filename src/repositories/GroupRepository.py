@@ -44,7 +44,7 @@ class GroupRepository(IGroupRepository):
             .all()
 
         return [
-            self._mapping_record_to_group_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -60,7 +60,7 @@ class GroupRepository(IGroupRepository):
             .all()
 
         return [
-            self._mapping_record_to_group_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -77,7 +77,7 @@ class GroupRepository(IGroupRepository):
         if record is None:
             return None
 
-        return self._mapping_record_to_group_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update_one_mode_by_line_group_id(
         self,
@@ -98,7 +98,7 @@ class GroupRepository(IGroupRepository):
 
         record.mode = mode.value
 
-        return self._mapping_record_to_group_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update_one_zoom_url_by_line_group_id(
         self,
@@ -116,7 +116,7 @@ class GroupRepository(IGroupRepository):
 
         record.zoom_url = zoom_url
 
-        return self._mapping_record_to_group_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update(
         self,
@@ -137,7 +137,7 @@ class GroupRepository(IGroupRepository):
 
         return result
 
-    def _mapping_record_to_group_domain(self, record: GroupModel) -> Group:
+    def _mapping_record_to_domain(self, record: GroupModel) -> Group:
         return Group(
             line_group_id=record.line_group_id,
             zoom_url=record.zoom_url,

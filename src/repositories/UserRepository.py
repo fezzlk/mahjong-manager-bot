@@ -58,7 +58,7 @@ class UserRepository(IUserRepository):
             .all()
 
         return [
-            self._mapping_record_to_user_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -74,7 +74,7 @@ class UserRepository(IUserRepository):
             .all()
 
         return [
-            self._mapping_record_to_user_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -92,7 +92,7 @@ class UserRepository(IUserRepository):
         if record is None:
             return None
 
-        return self._mapping_record_to_user_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def find_by_name(
         self,
@@ -105,7 +105,7 @@ class UserRepository(IUserRepository):
             .order_by(UserModel.id)\
             .all()
         return [
-            self._mapping_record_to_user_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -126,7 +126,7 @@ class UserRepository(IUserRepository):
 
         record.mode = mode.value
 
-        return self._mapping_record_to_user_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update_one_zoom_url_by_line_user_id(
         self,
@@ -145,7 +145,7 @@ class UserRepository(IUserRepository):
 
         record.zoom_url = zoom_url
 
-        return self._mapping_record_to_user_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update(
         self,
@@ -168,7 +168,7 @@ class UserRepository(IUserRepository):
 
         return result
 
-    def _mapping_record_to_user_domain(self, record: UserModel) -> User:
+    def _mapping_record_to_domain(self, record: UserModel) -> User:
         return User(
             _id=record.id,
             line_user_name=record.line_user_name,

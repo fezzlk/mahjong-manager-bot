@@ -41,7 +41,7 @@ class HanchanRepository(IHanchanRepository):
             session.delete(record)
 
         return [
-            self._mapping_record_to_hanchan_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -55,7 +55,7 @@ class HanchanRepository(IHanchanRepository):
             .all()
 
         return [
-            self._mapping_record_to_hanchan_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -72,7 +72,7 @@ class HanchanRepository(IHanchanRepository):
             .all()
 
         return [
-            self._mapping_record_to_hanchan_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -92,7 +92,7 @@ class HanchanRepository(IHanchanRepository):
             .all()
 
         return [
-            self._mapping_record_to_hanchan_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -113,7 +113,7 @@ class HanchanRepository(IHanchanRepository):
         if record is None:
             return None
 
-        return self._mapping_record_to_hanchan_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def find_one_by_line_group_id_and_status(
         self,
@@ -132,7 +132,7 @@ class HanchanRepository(IHanchanRepository):
         if record is None:
             return None
 
-        return self._mapping_record_to_hanchan_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update_one_converted_scores_by_id(
         self,
@@ -149,7 +149,7 @@ class HanchanRepository(IHanchanRepository):
 
         record.converted_scores = json.dumps(converted_scores)
 
-        return self._mapping_record_to_hanchan_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update_one_raw_scores_by_id(
         self,
@@ -166,7 +166,7 @@ class HanchanRepository(IHanchanRepository):
 
         record.raw_scores = json.dumps(raw_scores)
 
-        return self._mapping_record_to_hanchan_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update_one_status_by_id(
         self,
@@ -183,7 +183,7 @@ class HanchanRepository(IHanchanRepository):
 
         record.status = status
 
-        return self._mapping_record_to_hanchan_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update(
         self,
@@ -206,7 +206,7 @@ class HanchanRepository(IHanchanRepository):
 
         return result
 
-    def _mapping_record_to_hanchan_domain(
+    def _mapping_record_to_domain(
         self,
         record: HanchanModel
     ) -> Hanchan:

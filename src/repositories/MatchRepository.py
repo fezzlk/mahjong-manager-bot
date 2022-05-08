@@ -35,7 +35,7 @@ class MatchRepository(IMatchRepository):
             .all()
 
         return [
-            self._mapping_record_to_match_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -51,7 +51,7 @@ class MatchRepository(IMatchRepository):
             .all()
 
         return [
-            self._mapping_record_to_match_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -70,7 +70,7 @@ class MatchRepository(IMatchRepository):
             .all()
 
         return [
-            self._mapping_record_to_match_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -88,7 +88,7 @@ class MatchRepository(IMatchRepository):
             .all()
 
         return [
-            self._mapping_record_to_match_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -108,7 +108,7 @@ class MatchRepository(IMatchRepository):
         if record is None:
             return None
 
-        return self._mapping_record_to_match_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update_one_hanchan_ids_by_id(
         self,
@@ -125,7 +125,7 @@ class MatchRepository(IMatchRepository):
 
         record.hanchan_ids = json.dumps(hanchan_ids)
 
-        return self._mapping_record_to_match_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def update_one_status_by_id(
         self,
@@ -142,7 +142,7 @@ class MatchRepository(IMatchRepository):
 
         record.status = status
 
-        return self._mapping_record_to_match_domain(record)
+        return self._mapping_record_to_domain(record)
 
     def delete_by_ids(
         self,
@@ -175,7 +175,7 @@ class MatchRepository(IMatchRepository):
 
         return result
 
-    def _mapping_record_to_match_domain(self, record: MatchModel) -> Match:
+    def _mapping_record_to_domain(self, record: MatchModel) -> Match:
         return Match(
             _id=record.id,
             line_group_id=record.line_group_id,

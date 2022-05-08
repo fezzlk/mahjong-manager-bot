@@ -30,7 +30,7 @@ class UserMatchRepository(IUserMatchRepository):
             .all()
 
         return [
-            self._mapping_record_to_user_match_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
@@ -46,11 +46,11 @@ class UserMatchRepository(IUserMatchRepository):
             .all()
 
         return [
-            self._mapping_record_to_user_match_domain(record)
+            self._mapping_record_to_domain(record)
             for record in records
         ]
 
-    def _mapping_record_to_user_match_domain(
+    def _mapping_record_to_domain(
             self, record: UserMatchModel) -> UserMatch:
         return UserMatch(
             user_id=record.user_id,
