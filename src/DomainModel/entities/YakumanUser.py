@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass()
 class YakumanUser:
+    _id: int
     user_id: int
     hanchan_id: int
 
@@ -10,6 +11,8 @@ class YakumanUser:
         self,
         user_id: int,
         hanchan_id: int,
+        _id: int = None,
     ):
         self.user_id = user_id
         self.hanchan_id = hanchan_id
+        self._id = _id

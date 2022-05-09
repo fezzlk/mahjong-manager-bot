@@ -59,6 +59,18 @@ class YakumanUserRepository:
             for record in records
         ]
 
+    def delete_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[int],
+    ) -> int:
+        delete_count = session\
+            .query(YakumanUserModel)\
+            .filter(YakumanUserModel.id.in_(ids))\
+            .delete(synchronize_session=False)
+
+        return delete_count
+
     def _mapping_record_to_domain(
         self,
         record: YakumanUser

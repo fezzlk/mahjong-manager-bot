@@ -36,3 +36,11 @@ class IYakumanUserRepository(metaclass=ABCMeta):
         hanchan_ids: List[str],
     ) -> List[YakumanUser]:
         pass
+
+    @abstractmethod
+    def delete_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[int],
+    ) -> int:
+        pass
