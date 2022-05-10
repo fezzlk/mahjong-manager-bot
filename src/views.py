@@ -36,6 +36,7 @@ from use_cases.web.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
 from use_cases.web.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
 from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
 from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
+from use_cases.web.DeleteYakumanUsersForWebUseCase import DeleteYakumanUsersForWebUseCase
 
 from use_cases.web.UpdateUserForWebUseCase import UpdateUserForWebUseCase
 from use_cases.web.UpdateGroupForWebUseCase import UpdateGroupForWebUseCase
@@ -489,8 +490,8 @@ def update_yakuman_user():
 
 @views_blueprint.route('/yakuman_users/delete', methods=['POST'])
 def delete_yakuman_users():
-    # target_id = request.args.get('target_id')
-    # DeleteYakumanUserForWebUseCase().execute([int(target_id)])
+    target_id = request.args.get('target_id')
+    DeleteYakumanUsersForWebUseCase().execute([int(target_id)])
     return redirect(url_for('views_blueprint.get_yakuman_users'))
 
 
