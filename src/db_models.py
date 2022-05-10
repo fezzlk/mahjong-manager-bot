@@ -21,8 +21,9 @@ class UserMatchModel(Base):
 
 class YakumanUserModel(Base):
     __tablename__ = 'yakuman_user'
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    hanchan_id = Column(Integer, ForeignKey('hanchans.id'), primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    hanchan_id = Column(Integer, ForeignKey('hanchans.id'))
 
 
 class UserModel(Base):
