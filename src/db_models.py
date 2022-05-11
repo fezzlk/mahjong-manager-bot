@@ -25,6 +25,14 @@ class YakumanUserModel(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     hanchan_id = Column(Integer, ForeignKey('hanchans.id'))
 
+    def __init__(
+        self,
+        user_id,
+        hanchan_id,
+    ):
+        self.user_id = user_id
+        self.hanchan_id = hanchan_id
+
 
 class UserModel(Base):
     __tablename__ = 'users'

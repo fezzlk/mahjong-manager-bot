@@ -71,6 +71,24 @@ class YakumanUserRepository:
 
         return delete_count
 
+    def update(
+        self,
+        session: BaseSession,
+        target: YakumanUser,
+    ) -> int:
+        updated = YakumanUserModel(
+            user_id=target.user_id,
+            hanchan_id=target.hanchan_id,
+        ).__dict__
+        updated.pop('_sa_instance_state')
+
+        result: int = session\
+            .query(YakumanUserModel)\
+            .filter(YakumanUserModel.id == target._id)\
+            .update(updated)
+
+        return result
+
     def _mapping_record_to_domain(
         self,
         record: YakumanUser
