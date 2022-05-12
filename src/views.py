@@ -39,10 +39,18 @@ from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
 from use_cases.web.DeleteYakumanUsersForWebUseCase import DeleteYakumanUsersForWebUseCase
 
 from use_cases.web.UpdateUserForWebUseCase import UpdateUserForWebUseCase
+from use_cases.web.UpdateYakumanUserForWebUseCase import UpdateYakumanUserForWebUseCase
 from use_cases.web.UpdateGroupForWebUseCase import UpdateGroupForWebUseCase
 from use_cases.web.UpdateHanchanForWebUseCase import UpdateHanchanForWebUseCase
 from use_cases.web.UpdateMatchForWebUseCase import UpdateMatchForWebUseCase
 from use_cases.web.UpdateConfigForWebUseCase import UpdateConfigForWebUseCase
+
+from use_cases.web.CreateUserForWebUseCase import CreateUserForWebUseCase
+from use_cases.web.CreateYakumanUserForWebUseCase import CreateYakumanUserForWebUseCase
+from use_cases.web.CreateGroupForWebUseCase import CreateGroupForWebUseCase
+from use_cases.web.CreateHanchanForWebUseCase import CreateHanchanForWebUseCase
+from use_cases.web.CreateMatchForWebUseCase import CreateMatchForWebUseCase
+from use_cases.web.CreateConfigForWebUseCase import CreateConfigForWebUseCase
 
 
 from linebot import WebhookHandler, exceptions
@@ -179,9 +187,7 @@ def users_detail(_id):
 
 @views_blueprint.route('/users/create', methods=['POST'])
 def create_user():
-    # line_user_name = request.form['line_user_name']
-    # user_id = request.form['user_id']
-    # user_use_cases.create(line_user_name, user_id)
+    CreateUserForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_users'))
 
 
@@ -230,6 +236,7 @@ def groups_detail(_id):
 
 @views_blueprint.route('/groups/create', methods=['POST'])
 def create_group():
+    CreateGroupForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_groups'))
 
 
@@ -281,6 +288,7 @@ def hanchans_detail(_id):
 
 @views_blueprint.route('/hanchans/create', methods=['POST'])
 def create_hanchan():
+    CreateHanchanForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_hanchans'))
 
 
@@ -335,6 +343,7 @@ def matches_detail(_id):
 
 @views_blueprint.route('/matches/create', methods=['POST'])
 def create_match():
+    CreateMatchForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_matches'))
 
 
@@ -383,6 +392,7 @@ def configs_detail(_id):
 
 @views_blueprint.route('/configs/create', methods=['POST'])
 def create_config():
+    CreateConfigForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_configs'))
 
 
@@ -436,14 +446,11 @@ def create_user_match():
 
 @views_blueprint.route('/user_matches/update', methods=['POST'])
 def update_user_match():
-    # UpdateUserMatchForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_user_matches'))
 
 
 @views_blueprint.route('/user_matches/delete', methods=['POST'])
 def delete_user_matches():
-    # target_id = request.args.get('target_id')
-    # DeleteUserMatchForWebUseCase().execute([int(target_id)])
     return redirect(url_for('views_blueprint.user_matches'))
 
 
@@ -479,12 +486,13 @@ def yakuman_users_detail(_id):
 
 @views_blueprint.route('/yakuman_users/create', methods=['POST'])
 def create_yakuman_user():
+    CreateYakumanUserForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_yakuman_users'))
 
 
 @views_blueprint.route('/yakuman_users/update', methods=['POST'])
 def update_yakuman_user():
-    # UpdateYakumanUserForWebUseCase().execute()
+    UpdateYakumanUserForWebUseCase().execute()
     return redirect(url_for('views_blueprint.get_yakuman_users'))
 
 
