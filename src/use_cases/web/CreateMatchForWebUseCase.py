@@ -14,7 +14,6 @@ class CreateMatchForWebUseCase:
             line_group_id=form['line_group_id'],
             hanchan_ids=json.loads(form['hanchan_ids']),
             status=int(form['status']),
-            _id=int(form['_id']),
         )
         with session_scope() as session:
             return match_repository.create(session, new_match)

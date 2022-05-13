@@ -12,7 +12,6 @@ class CreateYakumanUserForWebUseCase:
         new_yakuman_user = YakumanUser(
             user_id=form['user_id'],
             hanchan_id=form['hanchan_id'],
-            _id=int(form['_id']),
         )
         with session_scope() as session:
             return yakuman_user_repository.create(session, new_yakuman_user)

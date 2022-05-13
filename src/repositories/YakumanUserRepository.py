@@ -12,7 +12,7 @@ class YakumanUserRepository:
         new_yakuman_user: YakumanUser,
     ) -> YakumanUser:
         record = YakumanUserModel(
-            line_user_id=new_yakuman_user.line_user_id,
+            user_id=new_yakuman_user.user_id,
             hanchan_id=new_yakuman_user.hanchan_id
         )
         session.add(record)
@@ -96,5 +96,5 @@ class YakumanUserRepository:
         return YakumanUser(
             _id=record.id,
             hanchan_id=record.hanchan_id,
-            line_user_id=record.line_user_id,
+            user_id=record.user_id,
         )
