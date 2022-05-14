@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from db_models import UserModel
 from DomainModel.IRepositories.IUserRepository import IUserRepository
 from DomainModel.entities.User import User, UserMode
@@ -82,7 +82,7 @@ class UserRepository(IUserRepository):
         self,
         session: BaseSession,
         line_user_id: str,
-    ) -> User:
+    ) -> Optional[User]:
         record = session\
             .query(UserModel)\
             .filter(UserModel.line_user_id == line_user_id)\

@@ -10,7 +10,7 @@ from repositories import session_scope, group_repository
 from linebot.models import TextSendMessage
 
 
-def test_execute(mocker):
+def test_execute():
     # Arrage
     dummy_event = generate_dummy_join_event()
     request_info_service.set_req_info(event=dummy_event)

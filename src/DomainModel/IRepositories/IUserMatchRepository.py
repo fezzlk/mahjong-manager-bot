@@ -15,6 +15,13 @@ class IUserMatchRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def find_all(
+        self,
+        session: BaseSession,
+    ) -> List[UserMatch]:
+        pass
+
+    @abstractmethod
     def find_by_user_ids(
         self,
         session: BaseSession,
