@@ -6,6 +6,13 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
+from repositories import (
+    session_scope,
+    yakuman_user_repository,
+    user_repository,
+)
+from DomainModel.entities.YakumanUser import YakumanUser
+
 from use_cases.group_line.CalculateUseCase import CalculateUseCase
 
 
@@ -32,6 +39,8 @@ class AddPointByTextUseCase:
             point = text
 
         point = point.replace(',', '')
+        point_with_yakuman = point[:]
+        point = point.replace('役', '')
 
         # 入力した点数のバリデート（hack: '-' を含む場合数値として判断できないため一旦エスケープ）
         isMinus = False
@@ -62,6 +71,17 @@ class AddPointByTextUseCase:
         ]
 
         reply_service.add_message("\n".join(res))
+
+        for _ in range(len(point_with_yakuman) - len(point)):
+            with session_scope() as session:
+                target_user = user_repository.find_one_by_line_user_id(
+                    session, target_line_user_id)
+                yakuman_user_repository.create(session, YakumanUser(
+                    user_id=target_user.line_user_id,
+                    hanchan_id=hanchan._id,
+                ))
+
+        reply_service.add_message("\n".join('役満おめでとうございます！'))
 
         if len(points) == 4:
             CalculateUseCase().execute()
