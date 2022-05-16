@@ -1,3 +1,4 @@
+from typing import Dict
 from DomainService import (
     user_service,
     match_service,
@@ -29,25 +30,25 @@ class MatchFinishUseCase:
             hanchans = hanchan_repository.find_by_ids(
                 session, ids)
 
-        sum_hanchans = {}
+        total_scores: Dict[str, int] = {}
         for i in range(len(ids)):
             converted_scores = hanchans[i].converted_scores
 
             for line_user_id, converted_score in converted_scores.items():
-                if line_user_id not in sum_hanchans.keys():
-                    sum_hanchans[line_user_id] = 0
-                sum_hanchans[line_user_id] += converted_score
+                if line_user_id not in total_scores.keys():
+                    total_scores[line_user_id] = 0
+                total_scores[line_user_id] += converted_score
 
         reply_service.add_message(
             '\n'.join([
                 f'{user_service.get_name_by_line_user_id(line_user_id)}: {converted_score}'
-                for line_user_id, converted_score in sum_hanchans.items()
+                for line_user_id, converted_score in total_scores.items()
             ])
         )
 
         key = 'レート'
         match_list = []
-        for line_user_id, converted_score in sum_hanchans.items():
+        for line_user_id, converted_score in total_scores.items():
             name = user_service.get_name_by_line_user_id(line_user_id)
             price = str(
                 converted_score * int(config_service.get_value_by_key(line_group_id, key)[1]) * 10)
