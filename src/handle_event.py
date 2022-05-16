@@ -38,9 +38,15 @@ def handle_event_decorater(function):
 
         except BaseException as err:
             traceback.print_exc()
+            tb = list(
+                traceback.TracebackException.from_exception(err).format())
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
                 message=str(err),
+            )
+            reply_service.push_a_message(
+                to=env_var.SERVER_ADMIN_LINE_USER_ID,
+                message='\n'.join(tb)[-5000:],
             )
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
