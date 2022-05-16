@@ -39,14 +39,15 @@ class AddPointByTextUseCase:
             point = text
 
         point = point.replace(',', '')
-        point_with_yakuman = point[:]
-        point = point.replace('役', '')
 
         # 入力した点数のバリデート（hack: '-' を含む場合数値として判断できないため一旦エスケープ）
         isMinus = False
         if point[0] == '-':
             point = point[1:]
             isMinus = True
+
+        point_with_yakuman = point[:]
+        point = point.replace('役', '')
 
         if not point.isdigit():
             reply_service.add_message(
@@ -72,12 +73,12 @@ class AddPointByTextUseCase:
 
         reply_service.add_message("\n".join(res))
 
-        for _ in range(len(point_with_yakuman) - len(point)):
-            with session_scope() as session:
-                target_user = user_repository.find_one_by_line_user_id(
-                    session, target_line_user_id)
+        with session_scope() as session:
+            target_user = user_repository.find_one_by_line_user_id(
+                session, target_line_user_id)
+            for _ in range(len(point_with_yakuman) - len(point)):
                 yakuman_user_repository.create(session, YakumanUser(
-                    user_id=target_user.line_user_id,
+                    user_id=target_user._id,
                     hanchan_id=hanchan._id,
                 ))
 
