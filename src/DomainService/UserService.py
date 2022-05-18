@@ -5,6 +5,9 @@ from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
 from messaging_api_setting import line_bot_api
 from DomainModel.entities.User import User, UserMode
+from ApplicationService import (
+    reply_service,
+)
 
 
 class UserService(IUserService):
@@ -45,11 +48,6 @@ class UserService(IUserService):
         self,
         line_user_id: str,
     ) -> str:
-        """
-            LINE Bot API から名前の取得を試みる
-            -> 失敗したら DB から名前の取得を試みる
-            -> 失敗したら LINE User ID を返す
-        """
         try:
             profile = line_bot_api.get_profile(
                 line_user_id,
@@ -58,17 +56,7 @@ class UserService(IUserService):
             return profile.display_name
 
         except Exception:
-            with session_scope() as session:
-                target = user_repository.find_one_by_line_user_id(
-                    session,
-                    line_user_id,
-                )
-
-                if target is None:
-                    print(f'user({line_user_id}) is not found')
-                    return line_user_id
-
-                return target.line_user_name
+            reply_service.add_message('友達登録してください（登録済みの場合は一度ブロックし、解除してください。')
 
     def get_line_user_id_by_name(
         self,
