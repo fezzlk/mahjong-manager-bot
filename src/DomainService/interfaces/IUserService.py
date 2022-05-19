@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 from linebot.models.responses import Profile
 from DomainModel.entities.User import User, UserMode
 
@@ -16,7 +17,7 @@ class IUserService(metaclass=ABCMeta):
     def get_name_by_line_user_id(
         self,
         line_user_id: str,
-    ) -> str:
+    ) -> Optional[str]:
         pass
 
     @abstractmethod

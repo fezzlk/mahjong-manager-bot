@@ -1,5 +1,6 @@
 """user"""
 
+from typing import Optional
 from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
@@ -47,7 +48,7 @@ class UserService(IUserService):
     def get_name_by_line_user_id(
         self,
         line_user_id: str,
-    ) -> str:
+    ) -> Optional[str]:
         try:
             profile = line_bot_api.get_profile(
                 line_user_id,
@@ -57,6 +58,7 @@ class UserService(IUserService):
 
         except Exception:
             reply_service.add_message('友達登録してください（登録済みの場合は一度ブロックし、解除してください。')
+            return None
 
     def get_line_user_id_by_name(
         self,
