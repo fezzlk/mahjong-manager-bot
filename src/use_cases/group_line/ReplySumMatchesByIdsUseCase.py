@@ -46,11 +46,14 @@ class ReplySumMatchesByIdsUseCase:
                     sum_hanchans[line_user_id] += converted_score
 
             if is_required_sum:
+                sum_info = []
+                for line_user_id, converted_score in sum_hanchans.items():
+                    name = user_service.get_name_by_line_user_id(line_user_id)
+                    if name is None:
+                        continue
+                    sum_info.append(f'{name}: {converted_score}')
                 reply_service.add_message(
-                    '\n'.join([
-                        f'{user_service.get_name_by_line_user_id(line_user_id)}: {converted_score}'
-                        for line_user_id, converted_score in sum_hanchans.items()
-                    ])
+                    '\n'.join(sum_info)
                 )
 
             key = 'レート'
@@ -58,6 +61,8 @@ class ReplySumMatchesByIdsUseCase:
             line_group_id = request_info_service.req_line_group_id
             for line_user_id, converted_score in sum_hanchans.items():
                 name = user_service.get_name_by_line_user_id(line_user_id)
+                if name is None:
+                    continue
                 price = str(
                     converted_score * int(config_service.get_value_by_key(line_group_id, key)[1]) * 10)
                 score = ("+" if converted_score > 0 else "") + \

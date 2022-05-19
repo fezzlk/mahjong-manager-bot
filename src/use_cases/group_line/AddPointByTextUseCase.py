@@ -66,10 +66,19 @@ class AddPointByTextUseCase:
 
         points = hanchan.raw_scores
 
-        res = [
-            f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
-            for line_user_id, point in points.items()
-        ]
+        res = []
+        is_contain_not_friend = False
+        for line_user_id, point in points.items():
+            user_name = user_service.get_name_by_line_user_id(line_user_id)
+            if user_name is None:
+                is_contain_not_friend = True
+                continue
+            res.append(
+                f'{user_name}: {point}'
+            )
+
+        if is_contain_not_friend:
+            reply_service.add_message('友達登録しているユーザーのみ表示します。')
 
         reply_service.add_message("\n".join(res))
 

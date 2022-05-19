@@ -59,11 +59,16 @@ class MatchFinishUseCase:
                         total_yakuman_minus[line_user_id] += 1
 
         results: List[str] = []
+        is_contain_not_friend = False
         for line_user_id, converted_score in total_scores.items():
             yakuman_info = '+' * total_yakuman_plus[line_user_id] \
                 + '-' * total_yakuman_minus[line_user_id]
+            name = user_service.get_name_by_line_user_id(line_user_id)
+            if name is None:
+                is_contain_not_friend = True
+                continue
             results.append(
-                f'{user_service.get_name_by_line_user_id(line_user_id)}: {converted_score}{yakuman_info}')
+                f'{name}: {converted_score}{yakuman_info}')
 
         reply_service.add_message(
             '\n'.join(results)
@@ -72,6 +77,9 @@ class MatchFinishUseCase:
         price_list = []
         for line_user_id, converted_score in total_scores.items():
             name = user_service.get_name_by_line_user_id(line_user_id)
+            if name is None:
+                is_contain_not_friend = True
+                continue
             rate = int(
                 config_service.get_value_by_key(
                     line_group_id, 'レート')[1])
@@ -88,5 +96,8 @@ class MatchFinishUseCase:
         reply_service.add_message(
             '対戦ID: ' + str(match_id) + '\n' + '\n'.join(price_list)
         )
+
+        if is_contain_not_friend:
+            reply_service.add_message('友達登録しているユーザーのみ表示しています。')
 
         match_service.archive(line_group_id)

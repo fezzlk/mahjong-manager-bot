@@ -6,9 +6,6 @@ from .interfaces.IUserService import IUserService
 from repositories import session_scope, user_repository
 from messaging_api_setting import line_bot_api
 from DomainModel.entities.User import User, UserMode
-from ApplicationService import (
-    reply_service,
-)
 
 
 class UserService(IUserService):
@@ -57,7 +54,6 @@ class UserService(IUserService):
             return profile.display_name
 
         except Exception:
-            reply_service.add_message('友達登録してください（登録済みの場合は一度ブロックし、解除してください。')
             return None
 
     def get_line_user_id_by_name(

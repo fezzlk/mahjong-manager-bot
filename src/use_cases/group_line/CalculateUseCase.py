@@ -72,10 +72,19 @@ class CalculateUseCase:
             # 飛び賞が発生した場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
             if any(x < 0 for x in points.values()
                    ) and tobashita_player_id is None:
-                reply_service.add_tobi_menu([
-                    {'id': p_id, 'name': user_service.get_name_by_line_user_id(p_id), }
-                    for p_id in points.keys() if points[p_id] > 0
-                ])
+                is_contain_not_friend = False
+                menu_opt = []
+                for p_id in points.keys():
+                    if points[p_id] > 0:
+                        user_name = user_service.get_name_by_line_user_id(p_id)
+                        if user_name is None:
+                            is_contain_not_friend = True
+                            continue
+                        menu_opt.append(
+                            {'id': p_id, 'name': user_name, })
+                if is_contain_not_friend:
+                    reply_service.add_message('友達登録しているユーザーのみ表示します。')
+                reply_service.add_tobi_menu(menu_opt)
                 return
 
             # config の取得
@@ -148,18 +157,24 @@ class CalculateUseCase:
             )
 
             score_text_list = []
+            is_contain_not_friend = False
             for r in sorted(
                 converted_scores.items(),
                 key=lambda x: x[1],
                 reverse=True
             ):
                 name = user_service.get_name_by_line_user_id(r[0])
+                if name is None:
+                    is_contain_not_friend = True
+                    continue
                 score = ("+" if r[1] > 0 else "") + str(r[1])
                 sum_score = (
                     "+" if sum_hanchans[r[0]] > 0 else "") + str(sum_hanchans[r[0]])
                 score_text_list.append(
                     f'{name}: {score} ({sum_score})'
                 )
+            if is_contain_not_friend:
+                reply_service.add_message('友達登録しているユーザーのみ表示します。')
             reply_service.add_message(
                 '\n'.join(score_text_list)
             )
