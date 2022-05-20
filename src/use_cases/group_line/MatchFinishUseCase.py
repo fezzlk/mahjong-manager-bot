@@ -11,6 +11,7 @@ from ApplicationService import (
 from repositories import (
     session_scope,
     hanchan_repository,
+    user_repository,
     yakuman_user_repository,
 )
 
@@ -37,10 +38,6 @@ class MatchFinishUseCase:
                 session, ids)
 
         total_scores: Dict[str, int] = {}
-        total_yakuman_plus: Dict[str, int] = {
-            k: 0 for k in total_scores.keys()}
-        total_yakuman_minus: Dict[str, int] = {
-            k: 0 for k in total_scores.keys()}
 
         for hanchan in hanchans:
             converted_scores = hanchan.converted_scores
@@ -50,10 +47,20 @@ class MatchFinishUseCase:
                     total_scores[line_user_id] = 0
                 total_scores[line_user_id] += converted_score
 
+        total_yakuman_plus: Dict[str, int] = {
+            k: 0 for k in total_scores.keys()}
+        total_yakuman_minus: Dict[str, int] = {
+            k: 0 for k in total_scores.keys()}
+        for hanchan in hanchans:
+            converted_scores = hanchan.converted_scores
             for yu in [
                     target for target in yakuman_users if target.hanchan_id == hanchan._id]:
+                with session_scope() as session:
+                    target = user_repository.find_by_ids(session, [yu.user_id])
+                    if len(target) == 0:
+                        continue
                 for line_user_id in converted_scores.keys():
-                    if line_user_id == yu.user_id:
+                    if line_user_id == target[0].line_user_id:
                         total_yakuman_plus[line_user_id] += 1
                     else:
                         total_yakuman_minus[line_user_id] += 1
@@ -61,8 +68,8 @@ class MatchFinishUseCase:
         results: List[str] = []
         is_contain_not_friend = False
         for line_user_id, converted_score in total_scores.items():
-            yakuman_info = '+' * total_yakuman_plus[line_user_id] \
-                + '-' * total_yakuman_minus[line_user_id]
+            yakuman_info = '○' * total_yakuman_plus[line_user_id] \
+                + 'x' * total_yakuman_minus[line_user_id]
             name = user_service.get_name_by_line_user_id(line_user_id)
             if name is None:
                 is_contain_not_friend = True
@@ -84,14 +91,20 @@ class MatchFinishUseCase:
                 config_service.get_value_by_key(
                     line_group_id, 'レート')[1])
             yakuman_prize = 300
-            price = str(converted_score * rate * 10)\
-                + yakuman_prize * 3 * total_yakuman_plus[line_user_id]\
-                - yakuman_prize * total_yakuman_minus[line_user_id]
-            yakuman_info = '+' * total_yakuman_plus[line_user_id]\
-                + '-' * total_yakuman_minus[line_user_id]
+            str_price = str(
+                converted_score *
+                rate *
+                10 +
+                yakuman_prize *
+                3 *
+                total_yakuman_plus[line_user_id] -
+                yakuman_prize *
+                total_yakuman_minus[line_user_id])
+            yakuman_info = '◯' * total_yakuman_plus[line_user_id]\
+                + 'x' * total_yakuman_minus[line_user_id]
             score = ("+" if converted_score > 0 else "") + \
                 str(converted_score) + yakuman_info
-            price_list.append(f'{name}: {price}円 ({score})')
+            price_list.append(f'{name}: {str_price}円 ({score})')
 
         reply_service.add_message(
             '対戦ID: ' + str(match_id) + '\n' + '\n'.join(price_list)
