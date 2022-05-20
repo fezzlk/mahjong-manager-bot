@@ -38,6 +38,13 @@ class AddPointByTextUseCase:
             target_line_user_id = request_info_service.req_line_user_id
             str_point = text
 
+        with session_scope() as session:
+            target_user = user_repository.find_one_by_line_user_id(
+                session, target_line_user_id)
+            if target_user is None:
+                reply_service.add_message('友達登録していないユーザーは登録できません。')
+                return
+
         str_point = str_point.replace(',', '')
 
         # 入力した点数のバリデート（hack: '-' を含む場合数値として判断できないため一旦エスケープ）
@@ -67,35 +74,24 @@ class AddPointByTextUseCase:
         points = hanchan.raw_scores
 
         res = []
-        is_contain_not_friend = False
         for line_user_id, point in points.items():
             user_name = user_service.get_name_by_line_user_id(line_user_id)
-            if user_name is None:
-                is_contain_not_friend = True
-                continue
             res.append(
                 f'{user_name}: {point}'
             )
 
-        if is_contain_not_friend:
-            reply_service.add_message('友達登録しているユーザーのみ表示します。')
+        if len(res) > 0:
+            reply_service.add_message("\n".join(res))
 
-        reply_service.add_message("\n".join(res))
-
-        with session_scope() as session:
-            target_user = user_repository.find_one_by_line_user_id(
-                session, target_line_user_id)
-            if target_user is None:
-                reply_service.add_message('友達登録していないユーザーは役満を登録できません。')
-            else:
-                diff = len(str_point_with_yakuman) - len(str_point)
-                for _ in range(diff):
+        diff = len(str_point_with_yakuman) - len(str_point)
+        if diff > 0:
+            for _ in range(diff):
+                with session_scope() as session:
                     yakuman_user_repository.create(session, YakumanUser(
                         user_id=target_user._id,
                         hanchan_id=hanchan._id,
                     ))
-                if diff > 0:
-                    reply_service.add_message("\n".join('役満おめでとうございます！'))
+            reply_service.add_message("\n".join('役満おめでとうございます！'))
 
         if len(points) == 4:
             CalculateUseCase().execute()
