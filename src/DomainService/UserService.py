@@ -54,7 +54,12 @@ class UserService(IUserService):
             return profile.display_name
 
         except Exception:
-            return None
+            with session_scope() as session:
+                target = user_repository.find_one_by_line_user_id(
+                    session,
+                    line_user_id,
+                )
+                return None if target is None else target.line_user_name
 
     def get_line_user_id_by_name(
         self,
