@@ -33,6 +33,22 @@ class YakumanUserRepository:
             for record in records
         ]
 
+    def find_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[str],
+    ) -> List[YakumanUser]:
+        records = session\
+            .query(YakumanUserModel)\
+            .filter(YakumanUserModel.id.in_(ids))\
+            .order_by(YakumanUserModel.id)\
+            .all()
+
+        return [
+            self._mapping_record_to_domain(record)
+            for record in records
+        ]
+
     def find_by_user_ids(
         self,
         session: BaseSession,
