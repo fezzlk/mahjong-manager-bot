@@ -22,6 +22,14 @@ class IYakumanUserRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def find_by_ids(
+        self,
+        session: BaseSession,
+        ids: List[int],
+    ) -> List[YakumanUser]:
+        pass
+
+    @abstractmethod
     def find_by_user_ids(
         self,
         session: BaseSession,

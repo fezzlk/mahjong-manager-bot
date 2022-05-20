@@ -33,7 +33,7 @@ class IGroupRepository(metaclass=ABCMeta):
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: List[str],
+        ids: List[int],
     ) -> List[Group]:
         pass
 

@@ -33,7 +33,7 @@ class IHanchanRepository(metaclass=ABCMeta):
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: List[Hanchan],
+        ids: List[int],
     ) -> List[Hanchan]:
         pass
 

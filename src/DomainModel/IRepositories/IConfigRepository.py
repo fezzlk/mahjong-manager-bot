@@ -42,7 +42,7 @@ class IConfigRepository(metaclass=ABCMeta):
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: List[str],
+        ids: List[int],
     ) -> List[Config]:
         pass
 

@@ -25,7 +25,7 @@ class IMatchRepository(metaclass=ABCMeta):
     def find_by_ids(
         self,
         session: BaseSession,
-        ids: List[Match],
+        ids: List[int],
     ) -> List[Match]:
         pass
 
