@@ -91,7 +91,7 @@ class AddPointByTextUseCase:
                         user_id=target_user._id,
                         hanchan_id=hanchan._id,
                     ))
-            reply_service.add_message("\n".join('役満おめでとうございます！'))
+            reply_service.add_message('役満おめでとうございます！')
 
         if len(points) == 4:
             CalculateUseCase().execute()

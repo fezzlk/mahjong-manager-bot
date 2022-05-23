@@ -14,6 +14,7 @@ from repositories import (
     match_repository,
     user_repository,
     group_repository,
+    yakuman_user_repository,
     session_scope,
 )
 
@@ -294,7 +295,7 @@ def test_execute_not_registered_user():
         assert len(hanchans[0].raw_scores) == 0
 
 
-def test_execute_fourth_input():
+def test_execute_sum_point_is_low():
     # Arrage
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -361,3 +362,38 @@ def test_execute_fifth_input():
         assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
         for k in expected_raw_scores:
             assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
+
+
+def test_ok_with_yakuman():
+    # Arrage
+    use_case = AddPointByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    with session_scope() as session:
+        match_repository.create(session, dummy_match)
+        hanchan_repository.create(session, dummy_hanchans[0])
+        group_repository.create(session, dummy_group)
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+
+    # Act
+    use_case.execute(text='10000役')
+
+    # Assert
+    print(reply_service.texts)
+    assert len(reply_service.texts) == 2
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == 'test_user1: 10000'
+    assert reply_service.texts[1].type == 'text'
+    assert reply_service.texts[1].text == '役満おめでとうございます！'
+    with session_scope() as session:
+        hanchans = hanchan_repository.find_all(session)
+        expected_raw_scores = {'U0123456789abcdefghijklmnopqrstu1': 10000}
+        assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
+        for k in expected_raw_scores:
+            assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
+
+        yakuman_users = yakuman_user_repository.find_all(session)
+        assert len(yakuman_users) == 1
+        assert yakuman_users[0].hanchan_id == 1
+        assert yakuman_users[0].user_id == 1
