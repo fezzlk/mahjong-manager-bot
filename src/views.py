@@ -69,12 +69,6 @@ def index():
     return render_template('index.html', title='home', message=message)
 
 
-# @app.route('/plot')
-# def plot():
-#     matches_use_cases.plot()
-#     return render_template('index.html', title='home', message='message')
-
-
 @views_blueprint.route('/reset', methods=['POST'])
 def reset_db():
     Base.metadata.drop_all(bind=Engine)
