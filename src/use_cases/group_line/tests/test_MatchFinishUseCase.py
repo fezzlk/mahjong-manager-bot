@@ -1,9 +1,8 @@
-from typing import Dict, Tuple
-import pytest
 from DomainModel.entities.User import User, UserMode
 from DomainModel.entities.Group import Group, GroupMode
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
+from DomainModel.entities.YakumanUser import YakumanUser
 from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
 from ApplicationService import (
     reply_service,
@@ -144,7 +143,9 @@ def test_execute():
     assert reply_service.texts[0].text == 'test_user2: -40\ntest_user3: -40\ntest_user4: 20\ntest_user5: 100\ntest_user1: -40'
     assert reply_service.texts[1].type == 'text'
     print(reply_service.texts[1].text)
-    assert reply_service.texts[1].text == '対戦ID: 1\ntest_user2: -1200円 (-40)\ntest_user3: -1200円 (-40)\ntest_user4: 600円 (+20)\ntest_user5: 3000円 (+100)\ntest_user1: -1200円 (-40)'
+    assert reply_service.texts[
+        1].text == '対戦ID: 1\ntest_user2: -1200円 (-40)\ntest_user3: -1200円 (-40)\
+        \ntest_user4: 600円 (+20)\ntest_user5: 3000円 (+100)\ntest_user1: -1200円 (-40)'
     with session_scope() as session:
         matches = match_repository.find_all(session)
         assert matches[0].status == 2
@@ -170,3 +171,37 @@ def test_execute_without_match():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'まだ対戦結果がありません。'
+
+
+dummy_yu = YakumanUser(user_id=4, hanchan_id=1)
+
+
+def test_execute_with_yakuman():
+    # Arrage
+    use_case = MatchFinishUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    with session_scope() as session:
+        for dummy_user in dummy_users:
+            user_repository.create(session, dummy_user)
+        group_repository.create(session, dummy_group)
+        match_repository.create(session, dummy_matches[0])
+        for dummy_hanchan in dummy_hanchans:
+            hanchan_repository.create(session, dummy_hanchan)
+        yakuman_user_repository.create(session, dummy_yu)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 2
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == 'test_user2: -40x\ntest_user3: -40x\ntest_user4: 20○\ntest_user5: 100x\ntest_user1: -40'
+    assert reply_service.texts[1].type == 'text'
+    print(reply_service.texts[1].text)
+    assert reply_service.texts[
+        1].text == '対戦ID: 1\ntest_user2: -1500円 (-40x)\ntest_user3: -1500円 (-40x)\
+    \ntest_user4: 1500円 (+20◯)\ntest_user5: 2700円 (+100x)\ntest_user1: -1200円 (-40)'
+    with session_scope() as session:
+        matches = match_repository.find_all(session)
+        assert matches[0].status == 2
