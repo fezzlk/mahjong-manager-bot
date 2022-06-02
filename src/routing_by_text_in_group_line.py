@@ -11,7 +11,7 @@ from ApplicationService import (
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 from use_cases.group_line.CalculateUseCase import CalculateUseCase
 
-from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
+from use_cases.group_line.QuitGroupUseCase import QuitGroupUseCase
 from use_cases.group_line.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
 from use_cases.group_line.SetMyZoomUrlToGroupUseCase import SetMyZoomUrlToGroupUseCase
 from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
@@ -114,7 +114,7 @@ def routing_for_group_by_method(method, body):
         ReplyGroupModeUseCase().execute()
     # exit
     elif method == RCommands.exit.name:
-        GroupQuitUseCase().execute()
+        QuitGroupUseCase().execute()
     # help
     elif method == RCommands.help.name:
         ReplyGroupHelpUseCase().execute(RCommands)
