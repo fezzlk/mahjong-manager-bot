@@ -10,7 +10,7 @@ from repositories import (
 
 
 def test_get_from_profile(mocker):
-    # Arrage
+    # Arrange
     user_service = UserService()
     dummy_user = generate_dummy_user_list()[0]
     dummy_profile = generate_dummy_profile()
@@ -30,7 +30,7 @@ def test_get_from_profile(mocker):
 
 
 def test_ok_from_db(mocker):
-    # Arrage
+    # Arrange
     user_service = UserService()
     dummy_users = generate_dummy_user_list()[:3]
     with session_scope() as session:
@@ -56,7 +56,7 @@ def test_ok_from_db(mocker):
 
 
 def test_ok_line_api_do_not_reply_id(mocker):
-    # Arrage
+    # Arrange
     user_service = UserService()
     dummy_users = generate_dummy_user_list()[:3]
     with session_scope() as session:

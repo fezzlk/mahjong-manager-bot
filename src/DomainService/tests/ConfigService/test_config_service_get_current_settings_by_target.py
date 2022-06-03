@@ -9,7 +9,7 @@ from repositories import session_scope, config_repository
 
 
 def test_success():
-    # Arrage
+    # Arrange
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:6]
         for dummy_config in dummy_configs:
@@ -38,7 +38,7 @@ def test_success():
 
 
 def test_success_get_default_settings():
-    # Arrage
+    # Arrange
     dummy_config = generate_dummy_config_list()[0]
 
     # Act

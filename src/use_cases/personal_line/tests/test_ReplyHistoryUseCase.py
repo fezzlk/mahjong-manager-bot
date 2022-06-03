@@ -57,7 +57,7 @@ dummy_hanchan = Hanchan(
 
 
 def test_execute_not_match():
-    # Arrage
+    # Arrange
     with session_scope() as session:
         user_repository.create(session, dummy_user)
 
@@ -74,7 +74,7 @@ def test_execute_not_match():
 
 def test_execute():
     with pytest.raises(ValueError):
-        # Arrage
+        # Arrange
         with session_scope() as session:
             user_repository.create(session, dummy_user)
             match_repository.create(session, dummy_match)

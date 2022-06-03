@@ -9,7 +9,7 @@ from repositories import session_scope, config_repository
 
 
 def test_success_to_original_from_default():
-    # Arrage
+    # Arrange
     dummy_config = generate_dummy_config_list()[0]
     expected_settings = {
         'レート': '点3',
@@ -40,7 +40,7 @@ def test_success_to_original_from_default():
 
 
 def test_success_to_original_from_original():
-    # Arrage
+    # Arrange
     dummy_config = generate_dummy_config_list()[3]
     with session_scope() as session:
         config_repository.create(
@@ -77,7 +77,7 @@ def test_success_to_original_from_original():
 
 
 def test_success_to_default_from_original():
-    # Arrage
+    # Arrange
     dummy_config = generate_dummy_config_list()[3]
     with session_scope() as session:
         config_repository.create(
@@ -105,7 +105,7 @@ def test_success_to_default_from_original():
 
 
 def test_success_to_default_from_default():
-    # Arrage
+    # Arrange
     dummy_config = generate_dummy_config_list()[3]
 
     # Act

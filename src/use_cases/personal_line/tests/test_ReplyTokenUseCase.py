@@ -33,7 +33,7 @@ class Dummy:
 
 
 def test_execute(mocker):
-    # Arrage
+    # Arrange
     with session_scope() as session:
         user_repository.create(session, dummy_user)
     request_info_service.set_req_info(event=dummy_event)

@@ -7,7 +7,7 @@ from ApplicationService import (
 
 
 def test_execute():
-    # Arrage
+    # Arrange
     use_case = UserMyZoomCommandUseCase()
 
     # Act

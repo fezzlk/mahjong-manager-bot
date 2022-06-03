@@ -9,7 +9,7 @@ dummy_users = generate_dummy_user_list()[1:4]
 
 
 def test_success_get_line_user_id():
-    # Arrage
+    # Arrange
     user_service = UserService()
 
     with session_scope() as session:
@@ -30,7 +30,7 @@ def test_success_get_line_user_id():
 
 def test_fail_because_hit_multi_user():
     with pytest.raises(ValueError):
-        # Arrage
+        # Arrange
         user_service = UserService()
 
         with session_scope() as session:

@@ -10,7 +10,7 @@ from repositories import session_scope, UserRepository
 
 
 def test_execute():
-    # Arrage
+    # Arrange
     dummy_event = generate_dummy_unfollow_event()
     request_info_service.set_req_info(event=dummy_event)
 

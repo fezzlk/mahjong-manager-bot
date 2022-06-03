@@ -122,7 +122,7 @@ dummy_matches = [
 
 
 def test_execute():
-    # Arrage
+    # Arrange
     use_case = MatchFinishUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -152,7 +152,7 @@ def test_execute():
 
 
 def test_execute_without_match():
-    # Arrage
+    # Arrange
     use_case = MatchFinishUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -177,7 +177,7 @@ dummy_yu = YakumanUser(user_id=4, hanchan_id=1)
 
 
 def test_execute_with_yakuman():
-    # Arrage
+    # Arrange
     use_case = MatchFinishUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id

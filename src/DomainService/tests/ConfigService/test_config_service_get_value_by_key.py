@@ -22,7 +22,7 @@ def case(request) -> Tuple[str, str]:
 
 
 def test_success_get_default_config(case):
-    # Arrage
+    # Arrange
     dummy_config = generate_dummy_config_list()[0]
 
     # Act
@@ -36,7 +36,7 @@ def test_success_get_default_config(case):
 
 
 def test_success_get_updated_config():
-    # Arrage
+    # Arrange
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:6]
         for dummy_config in dummy_configs:

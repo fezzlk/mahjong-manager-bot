@@ -37,7 +37,7 @@ dummy_hanchan = Hanchan(
 
 
 def test_execute():
-    # Arrage
+    # Arrange
     use_case = QuitGroupUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     with session_scope() as session:

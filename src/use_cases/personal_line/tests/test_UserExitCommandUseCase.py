@@ -22,7 +22,7 @@ dummy_user = User(
 
 
 def test_execute():
-    # Arrage
+    # Arrange
     with session_scope() as session:
         user_repository.create(session, dummy_user)
 
