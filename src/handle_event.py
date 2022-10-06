@@ -87,10 +87,10 @@ def handle_text_message(event):
 @ handler.add(MessageEvent, message=ImageMessage)
 @ handle_event_decorater
 def handle_image_message(event):
-    if event.source.type == 'room' or event.source.type == 'group':
-        InputResultFromImageUseCase().execute(event)
-    else:
-        raise BaseException('this source type is not supported')
+    # if event.source.type == 'room' or event.source.type == 'group':
+    #     InputResultFromImageUseCase().execute(event)
+    # else:
+    raise BaseException('this source type is not supported')
 
 
 @ handler.add(PostbackEvent)
