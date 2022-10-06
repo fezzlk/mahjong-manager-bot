@@ -20,8 +20,8 @@ from ApplicationService import (
 from use_cases.personal_line.FollowUseCase import FollowUseCase
 from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
 from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
-from use_cases.group_line.InputResultFromImageUseCase import (
-    InputResultFromImageUseCase)
+# from use_cases.group_line.InputResultFromImageUseCase import (
+#     InputResultFromImageUseCase)
 import env_var
 import traceback
 
@@ -87,10 +87,10 @@ def handle_text_message(event):
 @ handler.add(MessageEvent, message=ImageMessage)
 @ handle_event_decorater
 def handle_image_message(event):
-    if event.source.type == 'room' or event.source.type == 'group':
-        InputResultFromImageUseCase().execute(event)
-    else:
-        raise BaseException('this source type is not supported')
+    # if event.source.type == 'room' or event.source.type == 'group':
+    #     InputResultFromImageUseCase().execute(event)
+    # else:
+    raise BaseException('this source type is not supported')
 
 
 @ handler.add(PostbackEvent)

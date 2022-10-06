@@ -16,8 +16,8 @@ app = Flask(__name__)
 logger = logging.create_logger(app)
 
 
-from jwt_setting import register_jwt
-jwt = register_jwt(app)
+# from jwt_setting import register_jwt
+# jwt = register_jwt(app)
 
 
 from db_setting import Engine
