@@ -29,61 +29,61 @@ def convert_to_json(records: List) -> str:
     )
 
 
-@api_blueprint.route('/users/all')
-# @ jwt_required()
-@admin_required
-def api_get_all_users():
-    req_user: User = current_identity
-    print(f'Receive a request from user_id = {req_user._id}')
+# @api_blueprint.route('/users/all')
+# # @ jwt_required()
+# @admin_required
+# def api_get_all_users():
+#     req_user: User = current_identity
+#     print(f'Receive a request from user_id = {req_user._id}')
 
-    with session_scope() as session:
-        records = user_repository.find_all(session)
-        return convert_to_json(records)
-
-
-@api_blueprint.route('/groups/all')
-# @ jwt_required()
-@admin_required
-def api_get_all_groups():
-    req_user: User = current_identity
-    print(f'Receive a request from user_id = {req_user._id}')
-
-    with session_scope() as session:
-        records = group_repository.find_all(session)
-        return convert_to_json(records)
+#     with session_scope() as session:
+#         records = user_repository.find_all(session)
+#         return convert_to_json(records)
 
 
-@api_blueprint.route('/hanchans/all')
-# @ jwt_required()
-@admin_required
-def api_get_all_hanchans():
-    req_user: User = current_identity
-    print(f'Receive a request from user_id = {req_user._id}')
+# @api_blueprint.route('/groups/all')
+# # @ jwt_required()
+# @admin_required
+# def api_get_all_groups():
+#     req_user: User = current_identity
+#     print(f'Receive a request from user_id = {req_user._id}')
 
-    with session_scope() as session:
-        records = hanchan_repository.find_all(session)
-        return convert_to_json(records)
-
-
-@api_blueprint.route('/matches/all')
-# @ jwt_required()
-@admin_required
-def api_get_all_matches():
-    req_user: User = current_identity
-    print(f'Receive a request from user_id = {req_user._id}')
-
-    with session_scope() as session:
-        records = match_repository.find_all(session)
-        return convert_to_json(records)
+#     with session_scope() as session:
+#         records = group_repository.find_all(session)
+#         return convert_to_json(records)
 
 
-@api_blueprint.route('/configs/all')
-# @ jwt_required()
-@admin_required
-def api_get_all_configs():
-    req_user: User = current_identity
-    print(f'Receive a request from user_id = {req_user._id}')
+# @api_blueprint.route('/hanchans/all')
+# # @ jwt_required()
+# @admin_required
+# def api_get_all_hanchans():
+#     req_user: User = current_identity
+#     print(f'Receive a request from user_id = {req_user._id}')
 
-    with session_scope() as session:
-        records = config_repository.find_all(session)
-        return convert_to_json(records)
+#     with session_scope() as session:
+#         records = hanchan_repository.find_all(session)
+#         return convert_to_json(records)
+
+
+# @api_blueprint.route('/matches/all')
+# # @ jwt_required()
+# @admin_required
+# def api_get_all_matches():
+#     req_user: User = current_identity
+#     print(f'Receive a request from user_id = {req_user._id}')
+
+#     with session_scope() as session:
+#         records = match_repository.find_all(session)
+#         return convert_to_json(records)
+
+
+# @api_blueprint.route('/configs/all')
+# # @ jwt_required()
+# @admin_required
+# def api_get_all_configs():
+#     req_user: User = current_identity
+#     print(f'Receive a request from user_id = {req_user._id}')
+
+#     with session_scope() as session:
+#         records = config_repository.find_all(session)
+#         return convert_to_json(records)
