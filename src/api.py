@@ -12,7 +12,7 @@ from repositories import (
 )
 import json
 from datetime import datetime
-from flask_jwt import jwt_required, current_identity
+# from flask_jwt import jwt_required, current_identity
 api_blueprint = Blueprint('api_blueprint', __name__, url_prefix='/_api')
 
 
@@ -30,7 +30,7 @@ def convert_to_json(records: List) -> str:
 
 
 @api_blueprint.route('/users/all')
-@ jwt_required()
+# @ jwt_required()
 @admin_required
 def api_get_all_users():
     req_user: User = current_identity
@@ -42,7 +42,7 @@ def api_get_all_users():
 
 
 @api_blueprint.route('/groups/all')
-@ jwt_required()
+# @ jwt_required()
 @admin_required
 def api_get_all_groups():
     req_user: User = current_identity
@@ -54,7 +54,7 @@ def api_get_all_groups():
 
 
 @api_blueprint.route('/hanchans/all')
-@ jwt_required()
+# @ jwt_required()
 @admin_required
 def api_get_all_hanchans():
     req_user: User = current_identity
@@ -66,7 +66,7 @@ def api_get_all_hanchans():
 
 
 @api_blueprint.route('/matches/all')
-@ jwt_required()
+# @ jwt_required()
 @admin_required
 def api_get_all_matches():
     req_user: User = current_identity
@@ -78,7 +78,7 @@ def api_get_all_matches():
 
 
 @api_blueprint.route('/configs/all')
-@ jwt_required()
+# @ jwt_required()
 @admin_required
 def api_get_all_configs():
     req_user: User = current_identity
