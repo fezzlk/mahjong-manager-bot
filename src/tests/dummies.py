@@ -139,13 +139,6 @@ def generate_dummy_group_list() -> List[Group]:
             mode=GroupMode.wait,
             _id=3,
         ),
-        # same line group id 3
-        Group(
-            line_group_id="G0123456789abcdefghijklmnopqrstu3",
-            zoom_url="https://us01web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
-            mode=GroupMode.input,
-            _id=4,
-        ),
     ]
 
 

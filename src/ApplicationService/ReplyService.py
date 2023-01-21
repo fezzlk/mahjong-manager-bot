@@ -284,10 +284,10 @@ class ReplyService(IReplyService):
                     text='どれにしますか？',
                     actions=[
                         PostbackAction(
-                            label=i,
+                            label=f'1枚{i}円',
                             display_text=f'1枚{i}円',
                             data=f'_update_config チップ {i}'
-                        ) for i in [0, 30]
+                        ) for i in [0, 10, 20, 30]
                     ]
                 )
             )
