@@ -6,6 +6,7 @@ class GroupMode(Enum):
     wait = 'wait'
     input = 'input'
     tip_input = 'tip_input'
+    tip_ok = 'tip_ok'
 
 
 @dataclass()
