@@ -33,6 +33,7 @@ from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesById
 from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
+from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
 from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
@@ -66,6 +67,7 @@ class RCommands(Enum):
     graph = 'graph'
     my_results = 'my_results'
     history = 'history'
+    tip_ok = 'tip_ok'
 
 
 def routing_by_text_in_group_line(text: str):
@@ -171,6 +173,9 @@ def routing_for_group_by_method(method, body):
     # history
     elif method == RCommands.history.name:
         ReplyMultiHistoryUseCase().execute()
+    # tip_ok
+    elif method == RCommands.tip_ok.name:
+        FinishInputTipUseCase().execute()
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')
