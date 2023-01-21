@@ -20,6 +20,7 @@ from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
 from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
 from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
 from use_cases.group_line.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCase
+from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
 
 from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
@@ -68,6 +69,7 @@ class RCommands(Enum):
     my_results = 'my_results'
     history = 'history'
     tip_ok = 'tip_ok'
+    badai = 'badai'
 
 
 def routing_by_text_in_group_line(text: str):
@@ -176,6 +178,9 @@ def routing_for_group_by_method(method, body):
     # tip_ok
     elif method == RCommands.tip_ok.name:
         FinishInputTipUseCase().execute()
+    # badai
+    elif method == RCommands.badai.name:
+        ReplyApplyBadaiUseCase().execute(body)
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')
