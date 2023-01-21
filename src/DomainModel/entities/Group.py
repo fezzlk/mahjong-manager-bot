@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class GroupMode(Enum):
     wait = 'wait'
     input = 'input'
+    tip_input = 'tip_input'
 
 
 @dataclass()

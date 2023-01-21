@@ -74,7 +74,7 @@ def create_dummy():
 
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
-    MatchModel.add_column(engine=Engine, column_name="chip_scores")
+    MatchModel.add_column(engine=Engine, column_name="tip_scores")
 
     return redirect(url_for('views_blueprint.index', message='migrateしました'))
 
@@ -293,7 +293,7 @@ def get_matches():
         'hanchan_ids',
         'created_at',
         'status',
-        'chip_scores',
+        'tip_scores',
         'users']
     input_keys = ['line_group_id', 'hanchan_ids', 'status']
     return render_template(

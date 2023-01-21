@@ -23,6 +23,7 @@ from use_cases.group_line.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCa
 
 from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
+from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 from use_cases.group_line.ReplySumHanchansUseCase import ReplySumHanchansUseCase
 
@@ -87,6 +88,10 @@ def routing_by_text_in_group_line(text: str):
     """input mode"""
     if current_mode.value == GroupMode.input.value:
         AddPointByTextUseCase().execute(text)
+        return
+    """tip input mode"""
+    if current_mode.value == GroupMode.tip_input.value:
+        AddTipByTextUseCase().execute(text)
         return
 
     """wait mode"""

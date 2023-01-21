@@ -18,6 +18,7 @@ class MatchRepository(IMatchRepository):
             line_group_id=new_match.line_group_id,
             hanchan_ids=new_match.hanchan_ids,
             status=new_match.status,
+            tip_scores=new_match.tip_scores,
         )
 
         session.add(record)
@@ -164,6 +165,7 @@ class MatchRepository(IMatchRepository):
         updated = MatchModel(
             line_group_id=target.line_group_id,
             hanchan_ids=target.hanchan_ids,
+            tip_scores=target.tip_scores,
             status=target.status,
         ).__dict__
         updated.pop('_sa_instance_state')
@@ -180,8 +182,13 @@ class MatchRepository(IMatchRepository):
             _id=record.id,
             line_group_id=record.line_group_id,
             hanchan_ids=json.loads(record.hanchan_ids),
+
             users=record.users,
             status=record.status,
-            chip_scores=record.chip_scores,
+            tip_scores=(
+                json.loads(
+                    record.tip_scores
+                ) if record.tip_scores is not None else {}
+            ),
             created_at=record.created_at,
         )
