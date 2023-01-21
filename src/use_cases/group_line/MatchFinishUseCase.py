@@ -24,7 +24,7 @@ class MatchFinishUseCase:
 
         tip_rate = int(config_service.get_value_by_key(line_group_id, 'チップ'))
         str_current_mode = group_service.get_mode(line_group_id).value
-        if tip_rate != 0 and str_current_mode != GroupMode.tip_ok:
+        if tip_rate != 0 and str_current_mode != GroupMode.tip_ok.value:
             group_service.chmod(line_group_id, GroupMode.tip_input)
             reply_service.add_message(
                 'チップの増減数を入力してください。完了したら「_tip_ok」と入力してください。')
@@ -79,9 +79,9 @@ class MatchFinishUseCase:
             tip_count = 0 if nullable_tip_count is None else nullable_tip_count
             price = converted_score * rate + tip_count * tip_rate
             score = ("+" if converted_score > 0 else "") + str(converted_score)
-            additional_tip_message = f'+ {tip_count}枚'
+            additional_tip_message = f'({("+" if tip_count > 0 else "") + str(tip_count)}枚)'
             show_prize_money_list.append(
-                f'{name}: {str(price)}円 ({score} {additional_tip_message})')
+                f'{name}: {str(price)}円 ({score}{additional_tip_message})')
 
         reply_service.add_message(
             '対戦ID: ' + str(match_id) + '\n' + '\n'.join(show_prize_money_list)
