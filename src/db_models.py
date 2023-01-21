@@ -144,10 +144,12 @@ class MatchModel(Base):
         nullable=False,
         server_default=current_timestamp()
     )
+    tip_scores = Column(String(255), nullable=True)
 
-    def __init__(self, line_group_id, hanchan_ids, status):
+    def __init__(self, line_group_id, hanchan_ids, status, tip_scores):
         self.line_group_id = line_group_id
         self.hanchan_ids = json.dumps(hanchan_ids),
+        self.tip_scores = json.dumps(tip_scores)
         self.status = status
 
     @staticmethod

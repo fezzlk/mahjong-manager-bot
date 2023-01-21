@@ -1,3 +1,4 @@
+from typing import Optional
 from .interfaces.IMatchService import IMatchService
 from repositories import session_scope, match_repository
 from DomainModel.entities.Match import Match
@@ -143,3 +144,38 @@ class MatchService(IMatchService):
             )
 
             return updated_match
+
+    def add_or_drop_tip_score(
+        self,
+        line_group_id: str,
+        line_user_id: str,
+        tip_score: Optional[int],
+    ) -> Match:
+        with session_scope() as session:
+            if line_user_id is None:
+                raise ValueError('line_user_id is required')
+
+            target = match_repository.find_one_by_line_group_id_and_status(
+                session=session,
+                line_group_id=line_group_id,
+                status=1,
+            )
+
+            if target is None:
+                raise ValueError('Not found match')
+
+            tip_scores = target.tip_scores
+
+            if tip_score is None:
+                tip_scores.pop(line_user_id, None)
+            else:
+                tip_scores[line_user_id] = tip_score
+
+            target.tip_scores = tip_scores
+
+            match_repository.update(
+                session=session,
+                target=target,
+            )
+
+            return target

@@ -23,6 +23,7 @@ from use_cases.group_line.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCa
 
 from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
+from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 from use_cases.group_line.ReplySumHanchansUseCase import ReplySumHanchansUseCase
 
@@ -32,6 +33,7 @@ from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesById
 from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
+from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
 from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
@@ -65,6 +67,7 @@ class RCommands(Enum):
     graph = 'graph'
     my_results = 'my_results'
     history = 'history'
+    tip_ok = 'tip_ok'
 
 
 def routing_by_text_in_group_line(text: str):
@@ -87,6 +90,10 @@ def routing_by_text_in_group_line(text: str):
     """input mode"""
     if current_mode.value == GroupMode.input.value:
         AddPointByTextUseCase().execute(text)
+        return
+    """tip input mode"""
+    if current_mode.value == GroupMode.tip_input.value:
+        AddTipByTextUseCase().execute(text)
         return
 
     """wait mode"""
@@ -166,6 +173,9 @@ def routing_for_group_by_method(method, body):
     # history
     elif method == RCommands.history.name:
         ReplyMultiHistoryUseCase().execute()
+    # tip_ok
+    elif method == RCommands.tip_ok.name:
+        FinishInputTipUseCase().execute()
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')
