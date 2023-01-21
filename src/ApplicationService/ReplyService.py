@@ -112,6 +112,26 @@ class ReplyService(IReplyService):
                             data='_setting 順位点'
                         ),
                         PostbackAction(
+                            label='チップ',
+                            display_text='チップ',
+                            data='_setting チップ'
+                        ),
+                        PostbackAction(
+                            label='飛び賞、端数計算方法',
+                            display_text='飛び賞、端数計算方法',
+                            data='_setting その他'
+                        ),
+                    ]
+                )
+            )
+        if key == 'その他':
+            button = TemplateSendMessage(
+                alt_text='Settings Menu',
+                template=ButtonsTemplate(
+                    title='設定',
+                    text='変更したい項目を選んでください。',
+                    actions=[
+                        PostbackAction(
                             label='飛び賞',
                             display_text='飛び賞',
                             data='_setting 飛び賞'
@@ -120,6 +140,11 @@ class ReplyService(IReplyService):
                             label='端数計算方法',
                             display_text='端数計算方法',
                             data='_setting 端数計算方法'
+                        ),
+                        PostbackAction(
+                            label='レート、順位点、チップ',
+                            display_text='レート、順位点、チップ',
+                            data='_setting'
                         ),
                     ]
                 )
@@ -248,6 +273,21 @@ class ReplyService(IReplyService):
                             display_text='その他',
                             data='_setting 端数計算方法'
                         )
+                    ]
+                )
+            )
+        elif key == 'チップ':
+            button = TemplateSendMessage(
+                alt_text='Calculate Method Setting2',
+                template=ButtonsTemplate(
+                    title='チップ',
+                    text='どれにしますか？',
+                    actions=[
+                        PostbackAction(
+                            label=f'1枚{i}円',
+                            display_text=f'1枚{i}円',
+                            data=f'_update_config チップ {i}'
+                        ) for i in [0, 10, 20, 30]
                     ]
                 )
             )

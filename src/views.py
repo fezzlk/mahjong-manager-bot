@@ -11,7 +11,7 @@ from flask import (
 )
 
 from db_setting import Engine, Session
-from db_models import Base
+from db_models import Base, MatchModel
 from repositories import user_match_repository
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
@@ -74,12 +74,7 @@ def create_dummy():
 
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
-    from repositories import match_repository, session_scope
-    with session_scope() as session:
-        matches = match_repository.find_all(session)
-        for m in matches:
-            m.hanchan_ids = list(map(int, m.hanchan_ids))
-            match_repository.update(session, m)
+    MatchModel.add_column(engine=Engine, column_name="tip_scores")
 
     return redirect(url_for('views_blueprint.index', message='migrateしました'))
 
@@ -298,6 +293,7 @@ def get_matches():
         'hanchan_ids',
         'created_at',
         'status',
+        'tip_scores',
         'users']
     input_keys = ['line_group_id', 'hanchan_ids', 'status']
     return render_template(

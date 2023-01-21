@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import datetime
-from typing import List
+from typing import Dict, List
 
 
 @dataclass()
@@ -10,6 +10,7 @@ class Match:
     hanchan_ids: List[int]
     users: list
     status: int
+    tip_scores: Dict[str, int]
     created_at: datetime.date
 
     def __init__(
@@ -19,6 +20,7 @@ class Match:
         status: int,
         users: list = [],
         created_at: datetime.date = None,
+        tip_scores: Dict[str, int] = {},
         _id: int = None,
     ):
         self._id = _id
@@ -26,6 +28,7 @@ class Match:
         self.hanchan_ids = hanchan_ids
         self.users = users
         self.status = status
+        self.tip_scores = tip_scores
         self.created_at = created_at
 
 
