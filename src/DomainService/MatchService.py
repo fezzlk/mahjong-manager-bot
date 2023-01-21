@@ -175,7 +175,7 @@ class MatchService(IMatchService):
 
             match_repository.update(
                 session=session,
-                match=target,
+                target=target,
             )
 
             return target
