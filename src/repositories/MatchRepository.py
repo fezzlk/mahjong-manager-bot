@@ -182,5 +182,6 @@ class MatchRepository(IMatchRepository):
             hanchan_ids=json.loads(record.hanchan_ids),
             users=record.users,
             status=record.status,
+            chip_scores=record.chip_scores,
             created_at=record.created_at,
         )

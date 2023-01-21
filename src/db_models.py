@@ -144,6 +144,7 @@ class MatchModel(Base):
         nullable=False,
         server_default=current_timestamp()
     )
+    chip_scores = Column(String(255), nullable=True)
 
     def __init__(self, line_group_id, hanchan_ids, status):
         self.line_group_id = line_group_id
