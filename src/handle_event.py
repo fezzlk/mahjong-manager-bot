@@ -90,7 +90,8 @@ def handle_image_message(event):
     # if event.source.type == 'room' or event.source.type == 'group':
     #     InputResultFromImageUseCase().execute(event)
     # else:
-    raise BaseException('this source type is not supported')
+    # raise BaseException('this source type is not supported')
+    return
 
 
 @ handler.add(PostbackEvent)
