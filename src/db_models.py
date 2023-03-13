@@ -1,10 +1,11 @@
 """models"""
 
-from sqlalchemy import Column, String, Integer, ForeignKey, DateTime
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
 from db_setting import Base
 import json
+from datetime import datetime
 
 
 class UserGroupModel(Base):
@@ -180,3 +181,40 @@ class ConfigModel(Base):
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
                        (ConfigModel.__tablename__, column_name, column_type))
+
+
+class WebUserModel(Base):
+    __tablename__ = 'web_users'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_code = Column(String(255), nullable=False)
+    name = Column(String(255))
+    email = Column(String(255))
+    linked_line_user_id = Column(String(255))
+    is_approved_line_user = Column(Boolean)
+    password = Column(String(255))
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        server_default=current_timestamp()
+    )
+    updated_at = Column(
+        DateTime,
+        nullable=False,
+        server_default=current_timestamp()
+    )
+
+    def __init__(self, user_code, name, email, linked_line_user_id, is_approved_line_user):
+        self.user_code = user_code
+        self.name = name
+        self.email = email
+        self.linked_line_user_id = linked_line_user_id
+        self.is_approved_line_user = is_approved_line_user
+        self.created_at = datetime.now()
+
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (WebUserModel.__tablename__, column_name, column_type))
