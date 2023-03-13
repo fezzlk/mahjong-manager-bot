@@ -13,12 +13,18 @@ load_dotenv()
 
 from flask import Flask, logging
 app = Flask(__name__)
+app.secret_key = 'random secret'
 logger = logging.create_logger(app)
 
 
-# from jwt_setting import register_jwt
-# jwt = register_jwt(app)
+from jwt_setting import register_jwt
+jwt = register_jwt(app)
 
+from flask_bcrypt import Bcrypt
+bcrypt = Bcrypt(app)
+
+from oauth_client import oauth
+oauth.init_app(app)
 
 from db_setting import Engine
 from db_models import Base
