@@ -1,7 +1,7 @@
 """
 LINE messaging API handler
 """
-from views import handler
+from apis.root import handler
 from routing_by_text_in_group_line import routing_by_text_in_group_line
 from routing_by_text_in_personal_line import routing_by_text_in_personal_line
 from linebot.models import (

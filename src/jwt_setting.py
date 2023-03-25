@@ -1,21 +1,7 @@
 from flask import Flask, make_response, jsonify
-from repositories import user_repository, session_scope
 from flask_jwt_extended import JWTManager, create_access_token
-# from werkzeug.security import safe_str_cmp
-from datetime import timedelta, datetime
-# import env_var
+from datetime import timedelta
 
-
-def authenticate(line_user_id: str) -> str:
-    with session_scope() as session:
-        user = user_repository.find_one_by_line_user_id(
-            session, line_user_id=line_user_id)
-        if user is None:
-            raise ValueError('ユーザーがいないか、複数存在します。')
-        # if safe_str_cmp(
-        #         user.line_user_id.encode('utf-8'),  # パスワードに置き換える
-        #         line_user_id.encode('utf-8')):
-        return create_access_token(identity=user.line_user_id)
 
 
 def identity(payload):
@@ -35,25 +21,9 @@ def register_jwt(app: Flask):
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=300)  # トークンの有効期間
     app.config['JWT_NOT_BEFORE_DELTA'] = timedelta(
         seconds=0)   # トークンの使用を開始する相対時間
-    #     app.config['JWT_AUTH_URL_RULE'] = '/' + \
-    #         env_var.JWT_AUTH_PATH                   # 認証エンドポイントURL
-    #     # 認証エンドポイントURL
-    #     app.config['JWT_AUTH_USERNAME_KEY'] = '_id'
-    #     # 認証エンドポイントURL
-    #     app.config['JWT_AUTH_PASSWORD_KEY'] = 'line_user_id'
 
     jwt = JWTManager(app)
     jwt.unauthorized_loader(jwt_unauthorized_loader_handler)
-
-#     @jwt.jwt_payload_handler
-#     def make_payload(identity):
-#         iat = datetime.utcnow()
-#         exp = iat + app.config.get('JWT_EXPIRATION_DELTA')
-#         nbf = iat + app.config.get('JWT_NOT_BEFORE_DELTA')
-#         identity = getattr(identity, '_id')
-#         return {'exp': exp, 'iat': iat, 'nbf': nbf, 'identity': identity}
-
-#     return jwt
 
 
 def jwt_unauthorized_loader_handler(reason):

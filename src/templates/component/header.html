@@ -25,7 +25,7 @@
           </ul>
         </div>
         {% else %}
-        <a class="nav-link text-dark" href="/login">ログイン</a>
+        <a class="nav-link text-dark" href="/login/google">ログイン</a>
         {% endif %}
       </div>
       <!-- スマートフォン画面 -->
@@ -46,7 +46,9 @@
             aria-labelledby="navbarDropdown"
           >
             <li>
-              <a class="dropdown-item">{{ page_contents.login_user.web_user_email }}</a>
+              <a class="dropdown-item"
+                >{{ page_contents.login_user.web_user_email }}</a
+              >
             </li>
             <li><hr class="dropdown-divider" /></li>
             <li><a class="dropdown-item" href="/">ホーム</a></li>
@@ -58,7 +60,9 @@
             class="dropdown-menu dropdown-menu-end"
             aria-labelledby="navbarDropdown"
           >
-            <li><a class="nav-link text-dark" href="/login">ログイン</a></li>
+            <li>
+              <a class="nav-link text-dark" href="/login/google">ログイン</a>
+            </li>
           </ul>
           {% endif %}
         </div>
