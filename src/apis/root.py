@@ -55,6 +55,26 @@ def index():
     return render_template('index.html', page_contents=page_contents)
 
 
+@views_blueprint.route("/callback", methods=['POST'])
+def callback():
+    """ Endpoint for LINE messaging API """
+
+    signature = request.headers['X-Line-Signature']
+    body = request.get_data(as_text=True)
+    try:
+        handler.handle(body, signature)
+    except exceptions.InvalidSignatureError:
+        abort(400)
+    return 'OK'
+
+
+@views_blueprint.route('/uploads/<path:filename>')
+def download_file(filename: str):
+    return send_from_directory("uploads/",
+                               filename, as_attachment=True)
+
+
+
 # @app.route('/plot')
 # def plot():
 #     matches_use_cases.plot()
@@ -387,67 +407,3 @@ def index():
 #     target_id = request.args.get('target_id')
 #     DeleteConfigsForWebUseCase().execute([int(target_id)])
 #     return redirect(url_for('views_blueprint.get_configs'))
-
-
-# @views_blueprint.route("/callback", methods=['POST'])
-# def callback():
-#     """ Endpoint for LINE messaging API """
-
-#     signature = request.headers['X-Line-Signature']
-#     body = request.get_data(as_text=True)
-#     try:
-#         handler.handle(body, signature)
-#     except exceptions.InvalidSignatureError:
-#         abort(400)
-#     return 'OK'
-
-
-# @views_blueprint.route('/uploads/<path:filename>')
-# def download_file(filename: str):
-#     return send_from_directory("uploads/",
-#                                filename, as_attachment=True)
-
-
-# Auth
-
-
-@ views_blueprint.route('/login')
-def login():
-    google = oauth.create_client('google')
-    redirect_uri = url_for('views_blueprint.authorize', _external=True)
-    return google.authorize_redirect(redirect_uri)
-
-
-@ views_blueprint.route('/authorize')
-def authorize():
-    google = oauth.create_client('google')
-    token = google.authorize_access_token()
-    resp = google.get('userinfo')
-    user_info = resp.json()
-    email = user_info['email']
-    
-    db_session = Session()
-    web_user = web_user_repository.find_one_by_email(session=db_session, email=email)
-
-    if web_user is None:
-        new_webuser = WebUser(
-            user_code=email,
-            name=user_info['name'],
-            email=email,
-        )
-        web_user = web_user_repository.create(session=db_session, new_webuser=new_webuser)
-    
-    # session['login_picture'] = user_info['picture']
-    session['access_token'] = token['access_token']
-    session['id_token'] = token['id_token']
-    session['login_user'] = web_user
-
-    redirect_to = session.pop('next_page_url', '/')
-    return redirect(redirect_to)
-
-
-@ views_blueprint.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('views_blueprint.index', message='ログアウトしました'))
-

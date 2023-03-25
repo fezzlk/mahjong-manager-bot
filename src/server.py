@@ -30,10 +30,12 @@ from db_setting import Engine
 from db_models import Base
 Base.metadata.create_all(bind=Engine)
 
-from views import views_blueprint
+from apis.root import views_blueprint
+from apis.auth import auth_blueprint
 from api import api_blueprint
 
 app.register_blueprint(views_blueprint)
+app.register_blueprint(auth_blueprint)
 app.register_blueprint(api_blueprint)
 
 import handle_event
