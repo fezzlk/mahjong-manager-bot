@@ -21,7 +21,20 @@ class RegisterFormData:
         self.login_email = session['login_email']
 
 
-T = TypeVar('T', RegisterFormData, None)
+@dataclass()
+class ViewUserInfoData():
+    user_name: str
+    user_email: str
+    line_name: str
+
+    def __init__(
+        self,
+        session: SessionMixin,
+    ):
+        pass
+
+
+T = TypeVar('T', RegisterFormData, ViewUserInfoData, None)
 
 
 @dataclass()

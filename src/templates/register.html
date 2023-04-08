@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block content %} {% from
 "components/_formhelpers.html" import render_field %}
 <h3>新規登録</h3>
-<form action="/register" method="post">
+<form action="/web_user/register" method="post">
   <p>{{ render_field(form.name) }}</p>
   <p>{{ render_field(form.email) }}</p>
   <p>{{ form.csrf_token }} {{ form.submit() }}</p>

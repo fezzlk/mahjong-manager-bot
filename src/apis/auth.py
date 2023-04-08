@@ -69,7 +69,7 @@ def google_authorize():
         session['login_email'] = email
         session['login_name'] = user_info['name']
         return redirect(
-            url_for('views_blueprint.view_register', _external=True)
+            url_for('web_user_blueprint.view_register', _external=True)
         )
 
     # ヒットした場合はログイン

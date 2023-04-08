@@ -11,12 +11,8 @@ from flask import (
     send_from_directory,
 )
 # from db_setting import Engine, Session
-from ApplicationModels.PageContents import PageContents, RegisterFormData
+from ApplicationModels.PageContents import PageContents
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
-
-from use_cases.web.ViewRegisterUseCase import ViewRegisterUseCase
-from use_cases.web.RegisterWebUserUseCase import RegisterWebUserUseCase
-
 
 from linebot import WebhookHandler, exceptions
 import env_var
@@ -68,30 +64,6 @@ def view_login():
 def logout():
     session.clear()
     return redirect(url_for('views_blueprint.view_login'))
-
-
-@views_blueprint.route('/register', methods=['GET'])
-def view_register():
-    page_contents = PageContents[RegisterFormData](
-        session, request, RegisterFormData)
-    page_contents, forms = ViewRegisterUseCase().execute(
-        page_contents=page_contents
-    )
-    return render_template(
-        'register.html',
-        page_contents=page_contents,
-        form=forms
-    )
-
-
-@views_blueprint.route('/register', methods=['POST'])
-def register():
-    page_contents = PageContents(session, request)
-    RegisterWebUserUseCase().execute(page_contents=page_contents)
-    return render_template(
-        'index.html',
-        page_contents=page_contents,
-    )
 
 
 @views_blueprint.route('/create_dummy', methods=['POST'])

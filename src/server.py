@@ -46,6 +46,8 @@ from apis.group import group_blueprint
 app.register_blueprint(group_blueprint)
 from apis.user import user_blueprint
 app.register_blueprint(user_blueprint)
+from apis.web_user import web_user_blueprint
+app.register_blueprint(web_user_blueprint)
 
 
 import handle_event
