@@ -4,7 +4,6 @@ from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
 from db_setting import Base
-import json
 from datetime import datetime
 
 
@@ -15,7 +14,7 @@ class UserGroupModel(Base):
 
 
 class UserMatchModel(Base):
-    __tablename__ = 'user_match'
+    __tablename__ = 'user_matches'
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     match_id = Column(Integer, ForeignKey('matches.id'), primary_key=True)
 
@@ -111,12 +110,12 @@ class HanchanModel(Base):
         line_group_id,
         match_id,
         status,
-        raw_scores={},
-        converted_scores={},
+        raw_scores='',
+        converted_scores='',
     ):
         self.line_group_id = line_group_id
-        self.raw_scores = json.dumps(raw_scores)
-        self.converted_scores = json.dumps(converted_scores)
+        self.raw_scores = raw_scores
+        self.converted_scores = converted_scores
         self.match_id = match_id
         self.status = status
 
@@ -149,8 +148,8 @@ class MatchModel(Base):
 
     def __init__(self, line_group_id, hanchan_ids, status, tip_scores):
         self.line_group_id = line_group_id
-        self.hanchan_ids = json.dumps(hanchan_ids),
-        self.tip_scores = json.dumps(tip_scores)
+        self.hanchan_ids = hanchan_ids,
+        self.tip_scores = tip_scores
         self.status = status
 
     @staticmethod
@@ -210,7 +209,7 @@ class WebUserModel(Base):
         self.email = email
         self.linked_line_user_id = linked_line_user_id
         self.is_approved_line_user = is_approved_line_user
-        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
 
     @staticmethod
     def add_column(engine, column_name):

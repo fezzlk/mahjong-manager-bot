@@ -15,6 +15,7 @@ from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
 from use_cases.personal_line.UserMyZoomCommandUseCase import UserMyZoomCommandUseCase
 from use_cases.personal_line.ReplyHistoryUseCase import ReplyHistoryUseCase
+from use_cases.personal_line.RequestLinkLineWebUseCase import RequestLinkLineWebUseCase
 
 
 class UCommands(Enum):
@@ -53,6 +54,10 @@ def routing_by_text_in_personal_line(text: str):
     # if zoom url, register to group
     if '.zoom.us' in text:
         SetZoomUrlToUserUseCase().execute(text)
+        return
+
+    if 'アカウント連携' == text.split()[0]:
+        RequestLinkLineWebUseCase().execute()
         return
 
     reply_service.add_message(

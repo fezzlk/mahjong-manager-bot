@@ -36,8 +36,7 @@
   </head>
 </head>
 <body>
-    {% import 'component/header.html' as header %} {{
-    header.render(page_contents) }} {% import 'component/alert.html' as alert
+    {% import 'components/alert.html' as alert
     %} {{ alert.render(page_contents) }}
      {% block content %} {% endblock %}
     <script

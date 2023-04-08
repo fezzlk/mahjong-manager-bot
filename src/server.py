@@ -31,12 +31,22 @@ from db_models import Base
 Base.metadata.create_all(bind=Engine)
 
 from apis.root import views_blueprint
-from apis.auth import auth_blueprint
-from api import api_blueprint
-
 app.register_blueprint(views_blueprint)
+from apis.auth import auth_blueprint
 app.register_blueprint(auth_blueprint)
-app.register_blueprint(api_blueprint)
+from apis.line import line_blueprint
+app.register_blueprint(line_blueprint)
+from apis.hanchan import hanchan_blueprint
+app.register_blueprint(hanchan_blueprint)
+from apis.match import match_blueprint
+app.register_blueprint(match_blueprint)
+from apis.config import config_blueprint
+app.register_blueprint(config_blueprint)
+from apis.group import group_blueprint
+app.register_blueprint(group_blueprint)
+from apis.user import user_blueprint
+app.register_blueprint(user_blueprint)
+
 
 import handle_event
 

@@ -1,5 +1,5 @@
-from typing import Dict, List
-from xml.dom import NotFoundErr
+# from typing import Dict, List
+# from xml.dom import NotFoundErr
 from flask import (
     Blueprint,
     abort,
@@ -10,34 +10,12 @@ from flask import (
     session,
     send_from_directory,
 )
-from oauth_client import oauth
-from db_setting import Engine, Session
-from db_models import Base, MatchModel
-from DomainModel.entities.WebUser import WebUser
-from repositories import user_match_repository, web_user_repository
-from ApplicationModels.PageContents import PageContents
-# from use_cases.CreateDummyUseCase import CreateDummyUseCase
+# from db_setting import Engine, Session
+from ApplicationModels.PageContents import PageContents, RegisterFormData
+from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
-# from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
-# from use_cases.web.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
-# from use_cases.web.GetMatchesForWebUseCase import GetMatchesForWebUseCase
-# from use_cases.web.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
-# from use_cases.web.GetGroupsForWebUseCase import GetGroupsForWebUseCase
-# from use_cases.web.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
-# from use_cases.web.GetHanchansForWebUseCase import GetHanchansForWebUseCase
-# from use_cases.web.DeleteHanchansForWebUseCase import DeleteHanchansForWebUseCase
-# from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
-# from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
-# from use_cases.web.GetUserForWebUseCase import GetUserForWebUseCase
-# from use_cases.web.GetGroupForWebUseCase import GetGroupForWebUseCase
-# from use_cases.web.GetHanchanForWebUseCase import GetHanchanForWebUseCase
-# from use_cases.web.GetMatchForWebUseCase import GetMatchForWebUseCase
-# from use_cases.web.GetConfigForWebUseCase import GetConfigForWebUseCase
-# from use_cases.web.UpdateUserForWebUseCase import UpdateUserForWebUseCase
-# from use_cases.web.UpdateGroupForWebUseCase import UpdateGroupForWebUseCase
-# from use_cases.web.UpdateHanchanForWebUseCase import UpdateHanchanForWebUseCase
-# from use_cases.web.UpdateMatchForWebUseCase import UpdateMatchForWebUseCase
-# from use_cases.web.UpdateConfigForWebUseCase import UpdateConfigForWebUseCase
+from use_cases.web.ViewRegisterUseCase import ViewRegisterUseCase
+from use_cases.web.RegisterWebUserUseCase import RegisterWebUserUseCase
 
 
 from linebot import WebhookHandler, exceptions
@@ -70,35 +48,63 @@ def callback():
 
 @views_blueprint.route('/uploads/<path:filename>')
 def download_file(filename: str):
-    return send_from_directory("uploads/",
-                               filename, as_attachment=True)
+    return send_from_directory(
+        "uploads/",
+        filename,
+        as_attachment=True
+    )
 
 
-
-# @app.route('/plot')
-# def plot():
-#     matches_use_cases.plot()
-#     return render_template('index.html', title='home', message='message')
-
-
-# @views_blueprint.route('/reset', methods=['POST'])
-# def reset_db():
-#     Base.metadata.drop_all(bind=Engine)
-#     Base.metadata.create_all(bind=Engine)
-#     return redirect(url_for('views_blueprint.index', message='DBをリセットしました。'))
+@views_blueprint.route('/login', methods=['GET'])
+def view_login():
+    page_contents = PageContents(session, request)
+    return render_template(
+        'login.html',
+        page_contents=page_contents,
+    )
 
 
-# @views_blueprint.route('/create_dummy', methods=['POST'])
-# def create_dummy():
-#     CreateDummyUseCase().execute()
-#     return 'Done'
+@views_blueprint.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('views_blueprint.view_login'))
 
+
+@views_blueprint.route('/register', methods=['GET'])
+def view_register():
+    page_contents = PageContents[RegisterFormData](
+        session, request, RegisterFormData)
+    page_contents, forms = ViewRegisterUseCase().execute(
+        page_contents=page_contents
+    )
+    return render_template(
+        'register.html',
+        page_contents=page_contents,
+        form=forms
+    )
+
+
+@views_blueprint.route('/register', methods=['POST'])
+def register():
+    page_contents = PageContents(session, request)
+    RegisterWebUserUseCase().execute(page_contents=page_contents)
+    return render_template(
+        'index.html',
+        page_contents=page_contents,
+    )
+
+
+@views_blueprint.route('/create_dummy', methods=['POST'])
+def create_dummy():
+    CreateDummyUseCase().execute()
+    return 'Done'
 
 # @views_blueprint.route('/migrate', methods=['POST'])
 # def migrate():
-#     MatchModel.add_column(engine=Engine, column_name="tip_scores")
+    # from db_models import Base, MatchModel
+    # MatchModel.add_column(engine=Engine, column_name="tip_scores")
 
-#     return redirect(url_for('views_blueprint.index', message='migrateしました'))
+    # return redirect(url_for('views_blueprint.index', message='migrateしました'))
 
 
 # @views_blueprint.route('/migrate_reset_sequence', methods=['POST'])
@@ -121,6 +127,7 @@ def download_file(filename: str):
 
 # @views_blueprint.route('/migrate_create_user_match', methods=['POST'])
 # def migrate_create_user_match():
+#     from repositories import user_match_repository
 #     db_session = Session()
 #     from db_models import UserMatchModel
 #     from repositories import hanchan_repository
@@ -143,267 +150,3 @@ def download_file(filename: str):
 #         user_match_repository.create(db_session, user_match)
 
 #     return redirect(url_for('views_blueprint.index', message='migrateしました'))
-
-
-# @views_blueprint.route('/users')
-# def get_users():
-#     data = GetUsersForWebUseCase().execute()
-#     keys = ['_id', 'line_user_name', 'line_user_id', 'jantama_name',
-#             'zoom_url', 'mode', 'matches', 'groups']
-#     input_keys = [
-#         'line_user_name',
-#         'line_user_id',
-#         'zoom_url',
-#         'jantama_name']
-#     return render_template(
-#         'model.html',
-#         title='users',
-#         submit_to='create_user',
-#         keys=keys,
-#         input_keys=input_keys,
-#         data=data
-#     )
-
-
-# @views_blueprint.route('/users/<_id>')
-# def users_detail(_id):
-#     data = GetUserForWebUseCase().execute(_id)
-#     if data is None:
-#         raise NotFoundErr()
-#     input_keys = [
-#         '_id',
-#         'line_user_name',
-#         'line_user_id',
-#         'mode',
-#         'zoom_url',
-#         'jantama_name']
-#     return render_template(
-#         'detail.html',
-#         title='user_detail',
-#         submit_to='update_user',
-#         input_keys=input_keys,
-#         init_data=data
-#     )
-
-
-# @views_blueprint.route('/users/create', methods=['POST'])
-# def create_user():
-#     # line_user_name = request.form['line_user_name']
-#     # user_id = request.form['user_id']
-#     # user_use_cases.create(line_user_name, user_id)
-#     return redirect(url_for('views_blueprint.get_users'))
-
-
-# @views_blueprint.route('/users/update', methods=['POST'])
-# def update_user():
-#     UpdateUserForWebUseCase().execute()
-#     return redirect(url_for('views_blueprint.get_users'))
-
-
-# @views_blueprint.route('/users/delete', methods=['POST'])
-# def delete_users():
-#     target_id = request.args.get('target_id')
-#     DeleteUsersForWebUseCase().execute([int(target_id)])
-#     return redirect(url_for('views_blueprint.get_users'))
-
-
-# @views_blueprint.route('/groups')
-# def get_groups():
-#     data = GetGroupsForWebUseCase().execute()
-#     keys = ['_id', 'line_group_id', 'zoom_url', 'mode', 'users']
-#     input_keys = ['line_group_id', 'zoom_url']
-#     return render_template(
-#         'model.html',
-#         title='groups',
-#         submit_to='create_group',
-#         keys=keys,
-#         input_keys=input_keys,
-#         data=data
-#     )
-
-
-# @views_blueprint.route('/groups/<_id>')
-# def groups_detail(_id):
-#     data = GetGroupForWebUseCase().execute(_id)
-#     if data is None:
-#         raise NotFoundErr()
-#     input_keys = ['_id', 'line_group_id', 'zoom_url']
-#     return render_template(
-#         'detail.html',
-#         title='groups',
-#         submit_to='update_group',
-#         input_keys=input_keys,
-#         init_data=data
-#     )
-
-
-# @views_blueprint.route('/groups/create', methods=['POST'])
-# def create_group():
-#     return redirect(url_for('views_blueprint.get_groups'))
-
-
-# @views_blueprint.route('/groups/update', methods=['POST'])
-# def update_group():
-#     UpdateGroupForWebUseCase().execute()
-#     return redirect(url_for('views_blueprint.get_groups'))
-
-
-# @views_blueprint.route('/groups/delete', methods=['POST'])
-# def delete_groups():
-#     target_id = request.args.get('target_id')
-#     DeleteGroupsForWebUseCase().execute([int(target_id)])
-#     return redirect(url_for('views_blueprint.get_groups'))
-
-
-# @views_blueprint.route('/hanchans')
-# def get_hanchans():
-#     data = GetHanchansForWebUseCase().execute()
-#     keys = ['_id', 'line_group_id', 'raw_scores',
-#             'converted_scores', 'match_id', 'status']
-#     input_keys = ['line_group_id', 'raw_scores',
-#                   'converted_scores', 'match_id', 'status']
-#     return render_template(
-#         'model.html',
-#         title='hanchans',
-#         submit_to='create_hanchan',
-#         keys=keys,
-#         input_keys=input_keys,
-#         data=data
-#     )
-
-
-# @views_blueprint.route('/hanchans/<_id>')
-# def hanchans_detail(_id):
-#     data = GetHanchanForWebUseCase().execute(_id)
-#     if data is None:
-#         raise NotFoundErr()
-#     input_keys = ['_id', 'line_group_id', 'raw_scores',
-#                   'converted_scores', 'match_id', 'status']
-#     return render_template(
-#         'detail.html',
-#         title='hanchans',
-#         submit_to='update_hanchan',
-#         input_keys=input_keys,
-#         init_data=data
-#     )
-
-
-# @views_blueprint.route('/hanchans/create', methods=['POST'])
-# def create_hanchan():
-#     return redirect(url_for('views_blueprint.get_hanchans'))
-
-
-# @views_blueprint.route('/hanchans/update', methods=['POST'])
-# def update_hanchan():
-#     UpdateHanchanForWebUseCase().execute()
-#     return redirect(url_for('views_blueprint.get_hanchans'))
-
-
-# @views_blueprint.route('/hanchans/delete', methods=['POST'])
-# def delete_hanchans():
-#     target_id = request.args.get('target_id')
-#     DeleteHanchansForWebUseCase().execute([int(target_id)])
-#     return redirect(url_for('views_blueprint.get_hanchans'))
-
-
-# @views_blueprint.route('/matches')
-# def get_matches():
-#     data = GetMatchesForWebUseCase().execute()
-#     keys = [
-#         '_id',
-#         'line_group_id',
-#         'hanchan_ids',
-#         'created_at',
-#         'status',
-#         'tip_scores',
-#         'users']
-#     input_keys = ['line_group_id', 'hanchan_ids', 'status']
-#     return render_template(
-#         'model.html',
-#         title='matches',
-#         submit_to='create_match',
-#         keys=keys,
-#         input_keys=input_keys,
-#         data=data
-#     )
-
-
-# @views_blueprint.route('/matches/<_id>')
-# def matches_detail(_id):
-#     data = GetMatchForWebUseCase().execute(_id)
-#     if data is None:
-#         raise NotFoundErr()
-#     input_keys = ['_id', 'line_group_id', 'hanchan_ids', 'status']
-#     return render_template(
-#         'detail.html',
-#         title='matches',
-#         submit_to='update_match',
-#         input_keys=input_keys,
-#         init_data=data
-#     )
-
-
-# @views_blueprint.route('/matches/create', methods=['POST'])
-# def create_match():
-#     return redirect(url_for('views_blueprint.get_matches'))
-
-
-# @views_blueprint.route('/matches/update', methods=['POST'])
-# def update_match():
-#     UpdateMatchForWebUseCase().execute()
-#     return redirect(url_for('views_blueprint.get_matches'))
-
-
-# @views_blueprint.route('/matches/delete', methods=['POST'])
-# def delete_matches():
-#     target_id = request.args.get('target_id')
-#     DeleteMatchesForWebUseCase().execute([int(target_id)])
-#     return redirect(url_for('views_blueprint.get_matches'))
-
-
-# @views_blueprint.route('/configs')
-# def get_configs():
-#     data = GetConfigsForWebUseCase().execute()
-#     keys = ['_id', 'key', 'value', 'target_id']
-#     input_keys = ['key', 'value', 'target_id']
-#     return render_template(
-#         'model.html',
-#         title='configs',
-#         submit_to='create_config',
-#         keys=keys,
-#         input_keys=input_keys,
-#         data=data
-#     )
-
-
-# @views_blueprint.route('/configs/<_id>')
-# def configs_detail(_id):
-#     data = GetConfigForWebUseCase().execute(_id)
-#     if data is None:
-#         raise NotFoundErr()
-#     input_keys = ['_id', 'key', 'value', 'target_id']
-#     return render_template(
-#         'detail.html',
-#         title='configs',
-#         submit_to='update_config',
-#         input_keys=input_keys,
-#         init_data=data
-#     )
-
-
-# @views_blueprint.route('/configs/create', methods=['POST'])
-# def create_config():
-#     return redirect(url_for('views_blueprint.get_configs'))
-
-
-# @views_blueprint.route('/configs/update', methods=['POST'])
-# def update_config():
-#     UpdateConfigForWebUseCase().execute()
-#     return redirect(url_for('views_blueprint.get_configs'))
-
-
-# @views_blueprint.route('/configs/delete', methods=['POST'])
-# def delete_configs():
-#     target_id = request.args.get('target_id')
-#     DeleteConfigsForWebUseCase().execute([int(target_id)])
-#     return redirect(url_for('views_blueprint.get_configs'))

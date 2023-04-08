@@ -1,17 +1,15 @@
 from flask import Flask, make_response, jsonify
-from flask_jwt_extended import JWTManager, create_access_token
+from flask_jwt_extended import JWTManager
 from datetime import timedelta
 
 
-
-def identity(payload):
-    with session_scope() as session:
-        user_id = payload['identity']
-        users = user_repository.find_by_ids(session, [user_id])
-        if len(users) != 1:
-            raise ValueError('ユーザーidが取得できません')
-        return users[0]
-
+# def identity(payload):
+#     with session_scope() as session:
+#         user_id = payload['identity']
+#         users = user_repository.find_by_ids(session, [user_id])
+#         if len(users) != 1:
+#             raise ValueError('ユーザーidが取得できません')
+#         return users[0]
 
 def register_jwt(app: Flask):
     #     # Flask JWT

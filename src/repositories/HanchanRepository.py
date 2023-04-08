@@ -17,8 +17,8 @@ class HanchanRepository(IHanchanRepository):
         record = HanchanModel(
             line_group_id=new_hanchan.line_group_id,
             match_id=new_hanchan.match_id,
-            raw_scores=new_hanchan.raw_scores,
-            converted_scores=new_hanchan.converted_scores,
+            raw_scores=json.dumps(new_hanchan.raw_scores),
+            converted_scores=json.dumps(new_hanchan.converted_scores),
             status=new_hanchan.status,
         )
         session.add(record)
@@ -193,8 +193,8 @@ class HanchanRepository(IHanchanRepository):
         updated = HanchanModel(
             line_group_id=target.line_group_id,
             match_id=target.match_id,
-            raw_scores=target.raw_scores,
-            converted_scores=target.converted_scores,
+            raw_scores=json.dumps(target.raw_scores),
+            converted_scores=json.dumps(target.converted_scores),
             status=target.status,
         ).__dict__
         updated.pop('_sa_instance_state')

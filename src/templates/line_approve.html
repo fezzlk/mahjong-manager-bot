@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% block content %} {% import 'components/header.html'
+as header %} {{ header.render(page_contents) }}
+<div class="container">
+  <div class="row">
+    <div class="col-12 mt-3">
+      <h2>LINE アカウント連携</h2>
+      <div>
+        {% if page_contents.login_user.is_approved_line_user %}
+        <p>ステータス: 連携中</p>
+        <p>LINE アカウント名: {{ page_contents.line_user_name }}</p>
+        <form
+          action="{{ url_for('line_blueprint.release_line_user') }}"
+          method="post"
+        >
+          <input type="submit" value="連携解除" />
+        </form>
+        {% elif page_contents.line_user_name %}
+        <p>ステータス: 連携承認待ち</p>
+        <p>LINE アカウント名: {{ page_contents.line_user_name }}</p>
+        <form
+          action="{{ url_for('line_blueprint.approve_line_user') }}"
+          method="post"
+        >
+          <input type="submit" value="承認" />
+        </form>
+        <form
+          action="{{ url_for('line_blueprint.deny_line_user') }}"
+          method="post"
+        >
+          <input type="submit" value="申請取消" />
+        </form>
+        {% else %}
+        <p>ステータス: 未連携</p>
+        <p>アカウント連携リクエストが来ていません。</p>
+        <p>
+          連携したい LINE アカウントから Bot に 「アカウント連携 {{
+          page_contents.login_user.email }}」と送信してください。
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
