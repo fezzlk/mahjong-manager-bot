@@ -1,2 +1,2 @@
-{% extends "layout.html" %} {% block content %} {% import 'form.html' as form %}
+{% extends "base.html" %} {% block content %} {% import 'form.html' as form %}
 {{ form.render(submit_to, input_keys, init_data) }} {% endblock %}

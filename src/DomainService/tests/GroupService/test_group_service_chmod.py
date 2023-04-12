@@ -17,11 +17,11 @@ def test_success():
     # Act
     result = group_service.chmod(
         line_group_id=dummy_group.line_group_id,
-        mode=GroupMode.input,
+        mode=GroupMode.input.value,
     )
 
     # Assert
-    assert result.mode == GroupMode.input
+    assert result.mode == GroupMode.input.value
     with session_scope() as session:
         records_on_db = group_repository.find_all(session)
         for i, record in enumerate(records_on_db):
@@ -40,7 +40,7 @@ def test_not_hit():
     # Act
     result = group_service.chmod(
         line_group_id=dummy_group.line_group_id,
-        mode=GroupMode.input,
+        mode=GroupMode.input.value,
     )
 
     # Assert

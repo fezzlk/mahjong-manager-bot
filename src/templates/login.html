@@ -1,6 +1,45 @@
 {% extends "base.html" %} {% block content %}
-<h3>Login</h3>
-<a class="nav-link text-dark" href="/auth/google/login"
-  >Google アカウントでログイン</a
->
+<div class="container">
+  <div
+    class="d-flex align-items-center justify-content-center"
+    style="height: 100vh"
+  >
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title h3 text-center">Login</div>
+        <div class="card-text">
+          <form>
+            <div class="form-group text-center">
+              <input
+                class="m-1 form-control"
+                name="user_code"
+                placeholder="UserCode or e-mail"
+                type="text"
+                disabled
+              />
+              <input
+                class="m-1 form-control"
+                name="password"
+                placeholder="Password"
+                type="password"
+                disabled
+              />
+              <input
+                class="m-1 btn btn-primary"
+                name="login_btn"
+                value="Login"
+                type="submit"
+                style="width:80px"
+                disabled
+              />
+            </form>
+          </div>
+          <a class="nav-link text-dark" href="{{ url_for('auth_blueprint.google_login') }}"
+            >Google アカウントでログイン</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

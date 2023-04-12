@@ -8,22 +8,23 @@ class UserMode(Enum):
 
 @dataclass()
 class User:
+
     _id: int
-    name: str
+    name: str = ''
     # line_user_id is unique
-    line_user_id: str
-    zoom_url: str
-    mode: UserMode
-    jantama_name: str
-    matches: list
-    groups: list
+    line_user_id: str = ''
+    zoom_url: str = ''
+    mode: str = ''
+    jantama_name: str = ''
+    matches: list = None
+    groups: list = None
 
     def __init__(
         self,
         line_user_name: str,
         line_user_id: str,
         zoom_url: str,
-        mode: UserMode,
+        mode: str,
         jantama_name: str,
         matches: list = [],
         groups: list = [],

@@ -46,6 +46,6 @@ class IUserService(metaclass=ABCMeta):
     def chmod(
         self,
         line_user_id: str,
-        mode: UserMode,
+        mode: str,
     ) -> User:
         pass

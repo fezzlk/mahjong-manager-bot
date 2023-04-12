@@ -17,7 +17,7 @@ def test_fail_with_invalid_mode():
         # Act
         user_service.chmod(
             line_user_id=dummy_user.line_user_id,
-            mode=GroupMode.input
+            mode=GroupMode.input.value
         )
 
         # Assert

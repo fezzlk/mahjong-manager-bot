@@ -13,7 +13,7 @@ class ViewUserInfoUseCase():
         self,
         page_contents: PageContents[ViewUserInfoData]
     ) -> PageContents[ViewUserInfoData]:
-        page_contents.page_title = 'ユーザ情報'
+        page_contents.page_title = 'プロフィール'
 
         login_user_id: str = session.get('login_user_id', None)
         with session_scope() as db_session:

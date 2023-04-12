@@ -16,7 +16,7 @@ def register_jwt(app: Flask):
     app.config['JWT_SECRET_KEY'] = 'super-secret'
     app.config['JWT_ALGORITHM'] = 'HS256'                       # 暗号化署名のアルゴリズム
     app.config['JWT_LEEWAY'] = 0                                # 有効期限に対する余裕時間
-    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=300)  # トークンの有効期間
+    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=600)  # トークンの有効期間
     app.config['JWT_NOT_BEFORE_DELTA'] = timedelta(
         seconds=0)   # トークンの使用を開始する相対時間
 

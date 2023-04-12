@@ -27,7 +27,7 @@ class UserService(IUserService):
                 line_user_name=profile.display_name,
                 line_user_id=profile.user_id,
                 zoom_url=None,
-                mode=UserMode.wait,
+                mode=UserMode.wait.value,
                 jantama_name=None,
             )
             user_repository.create(
@@ -91,7 +91,7 @@ class UserService(IUserService):
     def chmod(
         self,
         line_user_id: str,
-        mode: UserMode,
+        mode: str,
     ) -> User:
         if mode not in UserMode:
             raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
@@ -103,7 +103,7 @@ class UserService(IUserService):
                 mode=mode,
             )
 
-            print(f'chmod: {line_user_id}: {mode.value}')
+            print(f'chmod: {line_user_id}: {mode}')
 
             return user
 

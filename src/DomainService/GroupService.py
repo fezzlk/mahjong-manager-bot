@@ -17,7 +17,7 @@ class GroupService(IGroupService):
                 group = Group(
                     line_group_id=group_id,
                     zoom_url=None,
-                    mode=GroupMode.wait,
+                    mode=GroupMode.wait.value,
                 )
                 group_repository.create(session, group)
                 print(f'create group: {group_id}')
@@ -27,7 +27,7 @@ class GroupService(IGroupService):
     def chmod(
         self,
         line_group_id: str,
-        mode: GroupMode,
+        mode: str,
     ) -> Group:
         if mode not in GroupMode:
             print(

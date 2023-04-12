@@ -50,7 +50,7 @@ class IGroupRepository(metaclass=ABCMeta):
         self,
         session: BaseSession,
         line_group_id: str,
-        mode: GroupMode,
+        mode: str,
     ) -> Group:
         pass
 

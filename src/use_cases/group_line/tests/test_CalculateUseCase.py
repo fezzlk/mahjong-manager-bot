@@ -29,7 +29,7 @@ dummy_users = [
         line_user_name="test_user1",
         line_user_id="U0123456789abcdefghijklmnopqrstu1",
         zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
-        mode=UserMode.wait,
+        mode=UserMode.wait.value,
         jantama_name="jantama_user1",
         matches=[],
         _id=1,
@@ -38,7 +38,7 @@ dummy_users = [
         line_user_name="test_user2",
         line_user_id="U0123456789abcdefghijklmnopqrstu2",
         zoom_url="https://us00web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
-        mode=UserMode.wait,
+        mode=UserMode.wait.value,
         jantama_name="jantama_user2",
         matches=[],
         _id=2,
@@ -47,7 +47,7 @@ dummy_users = [
         line_user_name="test_user3",
         line_user_id="U0123456789abcdefghijklmnopqrstu3",
         zoom_url="https://us00web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
-        mode=UserMode.wait,
+        mode=UserMode.wait.value,
         jantama_name="jantama_user3",
         matches=[],
         _id=3,
@@ -56,7 +56,7 @@ dummy_users = [
         line_user_name="test_user4",
         line_user_id="U0123456789abcdefghijklmnopqrstu4",
         zoom_url="https://us00web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
-        mode=UserMode.wait,
+        mode=UserMode.wait.value,
         jantama_name="jantama_user4",
         matches=[],
         _id=4,
@@ -65,7 +65,7 @@ dummy_users = [
         line_user_name="test_user5",
         line_user_id="U0123456789abcdefghijklmnopqrstu5",
         zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
-        mode=UserMode.wait,
+        mode=UserMode.wait.value,
         jantama_name="jantama_user5",
         matches=[],
         _id=5,
@@ -75,7 +75,7 @@ dummy_users = [
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
-    mode=GroupMode.input,
+    mode=GroupMode.input.value,
     _id=1,
 )
 
@@ -238,7 +238,7 @@ def test_success():
         assert reply_service.texts[1].text == "test_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
-        assert group.mode == GroupMode.wait
+        assert group.mode == GroupMode.wait.value
         match = match_repository.find_all(session)[0]
         print(match.hanchan_ids)
         assert len(match.hanchan_ids) == 1
@@ -339,7 +339,7 @@ def test_success_not_current_hanchan(mocker):
         assert reply_service.texts[0].text == "計算対象の半荘が見つかりません。"
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
-        assert group.mode == GroupMode.input
+        assert group.mode == GroupMode.input.value
 
         reply_service.reset()
 
@@ -372,7 +372,7 @@ def test_success_does_not_have_4_points():
         assert reply_service.texts[0].text == "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
-        assert group.mode == GroupMode.input
+        assert group.mode == GroupMode.input.value
 
         reply_service.reset()
 
@@ -406,7 +406,7 @@ def test_success_does_invalid_sum_point():
         assert reply_service.texts[0].text == "点数の合計が110000点です。合計100000点+αになるように修正してください。"
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
-        assert group.mode == GroupMode.input
+        assert group.mode == GroupMode.input.value
 
         reply_service.reset()
 
@@ -440,7 +440,7 @@ def test_success_has_tai():
         assert reply_service.texts[0].text == "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。"
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
-        assert group.mode == GroupMode.input
+        assert group.mode == GroupMode.input.value
 
         reply_service.reset()
 
@@ -473,7 +473,7 @@ def test_success_reply_tobi_menu(mocker):
         assert len(um) == 0
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
-        assert group.mode == GroupMode.input
+        assert group.mode == GroupMode.input.value
 
         reply_service.reset()
 
@@ -514,7 +514,7 @@ def test_success_with_tobi():
         assert reply_service.texts[1].text == "test_user1: +80 (+80)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -70 (-70)"
         group = group_repository.find_one_by_line_group_id(
             session, dummy_group.line_group_id)
-        assert group.mode == GroupMode.wait
+        assert group.mode == GroupMode.wait.value
 
         reply_service.reset()
 

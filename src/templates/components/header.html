@@ -2,7 +2,9 @@
 <nav class="navbar navbar-light bg-light border-bottom">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/">Mahjong Manager</a>
+      <a class="navbar-brand" href="{{ url_for('views_blueprint.index') }}"
+        >Mahjong Manager</a
+      >
     </div>
     <div class="navbar-right">
       {% import 'components/menu_dropdown.html' as dropdown %} {{

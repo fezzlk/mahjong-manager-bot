@@ -17,12 +17,31 @@
       aria-labelledby="navbarDropdown"
     >
       <li></li>
-      <li><a class="dropdown-item" href="/line/approve">LINE 連携</a></li>
-      <li><a class="dropdown-item" href="/logout">ログアウト</a></li>
+      <li>
+        <a
+          class="dropdown-item"
+          href="{{ url_for('web_user_blueprint.view_me') }}"
+          >プロフィール</a
+        >
+      </li>
+      <li>
+        <a
+          class="dropdown-item"
+          href="{{ url_for('line_blueprint.view_approve_link_line_user') }}"
+          >LINE 連携</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="{{ url_for('views_blueprint.logout') }}"
+          >ログアウト</a
+        >
+      </li>
     </ul>
   </div>
   {% else %}
-  <a class="nav-link text-dark" href="/login">ログイン</a>
+  <a class="nav-link text-dark" href="{{ url_for('views_blueprint.login') }}"
+    >ログイン</a
+  >
   {% endif %}
 </div>
 <!-- スマートフォン画面 -->
@@ -46,8 +65,18 @@
         <a class="dropdown-item">{{ page_contents.login_user.email }}</a>
       </li>
       <li><hr class="dropdown-divider" /></li>
-      <li><a class="dropdown-item" href="/line/approve">LINE 連携</a></li>
-      <li><a class="dropdown-item" href="/logout">ログアウト</a></li>
+      <li>
+        <a
+          class="dropdown-item"
+          href="{{ url_for('line_blueprint.view_approve_link_line_user') }}"
+          >LINE 連携</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="{{ url_for('views_blueprint.logout') }}"
+          >ログアウト</a
+        >
+      </li>
     </ul>
     {% else %}
     <ul
@@ -55,7 +84,11 @@
       aria-labelledby="navbarDropdown"
     >
       <li>
-        <a class="nav-link text-dark" href="/login">ログイン</a>
+        <a
+          class="nav-link text-dark"
+          href="{{ url_for('views_blueprint.login') }}"
+          >ログイン</a
+        >
       </li>
     </ul>
     {% endif %}

@@ -66,7 +66,7 @@ class IUserRepository(metaclass=ABCMeta):
         self,
         session: BaseSession,
         line_user_id: str,
-        mode: UserMode,
+        mode: str,
     ) -> User:
         pass
 

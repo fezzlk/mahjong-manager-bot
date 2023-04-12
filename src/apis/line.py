@@ -14,12 +14,14 @@ from use_cases.web.ViewApproveLinkLineUseCase import ViewApproveLinkLineUseCase
 from use_cases.web.ApproveLinkLineUserUseCase import ApproveLinkLineUserUseCase
 from use_cases.web.DenyLinkLineUserUseCase import DenyLinkLineUserUseCase
 from use_cases.web.ReleaseLineUserUseCase import ReleaseLineUserUseCase
+from middlewares import login_required
 
 handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)
 line_blueprint = Blueprint('line_blueprint', __name__, url_prefix='/line')
 
 
 @line_blueprint.route('/approve', methods=['GET'])
+@login_required
 def view_approve_link_line_user(message: str = ''):
     page_contents = PageContents(session, request)
     page_contents = ViewApproveLinkLineUseCase().execute(
@@ -35,6 +37,7 @@ def view_approve_link_line_user(message: str = ''):
 
 
 @line_blueprint.route('/approve', methods=['POST'])
+@login_required
 def approve_line_user():
     page_contents = PageContents(session, request)
     ApproveLinkLineUserUseCase().execute(page_contents=page_contents)
@@ -45,6 +48,7 @@ def approve_line_user():
 
 
 @line_blueprint.route('/release', methods=['POST'])
+@login_required
 def release_line_user():
     page_contents = PageContents(session, request)
     ReleaseLineUserUseCase().execute(page_contents=page_contents)
@@ -55,6 +59,7 @@ def release_line_user():
 
 
 @line_blueprint.route('/deny', methods=['POST'])
+@login_required
 def deny_line_user():
     page_contents = PageContents(session, request)
     DenyLinkLineUserUseCase().execute(page_contents=page_contents)

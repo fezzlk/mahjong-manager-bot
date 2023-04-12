@@ -13,6 +13,7 @@ from flask import (
 # from db_setting import Engine, Session
 from ApplicationModels.PageContents import PageContents
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
+from middlewares import login_required
 
 from linebot import WebhookHandler, exceptions
 import env_var
@@ -67,6 +68,7 @@ def logout():
 
 
 @views_blueprint.route('/create_dummy', methods=['POST'])
+@login_required
 def create_dummy():
     CreateDummyUseCase().execute()
     return 'Done'
