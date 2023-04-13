@@ -91,19 +91,19 @@ class UserService(IUserService):
     def chmod(
         self,
         line_user_id: str,
-        mode: str,
+        mode: UserMode,
     ) -> User:
         if mode not in UserMode:
-            raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
+            raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode.value}\'')
 
         with session_scope() as session:
             user = user_repository.update_one_mode_by_line_user_id(
                 session=session,
                 line_user_id=line_user_id,
-                mode=mode,
+                mode=mode.value,
             )
 
-            print(f'chmod: {line_user_id}: {mode}')
+            print(f'chmod: {line_user_id}: {mode.value}')
 
             return user
 

@@ -28,7 +28,7 @@ class RequestInfoService:
             mentionees = event.message.mention.mentionees
             for mentionee in mentionees:
                 self.mention_line_ids.append(mentionee.user_id)
-        self.message = event.message.text
+            self.message = event.message.text
 
     """
     メッセージ送信元情報の削除

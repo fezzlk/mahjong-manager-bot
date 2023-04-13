@@ -12,12 +12,12 @@ def test_success():
     with session_scope() as session:
         for record in dummy_groups:
             group_repository.create(session, record)
-    assert_modes = [GroupMode.input, GroupMode.wait, GroupMode.wait]
+    assert_modes = [GroupMode.input.value, GroupMode.wait.value, GroupMode.wait.value]
 
     # Act
     result = group_service.chmod(
         line_group_id=dummy_group.line_group_id,
-        mode=GroupMode.input.value,
+        mode=GroupMode.input,
     )
 
     # Assert
@@ -40,7 +40,7 @@ def test_not_hit():
     # Act
     result = group_service.chmod(
         line_group_id=dummy_group.line_group_id,
-        mode=GroupMode.input.value,
+        mode=GroupMode.input,
     )
 
     # Assert

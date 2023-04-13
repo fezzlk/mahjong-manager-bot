@@ -9,8 +9,8 @@ from datetime import datetime
 
 class UserGroupModel(Base):
     __tablename__ = 'user_group'
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    group_id = Column(Integer, ForeignKey('groups.id'), primary_key=True)
+    line_user_id = Column(String(255), ForeignKey('users.line_user_id'), primary_key=True)
+    line_group_id = Column(String(255), ForeignKey('groups.line_group_id'), primary_key=True)
 
 
 class UserMatchModel(Base):
@@ -24,7 +24,7 @@ class UserModel(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     line_user_name = Column(String(255), nullable=False)
-    line_user_id = Column(String(255), nullable=False)
+    line_user_id = Column(String(255), nullable=False, unique=True)
     zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
     jantama_name = Column(String(255), nullable=True)
@@ -192,6 +192,7 @@ class WebUserModel(Base):
     linked_line_user_id = Column(String(255))
     is_approved_line_user = Column(Boolean)
     password = Column(String(255))
+    role = Column(String(255))
     created_at = Column(
         DateTime,
         nullable=False,

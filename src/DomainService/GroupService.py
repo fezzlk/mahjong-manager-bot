@@ -27,7 +27,7 @@ class GroupService(IGroupService):
     def chmod(
         self,
         line_group_id: str,
-        mode: str,
+        mode: GroupMode,
     ) -> Group:
         if mode not in GroupMode:
             print(
@@ -39,7 +39,7 @@ class GroupService(IGroupService):
             record = group_repository.update_one_mode_by_line_group_id(
                 session,
                 line_group_id,
-                mode
+                mode.value
             )
             if record is None:
                 print(

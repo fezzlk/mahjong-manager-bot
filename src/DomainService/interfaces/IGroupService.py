@@ -8,7 +8,7 @@ class IGroupService(metaclass=ABCMeta):
     def chmod(
         self,
         line_group_id: str,
-        mode: str,
+        mode: GroupMode,
     ) -> Group:
         pass
 
