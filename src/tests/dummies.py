@@ -109,7 +109,7 @@ def generate_dummy_user_list() -> List[User]:
         ),
         User(
             line_user_name="test user6",
-            line_user_id="dummy_user_id",
+            line_user_id="U0123456789abcdefghijklmnopqrstu6",
             zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
             mode=UserMode.wait.value,
             jantama_name="jantama user6",
