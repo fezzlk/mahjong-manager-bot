@@ -50,7 +50,26 @@ class UserGroupRepository(IUserGroupRepository):
             self._mapping_record_to_user_group_domain(record)
             for record in records
         ]
-    
+
+    def find_one(
+        self,
+        session: BaseSession,
+        line_group_id: str,
+        line_user_id: str,
+    ) -> UserGroup:
+        record = session\
+            .query(UserGroupModel)\
+            .filter(
+                UserGroupModel.line_group_id == line_group_id,
+                UserGroupModel.line_user_id == line_user_id,
+            )\
+            .first()
+
+        if record is None:
+            return None
+
+        return self._mapping_record_to_user_group_domain(record)
+
     def _mapping_record_to_user_group_domain(
             self, record: UserGroupModel) -> UserGroup:
         return UserGroup(

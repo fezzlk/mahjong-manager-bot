@@ -28,3 +28,12 @@ class IUserGroupRepository(metaclass=ABCMeta):
         line_group_id: str
     ) -> List[UserGroup]:
         pass
+
+    @abstractmethod
+    def find_one(
+        self,
+        session: BaseSession,
+        line_group_id: str,
+        line_user_id: str,
+    ) -> UserGroup:
+        pass
