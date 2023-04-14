@@ -24,6 +24,7 @@ from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
 #     InputResultFromImageUseCase)
 import env_var
 import traceback
+from messaging_api_setting import line_bot_api
 
 
 def handle_event_decorater(function):
@@ -38,6 +39,13 @@ def handle_event_decorater(function):
 
         except BaseException as err:
             traceback.print_exc()
+            profile = line_bot_api.get_profile(
+                request_info_service.req_line_user_id
+            )
+            reply_service.push_a_message(
+                to=env_var.SERVER_ADMIN_LINE_USER_ID,
+                message=f'From: {profile.display_name}\n{request_info_service.message}',
+            )
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
                 message=str(err),
