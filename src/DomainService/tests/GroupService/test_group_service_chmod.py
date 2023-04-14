@@ -12,7 +12,7 @@ def test_success():
     with session_scope() as session:
         for record in dummy_groups:
             group_repository.create(session, record)
-    assert_modes = [GroupMode.input, GroupMode.wait, GroupMode.wait]
+    assert_modes = [GroupMode.input.value, GroupMode.wait.value, GroupMode.wait.value]
 
     # Act
     result = group_service.chmod(
@@ -21,7 +21,7 @@ def test_success():
     )
 
     # Assert
-    assert result.mode == GroupMode.input
+    assert result.mode == GroupMode.input.value
     with session_scope() as session:
         records_on_db = group_repository.find_all(session)
         for i, record in enumerate(records_on_db):

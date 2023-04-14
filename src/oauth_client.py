@@ -1,4 +1,4 @@
-from . import env_var
+import env_var
 from authlib.integrations.flask_client import OAuth
 
 
@@ -12,5 +12,6 @@ oauth.register(
     authorize_url='https://accounts.google.com/o/oauth2/auth',
     authorize_params=None,
     api_base_url='https://www.googleapis.com/oauth2/v2/',
-    client_kwargs={'scope': 'openid profile email'},
+    client_kwargs={'scope': 'profile email'},
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
 )

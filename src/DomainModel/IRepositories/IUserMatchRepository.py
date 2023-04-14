@@ -28,3 +28,11 @@ class IUserMatchRepository(metaclass=ABCMeta):
         user_ids: List[str],
     ) -> List[UserMatch]:
         pass
+
+    @abstractmethod
+    def find_by_match_id(
+        self,
+        session: BaseSession,
+        match_id: int,
+    ) -> List[UserMatch]:
+        pass

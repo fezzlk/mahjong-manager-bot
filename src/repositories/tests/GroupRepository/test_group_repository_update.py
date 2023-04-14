@@ -5,13 +5,13 @@ dummy_groups = [
     Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
-        mode=GroupMode.wait,
+        mode=GroupMode.wait.value,
         _id=1,
     ),
     Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
         zoom_url="https://us01web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
-        mode=GroupMode.wait,
+        mode=GroupMode.wait.value,
         _id=1,
     ),
 ]

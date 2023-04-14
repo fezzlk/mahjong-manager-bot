@@ -32,9 +32,9 @@ GROUP_SETTING_DICT: Dict[str, List[str]] = {
 @dataclass()
 class Config:
     _id: int
-    target_id: str
-    key: str
-    value: str
+    target_id: str = ''
+    key: str = ''
+    value: str = ''
 
     def __init__(
         self,

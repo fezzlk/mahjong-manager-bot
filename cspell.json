@@ -17,7 +17,12 @@
     "tobi",
     "KANSUJI",
     "mentionee",
-    "mentionees"
+    "mentionees",
+    "badai",
+    "jsonify",
+    "sqlalchemy",
+    "userinfo",
+    "linebot",
   ],
   // flagWords - list of words to be always considered incorrect
   // This is useful for offensive words and common spelling errors.

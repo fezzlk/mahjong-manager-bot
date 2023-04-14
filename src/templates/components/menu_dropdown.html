@@ -1,0 +1,97 @@
+{% macro render(page_contents) -%}
+<!-- PC, タブレット画面 -->
+<div class="d-none d-sm-block">
+  {% if page_contents.login_user %}
+  <div class="nav-item dropdown">
+    <div
+      class="nav-link dropdown-toggle"
+      id="navbarDropdown"
+      role="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      {{ page_contents.login_user.email }}
+    </div>
+    <ul
+      class="dropdown-menu dropdown-menu-end"
+      aria-labelledby="navbarDropdown"
+    >
+      <li></li>
+      <li>
+        <a
+          class="dropdown-item"
+          href="{{ url_for('web_user_blueprint.view_me') }}"
+          >プロフィール</a
+        >
+      </li>
+      <li>
+        <a
+          class="dropdown-item"
+          href="{{ url_for('line_blueprint.view_approve_link_line_user') }}"
+          >LINE 連携</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="{{ url_for('views_blueprint.logout') }}"
+          >ログアウト</a
+        >
+      </li>
+    </ul>
+  </div>
+  {% else %}
+  <a class="nav-link text-dark" href="{{ url_for('views_blueprint.login') }}"
+    >ログイン</a
+  >
+  {% endif %}
+</div>
+<!-- スマートフォン画面 -->
+<div class="d-block d-sm-none">
+  <div class="nav-item dropdown">
+    <div
+      class="nav-link dropdown-toggle"
+      id="navbarDropdown"
+      role="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <i class="fas fa-bars"></i>
+    </div>
+    {% if page_contents.login_user %}
+    <ul
+      class="dropdown-menu dropdown-menu-end"
+      aria-labelledby="navbarDropdown"
+    >
+      <li>
+        <a class="dropdown-item">{{ page_contents.login_user.email }}</a>
+      </li>
+      <li><hr class="dropdown-divider" /></li>
+      <li>
+        <a
+          class="dropdown-item"
+          href="{{ url_for('line_blueprint.view_approve_link_line_user') }}"
+          >LINE 連携</a
+        >
+      </li>
+      <li>
+        <a class="dropdown-item" href="{{ url_for('views_blueprint.logout') }}"
+          >ログアウト</a
+        >
+      </li>
+    </ul>
+    {% else %}
+    <ul
+      class="dropdown-menu dropdown-menu-end"
+      aria-labelledby="navbarDropdown"
+    >
+      <li>
+        <a
+          class="nav-link text-dark"
+          href="{{ url_for('views_blueprint.login') }}"
+          >ログイン</a
+        >
+      </li>
+    </ul>
+    {% endif %}
+  </div>
+</div>
+{%- endmacro %}

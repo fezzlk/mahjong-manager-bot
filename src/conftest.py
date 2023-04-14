@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from dotenv import load_dotenv
 load_dotenv()
+os.environ.setdefault('IS_TEST', 'True')
 
 from db_setting import Engine, Session
 from db_models import Base

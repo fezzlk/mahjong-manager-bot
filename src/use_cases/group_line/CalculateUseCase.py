@@ -1,4 +1,3 @@
-from db_models import UserMatchModel
 from DomainService import (
     user_service,
     hanchan_service,
@@ -12,10 +11,13 @@ from ApplicationService import (
     message_service,
 )
 from DomainModel.entities.Group import GroupMode
+from DomainModel.entities.UserMatch import UserMatch
+from DomainModel.entities.UserGroup import UserGroup
 from repositories import (
     session_scope,
     hanchan_repository,
     user_match_repository,
+    user_group_repository,
 )
 
 from line_models.Profile import Profile
@@ -101,25 +103,34 @@ class CalculateUseCase:
             updated_hanchan = hanchan_service.update_current_converted_score(
                 line_group_id, calculate_result)
 
-            # user_match の作成
-            user_ids_in_hanchan = []
-            for user_line_id in updated_hanchan.converted_scores:
-                profile = Profile(display_name='', user_id=user_line_id)
-                user = user_service.find_or_create_by_profile(profile)
-                if user is not None:
-                    user_ids_in_hanchan.append(user._id)
-
-            user_matches = session\
-                .query(UserMatchModel)\
-                .filter(
-                    UserMatchModel.match_id == updated_hanchan.match_id,
-                )\
-                .all()
-            linked_user_ids = [um.user_id for um in user_matches]
-            target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
+            # user_match, user_group の作成
             with session_scope() as session:
+                user_ids_in_hanchan = []
+                user_groups = user_group_repository.find_by_line_group_id(
+                    session=session, line_group_id=line_group_id
+                )
+                line_user_ids_in_group = [ug.line_user_id for ug in user_groups]
+
+                for user_line_id in updated_hanchan.converted_scores:
+                    if line_group_id not in line_user_ids_in_group:
+                        user_group_repository.create(
+                            session=session, new_user_group=UserGroup(
+                                line_group_id=line_group_id,
+                                line_user_id=user_line_id,
+                            )
+                        )
+                    profile = Profile(display_name='', user_id=user_line_id)
+                    user = user_service.find_or_create_by_profile(profile)
+                    if user is not None:
+                        user_ids_in_hanchan.append(user._id)
+
+                user_matches = user_match_repository.find_by_match_id(
+                    session=session, match_id=updated_hanchan.match_id
+                )
+                linked_user_ids = [um.user_id for um in user_matches]
+                target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
                 for user_id in target_user_ids:
-                    user_match = UserMatchModel(
+                    user_match = UserMatch(
                         user_id=user_id,
                         match_id=updated_hanchan.match_id,
                     )

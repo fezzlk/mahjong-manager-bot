@@ -11,6 +11,7 @@ class Event:
         user_id='',
         group_id='',
         message_type='text',
+        message='',
         text='dummy_text',
         postback_data='dummy_postback_data',
         mode='active',
