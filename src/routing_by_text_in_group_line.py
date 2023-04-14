@@ -90,11 +90,11 @@ def routing_by_text_in_group_line(text: str):
     group_id = request_info_service.req_line_group_id
     current_mode = group_service.get_mode(group_id)
     """input mode"""
-    if current_mode.value == GroupMode.input.value:
+    if current_mode == GroupMode.input.value:
         AddPointByTextUseCase().execute(text)
         return
     """tip input mode"""
-    if current_mode.value == GroupMode.tip_input.value:
+    if current_mode == GroupMode.tip_input.value:
         AddTipByTextUseCase().execute(text)
         return
 
