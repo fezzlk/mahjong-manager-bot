@@ -12,9 +12,9 @@ class GroupMode(Enum):
 @dataclass()
 class Group:
     _id: int
-    line_group_id: str
-    zoom_url: str
-    mode: str
+    line_group_id: str = ''
+    zoom_url: str = None
+    mode: str = ''
 
     def __init__(
         self,

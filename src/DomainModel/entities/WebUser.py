@@ -6,13 +6,13 @@ from datetime import datetime
 @dataclass()
 class WebUser:
     _id: str
-    user_code: str
-    name: str
-    email: str
-    linked_line_user_id: str
-    is_approved_line_user: bool
-    created_at: datetime
-    updated_at: datetime
+    user_code: str = None
+    name: str = None
+    email: str = None
+    linked_line_user_id: str = None
+    is_approved_line_user: bool = False
+    created_at: datetime = None
+    updated_at: datetime = None
 
     def __init__(
         self,

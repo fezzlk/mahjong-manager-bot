@@ -6,12 +6,12 @@ from typing import Dict, List
 @dataclass()
 class Match:
     _id: int
-    line_group_id: str
-    hanchan_ids: List[int]
-    users: list
-    status: int
-    tip_scores: Dict[str, int]
-    created_at: datetime.date
+    line_group_id: str = ''
+    hanchan_ids: List[int] = None
+    users: list = None
+    status: int = 0
+    tip_scores: Dict[str, int] = None
+    created_at: datetime.date = None
 
     def __init__(
         self,
