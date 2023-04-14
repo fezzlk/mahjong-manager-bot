@@ -73,6 +73,28 @@ def create_dummy():
     CreateDummyUseCase().execute()
     return 'Done'
 
+
+@views_blueprint.route('/migrate', methods=['GET'])
+def migrate():
+    from DomainModel.entities.UserGroup import UserGroup
+    from repositories import session_scope, hanchan_repository, user_group_repository
+    with session_scope() as db_session:
+        hanchans = hanchan_repository.find_all(session=db_session)
+        list = []
+        for h in hanchans:
+            for u_id, _ in h.converted_scores.items():
+                list.append((h.line_group_id, u_id))
+        for s in set(list):
+            user_group_repository.create(
+                session=db_session,
+                new_user_group=UserGroup(
+                    line_user_id=s[1],
+                    line_group_id=s[0],
+                )
+            )
+
+    return 'migrateしました'
+
 # @views_blueprint.route('/migrate', methods=['POST'])
 # def migrate():
     # from db_models import Base, MatchModel

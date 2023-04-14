@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from DomainModel.entities.Group import Group, GroupMode
+from DomainModel.entities.Group import Group
 from sqlalchemy.orm.session import Session as BaseSession
 
 

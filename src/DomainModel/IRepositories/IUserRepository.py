@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from DomainModel.entities.User import User, UserMode
+from DomainModel.entities.User import User
 from sqlalchemy.orm.session import Session as BaseSession
 
 
