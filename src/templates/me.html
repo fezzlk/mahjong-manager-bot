@@ -1,0 +1,92 @@
+{% extends "base.html" %} {% block content %} {% import 'components/header.html'
+as header %} {{ header.render(page_contents) }}
+<div class="container">
+  <div class="row border m-3 p-2">
+    <div class="col-12">
+      <div class="row mt-3">
+        <h3>基本情報</h3>
+      </div>
+      <div class="row mt-3">
+        <div class="col-3">
+          <label>名前</label>
+        </div>
+        <div class="col-9">
+          <p>{{ page_contents.data.user_name }}</p>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-3">
+          <label>メールアドレス</label>
+        </div>
+        <div class="col-9">
+          <p>{{ page_contents.data.user_email }}</p>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-3">
+          <label>LINE アカウント名</label>
+        </div>
+        <div class="col-9">
+          <p>{{ page_contents.data.line_name }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row border m-3 p-2">
+    <div class="col-12">
+      <div class="row mt-3">
+        <h3>API</h3>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-12">
+              <button id="btn_generate_api" class="btn btn-primary">
+                トークン生成
+              </button>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12">
+              <input
+                id="api_token_input"
+                type="text"
+                class="form-control"
+                disabled
+                placeholder="ここにトークンが生成されます"
+              />
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12">
+              <p>
+                生成したトークンを Authorization ヘッダにそのまま添付することでAPIを利用できます。
+              </p>
+            </div>
+          </div>
+          <script>
+            $(function () {
+              $("#btn_generate_api").click(function () {
+                $.ajax(
+                  "{{ url_for('web_user_blueprint.generate_api_token') }}",
+                  {
+                    type: "post",
+                    data: {},
+                  }
+                )
+                  .done(function (data) {
+                    $("#api_token_input").val(data);
+                    toastr.success("APIトークンを生成しました。");
+                  })
+                  .fail(function () {
+                    toastr.error("APIトークンの生成に失敗しました。");
+                  });
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

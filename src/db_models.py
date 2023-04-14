@@ -1,20 +1,20 @@
 """models"""
 
-from sqlalchemy import Column, String, Integer, ForeignKey, DateTime
+from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
 from db_setting import Base
-import json
+from datetime import datetime
 
 
 class UserGroupModel(Base):
     __tablename__ = 'user_group'
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    group_id = Column(Integer, ForeignKey('groups.id'), primary_key=True)
+    line_user_id = Column(String(255), ForeignKey('users.line_user_id'), primary_key=True)
+    line_group_id = Column(String(255), ForeignKey('groups.line_group_id'), primary_key=True)
 
 
 class UserMatchModel(Base):
-    __tablename__ = 'user_match'
+    __tablename__ = 'user_matches'
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
     match_id = Column(Integer, ForeignKey('matches.id'), primary_key=True)
 
@@ -24,7 +24,7 @@ class UserModel(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     line_user_name = Column(String(255), nullable=False)
-    line_user_id = Column(String(255), nullable=False)
+    line_user_id = Column(String(255), nullable=False, unique=True)
     zoom_url = Column(String(255), nullable=True)
     mode = Column(String(255), nullable=False)
     jantama_name = Column(String(255), nullable=True)
@@ -110,12 +110,12 @@ class HanchanModel(Base):
         line_group_id,
         match_id,
         status,
-        raw_scores={},
-        converted_scores={},
+        raw_scores='',
+        converted_scores='',
     ):
         self.line_group_id = line_group_id
-        self.raw_scores = json.dumps(raw_scores)
-        self.converted_scores = json.dumps(converted_scores)
+        self.raw_scores = raw_scores
+        self.converted_scores = converted_scores
         self.match_id = match_id
         self.status = status
 
@@ -148,8 +148,8 @@ class MatchModel(Base):
 
     def __init__(self, line_group_id, hanchan_ids, status, tip_scores):
         self.line_group_id = line_group_id
-        self.hanchan_ids = json.dumps(hanchan_ids),
-        self.tip_scores = json.dumps(tip_scores)
+        self.hanchan_ids = hanchan_ids,
+        self.tip_scores = tip_scores
         self.status = status
 
     @staticmethod
@@ -180,3 +180,41 @@ class ConfigModel(Base):
         column_type = column.type.compile(engine.dialect)
         engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
                        (ConfigModel.__tablename__, column_name, column_type))
+
+
+class WebUserModel(Base):
+    __tablename__ = 'web_users'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_code = Column(String(255), nullable=False)
+    name = Column(String(255))
+    email = Column(String(255))
+    linked_line_user_id = Column(String(255))
+    is_approved_line_user = Column(Boolean)
+    password = Column(String(255))
+    role = Column(String(255))
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        server_default=current_timestamp()
+    )
+    updated_at = Column(
+        DateTime,
+        nullable=False,
+        server_default=current_timestamp()
+    )
+
+    def __init__(self, user_code, name, email, linked_line_user_id, is_approved_line_user):
+        self.user_code = user_code
+        self.name = name
+        self.email = email
+        self.linked_line_user_id = linked_line_user_id
+        self.is_approved_line_user = is_approved_line_user
+        self.updated_at = datetime.now()
+
+    @staticmethod
+    def add_column(engine, column_name):
+        column = Column(column_name, String(255), nullable=True)
+        column_type = column.type.compile(engine.dialect)
+        engine.execute('ALTER TABLE %s ADD COLUMN %s %s' %
+                       (WebUserModel.__tablename__, column_name, column_type))

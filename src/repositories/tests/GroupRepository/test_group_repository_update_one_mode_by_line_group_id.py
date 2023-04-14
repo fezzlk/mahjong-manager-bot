@@ -20,7 +20,7 @@ def test_hit_1_record():
         result = group_repository.update_one_mode_by_line_group_id(
             session,
             target_line_group_id,
-            mode=GroupMode.input,
+            mode=GroupMode.input.value,
         )
 
     # Assert
@@ -28,7 +28,7 @@ def test_hit_1_record():
         assert result._id == target_group._id
         assert result.line_group_id == target_group.line_group_id
         assert result.zoom_url == target_group.zoom_url
-        assert result.mode == GroupMode.input
+        assert result.mode == GroupMode.input.value
 
 
 def test_hit_0_record():
@@ -47,7 +47,7 @@ def test_hit_0_record():
         result = group_repository.update_one_mode_by_line_group_id(
             session,
             line_group_id=target_line_group_id,
-            mode=GroupMode.input,
+            mode=GroupMode.input.value,
         )
 
     # Assert

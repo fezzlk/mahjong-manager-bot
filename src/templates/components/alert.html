@@ -1,0 +1,7 @@
+{% macro render(page_contents) -%} {% if page_contents.message %}
+<div class="container">
+  <script>
+    toastr.success("{{ page_contents.message }}");
+  </script>
+</div>
+{% endif %} {%- endmacro %}

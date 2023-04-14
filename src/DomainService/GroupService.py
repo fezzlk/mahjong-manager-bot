@@ -17,7 +17,7 @@ class GroupService(IGroupService):
                 group = Group(
                     line_group_id=group_id,
                     zoom_url=None,
-                    mode=GroupMode.wait,
+                    mode=GroupMode.wait.value,
                 )
                 group_repository.create(session, group)
                 print(f'create group: {group_id}')
@@ -39,7 +39,7 @@ class GroupService(IGroupService):
             record = group_repository.update_one_mode_by_line_group_id(
                 session,
                 line_group_id,
-                mode
+                mode.value
             )
             if record is None:
                 print(

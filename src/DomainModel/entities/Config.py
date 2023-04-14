@@ -5,7 +5,7 @@ DEFAULT_CONFIGS = {
     'レート': '点3',
     '順位点': ','.join(['20', '10', '-10', '-20']),
     '飛び賞': '10',
-    'チップ': 'なし',
+    'チップ': '0',
     '人数': '4',
     '端数計算方法': '3万点以下切り上げ/以上切り捨て',
 }
@@ -32,9 +32,9 @@ GROUP_SETTING_DICT: Dict[str, List[str]] = {
 @dataclass()
 class Config:
     _id: int
-    target_id: str
-    key: str
-    value: str
+    target_id: str = ''
+    key: str = ''
+    value: str = ''
 
     def __init__(
         self,

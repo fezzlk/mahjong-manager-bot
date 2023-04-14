@@ -16,9 +16,9 @@ class MatchRepository(IMatchRepository):
     ) -> Match:
         record = MatchModel(
             line_group_id=new_match.line_group_id,
-            hanchan_ids=new_match.hanchan_ids,
+            hanchan_ids=json.dumps(new_match.hanchan_ids),
             status=new_match.status,
-            tip_scores=new_match.tip_scores,
+            tip_scores=json.dumps(new_match.tip_scores),
         )
 
         session.add(record)
@@ -117,7 +117,7 @@ class MatchRepository(IMatchRepository):
         match_id: int,
         hanchan_ids: List[int],
     ) -> Match:
-        record = session\
+        record: MatchModel = session\
             .query(MatchModel).filter(MatchModel.id == match_id)\
             .first()
 
@@ -164,8 +164,8 @@ class MatchRepository(IMatchRepository):
     ) -> int:
         updated = MatchModel(
             line_group_id=target.line_group_id,
-            hanchan_ids=target.hanchan_ids,
-            tip_scores=target.tip_scores,
+            hanchan_ids=json.dumps(target.hanchan_ids),
+            tip_scores=json.dumps(target.tip_scores),
             status=target.status,
         ).__dict__
         updated.pop('_sa_instance_state')

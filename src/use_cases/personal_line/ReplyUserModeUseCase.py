@@ -17,4 +17,4 @@ class ReplyUserModeUseCase:
                 'ユーザーを認識できませんでした。当アカウントを一度ブロックし、ブロック解除してください。'
             )
             return
-        reply_service.add_message(mode.value)
+        reply_service.add_message(mode)
