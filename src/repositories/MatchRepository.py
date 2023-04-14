@@ -93,6 +93,24 @@ class MatchRepository(IMatchRepository):
             for record in records
         ]
 
+    def find_many_by_line_group_ids_and_status(
+        self,
+        session: BaseSession,
+        line_group_ids: List[str],
+        status: int,
+    ) -> List[Match]:
+        records = session\
+            .query(MatchModel).filter(and_(
+                MatchModel.line_group_id in line_group_ids,
+                MatchModel.status == status,
+            )).order_by(MatchModel.id.desc())\
+            .all()
+
+        return [
+            self._mapping_record_to_match_domain(record)
+            for record in records
+        ]
+
     def find_one_by_line_group_id_and_status(
         self,
         session: BaseSession,

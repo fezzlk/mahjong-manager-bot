@@ -37,3 +37,11 @@ class IUserGroupRepository(metaclass=ABCMeta):
         line_user_id: str,
     ) -> UserGroup:
         pass
+
+    @abstractmethod
+    def find_by_line_user_id(
+        self,
+        session: BaseSession,
+        line_user_id: str
+    ) -> List[UserGroup]:
+        pass

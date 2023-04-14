@@ -192,7 +192,6 @@ class WebUserModel(Base):
     linked_line_user_id = Column(String(255))
     is_approved_line_user = Column(Boolean)
     password = Column(String(255))
-    role = Column(String(255))
     created_at = Column(
         DateTime,
         nullable=False,

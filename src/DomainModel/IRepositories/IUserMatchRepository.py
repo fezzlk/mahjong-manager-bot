@@ -36,3 +36,4 @@ class IUserMatchRepository(metaclass=ABCMeta):
         match_id: int,
     ) -> List[UserMatch]:
         pass
+    

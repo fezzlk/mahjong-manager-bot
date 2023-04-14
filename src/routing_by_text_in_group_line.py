@@ -42,6 +42,7 @@ from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
 
 from DomainModel.entities.Group import GroupMode
 
+
 class RCommands(Enum):
     """Commands for group"""
 

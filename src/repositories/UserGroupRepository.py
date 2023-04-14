@@ -51,6 +51,23 @@ class UserGroupRepository(IUserGroupRepository):
             for record in records
         ]
 
+    def find_by_line_user_id(
+        self,
+        session: BaseSession,
+        line_user_id: str
+    ) -> List[UserGroup]:
+        records = session\
+            .query(UserGroupModel)\
+            .filter(
+                UserGroupModel.line_user_id == line_user_id,
+            )\
+            .all()
+
+        return [
+            self._mapping_record_to_user_group_domain(record)
+            for record in records
+        ]
+
     def find_one(
         self,
         session: BaseSession,

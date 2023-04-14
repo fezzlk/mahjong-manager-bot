@@ -134,6 +134,25 @@ class HanchanRepository(IHanchanRepository):
 
         return self._mapping_record_to_hanchan_domain(record)
 
+    def find_many_by_line_group_ids_and_status(
+        self,
+        session: BaseSession,
+        line_group_ids: List[str],
+        status: int,
+    ) -> List[Hanchan]:
+        records = session\
+            .query(HanchanModel).filter(and_(
+                HanchanModel.line_group_id in line_group_ids,
+                HanchanModel.status == status,
+            ))\
+            .order_by(desc(HanchanModel.id))\
+            .all()
+
+        return [
+            self._mapping_record_to_hanchan_domain(record)
+            for record in records
+        ]
+
     def update_one_converted_scores_by_id(
         self,
         session: BaseSession,
