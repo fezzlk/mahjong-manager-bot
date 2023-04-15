@@ -112,7 +112,7 @@ class CalculateUseCase:
                 line_user_ids_in_group = [ug.line_user_id for ug in user_groups]
 
                 for user_line_id in updated_hanchan.converted_scores:
-                    if line_group_id not in line_user_ids_in_group:
+                    if user_line_id not in line_user_ids_in_group:
                         user_group_repository.create(
                             session=session, new_user_group=UserGroup(
                                 line_group_id=line_group_id,

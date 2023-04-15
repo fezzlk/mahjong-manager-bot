@@ -3,6 +3,8 @@
 from flask import (
     Blueprint,
     request,
+    url_for,
+    redirect,
     render_template,
     session,
 )
@@ -35,10 +37,10 @@ def view_register():
 def register():
     page_contents = PageContents(session, request)
     RegisterWebUserUseCase().execute(page_contents=page_contents)
-    return render_template(
-        'index.html',
-        page_contents=page_contents,
-    )
+    return redirect(url_for(
+        'views_blueprint.view_login',
+        message=page_contents.message
+    ))
 
 
 @web_user_blueprint.route('/me', methods=['GET'])
