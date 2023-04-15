@@ -77,14 +77,33 @@ def create_dummy():
 @views_blueprint.route('/migrate', methods=['GET'])
 def migrate():
     from DomainModel.entities.UserGroup import UserGroup
-    from repositories import session_scope, hanchan_repository, user_group_repository
+    from repositories import (
+        session_scope, 
+        hanchan_repository,
+        user_group_repository, 
+        group_repository, 
+        user_repository,
+    )
     with session_scope() as db_session:
         hanchans = hanchan_repository.find_all(session=db_session)
         list = []
         for h in hanchans:
             if type(h.converted_scores) is not dict:
                 continue
+
+            group = group_repository.find_one_by_line_group_id(
+                session=db_session, line_group_id=h.line_group_id
+            )
+            if group is None:
+                continue
+
             for u_id, _ in h.converted_scores.items():
+                user = user_repository.find_one_by_line_user_id(
+                    session=db_session, line_user_id=u_id
+                )
+                if user is None:
+                    continue
+  
                 list.append((h.line_group_id, u_id))
         for s in set(list):
             user_group_repository.create(
