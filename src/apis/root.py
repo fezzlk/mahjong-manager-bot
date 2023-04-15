@@ -10,7 +10,7 @@ from flask import (
     session,
     send_from_directory,
 )
-# from db_setting import Engine, Session
+from db_setting import Engine
 from ApplicationModels.PageContents import PageContents
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
 from middlewares import login_required
@@ -82,6 +82,8 @@ def migrate():
         hanchans = hanchan_repository.find_all(session=db_session)
         list = []
         for h in hanchans:
+            if type(h.converted_scores) is not dict:
+                continue
             for u_id, _ in h.converted_scores.items():
                 list.append((h.line_group_id, u_id))
         for s in set(list):
@@ -103,11 +105,13 @@ def migrate():
     # return redirect(url_for('views_blueprint.index', message='migrateしました'))
 
 
-# @views_blueprint.route('/migrate_reset_sequence', methods=['POST'])
-# def migrate_reset_sequence():
-#     table_name = request.form['table_name']  # ex. users
-#     Engine.execute(
-#         f'SELECT setval(\'{table_name}_id_seq\', MAX(id)) FROM {table_name};')
+@views_blueprint.route('/migrate_reset_sequence', methods=['POST'])
+def migrate_reset_sequence():
+    Engine.execute('SELECT setval(\'users_id_seq\', MAX(id)) FROM users;')
+    Engine.execute('SELECT setval(\'matches_id_seq\', MAX(id)) FROM matches;')
+    Engine.execute('SELECT setval(\'hanchans_id_seq\', MAX(id)) FROM hanchans;')
+    Engine.execute('SELECT setval(\'configs_id_seq\', MAX(id)) FROM configs;')
+    Engine.execute('SELECT setval(\'groups_id_seq\', MAX(id)) FROM groups;')
 
 
 # @views_blueprint.route('/migrate_rename_columns', methods=['POST'])
