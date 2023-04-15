@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
-from DomainModel.entities.Group import Group, GroupMode
+from DomainModel.entities.Group import Group
 from sqlalchemy.orm.session import Session as BaseSession
 
 
@@ -50,7 +50,7 @@ class IGroupRepository(metaclass=ABCMeta):
         self,
         session: BaseSession,
         line_group_id: str,
-        mode: GroupMode,
+        mode: str,
     ) -> Group:
         pass
 

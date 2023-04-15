@@ -14,7 +14,7 @@ class GroupRepository(IGroupRepository):
     ) -> Group:
         record = GroupModel(
             line_group_id=new_group.line_group_id,
-            mode=new_group.mode.value,
+            mode=new_group.mode,
             zoom_url=new_group.zoom_url,
         )
         session.add(record)
@@ -83,7 +83,7 @@ class GroupRepository(IGroupRepository):
         self,
         session: BaseSession,
         line_group_id: str,
-        mode: GroupMode,
+        mode: str,
     ) -> Group:
         if line_group_id is None:
             raise ValueError
@@ -96,7 +96,7 @@ class GroupRepository(IGroupRepository):
         if record is None:
             return None
 
-        record.mode = mode.value
+        record.mode = mode
 
         return self._mapping_record_to_group_domain(record)
 
@@ -125,7 +125,7 @@ class GroupRepository(IGroupRepository):
     ) -> int:
         updated = GroupModel(
             line_group_id=target.line_group_id,
-            mode=target.mode.value,
+            mode=target.mode,
             zoom_url=target.zoom_url,
         ).__dict__
         updated.pop('_sa_instance_state')
@@ -141,6 +141,6 @@ class GroupRepository(IGroupRepository):
         return Group(
             line_group_id=record.line_group_id,
             zoom_url=record.zoom_url,
-            mode=GroupMode[record.mode],
+            mode=GroupMode[record.mode].value,
             _id=record.id,
         )

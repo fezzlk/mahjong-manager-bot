@@ -148,8 +148,7 @@ class HanchanService(IHanchanService):
         # 素点計算
         result = {}
         tobasare_players = []
-        isTobi = not(tobashita_player_id is None or
-                     tobashita_player_id == '')
+        isTobi = not (tobashita_player_id is None or tobashita_player_id == '')
 
         # 計算方法に合わせて点数調整用の adjuster(丸めの境界値の調整) と padding(端数調整) を設定
         padding = 0

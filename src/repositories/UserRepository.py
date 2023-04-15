@@ -16,7 +16,7 @@ class UserRepository(IUserRepository):
             line_user_name=new_user.line_user_name,
             line_user_id=new_user.line_user_id,
             zoom_url=new_user.zoom_url,
-            mode=new_user.mode.value,
+            mode=new_user.mode,
             jantama_name=new_user.jantama_name,
         )
         session.add(record)
@@ -113,7 +113,7 @@ class UserRepository(IUserRepository):
         self,
         session: BaseSession,
         line_user_id: str,
-        mode: UserMode,
+        mode: str,
     ) -> User:
         record = session\
             .query(UserModel)\
@@ -124,7 +124,7 @@ class UserRepository(IUserRepository):
         if record is None:
             return None
 
-        record.mode = mode.value
+        record.mode = mode
 
         return self._mapping_record_to_user_domain(record)
 
@@ -156,7 +156,7 @@ class UserRepository(IUserRepository):
             line_user_name=target.line_user_name,
             line_user_id=target.line_user_id,
             zoom_url=target.zoom_url,
-            mode=target.mode.value,
+            mode=target.mode,
             jantama_name=target.jantama_name,
         ).__dict__
         updated.pop('_sa_instance_state')
@@ -174,6 +174,6 @@ class UserRepository(IUserRepository):
             line_user_name=record.line_user_name,
             line_user_id=record.line_user_id,
             zoom_url=record.zoom_url,
-            mode=UserMode[record.mode],
+            mode=UserMode[record.mode].value,
             jantama_name=record.jantama_name,
         )

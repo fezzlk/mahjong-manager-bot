@@ -12,3 +12,4 @@ Session = sessionmaker(
 )
 
 Base: DeclarativeMeta = declarative_base()
+print(f'Connected DB server:{env_var.DATABASE_URL}')

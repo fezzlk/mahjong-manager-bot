@@ -31,3 +31,17 @@ services:
     depends_on:
       - postgres
     restart: always
+
+  postgres_unittest:
+    image: postgres:11.2
+    container_name: postgres_unittest
+    ports:
+      - 15432:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+      POSTGRES_DB: unittest
+    restart: always
+    user: root
+    

@@ -17,8 +17,8 @@ class HanchanRepository(IHanchanRepository):
         record = HanchanModel(
             line_group_id=new_hanchan.line_group_id,
             match_id=new_hanchan.match_id,
-            raw_scores=new_hanchan.raw_scores,
-            converted_scores=new_hanchan.converted_scores,
+            raw_scores=json.dumps(new_hanchan.raw_scores),
+            converted_scores=json.dumps(new_hanchan.converted_scores),
             status=new_hanchan.status,
         )
         session.add(record)
@@ -134,6 +134,25 @@ class HanchanRepository(IHanchanRepository):
 
         return self._mapping_record_to_hanchan_domain(record)
 
+    def find_many_by_line_group_ids_and_status(
+        self,
+        session: BaseSession,
+        line_group_ids: List[str],
+        status: int,
+    ) -> List[Hanchan]:
+        records = session\
+            .query(HanchanModel).filter(and_(
+                HanchanModel.line_group_id in line_group_ids,
+                HanchanModel.status == status,
+            ))\
+            .order_by(desc(HanchanModel.id))\
+            .all()
+
+        return [
+            self._mapping_record_to_hanchan_domain(record)
+            for record in records
+        ]
+
     def update_one_converted_scores_by_id(
         self,
         session: BaseSession,
@@ -193,8 +212,8 @@ class HanchanRepository(IHanchanRepository):
         updated = HanchanModel(
             line_group_id=target.line_group_id,
             match_id=target.match_id,
-            raw_scores=target.raw_scores,
-            converted_scores=target.converted_scores,
+            raw_scores=json.dumps(target.raw_scores),
+            converted_scores=json.dumps(target.converted_scores),
             status=target.status,
         ).__dict__
         updated.pop('_sa_instance_state')

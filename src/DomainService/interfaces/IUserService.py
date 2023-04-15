@@ -39,7 +39,7 @@ class IUserService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_mode(self, line_user_id: str) -> UserMode:
+    def get_mode(self, line_user_id: str) -> str:
         pass
 
     @abstractmethod

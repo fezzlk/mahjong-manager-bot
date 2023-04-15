@@ -38,6 +38,7 @@ from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
 from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
+from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
 
 from DomainModel.entities.Group import GroupMode
 
@@ -70,6 +71,7 @@ class RCommands(Enum):
     history = 'history'
     tip_ok = 'tip_ok'
     badai = 'badai'
+    entry = 'entry'
 
 
 def routing_by_text_in_group_line(text: str):
@@ -90,11 +92,11 @@ def routing_by_text_in_group_line(text: str):
     group_id = request_info_service.req_line_group_id
     current_mode = group_service.get_mode(group_id)
     """input mode"""
-    if current_mode.value == GroupMode.input.value:
+    if current_mode == GroupMode.input.value:
         AddPointByTextUseCase().execute(text)
         return
     """tip input mode"""
-    if current_mode.value == GroupMode.tip_input.value:
+    if current_mode == GroupMode.tip_input.value:
         AddTipByTextUseCase().execute(text)
         return
 
@@ -181,6 +183,9 @@ def routing_for_group_by_method(method, body):
     # badai
     elif method == RCommands.badai.name:
         ReplyApplyBadaiUseCase().execute(body)
+    # entry
+    elif method == RCommands.entry.name:
+        LinkUserToGroupUseCase().execute()
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')

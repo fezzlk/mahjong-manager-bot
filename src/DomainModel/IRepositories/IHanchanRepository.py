@@ -97,3 +97,12 @@ class IHanchanRepository(metaclass=ABCMeta):
         target: Hanchan,
     ) -> int:
         pass
+
+    @abstractmethod
+    def find_many_by_line_group_ids_and_status(
+        self,
+        session: BaseSession,
+        line_group_ids: List[str],
+        status: int,
+    ) -> List[Hanchan]:
+        pass

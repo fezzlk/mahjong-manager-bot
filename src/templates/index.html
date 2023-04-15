@@ -1,11 +1,11 @@
-{% extends "layout.html" %}
-{% block content %}
-<h3>Hello</h3>
-<form action="{{ url_for('views_blueprint.reset_db') }}" method="post">
-    <button type="submit" disabled>DBをリセットする</button>
-</form>
-<form action="{{ url_for('views_blueprint.migrate') }}" method="post">
-    <button type="submit">migrate</button>
-</form>
-<p>{{ message }}</p>
+{% extends "base.html" %} {% block content %} {% import 'components/header.html'
+as header %} {{ header.render(page_contents) }}
+<div class="container">
+  <div class="row">
+    <div class="col-12 mt-3">
+      <h3>Hello</h3>
+      <p>{{ message }}</p>
+    </div>
+  </div>
+</div>
 {% endblock %}

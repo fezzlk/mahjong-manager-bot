@@ -13,7 +13,7 @@ class UpdateUserForWebUseCase:
             line_user_name=form['line_user_name'],
             line_user_id=form['line_user_id'],
             zoom_url=form['zoom_url'],
-            mode=UserMode[form['mode'].split('.')[-1]],
+            mode=UserMode[form['mode'].split('.')[-1]].value,
             jantama_name=form['jantama_name'],
             _id=int(form['_id']),
         )

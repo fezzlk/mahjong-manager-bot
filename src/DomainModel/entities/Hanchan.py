@@ -5,11 +5,11 @@ from typing import Dict
 @dataclass()
 class Hanchan:
     _id: int
-    line_group_id: str
-    raw_scores: Dict[str, int]
-    converted_scores: Dict[str, int]
-    match_id: int
-    status: int
+    line_group_id: str = ''
+    raw_scores: Dict[str, int] = None
+    converted_scores: Dict[str, int] = None
+    match_id: int = 0
+    status: int = 0
 
     def __init__(
         self,

@@ -23,7 +23,7 @@ class MatchFinishUseCase:
             return
 
         tip_rate = int(config_service.get_value_by_key(line_group_id, 'チップ'))
-        str_current_mode = group_service.get_mode(line_group_id).value
+        str_current_mode = group_service.get_mode(line_group_id)
         if tip_rate != 0 and str_current_mode != GroupMode.tip_ok.value:
             group_service.chmod(line_group_id, GroupMode.tip_input)
             reply_service.add_message(

@@ -16,9 +16,9 @@ class MatchRepository(IMatchRepository):
     ) -> Match:
         record = MatchModel(
             line_group_id=new_match.line_group_id,
-            hanchan_ids=new_match.hanchan_ids,
+            hanchan_ids=json.dumps(new_match.hanchan_ids),
             status=new_match.status,
-            tip_scores=new_match.tip_scores,
+            tip_scores=json.dumps(new_match.tip_scores),
         )
 
         session.add(record)
@@ -93,6 +93,24 @@ class MatchRepository(IMatchRepository):
             for record in records
         ]
 
+    def find_many_by_line_group_ids_and_status(
+        self,
+        session: BaseSession,
+        line_group_ids: List[str],
+        status: int,
+    ) -> List[Match]:
+        records = session\
+            .query(MatchModel).filter(and_(
+                MatchModel.line_group_id in line_group_ids,
+                MatchModel.status == status,
+            )).order_by(MatchModel.id.desc())\
+            .all()
+
+        return [
+            self._mapping_record_to_match_domain(record)
+            for record in records
+        ]
+
     def find_one_by_line_group_id_and_status(
         self,
         session: BaseSession,
@@ -117,7 +135,7 @@ class MatchRepository(IMatchRepository):
         match_id: int,
         hanchan_ids: List[int],
     ) -> Match:
-        record = session\
+        record: MatchModel = session\
             .query(MatchModel).filter(MatchModel.id == match_id)\
             .first()
 
@@ -164,8 +182,8 @@ class MatchRepository(IMatchRepository):
     ) -> int:
         updated = MatchModel(
             line_group_id=target.line_group_id,
-            hanchan_ids=target.hanchan_ids,
-            tip_scores=target.tip_scores,
+            hanchan_ids=json.dumps(target.hanchan_ids),
+            tip_scores=json.dumps(target.tip_scores),
             status=target.status,
         ).__dict__
         updated.pop('_sa_instance_state')

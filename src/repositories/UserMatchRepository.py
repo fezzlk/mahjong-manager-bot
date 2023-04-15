@@ -50,6 +50,23 @@ class UserMatchRepository(IUserMatchRepository):
             for record in records
         ]
 
+    def find_by_match_id(
+        self,
+        session: BaseSession,
+        match_id: int
+    ) -> List[UserMatch]:
+        records = session\
+            .query(UserMatchModel)\
+            .filter(
+                UserMatchModel.match_id == match_id,
+            )\
+            .all()
+
+        return [
+            self._mapping_record_to_user_match_domain(record)
+            for record in records
+        ]
+
     def _mapping_record_to_user_match_domain(
             self, record: UserMatchModel) -> UserMatch:
         return UserMatch(
