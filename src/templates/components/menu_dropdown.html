@@ -39,7 +39,9 @@
     </ul>
   </div>
   {% else %}
-  <a class="nav-link text-dark" href="{{ url_for('views_blueprint.login') }}"
+  <a
+    class="nav-link text-dark"
+    href="{{ url_for('views_blueprint.view_login') }}"
     >ログイン</a
   >
   {% endif %}
@@ -86,7 +88,7 @@
       <li>
         <a
           class="nav-link text-dark"
-          href="{{ url_for('views_blueprint.login') }}"
+          href="{{ url_for('views_blueprint.view_login') }}"
           >ログイン</a
         >
       </li>
