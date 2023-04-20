@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
+from typing import List, Dict, Tuple
 from DomainModel.entities.Group import Group
-from sqlalchemy.orm.session import Session as BaseSession
+from pymongo import ASCENDING
 
 
 class IGroupRepository(metaclass=ABCMeta):
@@ -9,64 +9,29 @@ class IGroupRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        session: BaseSession,
         new_group: Group,
     ) -> Group:
         pass
 
     @abstractmethod
-    def delete_by_ids(
+    def delete(
         self,
-        session: BaseSession,
-        ids: List[int],
+        query: Dict[str, any] = {},
     ) -> int:
         pass
 
     @abstractmethod
-    def find_all(
+    def find(
         self,
-        session: BaseSession,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
     ) -> List[Group]:
-        pass
-
-    @abstractmethod
-    def find_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[str],
-    ) -> List[Group]:
-        pass
-
-    @abstractmethod
-    def find_one_by_line_group_id(
-        self,
-        session: BaseSession,
-        line_group_id: int,
-    ) -> Group:
-        pass
-
-    @abstractmethod
-    def update_one_mode_by_line_group_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        mode: str,
-    ) -> Group:
-        pass
-
-    @abstractmethod
-    def update_one_zoom_url_by_line_group_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        zoom_url: str,
-    ) -> Group:
         pass
 
     @abstractmethod
     def update(
         self,
-        session: BaseSession,
-        target: Group,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
     ) -> int:
         pass

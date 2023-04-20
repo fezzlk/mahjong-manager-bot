@@ -1,24 +1,16 @@
 from abc import ABCMeta, abstractmethod
 from typing import List, Dict, Tuple
-from DomainModel.entities.Match import Match
+from DomainModel.entities.GroupSetting import GroupSetting
 from pymongo import ASCENDING
 
 
-class IMatchRepository(metaclass=ABCMeta):
+class IGroupSettingRepository(metaclass=ABCMeta):
 
     @abstractmethod
     def create(
         self,
-        new_match: Match,
-    ) -> Match:
-        pass
-
-    @abstractmethod
-    def find(
-        self,
-        query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
-    ) -> List[Match]:
+        new_group_setting: GroupSetting,
+    ) -> GroupSetting:
         pass
 
     @abstractmethod
@@ -26,6 +18,14 @@ class IMatchRepository(metaclass=ABCMeta):
         self,
         query: Dict[str, any] = {},
     ) -> int:
+        pass
+
+    @abstractmethod
+    def find(
+        self,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
+    ) -> List[GroupSetting]:
         pass
 
     @abstractmethod
