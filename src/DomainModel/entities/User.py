@@ -1,5 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
+from typing import Optional
 
 
 class UserMode(Enum):
@@ -8,33 +9,22 @@ class UserMode(Enum):
 
 @dataclass()
 class User:
-
-    _id: int
-    name: str = ''
-    # line_user_id is unique
-    line_user_id: str = ''
-    zoom_url: str = ''
-    mode: str = ''
-    jantama_name: str = ''
-    matches: list = None
-    groups: list = None
+    id: Optional[int]
+    name: str
+    line_user_id: str
+    mode: str
+    jantama_name: str
 
     def __init__(
         self,
-        line_user_name: str,
         line_user_id: str,
-        zoom_url: str,
-        mode: str,
-        jantama_name: str,
-        matches: list = [],
-        groups: list = [],
-        _id: int = None,
+        line_user_name: str = None,
+        mode: str = UserMode.wait.value,
+        jantama_name: str = None,
+        id: Optional[int] = None,
     ):
-        self._id = _id
+        self.id = id
         self.line_user_name = line_user_name
         self.line_user_id = line_user_id
-        self.zoom_url = zoom_url
         self.mode = mode
         self.jantama_name = jantama_name
-        self.matches = matches
-        self.groups = groups

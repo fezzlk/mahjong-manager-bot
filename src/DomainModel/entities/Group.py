@@ -1,5 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
+from typing import Optional
 
 
 class GroupMode(Enum):
@@ -11,19 +12,16 @@ class GroupMode(Enum):
 
 @dataclass()
 class Group:
-    _id: int
-    line_group_id: str = ''
-    zoom_url: str = None
-    mode: str = ''
+    id: Optional[int]
+    line_group_id: str
+    mode: str
 
     def __init__(
         self,
         line_group_id: str,
-        mode: str,
-        zoom_url: str = None,
-        _id=None,
+        mode: str = GroupMode.wait.value,
+        id: Optional[int] = None,
     ):
-        self._id = _id
+        self.id = id
         self.line_group_id = line_group_id
         self.mode = mode
-        self.zoom_url = zoom_url
