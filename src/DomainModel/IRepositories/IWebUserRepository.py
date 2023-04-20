@@ -9,7 +9,7 @@ class IWebUserRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        new_web_user: WebUser,
+        new_record: WebUser,
     ) -> WebUser:
         pass
 

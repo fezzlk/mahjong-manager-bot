@@ -1,43 +1,53 @@
-from typing import List
-from db_models import YakumanUserModel
+from typing import List, Dict, Tuple
+from datetime import datetime
+from pymongo import ASCENDING
+from mongo_client import yakuman_users_collection
 from DomainModel.entities.YakumanUser import YakumanUser
-from sqlalchemy.orm.session import Session as BaseSession
+from DomainModel.IRepositories.IYakumanUserRepository import IYakumanUserRepository
 
 
-class YakumanUserRepository:
+class YakumanUserRepository(IYakumanUserRepository):
 
     def create(
         self,
-        session: BaseSession,
-        new_yakuman_user: YakumanUser,
+        new_record: YakumanUser,
     ) -> YakumanUser:
-        record = YakumanUserModel(
-            line_user_id=new_yakuman_user.line_user_id,
-            hanchan_id=new_yakuman_user.hanchan_id
-        )
-        session.add(record)
-        new_yakuman_user._id = record.id
-        return new_yakuman_user
+        new_dict = new_record.__dict__.copy()
+        new_dict['created_at'] = datetime.now()
+        if new_dict['id'] is None:
+            new_dict.pop('id')
+        result = yakuman_users_collection.insert_one(new_dict)
+        new_record.id = result.inserted_id
+        return new_record
 
-    def find_by_hanchan_ids(
+    def update(
         self,
-        session: BaseSession,
-        hanchan_ids: List[int],
+        query: Dict[str, any],
+        new_values: Dict[str, any],
+    ) -> int:
+        new_values['updated_at'] = datetime.now()
+        result = yakuman_users_collection.update_one(query, {'$set': new_values})
+        return result.matched_count
+
+    def find(
+        self,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
     ) -> List[YakumanUser]:
-        records = session .query(YakumanUserModel) .filter(
-            YakumanUserModel.hanchan_id.in_([int(s) for s in hanchan_ids])) .all()
+        records = yakuman_users_collection\
+            .find(filter=query)\
+            .sort(sort)
+        return [self._mapping_mapping_record_to_domain(record) for record in records]
 
-        return [
-            self._mapping_record_to_domain(record)
-            for record in records
-        ]
-
-    def _mapping_record_to_domain(
+    def delete(
         self,
-        record: YakumanUser
-    ) -> YakumanUser:
-        return YakumanUser(
-            _id=record.id,
-            hanchan_id=record.hanchan_id,
-            line_user_id=record.line_user_id,
-        )
+        query: Dict[str, any] = {},
+    ) -> int:
+        result = yakuman_users_collection.delete_many(filter=query)
+        return result.deleted_count
+
+    def _mapping_record_to_domain(self, record: Dict[str, any]) -> YakumanUser:
+        domain = YakumanUser()
+        for attr, value in record.items():
+            domain.__setitem__(attr, value)
+        return domain

@@ -9,7 +9,7 @@ class IHanchanRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        new_hanchan: Hanchan,
+        new_record: Hanchan,
     ) -> Hanchan:
         pass
 

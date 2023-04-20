@@ -23,6 +23,9 @@ class User:
         jantama_name: str = None,
         id: Optional[int] = None,
     ):
+        if mode not in UserMode:
+            raise ValueError(f'UserMode の値({mode})が不適切です。')
+   
         self.id = id
         self.line_user_name = line_user_name
         self.line_user_id = line_user_id

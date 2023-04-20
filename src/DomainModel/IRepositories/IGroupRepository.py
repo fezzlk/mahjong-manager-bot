@@ -9,7 +9,7 @@ class IGroupRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        new_group: Group,
+        new_record: Group,
     ) -> Group:
         pass
 

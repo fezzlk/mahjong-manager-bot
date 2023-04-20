@@ -22,6 +22,9 @@ class Group:
         mode: str = GroupMode.wait.value,
         id: Optional[int] = None,
     ):
+        if mode not in GroupMode:
+            raise ValueError(f'GroupMode の値({mode})が不適切です。')
+   
         self.id = id
         self.line_group_id = line_group_id
         self.mode = mode

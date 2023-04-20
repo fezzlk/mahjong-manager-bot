@@ -8,7 +8,7 @@ class IUserGroupRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        new_user_group: UserGroup,
+        new_record: UserGroup,
     ) -> UserGroup:
         pass
 

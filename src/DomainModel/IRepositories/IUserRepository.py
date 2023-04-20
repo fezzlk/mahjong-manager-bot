@@ -9,7 +9,7 @@ class IUserRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        new_user: User,
+        new_record: User,
     ) -> User:
         pass
 

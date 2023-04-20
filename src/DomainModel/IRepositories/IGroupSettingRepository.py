@@ -9,7 +9,7 @@ class IGroupSettingRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        new_group_setting: GroupSetting,
+        new_record: GroupSetting,
     ) -> GroupSetting:
         pass
 

@@ -9,7 +9,7 @@ class IMatchRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        new_match: Match,
+        new_record: Match,
     ) -> Match:
         pass
 

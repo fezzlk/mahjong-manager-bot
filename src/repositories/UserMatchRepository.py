@@ -1,75 +1,44 @@
-from typing import List
-from db_models import UserMatchModel
-from DomainModel.IRepositories.IUserMatchRepository import IUserMatchRepository
+from typing import List, Dict, Tuple
+from datetime import datetime
+from pymongo import ASCENDING
+from mongo_client import user_matches_collection
 from DomainModel.entities.UserMatch import UserMatch
-from sqlalchemy.orm.session import Session as BaseSession
+from DomainModel.IRepositories.IUserMatchRepository import IUserMatchRepository
 
 
 class UserMatchRepository(IUserMatchRepository):
 
     def create(
         self,
-        session: BaseSession,
-        new_user_match: UserMatch,
+        new_record: UserMatch,
     ) -> UserMatch:
-        record = UserMatchModel(
-            user_id=new_user_match.user_id,
-            match_id=new_user_match.match_id,
-        )
-        session.add(record)
-        session.commit()
-        return new_user_match
+        new_dict = new_record.__dict__.copy()
+        new_dict['created_at'] = datetime.now()
+        if new_dict['id'] is None:
+            new_dict.pop('id')
+        result = user_matches_collection.insert_one(new_dict)
+        new_record.id = result.inserted_id
+        return new_record
 
-    def find_all(
+    def find(
         self,
-        session: BaseSession,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
     ) -> List[UserMatch]:
-        records = session\
-            .query(UserMatchModel)\
-            .order_by(UserMatchModel.user_id)\
-            .all()
+        records = user_matches_collection\
+            .find(filter=query)\
+            .sort(sort)
+        return [self._mapping_mapping_record_to_domain(record) for record in records]
 
-        return [
-            self._mapping_record_to_user_match_domain(record)
-            for record in records
-        ]
-
-    def find_by_user_ids(
+    def delete(
         self,
-        session: BaseSession,
-        user_ids: List[int]
-    ) -> List[UserMatch]:
-        records = session\
-            .query(UserMatchModel)\
-            .filter(UserMatchModel.user_id.in_(user_ids))\
-            .order_by(UserMatchModel.user_id)\
-            .all()
+        query: Dict[str, any] = {},
+    ) -> int:
+        result = user_matches_collection.delete_many(filter=query)
+        return result.deleted_count
 
-        return [
-            self._mapping_record_to_user_match_domain(record)
-            for record in records
-        ]
-
-    def find_by_match_id(
-        self,
-        session: BaseSession,
-        match_id: int
-    ) -> List[UserMatch]:
-        records = session\
-            .query(UserMatchModel)\
-            .filter(
-                UserMatchModel.match_id == match_id,
-            )\
-            .all()
-
-        return [
-            self._mapping_record_to_user_match_domain(record)
-            for record in records
-        ]
-
-    def _mapping_record_to_user_match_domain(
-            self, record: UserMatchModel) -> UserMatch:
-        return UserMatch(
-            user_id=record.user_id,
-            match_id=record.match_id,
-        )
+    def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserMatch:
+        domain = UserMatch()
+        for attr, value in record.items():
+            domain.__setitem__(attr, value)
+        return domain

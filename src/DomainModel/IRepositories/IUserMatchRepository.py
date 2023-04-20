@@ -8,7 +8,7 @@ class IUserMatchRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        new_user_match: UserMatch,
+        new_record: UserMatch,
     ) -> UserMatch:
         pass
 
