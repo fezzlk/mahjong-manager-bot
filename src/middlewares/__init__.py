@@ -1,9 +1,7 @@
 from functools import wraps
 
 from flask import request, redirect, url_for, session
-from repositories import (
-    web_user_repository, session_scope
-)
+from repositories import web_user_repository
 from flask_jwt_extended import get_jwt_identity
 
 
@@ -12,23 +10,22 @@ def login_required(f):
     def decorated_login_required(*args, **kwargs):
         session['next_page_url'] = request.url
 
-        # メールアドレスがわからない(認証を通っていない)場合はログイン画面に遷移
-        login_user_id = session.get('login_user_id', '')
-        if login_user_id == '':
+        # セッションの login_user_id が未設定の場合はログイン画面に遷移
+        login_user_id = session.get('login_user_id', None)
+        if login_user_id is None:
             return redirect(url_for(
                 'views_blueprint.view_login', next=request.url
             ))
 
-        with session_scope() as db_session:
-            web_user = web_user_repository.find_by_id(
-                session=db_session, id=login_user_id,
-            )
+        web_users = web_user_repository.find(query={
+            'id': login_user_id,
+        })
 
-            # メールアドレスが一致する web user がいなければ新規作成画面に遷移
-            if web_user is None:
-                return redirect(url_for(
-                    'views_blueprint.view_login', next=request.url
-                ))
+        # login_user_id に id が一致する web user がいなければ新規作成画面に遷移
+        if len(web_users) == 0:
+            return redirect(url_for(
+                'views_blueprint.view_login', next=request.url
+            ))
 
         session.pop('next_page_url', None)
 
@@ -40,10 +37,10 @@ def login_required(f):
 def parse_jwt_token(f):
     @wraps(f)
     def decorated_parse_jwt_token(*args, **kwargs):
-        with session_scope() as db_session:
-            web_user = web_user_repository.find_by_id(
-                session=db_session, id=get_jwt_identity(),
-            )
+        web_users = web_user_repository.find(query={
+            'id': get_jwt_identity(),
+        })
+        print(web_users[0])
 
         return f(*args, **kwargs)
 
