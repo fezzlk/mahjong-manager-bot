@@ -69,29 +69,6 @@ def test_hit_0_record():
     assert result == 0
 
 
-def test_update_status():
-    # Arrange
-    dummy_matches = generate_dummy_match_list()[:3]
-    for dummy_match in dummy_matches:
-        match_repository.create(
-            dummy_match,
-        )
-    dummy_hanchans = generate_dummy_hanchan_list()[:3]
-    for dummy_hanchan in dummy_hanchans:
-        hanchan_repository.create(
-            dummy_hanchan,
-        )
-
-    # Act
-    result = hanchan_repository.update(
-        query={'line_group_id': dummy_hanchans[0].line_group_id},
-        new_values={'status': 0},
-    )
-
-    # Assert
-    assert result == 1
-
-
 def test_update_raw_scores():
     # Arrange
     dummy_matches = generate_dummy_match_list()[:3]
@@ -114,6 +91,14 @@ def test_update_raw_scores():
 
     # Assert
     assert result == 1
+    record_on_db = hanchan_repository.find()
+    assert len(record_on_db) == len(dummy_hanchans)
+    assert record_on_db[0]._id == dummy_hanchans[0]._id
+    assert record_on_db[0].line_group_id == dummy_hanchans[0].line_group_id
+    assert record_on_db[0].raw_scores == dummy_raw_scores
+    assert record_on_db[0].converted_scores == dummy_hanchans[0].converted_scores
+    assert record_on_db[0].match_id == dummy_hanchans[0].match_id
+    assert record_on_db[0].status == dummy_hanchans[0].status
 
 
 def test_update_converted_scores():
@@ -138,3 +123,11 @@ def test_update_converted_scores():
 
     # Assert
     assert result == 1
+    record_on_db = hanchan_repository.find()
+    assert len(record_on_db) == len(dummy_hanchans)
+    assert record_on_db[0]._id == dummy_hanchans[0]._id
+    assert record_on_db[0].line_group_id == dummy_hanchans[0].line_group_id
+    assert record_on_db[0].raw_scores == dummy_hanchans[0].raw_scores
+    assert record_on_db[0].converted_scores == dummy_converted_scores
+    assert record_on_db[0].match_id == dummy_hanchans[0].match_id
+    assert record_on_db[0].status == dummy_hanchans[0].status

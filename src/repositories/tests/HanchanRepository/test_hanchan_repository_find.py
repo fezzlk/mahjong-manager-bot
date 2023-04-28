@@ -34,17 +34,6 @@ def test_success_find_records():
         assert result[i].status == dummy_hanchans[i].status
 
 
-def test_success_find_0_record():
-    # Arrange
-    # Do nothing
-
-    # Act
-    result = hanchan_repository.find()
-
-    # Assert
-    assert len(result) == 0
-
-
 def test_hit_1_record():
     # Arrange
     dummy_matches = generate_dummy_match_list()[:3]

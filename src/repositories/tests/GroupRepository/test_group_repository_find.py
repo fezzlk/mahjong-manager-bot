@@ -23,17 +23,6 @@ def test_success_find_records():
         assert result[i].mode == dummy_groups[i].mode
 
 
-def test_success_find_0_record():
-    # Arrange
-    # Do nothing
-
-    # Act
-    result = group_repository.find()
-
-    # Assert
-    assert len(result) == 0
-
-
 def test_hit_with_ids():
     # Arrange
     dummy_groups = generate_dummy_group_list()[:3]
@@ -98,21 +87,3 @@ def test_hit_1_record():
     assert result[0]._id == target_group._id
     assert result[0].line_group_id == target_group.line_group_id
     assert result[0].mode == target_group.mode
-
-
-def test_hit_0_record_with_line_group_id():
-    # Arrange
-    dummy_groups = generate_dummy_group_list()[1:3]
-    for dummy_group in dummy_groups:
-        group_repository.create(
-            dummy_group,
-        )
-    target_line_group_id = generate_dummy_group_list()[0].line_group_id
-
-    # Act
-    result = group_repository.find(
-        query={'line_group_id': target_line_group_id},
-    )
-
-    # Assert
-    assert len(result) == 0

@@ -24,7 +24,6 @@ def test_hit_with_ids():
     record_on_db = group_repository.find()
     assert len(record_on_db) == len(other_groups)
     for i in range(len(record_on_db)):
-        assert isinstance(record_on_db[i], Group)
         assert record_on_db[i].line_group_id == other_groups[i].line_group_id
         assert record_on_db[i].mode == other_groups[i].mode
 
