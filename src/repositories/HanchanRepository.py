@@ -14,10 +14,10 @@ class HanchanRepository(IHanchanRepository):
     ) -> Hanchan:
         new_dict = new_record.__dict__.copy()
         new_dict['created_at'] = datetime.now()
-        if new_dict['id'] is None:
-            new_dict.pop('id')
+        if new_dict['_id'] is None:
+            new_dict.pop('_id')
         result = hanchans_collection.insert_one(new_dict)
-        new_record.id = result.inserted_id
+        new_record._id = result.inserted_id
         return new_record
 
     def update(
@@ -32,12 +32,12 @@ class HanchanRepository(IHanchanRepository):
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[Hanchan]:
         records = hanchans_collection\
             .find(filter=query)\
             .sort(sort)
-        return [self._mapping_mapping_record_to_domain(record) for record in records]
+        return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
@@ -47,7 +47,11 @@ class HanchanRepository(IHanchanRepository):
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Hanchan:
-        domain = Hanchan()
-        for attr, value in record.items():
-            domain.__setitem__(attr, value)
-        return domain
+        return Hanchan(
+            line_group_id=record['line_group_id'],
+            match_id=record['match_id'],
+            status=record['status'],
+            raw_scores=record['raw_scores'],
+            converted_scores=record['converted_scores'],
+            _id=record['_id'],
+        )
