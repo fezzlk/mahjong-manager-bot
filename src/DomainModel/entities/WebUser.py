@@ -6,7 +6,7 @@ from typing import Optional
 
 @dataclass()
 class WebUser:
-    id: Optional[int]
+    _id: Optional[int]
     user_code: str
     name: str
     email: str
@@ -24,9 +24,9 @@ class WebUser:
         is_approved_line_user: bool = False,
         created_at: datetime = datetime.now(),
         updated_at: datetime = datetime.now(),
-        id: Optional[int] = None,
+        _id: Optional[int] = None,
     ):
-        self.id = id
+        self._id = _id
         self.user_code = user_code
         self.name = name
         self.email = email

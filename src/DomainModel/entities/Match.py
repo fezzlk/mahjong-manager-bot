@@ -7,7 +7,7 @@ MATCH_STATUS = ['DISABLE', 'ACTIVE', 'ARCHIVE']
 
 @dataclass()
 class Match:
-    id: Optional[int]
+    _id: Optional[int]
     line_group_id: str
     hanchan_ids: List[int]
     status: int
@@ -21,9 +21,9 @@ class Match:
         hanchan_ids: List[int] = [],
         created_at: datetime = datetime.now(),
         tip_scores: Dict[str, int] = {},
-        id: Optional[int] = None,
+        _id: Optional[int] = None,
     ):
-        self.id = id
+        self._id = _id
         self.line_group_id = line_group_id
         self.hanchan_ids = hanchan_ids
         self.status = status

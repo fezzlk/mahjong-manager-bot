@@ -12,7 +12,7 @@ class GroupMode(Enum):
 
 @dataclass()
 class Group:
-    id: Optional[int]
+    _id: Optional[int]
     line_group_id: str
     mode: str
 
@@ -20,11 +20,11 @@ class Group:
         self,
         line_group_id: str,
         mode: str = GroupMode.wait.value,
-        id: Optional[int] = None,
+        _id: Optional[int] = None,
     ):
-        if mode not in GroupMode:
+        if mode not in GroupMode._member_names_:
             raise ValueError(f'GroupMode の値({mode})が不適切です。')
    
-        self.id = id
+        self._id = _id
         self.line_group_id = line_group_id
         self.mode = mode

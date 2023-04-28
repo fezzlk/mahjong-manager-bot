@@ -19,7 +19,7 @@ ROUNDING_METHOD_LIST = [
 
 @dataclass()
 class GroupSetting:
-    id: Optional[int]
+    _id: Optional[int]
     line_group_id: str
     rate: int
     ranking_prize: List[int]
@@ -37,9 +37,9 @@ class GroupSetting:
         tobi_prize=10,
         num_of_players=4,
         rounding_method=0,
-        id: Optional[int] = None,
+        _id: Optional[int] = None,
     ):
-        self.id = id
+        self._id = _id
         self.line_group_id = line_group_id
         self.rate = rate
         self.ranking_prize = ranking_prize
