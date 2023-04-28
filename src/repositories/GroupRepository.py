@@ -14,10 +14,10 @@ class GroupRepository(IGroupRepository):
     ) -> Group:
         new_dict = new_record.__dict__.copy()
         new_dict['created_at'] = datetime.now()
-        if new_dict['id'] is None:
-            new_dict.pop('id')
+        if '_id' in new_dict and new_dict['_id'] is None:
+            new_dict.pop('_id')
         result = groups_collection.insert_one(new_dict)
-        new_record.id = result.inserted_id
+        new_record._id = result.inserted_id
         return new_record
 
     def update(
@@ -32,12 +32,12 @@ class GroupRepository(IGroupRepository):
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[Group]:
         records = groups_collection\
             .find(filter=query)\
             .sort(sort)
-        return [self._mapping_mapping_record_to_domain(record) for record in records]
+        return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
@@ -47,7 +47,8 @@ class GroupRepository(IGroupRepository):
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Group:
-        domain = Group()
-        for attr, value in record.items():
-            domain.__setitem__(attr, value)
-        return domain
+        return Group(
+            line_group_id=record['line_group_id'],
+            mode=record['mode'],
+            _id=record['_id'],
+        )

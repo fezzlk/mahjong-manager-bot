@@ -53,7 +53,7 @@ def test_update_mode():
     for dummy_group in dummy_groups:
         group_repository.create(
             dummy_group,
-        )       
+        )
     target_group = dummy_groups[0]
     target_line_group_id = target_group.line_group_id
 
