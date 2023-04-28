@@ -24,7 +24,7 @@ class IGroupRepository(metaclass=ABCMeta):
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[Group]:
         pass
 
