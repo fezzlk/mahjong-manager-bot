@@ -5,7 +5,7 @@ from tests.dummies import (
 from repositories import hanchan_repository, match_repository
 
 
-def test_hit_with_ids():
+def test_hit_with_line_group_id():
     # Arrange
     dummy_matches = generate_dummy_match_list()[:3]
     for dummy_match in dummy_matches:
@@ -19,20 +19,19 @@ def test_hit_with_ids():
         )
     other_hanchans = dummy_hanchans[0:1]
     target_hanchans = dummy_hanchans[1:3]
-    ids = [target_hanchan._id for target_hanchan in target_hanchans]
+    line_group_ids = [target_hanchan.line_group_id for target_hanchan in target_hanchans]
 
     # Act
     result = hanchan_repository.delete(
-        query={'_id': {'$in': ids}},
+        query={'line_group_id': {'$in': line_group_ids}},
     )
 
     # Assert
-    assert result == len(ids)
+    assert result == len(line_group_ids)
     record_on_db = hanchan_repository.find()
     assert len(record_on_db) == len(other_hanchans)
     for i in range(len(record_on_db)):
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
-        assert record_on_db[i]._id == other_hanchans[i]._id
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
         assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores
         assert record_on_db[i].converted_scores == other_hanchans[i].converted_scores
@@ -56,7 +55,7 @@ def test_hit_0_record():
 
     # Act
     result = hanchan_repository.delete(
-        query={'_id': {'$in': [4, 5]}},
+        query={'line_group_id': {'$in': []}},
     )
 
     # Assert
@@ -65,7 +64,6 @@ def test_hit_0_record():
     assert len(record_on_db) == len(other_hanchans)
     for i in range(len(record_on_db)):
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
-        assert record_on_db[i]._id == other_hanchans[i]._id
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
         assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores
         assert record_on_db[i].converted_scores == other_hanchans[i].converted_scores

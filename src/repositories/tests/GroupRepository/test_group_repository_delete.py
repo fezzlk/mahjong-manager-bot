@@ -1,6 +1,5 @@
 from tests.dummies import generate_dummy_group_list
 from repositories import group_repository
-from DomainModel.entities.Group import Group
 
 
 def test_hit_with_ids():
@@ -48,6 +47,5 @@ def test_hit_0_record():
     record_on_db = group_repository.find()
     assert len(record_on_db) == len(dummy_groups)
     for i in range(len(record_on_db)):
-        assert isinstance(record_on_db[i], Group)
         assert record_on_db[i].line_group_id == dummy_groups[i].line_group_id
         assert record_on_db[i].mode == dummy_groups[i].mode

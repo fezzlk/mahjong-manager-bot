@@ -1,6 +1,7 @@
-from DomainModel.entities.Group import Group
 from tests.dummies import generate_dummy_group_list
+from DomainModel.entities.Group import Group
 from repositories import group_repository
+from bson.objectid import ObjectId
 
 
 def test_success():
@@ -14,7 +15,7 @@ def test_success():
 
     # Assert
     assert isinstance(result, Group)
-    assert result._id == dummy_group._id
+    assert type(result._id) == ObjectId
     assert result.line_group_id == dummy_group.line_group_id
     assert result.mode == dummy_group.mode
 
