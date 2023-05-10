@@ -32,7 +32,7 @@ class HanchanService(IHanchanService):
             )
 
             print(
-                f'disabled: id={updated_hanchan._id}'
+                f'disabled: _id={updated_hanchan._id}'
             )
 
             return updated_hanchan
@@ -47,7 +47,7 @@ class HanchanService(IHanchanService):
             if line_user_id is None:
                 raise ValueError('line_user_id is required')
 
-            target = hanchan_repository.find_one_by_line_group_id_and_status(
+            target = hanchan_repository.find_and_status(
                 session=session,
                 line_group_id=line_group_id,
                 status=1,
@@ -77,7 +77,7 @@ class HanchanService(IHanchanService):
         converted_scores: Dict[str, int],
     ) -> Hanchan:
         with session_scope() as session:
-            target = hanchan_repository.find_one_by_line_group_id_and_status(
+            target = hanchan_repository.find_and_status(
                 session=session,
                 line_group_id=line_group_id,
                 status=1,
@@ -90,7 +90,7 @@ class HanchanService(IHanchanService):
                 session=session, hanchan_id=target._id, converted_scores=converted_scores)
 
             print(
-                f'update hanchan: id={updated_hanchan._id}'
+                f'update hanchan: _id={updated_hanchan._id}'
             )
 
         return updated_hanchan
@@ -101,7 +101,7 @@ class HanchanService(IHanchanService):
         status: int,
     ) -> Hanchan:
         with session_scope() as session:
-            target = hanchan_repository.find_one_by_line_group_id_and_status(
+            target = hanchan_repository.find_and_status(
                 session=session,
                 line_group_id=line_group_id,
                 status=1,
@@ -117,7 +117,7 @@ class HanchanService(IHanchanService):
             )
 
             print(
-                f'{STATUS_LIST[updated_hanchan.status]} hanchan: id={updated_hanchan._id}'
+                f'{STATUS_LIST[updated_hanchan.status]} hanchan: _id={updated_hanchan._id}'
             )
 
             return updated_hanchan

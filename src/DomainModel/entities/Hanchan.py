@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 from typing import Dict, Optional
+from bson.objectid import ObjectId
 
 HANCHAN_STATUS = ['DISABLE', 'ACTIVE', 'ARCHIVE']
 
 
 @dataclass()
 class Hanchan:
-    _id: Optional[int]
+    _id: ObjectId
     line_group_id: str
     # 素点
     # Dictionary(key: user_line_id, value: raw_score)
@@ -16,6 +17,7 @@ class Hanchan:
     converted_scores: Dict[str, int]
     match_id: int
     status: int
+    original_id: Optional[int]
 
     def __init__(
         self,
@@ -24,7 +26,8 @@ class Hanchan:
         status: int,
         raw_scores: Dict[str, int] = [],
         converted_scores: Dict[str, int] = [],
-        _id: Optional[int] = None,
+        _id: ObjectId = None,
+        original_id: Optional[int] = None,
     ):
         self._id = _id
         self.line_group_id = line_group_id

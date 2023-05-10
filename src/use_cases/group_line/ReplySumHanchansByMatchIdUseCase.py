@@ -11,7 +11,7 @@ class ReplySumHanchansByMatchIdUseCase:
 
     def execute(self, match_id: int) -> None:
         with session_scope() as session:
-            match = match_repository.find_by_ids(
+            match = match_repository.find(
                 session=session,
                 ids=[match_id],
             )
@@ -19,7 +19,7 @@ class ReplySumHanchansByMatchIdUseCase:
         ids = match.hanchan_ids
         date = match.created_at.strftime('%Y-%m-%d') + '\n',
         with session_scope() as session:
-            hanchans = hanchan_repository.find_by_ids(
+            hanchans = hanchan_repository.find(
                 session, ids)
 
         hanchans_list = []

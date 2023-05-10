@@ -25,7 +25,7 @@ def test_hit_1_record():
     # Assert
     assert result == 1
     with session_scope() as session:
-        record_on_db = user_repository.find_all(
+        record_on_db = user_repository.find(
             session,
         )
         assert len(record_on_db) == len(other_users)
@@ -34,7 +34,6 @@ def test_hit_1_record():
             assert record_on_db[i]._id == other_users[i]._id
             assert record_on_db[i].line_user_name == other_users[i].line_user_name
             assert record_on_db[i].line_user_id == other_users[i].line_user_id
-            assert record_on_db[i].zoom_url == other_users[i].zoom_url
             assert record_on_db[i].mode == other_users[i].mode
             assert record_on_db[i].jantama_name == other_users[i].jantama_name
 
@@ -60,7 +59,7 @@ def test_hit_0_record():
     # Assert
     assert result == 0
     with session_scope() as session:
-        record_on_db = user_repository.find_all(
+        record_on_db = user_repository.find(
             session,
         )
         assert len(record_on_db) == len(dummy_users)
@@ -69,6 +68,5 @@ def test_hit_0_record():
             assert record_on_db[i]._id == dummy_users[i]._id
             assert record_on_db[i].line_user_name == dummy_users[i].line_user_name
             assert record_on_db[i].line_user_id == dummy_users[i].line_user_id
-            assert record_on_db[i].zoom_url == dummy_users[i].zoom_url
             assert record_on_db[i].mode == dummy_users[i].mode
             assert record_on_db[i].jantama_name == dummy_users[i].jantama_name

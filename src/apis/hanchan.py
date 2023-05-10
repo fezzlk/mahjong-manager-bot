@@ -30,7 +30,7 @@ def get_users():
 
     with session_scope() as db_session:
         request_user = web_user_repository.find_by_id(
-            session=db_session, id=request_user_id
+            session=db_session, _id=request_user_id
         )
 
         if request_user.is_approved_line_user is False:

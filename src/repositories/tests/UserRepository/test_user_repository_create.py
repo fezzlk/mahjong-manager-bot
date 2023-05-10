@@ -19,18 +19,16 @@ def test_success():
     assert result._id == dummy_user._id
     assert result.line_user_name == dummy_user.line_user_name
     assert result.line_user_id == dummy_user.line_user_id
-    assert result.zoom_url == dummy_user.zoom_url
     assert result.mode == dummy_user.mode
     assert result.jantama_name == dummy_user.jantama_name
 
     with session_scope() as session:
-        record_on_db = user_repository.find_all(
+        record_on_db = user_repository.find(
             session,
         )
         assert len(record_on_db) == 1
         assert record_on_db[0]._id == dummy_user._id
         assert record_on_db[0].line_user_name == dummy_user.line_user_name
         assert record_on_db[0].line_user_id == dummy_user.line_user_id
-        assert record_on_db[0].zoom_url == dummy_user.zoom_url
         assert record_on_db[0].mode == dummy_user.mode
         assert record_on_db[0].jantama_name == dummy_user.jantama_name

@@ -8,7 +8,6 @@ dummy_users = [
     User(
         line_user_name="test_user1",
         line_user_id="U0123456789abcdefghijklmnopqrstu1",
-        zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user1",
         matches=[],
@@ -17,16 +16,14 @@ dummy_users = [
     User(
         line_user_name="test_user2",
         line_user_id="U0123456789abcdefghijklmnopqrstu2",
-        zoom_url="https://us00web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user2",
         matches=[],
         _id=2,
     ),
     User(
-        line_user_name="test_user2",  # same name with id=2
+        line_user_name="test_user2",  # same name with _id=2
         line_user_id="U0123456789abcdefghijklmnopqrstu3",
-        zoom_url="https://us00web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user3",
         matches=[],
@@ -68,6 +65,5 @@ def test_success(case):
             assert result[i]._id == target_users[i]._id
             assert result[i].line_user_name == target_users[i].line_user_name
             assert result[i].line_user_id == target_users[i].line_user_id
-            assert result[i].zoom_url == target_users[i].zoom_url
             assert result[i].mode == target_users[i].mode
             assert result[i].jantama_name == target_users[i].jantama_name

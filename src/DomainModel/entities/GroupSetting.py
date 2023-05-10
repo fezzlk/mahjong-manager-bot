@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
+from bson.objectid import ObjectId
 
 RATE_LIST = [0, 1, 2, 3, 4, 5, 10]
 TIP_RATE_LIST = [0, 10]
@@ -19,7 +20,7 @@ ROUNDING_METHOD_LIST = [
 
 @dataclass()
 class GroupSetting:
-    _id: Optional[int]
+    _id: ObjectId
     line_group_id: str
     rate: int
     ranking_prize: List[int]
@@ -37,7 +38,7 @@ class GroupSetting:
         tobi_prize=10,
         num_of_players=4,
         rounding_method=0,
-        _id: Optional[int] = None,
+        _id: ObjectId = None,
     ):
         self._id = _id
         self.line_group_id = line_group_id

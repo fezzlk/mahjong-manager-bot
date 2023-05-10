@@ -6,7 +6,7 @@ from tests.dummies import (
 from DomainService import (
     config_service,
 )
-from repositories import session_scope, config_repository
+from repositories import session_scope, group_setting_repository
 
 
 @pytest.fixture(params=[
@@ -40,7 +40,7 @@ def test_success_get_updated_config():
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:6]
         for dummy_config in dummy_configs:
-            config_repository.create(
+            group_setting_repository.create(
                 session=session,
                 new_config=dummy_config,
             )

@@ -37,7 +37,7 @@ class MatchFinishUseCase:
         match_id = current._id
 
         with session_scope() as session:
-            hanchans = hanchan_repository.find_by_ids(
+            hanchans = hanchan_repository.find(
                 session, ids)
 
         sum_hanchans = {}

@@ -23,7 +23,7 @@ class ReplySumHanchansUseCase:
         ids = match.hanchan_ids
         date = match.created_at.strftime('%Y-%m-%d')
         with session_scope() as session:
-            hanchans = hanchan_repository.find_by_ids(
+            hanchans = hanchan_repository.find(
                 session, ids)
 
         hanchans_list = []

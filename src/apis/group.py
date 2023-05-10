@@ -21,8 +21,8 @@ group_blueprint = Blueprint(
 @group_blueprint.route('/')
 def get_groups():
     data = GetGroupsForWebUseCase().execute()
-    keys = ['_id', 'line_group_id', 'zoom_url', 'mode', 'users']
-    input_keys = ['line_group_id', 'zoom_url']
+    keys = ['_id', 'line_group_id', 'mode', 'users']
+    input_keys = ['line_group_id']
     return render_template(
         'model.html',
         title='groups',
@@ -38,7 +38,7 @@ def groups_detail(_id):
     data = GetGroupForWebUseCase().execute(_id)
     if data is None:
         raise NotFoundErr()
-    input_keys = ['_id', 'line_group_id', 'zoom_url']
+    input_keys = ['_id', 'line_group_id']
     return render_template(
         'detail.html',
         title='groups',

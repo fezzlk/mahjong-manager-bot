@@ -1,12 +1,12 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
+from bson.objectid import ObjectId
 
 
 @dataclass()
 class WebUser:
-    _id: Optional[int]
+    _id: ObjectId
     user_code: str
     name: str
     email: str
@@ -24,7 +24,7 @@ class WebUser:
         is_approved_line_user: bool = False,
         created_at: datetime = datetime.now(),
         updated_at: datetime = datetime.now(),
-        _id: Optional[int] = None,
+        _id: ObjectId = None,
     ):
         self._id = _id
         self.user_code = user_code

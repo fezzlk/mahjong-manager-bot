@@ -10,5 +10,5 @@ class DeleteUsersForWebUseCase:
         with session_scope() as session:
             user_repository.delete_by_ids(
                 session=session,
-                ids=ids,
+                ids=query={'_id': {'$in': ids}},
             )

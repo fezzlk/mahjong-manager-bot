@@ -33,7 +33,7 @@ def get_users():
 
     with session_scope() as db_session:
         request_user = web_user_repository.find_by_id(
-            session=db_session, id=request_user_id
+            session=db_session, _id=request_user_id
         )
 
         if request_user.is_approved_line_user is False:
@@ -55,11 +55,10 @@ def get_users():
 # def view_users():
 #     data = GetUsersForWebUseCase().execute()
 #     keys = ['_id', 'line_user_name', 'line_user_id', 'jantama_name',
-#             'zoom_url', 'mode', 'matches', 'groups']
+#             'mode', 'matches', 'groups']
 #     input_keys = [
 #         'line_user_name',
 #         'line_user_id',
-#         'zoom_url',
 #         'jantama_name']
 #     return render_template(
 #         'model.html',
@@ -81,7 +80,6 @@ def get_users():
 #         'line_user_name',
 #         'line_user_id',
 #         'mode',
-#         'zoom_url',
 #         'jantama_name']
 #     return render_template(
 #         'detail.html',

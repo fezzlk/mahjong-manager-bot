@@ -22,7 +22,7 @@ def test_hit_with_line_group_id():
     )
 
     # Assert
-    assert result == len(line_group_ids)
+    assert result == len(target_matches)
     record_on_db = match_repository.find()
     assert len(record_on_db) == len(other_matches)
     for i in range(len(record_on_db)):

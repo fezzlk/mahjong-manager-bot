@@ -3,7 +3,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.functions import current_timestamp
-from db_setting import Base
+# from db_setting import Base
 from datetime import datetime
 
 
@@ -15,8 +15,8 @@ class UserGroupModel(Base):
 
 class UserMatchModel(Base):
     __tablename__ = 'user_matches'
-    user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    match_id = Column(Integer, ForeignKey('matches.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users._id'), primary_key=True)
+    match_id = Column(Integer, ForeignKey('matches._id'), primary_key=True)
 
 
 class UserModel(Base):
@@ -78,14 +78,12 @@ class GroupModel(Base):
         self,
         line_group_id,
         mode,
-        zoom_url,
-        id=None,
+        _id=None,
     ):
         if id is not None:
-            self.id = id
+            self._id = _id
         self.line_group_id = line_group_id
         self.mode = mode
-        self.zoom_url = zoom_url
 
     @staticmethod
     def add_column(engine, column_name):
@@ -102,7 +100,7 @@ class HanchanModel(Base):
     line_group_id = Column(String(255), nullable=False)
     raw_scores = Column(String(255), nullable=True)
     converted_scores = Column(String(255), nullable=True)
-    match_id = Column(Integer, ForeignKey("matches.id"))
+    match_id = Column(Integer, ForeignKey("matches._id"))
     status = Column(Integer, nullable=False)
 
     def __init__(

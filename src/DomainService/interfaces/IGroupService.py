@@ -19,18 +19,3 @@ class IGroupService(metaclass=ABCMeta):
     @abstractmethod
     def get_mode(self, group_id: str) -> GroupMode:
         pass
-
-    @abstractmethod
-    def set_zoom_url(
-        self,
-        line_group_id: str,
-        zoom_url: str,
-    ) -> Group:
-        pass
-
-    @abstractmethod
-    def get_zoom_url(
-        self,
-        line_group_id: str,
-    ) -> str:
-        pass

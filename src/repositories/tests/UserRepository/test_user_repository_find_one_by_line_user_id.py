@@ -26,7 +26,6 @@ def test_hit_1_record():
         assert result._id == target_user._id
         assert result.line_user_name == target_user.line_user_name
         assert result.line_user_id == target_user.line_user_id
-        assert result.zoom_url == target_user.zoom_url
         assert result.mode == target_user.mode
         assert result.jantama_name == target_user.jantama_name
 

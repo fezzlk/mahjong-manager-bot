@@ -22,7 +22,7 @@ def test_execute():
 
     # Assert
     with session_scope() as session:
-        result = group_repository.find_all(session)
+        result = group_repository.find(session)
         assert len(result) == 1
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextSendMessage)

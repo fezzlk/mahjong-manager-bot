@@ -9,4 +9,4 @@ class GetGroupsForWebUseCase:
 
     def execute(self) -> List[Group]:
         with session_scope() as session:
-            return group_repository.find_all(session)
+            return group_repository.find(session)

@@ -4,8 +4,8 @@ from tests.dummies import (
 from DomainService import (
     config_service,
 )
-from DomainModel.entities.Config import DEFAULT_CONFIGS
-from repositories import session_scope, config_repository
+from DomainModel.entities.GroupSetting import DEFAULT_CONFIGS
+from repositories import session_scope, group_setting_repository
 
 
 def test_success_to_original_from_default():
@@ -35,7 +35,7 @@ def test_success_to_original_from_default():
     for key, value in result.items():
         assert expected_settings[key] == value
     with session_scope() as session:
-        record_on_db = config_repository.find_all(session)
+        record_on_db = group_setting_repository.find(session)
         assert len(record_on_db) == 1
 
 
@@ -43,7 +43,7 @@ def test_success_to_original_from_original():
     # Arrage
     dummy_config = generate_dummy_config_list()[3]
     with session_scope() as session:
-        config_repository.create(
+        group_setting_repository.create(
             session=session,
             new_config=dummy_config,
         )
@@ -72,7 +72,7 @@ def test_success_to_original_from_original():
     for key, value in result.items():
         assert expected_settings[key] == value
     with session_scope() as session:
-        record_on_db = config_repository.find_all(session)
+        record_on_db = group_setting_repository.find(session)
         assert len(record_on_db) == 1
 
 
@@ -80,7 +80,7 @@ def test_success_to_default_from_original():
     # Arrage
     dummy_config = generate_dummy_config_list()[3]
     with session_scope() as session:
-        config_repository.create(
+        group_setting_repository.create(
             session=session,
             new_config=dummy_config,
         )
@@ -100,7 +100,7 @@ def test_success_to_default_from_original():
     for key, value in result.items():
         assert DEFAULT_CONFIGS[key] == value
     with session_scope() as session:
-        record_on_db = config_repository.find_all(session)
+        record_on_db = group_setting_repository.find(session)
         assert len(record_on_db) == 0
 
 
@@ -123,5 +123,5 @@ def test_success_to_default_from_default():
     for key, value in result.items():
         assert DEFAULT_CONFIGS[key] == value
     with session_scope() as session:
-        record_on_db = config_repository.find_all(session)
+        record_on_db = group_setting_repository.find(session)
         assert len(record_on_db) == 0

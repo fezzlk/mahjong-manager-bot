@@ -10,13 +10,12 @@ class GroupService(IGroupService):
 
     def find_or_create(self, group_id: str) -> Group:
         with session_scope() as session:
-            group = group_repository.find_one_by_line_group_id(
+            group = group_repository.find(
                 session, group_id)
 
             if group is None:
                 group = Group(
                     line_group_id=group_id,
-                    zoom_url=None,
                     mode=GroupMode.wait.value,
                 )
                 group_repository.create(session, group)
@@ -52,7 +51,7 @@ class GroupService(IGroupService):
     def get_mode(self, line_group_id: str) -> GroupMode:
         with session_scope() as session:
             # find にし、複数件ヒットした場合にはエラーを返す
-            target = group_repository.find_one_by_line_group_id(
+            target = group_repository.find(
                 session, line_group_id)
 
             if target is None:
@@ -62,43 +61,3 @@ class GroupService(IGroupService):
                 return
 
             return target.mode
-
-    def set_zoom_url(
-        self,
-        line_group_id: str,
-        zoom_url: str,
-    ) -> Group:
-        with session_scope() as session:
-            record = group_repository.update_one_zoom_url_by_line_group_id(
-                session,
-                line_group_id,
-                zoom_url,
-            )
-
-            if record is None:
-                print(
-                    f'fail to set zoom url: group "{line_group_id}" is not found')
-                raise Exception('トークルームが登録されていません。招待し直してください。')
-
-            print(f'set_zoom_url: {zoom_url} to {line_group_id}')
-            return record
-
-    def get_zoom_url(
-        self,
-        line_group_id: str,
-    ) -> str:
-        with session_scope() as session:
-            target = group_repository.find_one_by_line_group_id(
-                session, line_group_id)
-
-            if target is None:
-                print(
-                    f'fail to get zoom url: group "{line_group_id}" is not found.')
-                raise Exception('トークルームが登録されていません。招待し直してください。')
-
-            if target.zoom_url is None:
-                print(
-                    f'fail to get zoom url: group "{line_group_id}" does not have zoom url.')
-                return None
-
-            return target.zoom_url

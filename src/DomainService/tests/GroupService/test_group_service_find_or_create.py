@@ -31,5 +31,5 @@ def test_find_exist_group():
     assert isinstance(result, Group)
     assert result.line_group_id == dummy_group.line_group_id
     with session_scope() as session:
-        records = group_repository.find_all(session)
+        records = group_repository.find(session)
         assert len(records) == 1

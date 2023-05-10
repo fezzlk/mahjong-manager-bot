@@ -26,5 +26,5 @@ def test_execute():
 
     # Assert
     with session_scope() as session:
-        result = user_repository.find_all(session)
+        result = user_repository.find(session)
         assert len(result) == 0

@@ -15,7 +15,7 @@ def test_success_find_records():
 
     # Act
     with session_scope() as session:
-        result = user_repository.find_all(
+        result = user_repository.find(
             session,
         )
 
@@ -26,7 +26,6 @@ def test_success_find_records():
             assert result[i]._id == dummy_users[i]._id
             assert result[i].line_user_name == dummy_users[i].line_user_name
             assert result[i].line_user_id == dummy_users[i].line_user_id
-            assert result[i].zoom_url == dummy_users[i].zoom_url
             assert result[i].mode == dummy_users[i].mode
             assert result[i].jantama_name == dummy_users[i].jantama_name
 
@@ -37,7 +36,7 @@ def test_success_find_0_record():
 
     # Act
     with session_scope() as session:
-        result = user_repository.find_all(
+        result = user_repository.find(
             session,
         )
 

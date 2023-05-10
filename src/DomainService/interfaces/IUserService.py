@@ -27,18 +27,6 @@ class IUserService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_zoom_url(self, line_user_id: str) -> str:
-        pass
-
-    @abstractmethod
-    def set_zoom_url(
-        self,
-        line_user_id: str,
-        zoom_url: str,
-    ) -> User:
-        pass
-
-    @abstractmethod
     def get_mode(self, line_user_id: str) -> str:
         pass
 

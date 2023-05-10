@@ -9,7 +9,7 @@ class DenyLinkLineUserUseCase():
         with session_scope() as db_session:
             web_user_repository.update_linked_line_user_id(
                 session=db_session,
-                id=page_contents.login_user._id,
+                _id=page_contents.login_user._id,
                 line_user_id='',
             )
             page_contents.message = '申請を取り消しました。'

@@ -44,7 +44,7 @@ class RequestLinkLineWebUseCase():
 
             result = web_user_repository.update_linked_line_user_id(
                 session=session,
-                id=web_user._id,
+                _id=web_user._id,
                 line_user_id=request_info_service.req_line_user_id,
             )
 

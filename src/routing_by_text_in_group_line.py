@@ -12,14 +12,11 @@ from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 from use_cases.group_line.CalculateUseCase import CalculateUseCase
 
 from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
-from use_cases.group_line.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
-from use_cases.group_line.SetMyZoomUrlToGroupUseCase import SetMyZoomUrlToGroupUseCase
 from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
 from use_cases.group_line.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
 from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
 from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
 from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
-from use_cases.group_line.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCase
 from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
 
 from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
@@ -63,8 +60,6 @@ class RCommands(Enum):
     drop_m = 'drop_m'
     add_result = 'add_result'
     update_config = 'update_config'
-    zoom = 'zoom'
-    my_zoom = 'my_zoom'
     sum_matches = 'sum_matches'
     graph = 'graph'
     my_results = 'my_results'
@@ -106,10 +101,6 @@ def routing_by_text_in_group_line(text: str):
     resultRows = [r for r in text.split('\n') if ':' in r]
     if len(resultRows) == 4:
         AddHanchanByPointsTextUseCase().execute(text)
-
-    """if zoom url, register to group"""
-    if '.zoom.us' in text:
-        SetZoomUrlToGroupUseCase().execute(text)
 
 
 def routing_for_group_by_method(method, body):
@@ -168,12 +159,6 @@ def routing_for_group_by_method(method, body):
         UpdateGroupConfigUseCase().execute(
             key, value
         )
-    # zoom
-    elif method == RCommands.zoom.name:
-        ReplyGroupZoomUrlUseCase().execute()
-    # my_zoom
-    elif method == RCommands.my_zoom.name:
-        SetMyZoomUrlToGroupUseCase().execute()
     # history
     elif method == RCommands.history.name:
         ReplyMultiHistoryUseCase().execute()

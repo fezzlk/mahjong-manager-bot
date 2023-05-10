@@ -1,5 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
+from bson.objectid import ObjectId
 from typing import Optional
 
 
@@ -9,11 +10,12 @@ class UserMode(Enum):
 
 @dataclass()
 class User:
-    _id: Optional[int]
+    _id: ObjectId
     name: str
     line_user_id: str
     mode: str
     jantama_name: str
+    original_id: Optional[int]
 
     def __init__(
         self,
@@ -21,7 +23,8 @@ class User:
         line_user_name: str = None,
         mode: str = UserMode.wait.value,
         jantama_name: str = None,
-        _id: Optional[int] = None,
+        _id: ObjectId = None,
+        original_id: Optional[int] = None,
     ):
         if mode not in UserMode._member_names_:
             raise ValueError(f'UserMode の値({mode})が不適切です。')

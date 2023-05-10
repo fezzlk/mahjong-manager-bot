@@ -4,8 +4,8 @@ from tests.dummies import (
 from DomainService import (
     config_service,
 )
-from DomainModel.entities.Config import DEFAULT_CONFIGS
-from repositories import session_scope, config_repository
+from DomainModel.entities.GroupSetting import DEFAULT_CONFIGS
+from repositories import session_scope, group_setting_repository
 
 
 def test_success():
@@ -13,7 +13,7 @@ def test_success():
     with session_scope() as session:
         dummy_configs = generate_dummy_config_list()[:6]
         for dummy_config in dummy_configs:
-            config_repository.create(
+            group_setting_repository.create(
                 session=session,
                 new_config=dummy_config,
             )

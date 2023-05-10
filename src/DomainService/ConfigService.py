@@ -1,8 +1,8 @@
-from DomainModel.entities.Config import DEFAULT_CONFIGS
+from DomainModel.entities.GroupSetting import DEFAULT_CONFIGS
 from .interfaces.IConfigService import IConfigService
 from typing import Dict
-from repositories import session_scope, config_repository
-from DomainModel.entities.Config import Config
+from repositories import session_scope, group_setting_repository
+from DomainModel.entities.GroupSetting import Config
 
 
 class ConfigService(IConfigService):
@@ -14,7 +14,7 @@ class ConfigService(IConfigService):
     ) -> str:
         # デフォルトから変更されている config の取得
         with session_scope() as session:
-            config = config_repository.find_one_by_target_id_and_key(
+            config = group_setting_repository.find_one_by_target_id_and_key(
                 session,
                 target_id,
                 key
@@ -33,7 +33,7 @@ class ConfigService(IConfigService):
     ) -> Dict[str, str]:
         # デフォルト config から変更されている config を取得
         with session_scope() as session:
-            customized_configs = config_repository.find_by_target_id(
+            customized_configs = group_setting_repository.find_by_target_id(
                 session,
                 target_id,
             )
@@ -61,7 +61,7 @@ class ConfigService(IConfigService):
         """
         with session_scope() as session:
             # 既存の変更の削除
-            config_repository.delete_by_target_id_and_key(
+            group_setting_repository.delete_by_target_id_and_key(
                 session, target_id, key)
 
             # リクエストの value がデフォルト値と異なる場合はレコードを作成
@@ -71,7 +71,7 @@ class ConfigService(IConfigService):
                     key,
                     value,
                 )
-                config_repository.create(session, new_config)
+                group_setting_repository.create(session, new_config)
 
         print(
             f'update setting of "{target_id}": {key}:{value}'

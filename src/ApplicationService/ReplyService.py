@@ -305,7 +305,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label=player_id_and_name['name'],
                             display_text=player_id_and_name['name'],
-                            data='_tobi ' + player_id_and_name['id'],
+                            data='_tobi ' + player_id_and_name['_id'],
                         ) for player_id_and_name in player_id_and_names
                     ] + [
                         PostbackAction(

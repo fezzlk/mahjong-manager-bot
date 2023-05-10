@@ -12,7 +12,7 @@ def test_hit_with_line_group_id():
         match_repository.create(
             dummy_match,
         )
-    dummy_hanchans = generate_dummy_hanchan_list()[:3]
+    dummy_hanchans = generate_dummy_hanchan_list()[:7]
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(
             dummy_hanchan,
@@ -27,7 +27,7 @@ def test_hit_with_line_group_id():
     )
 
     # Assert
-    assert result == len(line_group_ids)
+    assert result == len(target_hanchans)
     record_on_db = hanchan_repository.find()
     assert len(record_on_db) == len(other_hanchans)
     for i in range(len(record_on_db)):

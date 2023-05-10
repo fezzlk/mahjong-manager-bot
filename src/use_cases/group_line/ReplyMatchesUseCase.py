@@ -33,7 +33,7 @@ class ReplyMatchesUseCase:
             is_required_sum = False
             date = match.created_at.strftime('%Y-%m-%d') + '\n'
             with session_scope() as session:
-                hanchans = hanchan_repository.find_by_ids(
+                hanchans = hanchan_repository.find(
                     session, ids)
 
             sum_hanchans = {}

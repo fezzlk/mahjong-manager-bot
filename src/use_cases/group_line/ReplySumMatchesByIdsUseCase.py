@@ -16,7 +16,7 @@ class ReplySumMatchesByIdsUseCase:
     def execute(self, ids: List[str]) -> None:
         formatted_id_list = sorted(list(set(ids)))
         with session_scope() as session:
-            matches = match_repository.find_by_ids(session=session, ids=ids)
+            matches = match_repository.find(session=session, ids=ids)
         if len(matches) == 0:
             reply_service.add_message(
                 '該当する対戦結果がありません。'
@@ -33,7 +33,7 @@ class ReplySumMatchesByIdsUseCase:
             is_required_sum = True
             date = ''
             with session_scope() as session:
-                hanchans = hanchan_repository.find_by_ids(
+                hanchans = hanchan_repository.find(
                     session, ids)
 
             sum_hanchans = {}

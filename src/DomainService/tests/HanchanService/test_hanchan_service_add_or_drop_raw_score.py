@@ -26,7 +26,6 @@ dummy_users = [
     User(
         line_user_name="test_user1",
         line_user_id="U0123456789abcdefghijklmnopqrstu1",
-        zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user1",
         matches=[],
@@ -35,7 +34,6 @@ dummy_users = [
     User(
         line_user_name="test_user2",
         line_user_id="U0123456789abcdefghijklmnopqrstu2",
-        zoom_url="https://us00web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user2",
         matches=[],
@@ -44,7 +42,6 @@ dummy_users = [
     User(
         line_user_name="test_user3",
         line_user_id="U0123456789abcdefghijklmnopqrstu3",
-        zoom_url="https://us00web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user3",
         matches=[],

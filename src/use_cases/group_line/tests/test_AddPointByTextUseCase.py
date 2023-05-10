@@ -19,7 +19,6 @@ from repositories import (
 
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
     mode=GroupMode.input.value,
     _id=1,
 )
@@ -28,7 +27,6 @@ dummy_users = [
     User(
         line_user_name="test_user1",
         line_user_id="U0123456789abcdefghijklmnopqrstu1",
-        zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user1",
         matches=[],
@@ -37,7 +35,6 @@ dummy_users = [
     User(
         line_user_name="test_user2",
         line_user_id="U0123456789abcdefghijklmnopqrstu2",
-        zoom_url="https://us00web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user2",
         matches=[],
@@ -46,7 +43,6 @@ dummy_users = [
     User(
         line_user_name="test_user3",
         line_user_id="U0123456789abcdefghijklmnopqrstu3",
-        zoom_url="https://us00web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user3",
         matches=[],
@@ -55,7 +51,6 @@ dummy_users = [
     User(
         line_user_name="test_user4",
         line_user_id="U0123456789abcdefghijklmnopqrstu4",
-        zoom_url="https://us00web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user4",
         matches=[],
@@ -64,7 +59,6 @@ dummy_users = [
     User(
         line_user_name="test_user5",
         line_user_id="U0123456789abcdefghijklmnopqrstu5",
-        zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user5",
         matches=[],
@@ -170,7 +164,7 @@ def test_execute(case1):
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == case1[2]
     with session_scope() as session:
-        hanchans = hanchan_repository.find_all(session)
+        hanchans = hanchan_repository.find(session)
         expected_raw_scores = case1[3]
         assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
         for k in expected_raw_scores:
@@ -205,7 +199,7 @@ def test_execute_not_int_point(case2):
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == '点数は整数で入力してください。'
     with session_scope() as session:
-        hanchans = hanchan_repository.find_all(session)
+        hanchans = hanchan_repository.find(session)
         expected_raw_scores = dummy_hanchans[0].raw_scores
         assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
         for k in expected_raw_scores:
@@ -234,7 +228,7 @@ def test_execute_with_mention():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'test_user1: 1000'
     with session_scope() as session:
-        hanchans = hanchan_repository.find_all(session)
+        hanchans = hanchan_repository.find(session)
         expected_raw_scores = {'U0123456789abcdefghijklmnopqrstu1': 1000}
         assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
         for k in expected_raw_scores:
@@ -265,7 +259,7 @@ def test_execute_multi_mentions():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'ユーザーを指定する場合はメンションをつけてメッセージの末尾に点数を入力してください。1回につき1人を指定するようにしてください。'
     with session_scope() as session:
-        hanchans = hanchan_repository.find_all(session)
+        hanchans = hanchan_repository.find(session)
         assert len(hanchans[0].raw_scores) == 0
 
 
@@ -290,7 +284,7 @@ def test_execute_not_registered_user():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'dummy_line_id: 1000'
     with session_scope() as session:
-        hanchans = hanchan_repository.find_all(session)
+        hanchans = hanchan_repository.find(session)
         expected_raw_scores = {'dummy_line_id': 1000}
         assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
         for k in expected_raw_scores:
@@ -319,7 +313,7 @@ def test_execute_fourth_input():
     assert reply_service.texts[1].type == 'text'
     assert reply_service.texts[1].text == '点数の合計が40000点です。合計100000点+αになるように修正してください。'
     with session_scope() as session:
-        hanchans = hanchan_repository.find_all(session)
+        hanchans = hanchan_repository.find(session)
         expected_raw_scores = {
             dummy_users[0].line_user_id: 10000,
             dummy_users[1].line_user_id: 10000,
@@ -353,7 +347,7 @@ def test_execute_fifth_input():
     assert reply_service.texts[1].type == 'text'
     assert reply_service.texts[1].text == '5人以上入力されています。@[ユーザー名] で不要な入力を消してください。'
     with session_scope() as session:
-        hanchans = hanchan_repository.find_all(session)
+        hanchans = hanchan_repository.find(session)
         expected_raw_scores = {
             dummy_users[0].line_user_id: 10000,
             dummy_users[1].line_user_id: 10000,

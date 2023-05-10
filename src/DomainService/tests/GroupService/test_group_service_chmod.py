@@ -23,7 +23,7 @@ def test_success():
     # Assert
     assert result.mode == GroupMode.input.value
     with session_scope() as session:
-        records_on_db = group_repository.find_all(session)
+        records_on_db = group_repository.find(session)
         for i, record in enumerate(records_on_db):
             assert record.mode == assert_modes[i]
 

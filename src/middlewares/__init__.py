@@ -18,7 +18,7 @@ def login_required(f):
             ))
 
         web_users = web_user_repository.find(query={
-            'id': login_user_id,
+            '_id': login_user_id,
         })
 
         # login_user_id に id が一致する web user がいなければ新規作成画面に遷移
@@ -38,7 +38,7 @@ def parse_jwt_token(f):
     @wraps(f)
     def decorated_parse_jwt_token(*args, **kwargs):
         web_users = web_user_repository.find(query={
-            'id': get_jwt_identity(),
+            '_id': get_jwt_identity(),
         })
         print(web_users[0])
 

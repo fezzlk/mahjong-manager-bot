@@ -27,7 +27,7 @@ class MatchService(IMatchService):
 
     def get_current(self, line_group_id: str) -> Match:
         with session_scope() as session:
-            return match_repository.find_one_by_line_group_id_and_status(
+            return match_repository.find_and_status(
                 session=session,
                 line_group_id=line_group_id,
                 status=1,
@@ -39,7 +39,7 @@ class MatchService(IMatchService):
         hanchan_id: int,
     ) -> Match:
         with session_scope() as session:
-            target = match_repository.find_one_by_line_group_id_and_status(
+            target = match_repository.find_and_status(
                 session=session,
                 line_group_id=line_group_id,
                 status=1,
@@ -65,7 +65,7 @@ class MatchService(IMatchService):
 
     def update_hanchan_ids_of_current(self, hanchan_ids, line_group_id):
         with session_scope() as session:
-            target = match_repository.find_one_by_line_group_id_and_status(
+            target = match_repository.find_and_status(
                 session=session,
                 line_group_id=line_group_id,
                 status=1,
@@ -92,7 +92,7 @@ class MatchService(IMatchService):
         status: int,
     ) -> Match:
         with session_scope() as session:
-            target = match_repository.find_one_by_line_group_id_and_status(
+            target = match_repository.find_and_status(
                 session=session,
                 line_group_id=line_group_id,
                 status=1,
@@ -108,7 +108,7 @@ class MatchService(IMatchService):
             )
 
             print(
-                f'{STATUS_LIST[updated_match.status]} match: id={updated_match._id}'
+                f'{STATUS_LIST[updated_match.status]} match: _id={updated_match._id}'
             )
 
             return updated_match
@@ -125,7 +125,7 @@ class MatchService(IMatchService):
         hanchan_id: int,
     ) -> Match:
         with session_scope() as session:
-            target = match_repository.find_by_ids(
+            target = match_repository.find(
                 session=session,
                 ids=[match_id],
             )
@@ -155,7 +155,7 @@ class MatchService(IMatchService):
             if line_user_id is None:
                 raise ValueError('line_user_id is required')
 
-            target = match_repository.find_one_by_line_group_id_and_status(
+            target = match_repository.find_and_status(
                 session=session,
                 line_group_id=line_group_id,
                 status=1,

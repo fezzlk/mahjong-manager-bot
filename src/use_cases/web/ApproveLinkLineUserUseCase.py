@@ -9,6 +9,6 @@ class ApproveLinkLineUserUseCase():
         with session_scope() as db_session:
             web_user_repository.approve_line(
                 session=db_session,
-                id=page_contents.login_user._id
+                _id=page_contents.login_user._id
             )
             page_contents.message = 'LINEアカウント連携を承認しました。'

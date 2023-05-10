@@ -14,10 +14,9 @@ class MatchRepository(IMatchRepository):
     ) -> Match:
         new_dict = new_record.__dict__.copy()
         new_dict['created_at'] = datetime.now()
-        if new_dict['id'] is None:
-            new_dict.pop('id')
+        new_dict.pop('_id')
         result = matches_collection.insert_one(new_dict)
-        new_record.id = result.inserted_id
+        new_record._id = result.inserted_id
         return new_record
 
     def update(
@@ -32,12 +31,12 @@ class MatchRepository(IMatchRepository):
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[Match]:
         records = matches_collection\
             .find(filter=query)\
             .sort(sort)
-        return [self._mapping_mapping_record_to_domain(record) for record in records]
+        return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
@@ -47,7 +46,12 @@ class MatchRepository(IMatchRepository):
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Match:
-        domain = Match()
-        for attr, value in record.items():
-            domain.__setitem__(attr, value)
-        return domain
+        return Match(
+            line_group_id=record['line_group_id'],
+            status=record['status'],
+            hanchan_ids=record['hanchan_ids'],
+            created_at=record['created_at'],
+            tip_scores=record['tip_scores'],
+            _id=record['_id'],
+        )
+    

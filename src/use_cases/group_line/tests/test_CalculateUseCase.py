@@ -4,7 +4,7 @@ from DomainModel.entities.UserMatch import UserMatch
 from use_cases.group_line.CalculateUseCase import CalculateUseCase
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
-from DomainModel.entities.Config import Config
+from DomainModel.entities.GroupSetting import Config
 from DomainModel.entities.User import User, UserMode
 from DomainModel.entities.Group import Group, GroupMode
 from DomainService import hanchan_service
@@ -15,7 +15,7 @@ from repositories import (
     hanchan_repository,
     match_repository,
     group_repository,
-    config_repository,
+    group_setting_repository,
     user_match_repository,
 )
 
@@ -28,7 +28,6 @@ dummy_users = [
     User(
         line_user_name="test_user1",
         line_user_id="U0123456789abcdefghijklmnopqrstu1",
-        zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user1",
         matches=[],
@@ -37,7 +36,6 @@ dummy_users = [
     User(
         line_user_name="test_user2",
         line_user_id="U0123456789abcdefghijklmnopqrstu2",
-        zoom_url="https://us00web.zoom.us/j/01234567892?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user2",
         matches=[],
@@ -46,7 +44,6 @@ dummy_users = [
     User(
         line_user_name="test_user3",
         line_user_id="U0123456789abcdefghijklmnopqrstu3",
-        zoom_url="https://us00web.zoom.us/j/01234567893?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user3",
         matches=[],
@@ -55,7 +52,6 @@ dummy_users = [
     User(
         line_user_name="test_user4",
         line_user_id="U0123456789abcdefghijklmnopqrstu4",
-        zoom_url="https://us00web.zoom.us/j/01234567894?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user4",
         matches=[],
@@ -64,7 +60,6 @@ dummy_users = [
     User(
         line_user_name="test_user5",
         line_user_id="U0123456789abcdefghijklmnopqrstu5",
-        zoom_url="https://us00web.zoom.us/j/01234567895?pwd=abcdefghijklmnopqrstuvwxyz",
         mode=UserMode.wait.value,
         jantama_name="jantama_user5",
         matches=[],
@@ -74,7 +69,6 @@ dummy_users = [
 
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    zoom_url="https://us01web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
     mode=GroupMode.input.value,
     _id=1,
 )
@@ -225,7 +219,7 @@ def test_success():
         dummy_users[3].line_user_id: -40,
     }
     with session_scope() as session:
-        hanchan = hanchan_repository.find_all(session)[0]
+        hanchan = hanchan_repository.find(session)[0]
         for k in expected_c_scores:
             assert hanchan.converted_scores[k] == expected_c_scores[k]
         assert hanchan.status == 2
@@ -236,10 +230,10 @@ def test_success():
         assert len(um) == 4
         assert len(reply_service.texts) == 4
         assert reply_service.texts[1].text == "test_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
-        group = group_repository.find_one_by_line_group_id(
+        group = group_repository.find(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.wait.value
-        match = match_repository.find_all(session)[0]
+        match = match_repository.find(session)[0]
         print(match.hanchan_ids)
         assert len(match.hanchan_ids) == 1
         expected_hanchan_ids = [1]
@@ -270,7 +264,7 @@ def test_success_assert_sum_point_in_match():
 
     # Assert
     with session_scope() as session:
-        print(hanchan_repository.find_all(session))
+        print(hanchan_repository.find(session))
     assert reply_service.texts[1].text == "test_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user5: -40 (-40)"
 
     reply_service.reset()
@@ -337,7 +331,7 @@ def test_success_not_current_hanchan(mocker):
         assert len(um) == 0
         assert len(reply_service.texts) == 1
         assert reply_service.texts[0].text == "計算対象の半荘が見つかりません。"
-        group = group_repository.find_one_by_line_group_id(
+        group = group_repository.find(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.input.value
 
@@ -360,7 +354,7 @@ def test_success_does_not_have_4_points():
 
     # Assert
     with session_scope() as session:
-        hanchan = hanchan_repository.find_all(session)[0]
+        hanchan = hanchan_repository.find(session)[0]
         assert len(hanchan.converted_scores) == 0
         assert hanchan.status == 1
         um = user_match_repository.find_by_user_ids(
@@ -370,7 +364,7 @@ def test_success_does_not_have_4_points():
         assert len(um) == 0
         assert len(reply_service.texts) == 1
         assert reply_service.texts[0].text == "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
-        group = group_repository.find_one_by_line_group_id(
+        group = group_repository.find(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.input.value
 
@@ -394,7 +388,7 @@ def test_success_does_invalid_sum_point():
 
     # Assert
     with session_scope() as session:
-        hanchan = hanchan_repository.find_all(session)[0]
+        hanchan = hanchan_repository.find(session)[0]
         assert len(hanchan.converted_scores) == 0
         assert hanchan.status == 1
         um = user_match_repository.find_by_user_ids(
@@ -404,7 +398,7 @@ def test_success_does_invalid_sum_point():
         assert len(um) == 0
         assert len(reply_service.texts) == 1
         assert reply_service.texts[0].text == "点数の合計が110000点です。合計100000点+αになるように修正してください。"
-        group = group_repository.find_one_by_line_group_id(
+        group = group_repository.find(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.input.value
 
@@ -428,7 +422,7 @@ def test_success_has_tai():
 
     # Assert
     with session_scope() as session:
-        hanchan = hanchan_repository.find_all(session)[0]
+        hanchan = hanchan_repository.find(session)[0]
         assert len(hanchan.converted_scores) == 0
         assert hanchan.status == 1
         um = user_match_repository.find_by_user_ids(
@@ -438,7 +432,7 @@ def test_success_has_tai():
         assert len(um) == 0
         assert len(reply_service.texts) == 1
         assert reply_service.texts[0].text == "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。"
-        group = group_repository.find_one_by_line_group_id(
+        group = group_repository.find(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.input.value
 
@@ -463,7 +457,7 @@ def test_success_reply_tobi_menu(mocker):
     # Assert
     assert len(reply_service.buttons) == 1
     with session_scope() as session:
-        hanchan = hanchan_repository.find_all(session)[0]
+        hanchan = hanchan_repository.find(session)[0]
         assert len(hanchan.converted_scores) == 0
         assert hanchan.status == 1
         um = user_match_repository.find_by_user_ids(
@@ -471,7 +465,7 @@ def test_success_reply_tobi_menu(mocker):
             [1, 2, 3, 4]
         )
         assert len(um) == 0
-        group = group_repository.find_one_by_line_group_id(
+        group = group_repository.find(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.input.value
 
@@ -501,7 +495,7 @@ def test_success_with_tobi():
         dummy_users[3].line_user_id: -70,
     }
     with session_scope() as session:
-        hanchan = hanchan_repository.find_all(session)[0]
+        hanchan = hanchan_repository.find(session)[0]
         for k in expected_c_scores:
             assert hanchan.converted_scores[k] == expected_c_scores[k]
         assert hanchan.status == 2
@@ -512,7 +506,7 @@ def test_success_with_tobi():
         assert len(um) == 4
         assert len(reply_service.texts) == 4
         assert reply_service.texts[1].text == "test_user1: +80 (+80)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -70 (-70)"
-        group = group_repository.find_one_by_line_group_id(
+        group = group_repository.find(
             session, dummy_group.line_group_id)
         assert group.mode == GroupMode.wait.value
 
@@ -566,7 +560,7 @@ def test_success_other_configs(mocker, case):
         hanchan_repository.create(
             session, dummy_current_hanchan)
         for dummy_config in case[0]:
-            config_repository.create(session, dummy_config)
+            group_setting_repository.create(session, dummy_config)
     mock = mocker.patch.object(
         hanchan_service,
         'run_calculate',

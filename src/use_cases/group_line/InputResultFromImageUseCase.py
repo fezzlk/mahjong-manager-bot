@@ -10,7 +10,7 @@
 
 #     def execute(self, event: Event) -> None:
 #         message_content = line_bot_api.get_message_content(
-#             event.message.id
+#             event.message._id
 #         )
 
 #         ocr_service.run(message_content.content)

@@ -34,7 +34,7 @@ class CalculateUseCase:
 
         # 現在 active な result (current)のポイントを計算対象にする
         with session_scope() as session:
-            current = hanchan_repository.find_one_by_line_group_id_and_status(
+            current = hanchan_repository.find_and_status(
                 session,
                 line_group_id,
                 1
@@ -75,7 +75,7 @@ class CalculateUseCase:
             if any(x < 0 for x in points.values()
                    ) and tobashita_player_id is None:
                 reply_service.add_tobi_menu([
-                    {'id': p_id, 'name': user_service.get_name_by_line_user_id(p_id), }
+                    {'_id': p_id, 'name': user_service.get_name_by_line_user_id(p_id), }
                     for p_id in points.keys() if points[p_id] > 0
                 ])
                 return
@@ -143,7 +143,7 @@ class CalculateUseCase:
             # 結果の表示
             converted_scores = updated_hanchan.converted_scores
             with session_scope() as session:
-                hanchans = hanchan_repository.find_by_ids(
+                hanchans = hanchan_repository.find(
                     session, current_match.hanchan_ids)
 
             sum_hanchans = {}

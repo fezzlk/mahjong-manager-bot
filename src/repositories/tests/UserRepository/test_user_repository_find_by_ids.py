@@ -17,9 +17,9 @@ def test_hit_with_ids():
 
     # Act
     with session_scope() as session:
-        result = user_repository.find_by_ids(
+        result = user_repository.find(
             session,
-            ids,
+            query={'_id': {'$in': ids}},
         )
 
     # Assert
@@ -29,7 +29,6 @@ def test_hit_with_ids():
             assert result[i]._id == target_users[i]._id
             assert result[i].line_user_name == target_users[i].line_user_name
             assert result[i].line_user_id == target_users[i].line_user_id
-            assert result[i].zoom_url == target_users[i].zoom_url
             assert result[i].mode == target_users[i].mode
             assert result[i].jantama_name == target_users[i].jantama_name
 
@@ -48,9 +47,9 @@ def test_hit_0_record():
 
     # Act
     with session_scope() as session:
-        result = user_repository.find_by_ids(
+        result = user_repository.find(
             session,
-            ids,
+            query={'_id': {'$in': ids}},
         )
 
     # Assert

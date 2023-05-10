@@ -13,7 +13,6 @@ from repositories import (
 dummy_user = User(
     line_user_name="test_user1",
     line_user_id="U0123456789abcdefghijklmnopqrstu1",
-    zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
     mode=UserMode.wait.value,
     jantama_name="jantama_user1",
     matches=[],
@@ -33,7 +32,7 @@ def test_execute():
 
     # Assert
     with session_scope() as session:
-        user = user_repository.find_all(session)[0]
+        user = user_repository.find(session)[0]
         assert user.mode == UserMode.wait.value
 
     assert len(reply_service.texts) == 1
