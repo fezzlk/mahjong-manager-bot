@@ -37,7 +37,9 @@ class UserGroupRepository(IUserGroupRepository):
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserGroup:
-        domain = UserGroup()
-        for attr, value in record.items():
-            domain.__setitem__(attr, value)
-        return domain
+        return UserGroup(
+            line_user_id=record["line_user_id"],
+            line_group_id=record["line_group_id"],
+            _id=record["_id"],
+        )
+

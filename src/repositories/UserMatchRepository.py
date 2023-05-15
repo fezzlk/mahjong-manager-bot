@@ -37,7 +37,8 @@ class UserMatchRepository(IUserMatchRepository):
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserMatch:
-        domain = UserMatch()
-        for attr, value in record.items():
-            domain.__setitem__(attr, value)
-        return domain
+        return UserMatch(
+            line_user_id=record["line_user_id"],
+            match_id=record["match_id"],
+            _id=record["_id"],
+        )

@@ -46,7 +46,11 @@ class UserRepository(IUserRepository):
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> User:
-        domain = User()
-        for attr, value in record.items():
-            domain.__setitem__(attr, value)
-        return domain
+        return User(
+            line_user_id=record["line_user_id"],
+            line_user_name=record["line_user_name"],
+            mode=record["mode"],
+            jantama_name=record["jantama_name"],
+            original_id=record["original_id"],
+            _id=record['_id'],
+        )

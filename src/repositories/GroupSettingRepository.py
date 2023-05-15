@@ -46,7 +46,12 @@ class GroupSettingRepository(IGroupSettingRepository):
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> GroupSetting:
-        domain = GroupSetting()
-        for attr, value in record.items():
-            domain.__setitem__(attr, value)
-        return domain
+        return GroupSetting(
+            _id=record["_id"],
+            line_group_id=record["line_group_id"],
+            rate=record["rate"],
+            ranking_prize=record["ranking_prize"],
+            tobi_prize=record["tobi_prize"],
+            num_of_players=record["num_of_players"],
+            rounding_method=record["rounding_method"],
+        )

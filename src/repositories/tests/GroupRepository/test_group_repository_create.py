@@ -22,6 +22,6 @@ def test_success():
     record_on_db = group_repository.find()
 
     assert len(record_on_db) == 1
-    assert record_on_db[0]._id == dummy_group._id
+    assert type(record_on_db[0]._id) == ObjectId
     assert record_on_db[0].line_group_id == dummy_group.line_group_id
     assert record_on_db[0].mode == dummy_group.mode

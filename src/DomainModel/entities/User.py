@@ -34,3 +34,4 @@ class User:
         self.line_user_id = line_user_id
         self.mode = mode
         self.jantama_name = jantama_name
+        self.original_id = original_id

@@ -3,10 +3,12 @@ from DomainModel.entities.User import User, UserMode
 from DomainModel.entities.Group import Group, GroupMode
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
+from DomainModel.entities.WebUser import WebUser
 
 from line_models.Profile import Profile
 from line_models.Event import Event
 from bson.objectid import ObjectId
+from datetime import datetime
 
 
 '''
@@ -55,6 +57,39 @@ def generate_dummy_user_list() -> List[User]:
             jantama_name="jantama user6",
         ),
     ]
+
+
+def generate_dummy_web_user_list() -> List[WebUser]:
+    dummy_web_users = [
+        WebUser(
+            user_code="code1",
+            name="name1",
+            email="email1",
+            linked_line_user_id=None,
+            is_approved_line_user=False,
+            created_at=datetime(2022, 1, 1, 12, 0, 0),
+            updated_at=datetime(2022, 1, 1, 12, 0, 0),
+        ),
+        WebUser(
+            user_code="code2",
+            name="name2",
+            email="email2",
+            linked_line_user_id=None,
+            is_approved_line_user=False,
+            created_at=datetime(2022, 1, 1, 12, 0, 0),
+            updated_at=datetime(2022, 1, 1, 12, 0, 0),
+        ),
+        WebUser(
+            user_code="code3",
+            name="name3",
+            email="email3",
+            linked_line_user_id=None,
+            is_approved_line_user=False,
+            created_at=datetime(2022, 1, 1, 12, 0, 0),
+            updated_at=datetime(2022, 1, 1, 12, 0, 0),
+        ),
+    ]
+    return dummy_web_users
 
 
 def generate_dummy_group_list() -> List[Group]:
