@@ -85,23 +85,17 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10"]
-
-    services:
-      db:
-        image: postgres
-        env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
+        mongodb-version: ["4.4"]
 
     steps:
+      # 対象のブランチにチェックアウト
       - uses: actions/checkout@v2
+      # Python の準備
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      # 依存パッケージのキャッシュ管理
       - name: Cache pip
         uses: actions/cache@v2
         with:
@@ -111,11 +105,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
+      # 依存パッケージのインストール
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements.dev.txt ]; then pip install -r requirements.dev.txt; fi
+      # テスト用 DB
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.7.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-port: 27017
       - name: Test with pytest
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
