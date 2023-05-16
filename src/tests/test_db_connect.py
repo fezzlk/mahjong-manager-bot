@@ -1,5 +1,4 @@
-from db_setting import Session
-session = Session()
+from mongo_client import mongo_client
 
 
 def test_db_health_check():
@@ -7,9 +6,10 @@ def test_db_health_check():
 
     try:
         # to check database we will execute raw query
-        session.execute('SELECT 1')
+        res = mongo_client.db.command('dbstats')
     except Exception as e:
         print(str(e))
         is_database_working = False
-
+    
+    assert res["ok"] == 1
     assert is_database_working

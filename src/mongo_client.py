@@ -11,5 +11,6 @@ web_users_collection = mongo_client.db.web_users
 hanchans_collection = mongo_client.db.hanchans
 matches_collection = mongo_client.db.matches
 user_matches_collection = mongo_client.db.user_matches
+hanchan_matches_collection = mongo_client.db.hanchan_matches
 
 print(f'Connected DB server:{env_var.DATABASE_URL}')

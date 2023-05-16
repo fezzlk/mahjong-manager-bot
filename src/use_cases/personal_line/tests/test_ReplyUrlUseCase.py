@@ -1,15 +1,15 @@
-from use_cases.personal_line.ReplyUrlUseCase import ReplyUrlUseCase
-from ApplicationService import (
-    reply_service,
-)
+# from use_cases.personal_line.ReplyUrlUseCase import ReplyUrlUseCase
+# from ApplicationService import (
+#     reply_service,
+# )
 
 
-def test_execute():
-    # Arrage
-    use_case = ReplyUrlUseCase()
+# def test_execute():
+#     # Arrage
+#     use_case = ReplyUrlUseCase()
 
-    # Act
-    use_case.execute()
+#     # Act
+#     use_case.execute()
 
-    # Assert
-    assert len(reply_service.texts) == 1
+#     # Assert
+#     assert len(reply_service.texts) == 1

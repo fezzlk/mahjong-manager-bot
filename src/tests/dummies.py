@@ -122,28 +122,28 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
             status=1,
         ),
         Hanchan(
-            line_group_id=groups[0].line_group_id,
+            line_group_id=groups[1].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=1,
             status=2,
         ),
         Hanchan(
-            line_group_id=groups[0].line_group_id,
+            line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=1,
             status=0,
         ),
         Hanchan(
-            line_group_id=groups[0].line_group_id,
+            line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=2,
             status=1,
         ),
         Hanchan(
-            line_group_id=groups[0].line_group_id,
+            line_group_id=groups[2].line_group_id,
             raw_scores={
                 users[0].line_user_id: 40000,
                 users[1].line_user_id: 30000,
@@ -160,7 +160,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
             status=1,
         ),
         Hanchan(
-            line_group_id=groups[0].line_group_id,
+            line_group_id=groups[2].line_group_id,
             raw_scores={
                 users[0].line_user_id: 40000,
                 users[1].line_user_id: 30000,
@@ -177,7 +177,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
             status=1,
         ),
         Hanchan(
-            line_group_id=groups[1].line_group_id,
+            line_group_id=groups[2].line_group_id,
             raw_scores={
                 users[0].line_user_id: 40000,
                 users[1].line_user_id: 30000,

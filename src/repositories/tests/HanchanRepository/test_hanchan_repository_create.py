@@ -22,7 +22,7 @@ def test_success():
 
     # Assert
     assert isinstance(result, Hanchan)
-    assert type(result[0]._id) == ObjectId
+    assert type(result._id) == ObjectId
     assert result.line_group_id == dummy_hanchan.line_group_id
     assert result.raw_scores == dummy_hanchan.raw_scores
     assert result.converted_scores == dummy_hanchan.converted_scores

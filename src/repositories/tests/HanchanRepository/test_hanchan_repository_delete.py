@@ -17,10 +17,10 @@ def test_hit_with_line_group_id():
         hanchan_repository.create(
             dummy_hanchan,
         )
-    other_hanchans = dummy_hanchans[0:1]
-    target_hanchans = dummy_hanchans[1:3]
+    other_hanchans = dummy_hanchans[2:]
+    target_hanchans = dummy_hanchans[:2]
     line_group_ids = [target_hanchan.line_group_id for target_hanchan in target_hanchans]
-
+    
     # Act
     result = hanchan_repository.delete(
         query={'line_group_id': {'$in': line_group_ids}},
