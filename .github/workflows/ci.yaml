@@ -121,7 +121,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
-          EXTERNAL_DATABASE_URL_FOR_TEST: postgres://postgres:postgres@localhost:5432/postgres
+          EXTERNAL_DATABASE_URL_FOR_TEST: mongodb://localhost:27017/db
           SERVER_URL: http://localhost:5000/
         run: |
           pytest --cov=src src/
