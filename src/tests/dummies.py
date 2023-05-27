@@ -1,6 +1,7 @@
 from typing import Dict, List
 from DomainModel.entities.User import User, UserMode
 from DomainModel.entities.Group import Group, GroupMode
+from DomainModel.entities.GroupSetting import GroupSetting
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
 from DomainModel.entities.WebUser import WebUser
@@ -108,6 +109,29 @@ def generate_dummy_group_list() -> List[Group]:
         ),
     ]
 
+
+def generate_dummy_group_setting_list() -> List[GroupSetting]:
+    return [
+        GroupSetting(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            rate=3,
+            ranking_prize=[20, 10, -10, -20],
+            tip_rate=0,
+            tobi_prize=10,
+            num_of_players=4,
+            rounding_method=0,
+        ),
+        GroupSetting(
+            line_group_id="G0123456789abcdefghijklmnopqrstu2",
+            rate=3,
+            ranking_prize=[30, 10, -10, -30],
+            tip_rate=0,
+            tobi_prize=10,
+            num_of_players=4,
+            rounding_method=0,
+        ),
+    ]
+    
 
 def generate_dummy_hanchan_list() -> List[Hanchan]:
     groups = generate_dummy_group_list()

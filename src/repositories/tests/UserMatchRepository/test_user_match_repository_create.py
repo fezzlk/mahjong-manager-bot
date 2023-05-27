@@ -22,8 +22,6 @@ dummy_match = Match(
 )
 
 
-
-
 def test_success():
     # Arrange
     new_user = user_repository.create(
