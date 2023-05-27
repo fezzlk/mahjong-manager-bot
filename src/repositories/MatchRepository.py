@@ -54,4 +54,3 @@ class MatchRepository(IMatchRepository):
             tip_scores=record['tip_scores'],
             _id=record['_id'],
         )
-    
