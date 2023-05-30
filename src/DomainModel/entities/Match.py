@@ -32,3 +32,4 @@ class Match:
         self.status = status
         self.tip_scores = tip_scores
         self.created_at = created_at
+        self.original_id = original_id

@@ -35,3 +35,4 @@ class Hanchan:
         self.converted_scores = converted_scores
         self.match_id = match_id
         self.status = status
+        self.original_id = original_id
