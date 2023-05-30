@@ -1,5 +1,6 @@
+import pytest
 from tests.dummies import generate_dummy_group_list
-from DomainModel.entities.Group import Group
+from DomainModel.entities.Group import Group, GroupMode
 from repositories import group_repository
 from bson.objectid import ObjectId
 
@@ -25,3 +26,31 @@ def test_success():
     assert type(record_on_db[0]._id) == ObjectId
     assert record_on_db[0].line_group_id == dummy_group.line_group_id
     assert record_on_db[0].mode == dummy_group.mode
+
+
+def test_error_duplicate_line_group_id():
+    with pytest.raises(Exception):
+        # Arrange
+        dummy_groups = [
+            Group(
+                line_group_id="G0123456789abcdefghijklmnopqrstu2",
+                mode=GroupMode.wait.value,
+            ),
+            Group(
+                line_group_id="G0123456789abcdefghijklmnopqrstu2",
+                mode=GroupMode.wait.value,
+            ),
+        ]
+
+        group_repository.create(
+            dummy_groups[0],
+        )
+
+        # Act
+        group_repository.create(
+            dummy_groups[1],
+        )
+
+        # Assert
+        record_on_db = group_repository.find()
+        assert len(record_on_db) == 1

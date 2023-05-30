@@ -38,16 +38,15 @@ def generate_dummy_user_list() -> List[User]:
             mode=UserMode.wait.value,
             jantama_name="jantama_user3",
         ),
-        # same line_user_name _id=3
         User(
-            line_user_name="test_user3",
+            line_user_name="test_user4",
             line_user_id="U0123456789abcdefghijklmnopqrstu4",
             mode=UserMode.wait.value,
             jantama_name="jantama_user4",
         ),
         User(
             line_user_name="test_user5",
-            line_user_id="dummy_user_id",
+            line_user_id="U0123456789abcdefghijklmnopqrstu5",
             mode=UserMode.wait.value,
             jantama_name="jantama_user5",
         ),
@@ -55,7 +54,28 @@ def generate_dummy_user_list() -> List[User]:
             line_user_name="test user6",
             line_user_id="U0123456789abcdefghijklmnopqrstu6",
             mode=UserMode.wait.value,
-            jantama_name="jantama user6",
+            jantama_name="jantama_user6",
+        ),
+        User(
+            line_user_name="test_user7",
+            line_user_id="U0123456789abcdefghijklmnopqrstu7",
+            mode=UserMode.wait.value,
+            jantama_name="jantama_user7",
+        ),
+        User(
+            line_user_name="test_user8",
+            line_user_id="U0123456789abcdefghijklmnopqrstu8",
+            mode=UserMode.wait.value,
+            jantama_name="jantama_user8",
+        ),
+        User(
+            line_user_name="test_user9",
+            line_user_id="U0123456789abcdefghijklmnopqrstu9",
+            mode=UserMode.wait.value,
+            jantama_name="jantama_user9",
+        ),
+        User(
+            line_user_id="U0123456789abcdefghijklmnopqrstu10",
         ),
     ]
 
@@ -89,6 +109,9 @@ def generate_dummy_web_user_list() -> List[WebUser]:
             created_at=datetime(2022, 1, 1, 12, 0, 0),
             updated_at=datetime(2022, 1, 1, 12, 0, 0),
         ),
+        WebUser(
+            user_code="code4",
+        ),
     ]
     return dummy_web_users
 
@@ -106,6 +129,13 @@ def generate_dummy_group_list() -> List[Group]:
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu3",
             mode=GroupMode.wait.value,
+        ),
+        Group(
+            line_group_id="G0123456789abcdefghijklmnopqrstu4",
+            mode=GroupMode.wait.value,
+        ),
+        Group(
+            line_group_id="G0123456789abcdefghijklmnopqrstu5",
         ),
     ]
 
@@ -130,6 +160,9 @@ def generate_dummy_group_setting_list() -> List[GroupSetting]:
             num_of_players=4,
             rounding_method=0,
         ),
+        GroupSetting(
+            line_group_id="G0123456789abcdefghijklmnopqrstu3",
+        ),
     ]
     
 
@@ -140,10 +173,8 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
     return [
         Hanchan(
             line_group_id=groups[0].line_group_id,
-            raw_scores={},
-            converted_scores={},
             match_id=1,
-            status=1,
+            status=2,
         ),
         Hanchan(
             line_group_id=groups[1].line_group_id,
@@ -174,12 +205,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
                 users[2].line_user_id: 20000,
                 users[3].line_user_id: 10000,
             },
-            converted_scores={
-                users[0].line_user_id: 50,
-                users[1].line_user_id: 10,
-                users[2].line_user_id: -20,
-                users[3].line_user_id: -40,
-            },
+            converted_scores={},
             match_id=1,
             status=1,
         ),
@@ -253,6 +279,10 @@ def generate_dummy_match_list() -> List[Match]:
             hanchan_ids=[4],
             status=0,
             _id=ObjectId('644c838186bbd9e20a91b787'),
+        ),
+        Match(
+            line_group_id=groups[0].line_group_id,
+            status=2,
         ),
     ]
 

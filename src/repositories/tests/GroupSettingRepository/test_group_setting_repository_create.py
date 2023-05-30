@@ -69,5 +69,4 @@ def test_error_duplicate_line_group_id():
 
         # Assert
         record_on_db = group_setting_repository.find()
-
         assert len(record_on_db) == 1

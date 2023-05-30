@@ -12,6 +12,9 @@ class WebUserRepository(IWebUserRepository):
         self,
         new_record: WebUser,
     ) -> WebUser:
+        if len(self.find(query={'user_code': new_record.user_code})) != 0:
+            raise Exception(f'User Code: {new_record.user_code} のWeb Userはすでに存在しています。')
+
         new_dict = new_record.__dict__.copy()
         new_dict['created_at'] = datetime.now()
         new_dict.pop('_id')

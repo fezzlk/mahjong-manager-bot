@@ -12,6 +12,12 @@ class HanchanMatchRepository(IHanchanMatchRepository):
         self,
         new_record: HanchanMatch,
     ) -> HanchanMatch:
+        if len(self.find(query={
+            'hanchan_id': new_record.hanchan_id,
+            'match_id': new_record.match_id,
+        })) != 0:
+            raise Exception(f'Hanchan ID({new_record.hanchan_id}とMatch ID({new_record.match_id}) のHanchanMatchはすでに存在しています。')
+
         new_dict = new_record.__dict__.copy()
         new_dict['created_at'] = datetime.now()
         new_dict.pop('_id')

@@ -12,6 +12,12 @@ class UserMatchRepository(IUserMatchRepository):
         self,
         new_record: UserMatch,
     ) -> UserMatch:
+        if len(self.find(query={
+            'user_id': new_record.user_id,
+            'match_id': new_record.match_id,
+        })) != 0:
+            raise Exception(f'User ID({new_record.user_id}とMatch ID({new_record.match_id}) のUserMatchはすでに存在しています。')
+
         new_dict = new_record.__dict__.copy()
         new_dict['created_at'] = datetime.now()
         new_dict.pop('_id')

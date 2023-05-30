@@ -31,13 +31,13 @@ class GroupSetting:
 
     def __init__(
         self,
-        line_group_id,
-        rate=0,
-        ranking_prize=[20, 10, -10, -20],
-        tip_rate=0,
-        tobi_prize=10,
-        num_of_players=4,
-        rounding_method=0,
+        line_group_id: str,
+        rate: int = 0,
+        ranking_prize: List[int] = [20, 10, -10, -20],
+        tip_rate: int = 0,
+        tobi_prize: int = 10,
+        num_of_players: int = 4,
+        rounding_method: int = 0,
         _id: ObjectId = None,
     ):
         self._id = _id
