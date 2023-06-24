@@ -22,6 +22,34 @@ def test_success():
     
     record_on_db = match_repository.find()
     assert len(record_on_db) == 1
+    assert record_on_db[0]._id == dummy_match._id
+    assert record_on_db[0].line_group_id == dummy_match.line_group_id
+    assert record_on_db[0].hanchan_ids == dummy_match.hanchan_ids
+    assert record_on_db[0].status == dummy_match.status
+
+
+def test_success_without_id():
+    # Arrange
+    dummy_match = Match(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        hanchan_ids=[1, 2, 3, 6, 7],
+        status=1,
+    )
+
+    # Act
+    result = match_repository.create(
+        dummy_match,
+    )
+
+    # Assert
+    assert isinstance(result, Match)
+    assert type(result._id) == ObjectId
+    assert result.line_group_id == dummy_match.line_group_id
+    assert result.hanchan_ids == dummy_match.hanchan_ids
+    assert result.status == dummy_match.status
+    
+    record_on_db = match_repository.find()
+    assert len(record_on_db) == 1
     assert type(record_on_db[0]._id) == ObjectId
     assert record_on_db[0].line_group_id == dummy_match.line_group_id
     assert record_on_db[0].hanchan_ids == dummy_match.hanchan_ids

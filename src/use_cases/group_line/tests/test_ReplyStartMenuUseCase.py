@@ -6,7 +6,7 @@
 
 
 # def test_execute():
-#     # Arrage
+#     # Arrange
 #     use_case = ReplyStartMenuUseCase()
 
 #     # Act

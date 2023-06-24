@@ -1,44 +1,38 @@
 """user"""
 
-# from linebot.models.responses import Profile
+from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
 from repositories import user_repository
 from messaging_api_setting import line_bot_api
-# from DomainModel.entities.User import User, UserMode
+from DomainModel.entities.User import User, UserMode
 
 
 class UserService(IUserService):
 
-    # def find_or_create_by_profile(
-    #     self,
-    #     profile: Profile,
-    # ) -> User:
-    #     with session_scope() as session:
-    #         target = user_repository.find_one_by_line_user_id(
-    #             session,
-    #             profile.user_id,
-    #         )
+    def find_or_create_by_profile(
+        self,
+        profile: Profile,
+    ) -> User:
+        users = user_repository.find(
+            query={'line_user_id': profile.user_id},
+        )
 
-    #     if target is not None:
-    #         return target
+        if len(users) > 0:
+            return users[0]
+        
+        new_user = User(
+            line_user_name=profile.display_name,
+            line_user_id=profile.user_id,
+            mode=UserMode.wait.value,
+            jantama_name=None,
+        )
+        user_repository.create(new_user)
 
-    #     with session_scope() as session:
-    #         new_user = User(
-    #             line_user_name=profile.display_name,
-    #             line_user_id=profile.user_id,
-    #             mode=UserMode.wait.value,
-    #             jantama_name=None,
-    #         )
-    #         user_repository.create(
-    #             session,
-    #             new_user,
-    #         )
+        print(
+            f'create user: {new_user.line_user_id} {new_user.line_user_name}'
+        )
 
-    #         print(
-    #             f'create: {new_user.line_user_id} {new_user.line_user_name}'
-    #         )
-
-    #         return new_user
+        return new_user
 
     def get_name_by_line_user_id(
         self,
@@ -85,32 +79,30 @@ class UserService(IUserService):
 
     #         return users[0].line_user_id
 
-    # def chmod(
-    #     self,
-    #     line_user_id: str,
-    #     mode: UserMode,
-    # ) -> User:
-    #     if mode not in UserMode:
-    #         raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode.value}\'')
+    def chmod(
+        self,
+        line_user_id: str,
+        mode: UserMode,
+    ) -> None:
+        if not isinstance(mode, UserMode):
+            raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
-    #     with session_scope() as session:
-    #         user = user_repository.update_one_mode_by_line_user_id(
-    #             session=session,
-    #             line_user_id=line_user_id,
-    #             mode=mode.value,
-    #         )
+        user_repository.update(
+            query={
+                'line_user_id': line_user_id,
+            },
+            new_values={'mode': mode.value}
+        )
 
-    #         print(f'chmod: {line_user_id}: {mode.value}')
+        print(f'chmod: {line_user_id}: {mode.value}')
 
-    #         return user
+        return
 
-    # def get_mode(self, line_user_id: str) -> UserMode:
-    #     with session_scope() as session:
-    #         target = user_repository.find_one_by_line_user_id(
-    #             session, line_user_id)
+    def get_mode(self, line_user_id: str) -> UserMode:
+        target = user_repository.find(query={'line_user_id': line_user_id})
 
-    #         if target is None:
-    #             print(f'user is not found: {line_user_id}')
-    #             raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
+        if len(target) == 0:
+            print(f'user is not found: {line_user_id}')
+            raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
 
-    #         return target.mode
+        return target[0].mode

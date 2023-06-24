@@ -13,8 +13,8 @@ class HanchanRepository(IHanchanRepository):
         new_record: Hanchan,
     ) -> Hanchan:
         new_dict = new_record.__dict__.copy()
-        new_dict['created_at'] = datetime.now()
-        new_dict.pop('_id')
+        if new_record._id is None:
+            new_dict.pop('_id')
         result = hanchans_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
         return new_record

@@ -1,5 +1,4 @@
 from typing import List, Dict, Tuple
-from datetime import datetime
 from pymongo import ASCENDING
 from mongo_client import user_matches_collection
 from DomainModel.entities.UserMatch import UserMatch
@@ -19,8 +18,8 @@ class UserMatchRepository(IUserMatchRepository):
             raise Exception(f'User ID({new_record.user_id}とMatch ID({new_record.match_id}) のUserMatchはすでに存在しています。')
 
         new_dict = new_record.__dict__.copy()
-        new_dict['created_at'] = datetime.now()
-        new_dict.pop('_id')
+        if new_record._id is None:
+            new_dict.pop('_id')
         result = user_matches_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
         return new_record

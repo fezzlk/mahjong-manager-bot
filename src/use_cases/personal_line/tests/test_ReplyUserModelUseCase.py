@@ -76,4 +76,3 @@ def test_execute_no_user(mocker):
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == 'ユーザが登録されていません。友達追加し直してください。'
-                

@@ -11,7 +11,7 @@ class UserMode(Enum):
 @dataclass()
 class User:
     _id: ObjectId
-    name: str
+    line_user_name: str
     line_user_id: str
     mode: str
     jantama_name: str

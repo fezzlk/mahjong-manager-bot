@@ -16,8 +16,8 @@ class UserRepository(IUserRepository):
             raise Exception(f'LINE User ID: {new_record.line_user_id} のUserはすでに存在しています。')
 
         new_dict = new_record.__dict__.copy()
-        new_dict['created_at'] = datetime.now()
-        new_dict.pop('_id')
+        if new_record._id is None:
+            new_dict.pop('_id')
         result = line_users_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
         return new_record

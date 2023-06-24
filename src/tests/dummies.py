@@ -173,28 +173,28 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
     return [
         Hanchan(
             line_group_id=groups[0].line_group_id,
-            match_id=1,
+            match_id=ObjectId('644c838186bbd9e20a91b783'),
             status=2,
         ),
         Hanchan(
             line_group_id=groups[1].line_group_id,
             raw_scores={},
             converted_scores={},
-            match_id=1,
+            match_id=ObjectId('644c838186bbd9e20a91b783'),
             status=2,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
-            match_id=1,
+            match_id=ObjectId('644c838186bbd9e20a91b783'),
             status=0,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
-            match_id=2,
+            match_id=ObjectId('644c838186bbd9e20a91b784'),
             status=1,
         ),
         Hanchan(
@@ -206,7 +206,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
                 users[3].line_user_id: 10000,
             },
             converted_scores={},
-            match_id=1,
+            match_id=ObjectId('644c838186bbd9e20a91b783'),
             status=1,
         ),
         Hanchan(
@@ -223,7 +223,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
                 users[2].line_user_id: -20,
                 users[4].line_user_id: -40,
             },
-            match_id=1,
+            match_id=ObjectId('644c838186bbd9e20a91b783'),
             status=1,
         ),
         Hanchan(
@@ -240,7 +240,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
                 users[2].line_user_id: -20,
                 users[4].line_user_id: -40,
             },
-            match_id=1,
+            match_id=ObjectId('644c838186bbd9e20a91b783'),
             status=1,
         ),
     ]

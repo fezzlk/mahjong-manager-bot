@@ -145,7 +145,7 @@
 
 
 # def test_execute(case1):
-#     # Arrage
+#     # Arrange
 #     use_case = AddPointByTextUseCase()
 #     request_info_service.req_line_group_id = dummy_group.line_group_id
 #     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -180,7 +180,7 @@
 
 
 # def test_execute_not_int_point(case2):
-#     # Arrage
+#     # Arrange
 #     use_case = AddPointByTextUseCase()
 #     request_info_service.req_line_group_id = dummy_group.line_group_id
 #     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -207,7 +207,7 @@
 
 
 # def test_execute_with_mention():
-#     # Arrage
+#     # Arrange
 #     use_case = AddPointByTextUseCase()
 #     request_info_service.req_line_group_id = dummy_group.line_group_id
 #     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -236,7 +236,7 @@
 
 
 # def test_execute_multi_mentions():
-#     # Arrage
+#     # Arrange
 #     use_case = AddPointByTextUseCase()
 #     request_info_service.req_line_group_id = dummy_group.line_group_id
 #     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -264,7 +264,7 @@
 
 
 # def test_execute_not_registered_user():
-#     # Arrage
+#     # Arrange
 #     use_case = AddPointByTextUseCase()
 #     request_info_service.req_line_group_id = dummy_group.line_group_id
 #     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -292,7 +292,7 @@
 
 
 # def test_execute_fourth_input():
-#     # Arrage
+#     # Arrange
 #     use_case = AddPointByTextUseCase()
 #     request_info_service.req_line_group_id = dummy_group.line_group_id
 #     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -326,7 +326,7 @@
 
 
 # def test_execute_fifth_input():
-#     # Arrage
+#     # Arrange
 #     use_case = AddPointByTextUseCase()
 #     request_info_service.req_line_group_id = dummy_group.line_group_id
 #     request_info_service.req_line_user_id = dummy_users[0].line_user_id

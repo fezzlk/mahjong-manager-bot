@@ -1,5 +1,4 @@
 from typing import List, Dict, Tuple
-from datetime import datetime
 from pymongo import ASCENDING
 from mongo_client import user_groups_collection
 from DomainModel.entities.UserGroup import UserGroup
@@ -19,8 +18,8 @@ class UserGroupRepository(IUserGroupRepository):
             raise Exception(f'LINE User ID({new_record.line_user_id}とLINE Group ID({new_record.line_group_id}) のUserGroupはすでに存在しています。')
 
         new_dict = new_record.__dict__.copy()
-        new_dict['created_at'] = datetime.now()
-        new_dict.pop('_id')
+        if new_record._id is None:
+            new_dict.pop('_id')
         result = user_groups_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
         return new_record

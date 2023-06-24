@@ -4,6 +4,7 @@ from tests.dummies import (
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 from ApplicationService import (
     request_info_service,
+    reply_service,
 )
 
 
@@ -18,3 +19,4 @@ def test_execute():
     use_case.execute()
 
     # Assert
+    assert len(reply_service.texts) == 1

@@ -16,8 +16,8 @@ class GroupSettingRepository(IGroupSettingRepository):
             raise Exception(f'LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。')
 
         new_dict = new_record.__dict__.copy()
-        new_dict['created_at'] = datetime.now()
-        new_dict.pop('_id')
+        if new_record._id is None:
+            new_dict.pop('_id')
         result = group_settings_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
         return new_record

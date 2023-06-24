@@ -11,7 +11,7 @@
 
 
 # def test_execute():
-#     # Arrage
+#     # Arrange
 #     dummy_event = generate_dummy_join_event()
 #     request_info_service.set_req_info(event=dummy_event)
 
