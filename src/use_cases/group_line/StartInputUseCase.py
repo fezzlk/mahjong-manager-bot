@@ -20,7 +20,7 @@ class StartInputUseCase:
             reply_service.add_message('すでに入力モードです')
             return
 
-        current_match = match_service.get_or_create_current(line_group_id)
+        current_match = match_service.find_or_create_current(line_group_id)
         new_hanchan = Hanchan(
             line_group_id=line_group_id,
             raw_scores={},

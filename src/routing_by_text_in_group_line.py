@@ -9,7 +9,7 @@ from ApplicationService import (
     reply_service,
 )
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
-from use_cases.group_line.CalculateUseCase import CalculateUseCase
+from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
 
 from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
 from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
@@ -35,7 +35,7 @@ from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
 from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
-from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
+# from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
 
 from DomainModel.entities.Group import GroupMode
 
@@ -149,7 +149,7 @@ def routing_for_group_by_method(method, body):
         ReplyMatchesUseCase().execute()
     # tobi
     elif method == RCommands.tobi.name:
-        CalculateUseCase().execute(
+        SubmitHanchanUseCase().execute(
             tobashita_player_id=body
         )
     # update config
@@ -168,9 +168,9 @@ def routing_for_group_by_method(method, body):
     # badai
     elif method == RCommands.badai.name:
         ReplyApplyBadaiUseCase().execute(body)
-    # entry
-    elif method == RCommands.entry.name:
-        LinkUserToGroupUseCase().execute()
+    # # entry
+    # elif method == RCommands.entry.name:
+    #     LinkUserToGroupUseCase().execute()
     # sum_matches
     elif method == RCommands.sum_matches.name:
         args = body.split(' ')

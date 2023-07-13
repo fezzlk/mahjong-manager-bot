@@ -5,12 +5,12 @@ from abc import ABCMeta, abstractmethod
 
 class IUserService(metaclass=ABCMeta):
 
-    # @abstractmethod
-    # def get_line_user_id_by_name(
-    #     self,
-    #     line_user_name: str,
-    # ) -> str:
-    #     pass
+    @abstractmethod
+    def get_line_user_id_by_name(
+        self,
+        line_user_name: str,
+    ) -> str:
+        pass
 
     @abstractmethod
     def get_name_by_line_user_id(

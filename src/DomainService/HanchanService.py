@@ -1,41 +1,40 @@
-from typing import Dict, List, Optional
-
-from repositories import session_scope, hanchan_repository
+from repositories import hanchan_repository
 from DomainModel.entities.Hanchan import Hanchan
 from .interfaces.IHanchanService import IHanchanService
+from typing import Optional
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
 
 class HanchanService(IHanchanService):
 
-    def disabled_by_id(
-        self,
-        line_group_id: str,
-        hanchan_id: int,
-    ) -> Hanchan:
-        """disabled target hanchan"""
-        with session_scope() as session:
-            target = hanchan_repository.find_one_by_id_and_line_group_id(
-                session=session,
-                hanchan_id=hanchan_id,
-                line_group_id=line_group_id,
-            )
+    # def disabled_by_id(
+    #     self,
+    #     line_group_id: str,
+    #     hanchan_id: int,
+    # ) -> Hanchan:
+    #     """disabled target hanchan"""
+    #     with session_scope() as session:
+    #         target = hanchan_repository.find_one_by_id_and_line_group_id(
+    #             session=session,
+    #             hanchan_id=hanchan_id,
+    #             line_group_id=line_group_id,
+    #         )
 
-            if target is None:
-                raise ValueError('Not found hanchan')
+    #         if target is None:
+    #             raise ValueError('Not found hanchan')
 
-            updated_hanchan = hanchan_repository.update_one_status_by_id(
-                session,
-                hanchan_id=target._id,
-                status=0,
-            )
+    #         updated_hanchan = hanchan_repository.update_one_status_by_id(
+    #             session,
+    #             hanchan_id=target._id,
+    #             status=0,
+    #         )
 
-            print(
-                f'disabled: _id={updated_hanchan._id}'
-            )
+    #         print(
+    #             f'disabled: _id={updated_hanchan._id}'
+    #         )
 
-            return updated_hanchan
+    #         return updated_hanchan
 
     def add_or_drop_raw_score(
         self,
@@ -43,84 +42,78 @@ class HanchanService(IHanchanService):
         line_user_id: str,
         raw_score: Optional[int],
     ) -> Hanchan:
-        with session_scope() as session:
-            if line_user_id is None:
-                raise ValueError('line_user_id is required')
+        if line_user_id is None:
+            raise ValueError('fail to add_or_drop_raw_score: line_user_id is required')
 
-            target = hanchan_repository.find_and_status(
-                session=session,
-                line_group_id=line_group_id,
-                status=1,
-            )
+        result = hanchan_repository.find({
+            'line_group_id': line_group_id,
+            'status': 1,
+        })
 
-            if target is None:
-                raise ValueError('Not found hanchan')
+        if len(result) == 0:
+            raise ValueError('fail to add_or_drop_raw_score: Not found hanchan')
 
-            raw_scores = target.raw_scores
+        target = result[0]
+        raw_scores = target.raw_scores
 
-            if raw_score is None:
-                raw_scores.pop(line_user_id, None)
-            else:
-                raw_scores[line_user_id] = raw_score
+        if raw_score is None:
+            raw_scores.pop(line_user_id, None)
+        else:
+            raw_scores[line_user_id] = raw_score
 
-            updated_hanchan = hanchan_repository.update_one_raw_scores_by_id(
-                session=session,
-                hanchan_id=target._id,
-                raw_scores=raw_scores,
-            )
+        hanchan_repository.update(
+            {'_id': target._id},
+            {'raw_scores': raw_scores},
+        )
 
-            return updated_hanchan
+        target.raw_scores = raw_scores
+        return target
 
-    def update_current_converted_score(
-        self,
-        line_group_id: str,
-        converted_scores: Dict[str, int],
-    ) -> Hanchan:
-        with session_scope() as session:
-            target = hanchan_repository.find_and_status(
-                session=session,
-                line_group_id=line_group_id,
-                status=1,
-            )
+    # def update_current_converted_score(
+    #     self,
+    #     line_group_id: str,
+    #     converted_scores: Dict[str, int],
+    # ) -> Hanchan:
+    #     with session_scope() as session:
+    #         target = hanchan_repository.find_and_status(
+    #             session=session,
+    #             line_group_id=line_group_id,
+    #             status=1,
+    #         )
 
-            if target is None:
-                raise ValueError('Not found hanchan')
+    #         if target is None:
+    #             raise ValueError('Not found hanchan')
 
-            updated_hanchan = hanchan_repository.update_one_converted_scores_by_id(
-                session=session, hanchan_id=target._id, converted_scores=converted_scores)
+    #         updated_hanchan = hanchan_repository.update_one_converted_scores_by_id(
+    #             session=session, hanchan_id=target._id, converted_scores=converted_scores)
 
-            print(
-                f'update hanchan: _id={updated_hanchan._id}'
-            )
+    #         print(
+    #             f'update hanchan: _id={updated_hanchan._id}'
+    #         )
 
-        return updated_hanchan
+    #     return updated_hanchan
 
     def update_status_active_hanchan(
         self,
         line_group_id: str,
         status: int,
     ) -> Hanchan:
-        with session_scope() as session:
-            target = hanchan_repository.find_and_status(
-                session=session,
-                line_group_id=line_group_id,
-                status=1,
-            )
+        current = self.get_current(line_group_id=line_group_id)
 
-            if target is None:
-                raise ValueError('Not found hanchan')
+        if current is None:
+            return None
+        
+        update_count = hanchan_repository.update(
+            {'_id': current._id},
+            {'status': status},
+        )
 
-            updated_hanchan = hanchan_repository.update_one_status_by_id(
-                session=session,
-                hanchan_id=target._id,
-                status=status,
-            )
-
+        if update_count == 1:
             print(
-                f'{STATUS_LIST[updated_hanchan.status]} hanchan: _id={updated_hanchan._id}'
+                f'{STATUS_LIST[status]} hanchan: _id={current._id}'
             )
 
-            return updated_hanchan
+        return current
 
     def archive(self, line_group_id: str) -> Hanchan:
         return self.update_status_active_hanchan(line_group_id, 2)
@@ -128,84 +121,42 @@ class HanchanService(IHanchanService):
     def disable(self, line_group_id: str) -> Hanchan:
         return self.update_status_active_hanchan(line_group_id, 0)
 
-    def run_calculate(
-        self,
-        points: Dict[str, int],
-        ranking_prize: List[int],
-        tobi_prize: int = 0,
-        rounding_method: str = None,
-        tobashita_player_id: str = None,
-    ) -> Dict[str, int]:
-        # 準備
-        sorted_points = sorted(
-            points.items(), key=lambda x: x[1], reverse=True)
-        # TODO:ソートしない（高順位が高得点前提にしない）
-        sorted_prize = sorted(
-            ranking_prize,
-            reverse=True,
-        )
+    # # def get_point_and_name_from_text(
+    # #     self,
+    # #     text: str,
+    # # ) -> Tuple[str, str]:
+    # #     s = text.split()
+    # #     if len(s) >= 2:
+    # #         # ユーザー名に空白がある場合を考慮し、最後の要素をポイント、そのほかをユーザー名として判断する
+    # #         return s[-1], ' '.join(s[:-1])
+    # #     # fixme: ユーザー名「taro 100」の点数を削除しようとした場合に上の条件にひっかかる
+    # #     # 名前のみによるメッセージでの削除機能自体をやめるか(更新できるから削除は需要ない)
+    # #     elif len(s) == 1:
+    # #         return 'delete', s[0]
 
-        # 素点計算
-        result = {}
-        tobasare_players = []
-        isTobi = not (tobashita_player_id is None or tobashita_player_id == '')
+    # def find_or_create_current(self, line_group_id: str) -> Hanchan:
+    #     current = self.get_current(line_group_id)
 
-        # 計算方法に合わせて点数調整用の adjuster(丸めの境界値の調整) と padding(端数調整) を設定
-        padding = 0
-        adjuster = 100000
-        if rounding_method == '五捨六入':
-            padding = 400
-        elif rounding_method == '四捨五入':
-            padding = 500
-        elif rounding_method == '切り捨て':
-            padding = 0
-        elif rounding_method == '切り上げ':
-            padding = 900
-        else:
-            adjuster = -30000
+    #     if current is None:
+    #         new_hanchan = Hanchan(
+    #             line_group_id=line_group_id,
+    #             status=1,
+    #         )
+    #         hanchan_repository.create(new_hanchan)
 
-        # 2~4位
-        for t in sorted_points[1:]:
-            player = t[0]
-            point = t[1]
-            # 点数がマイナスの場合、飛ばされたプレイヤーリストに追加する
-            if (point < 0):
-                tobasare_players.append(player)
+    #         print(f'create hanchan: group "{line_group_id}"')
+    #         current = new_hanchan
 
-            # 3万点切り上げ切り捨ての場合、一時的に30000点を引き、int の丸めを利用する
-            # ex. 切り上げ: int(-10100/1000) -> -10000, 切り捨て: int(10100/1000) -> 10000
-            # その他の場合、マイナス点の場合の丸め方をプラスの丸め方に合わせるため、一時的に100000足す
-            result[player] = int(
-                (point + adjuster + padding) / 1000) - 30 - (adjuster // 1000)
+    #     return current
 
-        # 1位(他プレイヤーの点数合計×(-1))
-        result[sorted_points[0][0]] = -1 * sum(result.values())
-
-        # 順位点、飛び賞加算
-        for i, t in enumerate(sorted_points):
-            # 順位点
-            result[t[0]] += sorted_prize[i]
-            # 飛び賞
-            if isTobi:
-                if t[0] in tobasare_players:
-                    result[t[0]] -= tobi_prize
-                if t[0] == tobashita_player_id:
-                    result[t[0]] += tobi_prize * len(tobasare_players)
-                else:
-                    print(
-                        'tobashita_player_id is not matching'
-                    )
-        return result
-
-    # def get_point_and_name_from_text(
-    #     self,
-    #     text: str,
-    # ) -> Tuple[str, str]:
-    #     s = text.split()
-    #     if len(s) >= 2:
-    #         # ユーザー名に空白がある場合を考慮し、最後の要素をポイント、そのほかをユーザー名として判断する
-    #         return s[-1], ' '.join(s[:-1])
-    #     # fixme: ユーザー名「taro 100」の点数を削除しようとした場合に上の条件にひっかかる
-    #     # 名前のみによるメッセージでの削除機能自体をやめるか(更新できるから削除は需要ない)
-    #     elif len(s) == 1:
-    #         return 'delete', s[0]
+    def get_current(self, line_group_id: str) -> Hanchan:
+        hanchans = hanchan_repository.find({
+            '$and': [
+                {'line_group_id': line_group_id},
+                {'status': 1},
+            ]
+        })
+        
+        if len(hanchans) == 0:
+            return None
+        return hanchans[0]

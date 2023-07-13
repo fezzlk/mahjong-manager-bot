@@ -1,4 +1,4 @@
-from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
+from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
 from ApplicationService import (
     reply_service,
 )
@@ -7,7 +7,7 @@ from linebot.models import TemplateSendMessage
 
 def test_execute():
     # Arrange
-    use_case = ReplyStartMenuUseCase()
+    use_case = ReplyOthersMenuUseCase()
 
     # Act
     use_case.execute()

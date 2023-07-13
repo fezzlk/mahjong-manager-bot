@@ -1,21 +1,19 @@
-from DomainService import (
-    user_service,
-    hanchan_service,
-)
 from ApplicationService import (
     request_info_service,
     reply_service,
 )
-from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
 
 
-class AddPointByTextUseCase:
+class InputPointService:
+    """InputPointService
+        受け取った点数入力メッセージに関する処理
+    """
 
-    def execute(
-        self,
-        text: str,
-    ) -> None:
-        line_group_id = request_info_service.req_line_group_id
+    """
+    受け取ったメッセージから登録先ユーザと値の取得
+    """
+
+    def extract_point_from_text(self, text: str) -> tuple[int, str]:
         mention_line_ids = request_info_service.mention_line_ids
 
         if len(mention_line_ids) > 0:
@@ -48,26 +46,4 @@ class AddPointByTextUseCase:
         if isMinus:
             point = '-' + point
 
-        hanchan = hanchan_service.add_or_drop_raw_score(
-            line_group_id=line_group_id,
-            line_user_id=target_line_user_id,
-            raw_score=int(point),
-        )
-
-        points = hanchan.raw_scores
-
-        res = [
-            f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
-            for line_user_id, point in points.items()
-        ]
-
-        reply_service.add_message("\n".join(res))
-
-        if len(points) == 4:
-            SubmitHanchanUseCase().execute()
-        elif len(points) > 4:
-            reply_service.add_message(
-                '5人以上入力されています。@[ユーザー名] で不要な入力を消してください。'
-            )
-
-        return
+        return (point, target_line_user_id)

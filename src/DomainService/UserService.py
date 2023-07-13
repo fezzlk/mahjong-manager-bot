@@ -61,23 +61,21 @@ class UserService(IUserService):
 
             return target[0].line_user_name
 
-    # def get_line_user_id_by_name(
-    #     self,
-    #     line_user_name: str,
-    # ) -> str:
-    #     with session_scope() as session:
-    #         users = user_repository.find_by_name(session, line_user_name)
+    def get_line_user_id_by_name(
+        self,
+        line_user_name: str,
+    ) -> str:
+        users = user_repository.find({'line_user_name': line_user_name})
 
-    #         if len(users) == 0:
-    #             print(f'user({line_user_name}) is not found')
-    #             raise ValueError(f'user({line_user_name}) is not found')
+        if len(users) == 0:
+            print(f'user_name:{line_user_name} is not found')
+            return None
 
-    #         if len(users) > 1:
-    #             print(f'"{line_user_name}" は複数存在しているため名前からLINE IDを一意に取得できません。')
-    #             raise ValueError(
-    #                 f'"{line_user_name}" は複数存在しているため名前からLINE IDを一意に取得できません。')
-
-    #         return users[0].line_user_id
+        if len(users) > 1:
+            print(f'user_name:{line_user_name} is duplicated')
+            return None
+        
+        return users[0].line_user_id
 
     def chmod(
         self,
@@ -102,7 +100,6 @@ class UserService(IUserService):
         target = user_repository.find(query={'line_user_id': line_user_id})
 
         if len(target) == 0:
-            print(f'user is not found: {line_user_id}')
-            raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
-
+            return None
+        
         return target[0].mode

@@ -6,9 +6,9 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
-from repositories import session_scope, hanchan_repository
+from repositories import hanchan_repository
 from DomainModel.entities.Hanchan import Hanchan
-from use_cases.group_line.CalculateUseCase import CalculateUseCase
+from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
 
 
 class AddHanchanByPointsTextUseCase:
@@ -23,21 +23,17 @@ class AddHanchanByPointsTextUseCase:
             ] = int(col[1])
 
         line_group_id = request_info_service.req_line_group_id
-        current_match = match_service.get_or_create_current(line_group_id)
+        current_match = match_service.find_or_create_current(line_group_id)
         new_hanchan = Hanchan(
             line_group_id=line_group_id,
             raw_scores=points,
-            converted_scores='',
+            converted_scores=[],
             match_id=current_match._id,
             status=1,
         )
-        with session_scope() as session:
-            hanchan_repository.create(
-                session,
-                new_hanchan,
-            )
+        hanchan_repository.create(new_hanchan)
         if len(points) == 4:
-            CalculateUseCase().execute()
+            SubmitHanchanUseCase().execute()
         else:
             reply_service.add_message(
                 '4人分の点数を入力してください'

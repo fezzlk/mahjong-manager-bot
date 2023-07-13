@@ -3,7 +3,6 @@ from DomainService import (
 )
 from repositories import user_repository
 from DomainModel.entities.User import User, UserMode
-import pytest
 
 dummy_users = [
     User(
@@ -31,13 +30,15 @@ def test_ok(mocker):
 
 
 def test_ng_no_user(mocker):
-    with pytest.raises(ValueError):
-        # Arrange
-        mocker.patch.object(
-            user_repository,
-            'find',
-            return_value=[],
-        )
+    # Arrange
+    mocker.patch.object(
+        user_repository,
+        'find',
+        return_value=[],
+    )
 
-        # Act, Assert
-        user_service.get_mode(line_user_id='hoge')
+    # Act
+    result = user_service.get_mode(line_user_id='hoge')
+
+    # Assert
+    assert result is None
