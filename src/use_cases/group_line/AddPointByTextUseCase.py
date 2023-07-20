@@ -7,6 +7,7 @@ from ApplicationService import (
     reply_service,
 )
 from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
+from use_cases.utility.InputPointUseCase import InputPointUseCase
 
 
 class AddPointByTextUseCase:
@@ -16,56 +17,29 @@ class AddPointByTextUseCase:
         text: str,
     ) -> None:
         line_group_id = request_info_service.req_line_group_id
-        mention_line_ids = request_info_service.mention_line_ids
+        target_line_user_id, point = InputPointUseCase().execute(text)
 
-        if len(mention_line_ids) > 0:
-            if len(mention_line_ids) == 1 and len(text[1:].split()) >= 2:
-                # ユーザー名に空白がある場合を考慮し、最後の要素をポイントとして判断する
-                point = text[1:].split()[-1]
-                target_line_user_id = mention_line_ids[0]
-            else:
-                reply_service.add_message(
-                    'ユーザーを指定する場合はメンションをつけてメッセージの末尾に点数を入力してください。1回につき1人を指定するようにしてください。')
-                return
-        else:
-            target_line_user_id = request_info_service.req_line_user_id
-            point = text
-
-        point = point.replace(',', '')
-
-        # 入力した点数のバリデート（hack: '-' を含む場合数値として判断できないため一旦エスケープ）
-        isMinus = False
-        if point[0] == '-':
-            point = point[1:]
-            isMinus = True
-
-        if not point.isdigit():
-            reply_service.add_message(
-                '点数は整数で入力してください。',
-            )
-            return None
-
-        if isMinus:
-            point = '-' + point
-
+        if point is None and target_line_user_id is None:
+            return
+        
         hanchan = hanchan_service.add_or_drop_raw_score(
             line_group_id=line_group_id,
             line_user_id=target_line_user_id,
-            raw_score=int(point),
+            raw_score=point,
         )
 
-        points = hanchan.raw_scores
+        raw_scores = hanchan.raw_scores
 
         res = [
-            f'{user_service.get_name_by_line_user_id(line_user_id)}: {point}'
-            for line_user_id, point in points.items()
+            f'{user_service.get_name_by_line_user_id(line_user_id)}: {raw_score}'
+            for line_user_id, raw_score in raw_scores.items()
         ]
 
         reply_service.add_message("\n".join(res))
 
-        if len(points) == 4:
+        if len(raw_scores) == 4:
             SubmitHanchanUseCase().execute()
-        elif len(points) > 4:
+        elif len(raw_scores) > 4:
             reply_service.add_message(
                 '5人以上入力されています。@[ユーザー名] で不要な入力を消してください。'
             )

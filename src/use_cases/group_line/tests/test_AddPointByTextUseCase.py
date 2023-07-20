@@ -256,7 +256,7 @@ def test_execute_multi_mentions():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == 'text'
-    assert reply_service.texts[0].text == 'ユーザーを指定する場合はメンションをつけてメッセージの末尾に点数を入力してください。1回につき1人を指定するようにしてください。'
+    assert reply_service.texts[0].text == 'メンションは1回につき1人を指定するようにしてください。'
     hanchans = hanchan_repository.find()
     assert len(hanchans[0].raw_scores) == 0
 
