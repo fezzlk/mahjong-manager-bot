@@ -1,61 +1,44 @@
+from DomainService import (
+    match_service,
+)
+from repositories import match_repository
 from DomainModel.entities.Match import Match
-from DomainService.MatchService import MatchService
-from repositories import session_scope, match_repository
-from tests.dummies import generate_dummy_match_list
 
-dummy_matches = generate_dummy_match_list()[0:5]
+dummy_matches = [
+    Match(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        status=1,
+    )
+]
 
 
-def test_success():
+def test_ok_hit_match(mocker):
     # Arrange
-    match_service = MatchService()
-    target_match = dummy_matches[0]
-    with session_scope() as session:
-        for dummy_match in dummy_matches[0:3]:
-            match_repository.create(session, new_match=dummy_match)
+    mocker.patch.object(
+        match_repository,
+        'find',
+        return_value=dummy_matches,
+    )
 
     # Act
-    result = match_service.get_current(
-        line_group_id=target_match.line_group_id
-    )
+    result = match_service.get_current('G0123456789abcdefghijklmnopqrstu1')
 
     # Assert
     assert isinstance(result, Match)
-    assert result._id == target_match._id
-    assert result.line_group_id == target_match.line_group_id
-    assert result.status == target_match.status
-    assert result.hanchan_ids == target_match.hanchan_ids
+    assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
+    assert result.status == 1
 
 
-def test_success_with_valid_line_group_id_and_not_active():
+def test_ok_no_match(mocker):
     # Arrange
-    match_service = MatchService()
-    target_match = dummy_matches[0]
-    with session_scope() as session:
-        for dummy_match in dummy_matches[1:3]:
-            match_repository.create(session, new_match=dummy_match)
-
-    # Act
-    result = match_service.get_current(
-        line_group_id=target_match.line_group_id
+    mocker.patch.object(
+        match_repository,
+        'find',
+        return_value=[],
     )
 
-    # Assert
-    assert result is None
-
-
-def test_success_not_found_line_group_id():
-    # Arrange
-    match_service = MatchService()
-    target_match = dummy_matches[4]
-    with session_scope() as session:
-        for dummy_match in dummy_matches[0:4]:
-            match_repository.create(session, new_match=dummy_match)
-
     # Act
-    result = match_service.get_current(
-        line_group_id=target_match.line_group_id
-    )
+    result = match_service.get_current('G0123456789abcdefghijklmnopqrstu1')
 
     # Assert
     assert result is None

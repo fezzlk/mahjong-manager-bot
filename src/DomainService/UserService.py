@@ -2,7 +2,7 @@
 
 from linebot.models.responses import Profile
 from .interfaces.IUserService import IUserService
-from repositories import session_scope, user_repository
+from repositories import user_repository
 from messaging_api_setting import line_bot_api
 from DomainModel.entities.User import User, UserMode
 
@@ -13,33 +13,26 @@ class UserService(IUserService):
         self,
         profile: Profile,
     ) -> User:
-        with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(
-                session,
-                profile.user_id,
-            )
+        users = user_repository.find(
+            query={'line_user_id': profile.user_id},
+        )
 
-        if target is not None:
-            return target
+        if len(users) > 0:
+            return users[0]
+        
+        new_user = User(
+            line_user_name=profile.display_name,
+            line_user_id=profile.user_id,
+            mode=UserMode.wait.value,
+            jantama_name=None,
+        )
+        user_repository.create(new_user)
 
-        with session_scope() as session:
-            new_user = User(
-                line_user_name=profile.display_name,
-                line_user_id=profile.user_id,
-                zoom_url=None,
-                mode=UserMode.wait.value,
-                jantama_name=None,
-            )
-            user_repository.create(
-                session,
-                new_user,
-            )
+        print(
+            f'create user: {new_user.line_user_id} {new_user.line_user_name}'
+        )
 
-            print(
-                f'create: {new_user.line_user_id} {new_user.line_user_name}'
-            )
-
-            return new_user
+        return new_user
 
     def get_name_by_line_user_id(
         self,
@@ -58,97 +51,55 @@ class UserService(IUserService):
             return profile.display_name
 
         except Exception:
-            with session_scope() as session:
-                target = user_repository.find_one_by_line_user_id(
-                    session,
-                    line_user_id,
-                )
+            target = user_repository.find(
+                query={'line_user_id': line_user_id},
+            )
 
-                if target is None:
-                    print(f'user({line_user_id}) is not found')
-                    return line_user_id
+            if len(target) == 0:
+                print(f'user({line_user_id}) is not found')
+                return line_user_id
 
-                return target.line_user_name
+            return target[0].line_user_name
 
     def get_line_user_id_by_name(
         self,
         line_user_name: str,
     ) -> str:
-        with session_scope() as session:
-            users = user_repository.find_by_name(session, line_user_name)
+        users = user_repository.find({'line_user_name': line_user_name})
 
-            if len(users) == 0:
-                print(f'user({line_user_name}) is not found')
-                raise ValueError(f'user({line_user_name}) is not found')
+        if len(users) == 0:
+            print(f'user_name:{line_user_name} is not found')
+            return None
 
-            if len(users) > 1:
-                print(f'"{line_user_name}" は複数存在しているため名前からLINE IDを一意に取得できません。')
-                raise ValueError(
-                    f'"{line_user_name}" は複数存在しているため名前からLINE IDを一意に取得できません。')
-
-            return users[0].line_user_id
+        if len(users) > 1:
+            print(f'user_name:{line_user_name} is duplicated')
+            return None
+        
+        return users[0].line_user_id
 
     def chmod(
         self,
         line_user_id: str,
         mode: UserMode,
-    ) -> User:
-        if mode not in UserMode:
-            raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode.value}\'')
+    ) -> None:
+        if not isinstance(mode, UserMode):
+            raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
-        with session_scope() as session:
-            user = user_repository.update_one_mode_by_line_user_id(
-                session=session,
-                line_user_id=line_user_id,
-                mode=mode.value,
-            )
+        user_repository.update(
+            query={
+                'line_user_id': line_user_id,
+            },
+            new_values={'mode': mode.value}
+        )
 
-            print(f'chmod: {line_user_id}: {mode.value}')
+        print(f'chmod: {line_user_id}: {mode.value}')
 
-            return user
+        return
 
     def get_mode(self, line_user_id: str) -> UserMode:
-        with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(
-                session, line_user_id)
+        target = user_repository.find(query={'line_user_id': line_user_id})
 
-            if target is None:
-                print(f'user is not found: {line_user_id}')
-                raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
-
-            return target.mode
-
-    def set_zoom_url(
-        self,
-        line_user_id: str,
-        zoom_url: str,
-    ) -> User:
-        with session_scope() as session:
-            user = user_repository.update_one_zoom_url_by_line_user_id(
-                session=session,
-                line_user_id=line_user_id,
-                zoom_url=zoom_url,
-            )
-
-        if user is None:
-            print(f'user is not found: {line_user_id}')
-            raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
-
-        print(f'set_user_url: {user.zoom_url} to {line_user_id}')
-        return user
-
-    def get_zoom_url(self, line_user_id: str) -> str:
-        with session_scope() as session:
-            target = user_repository.find_one_by_line_user_id(
-                session, line_user_id)
-
-            if target is None:
-                print(f'user_services: user "{line_user_id}" is not found')
-                raise ValueError('ユーザーが登録されていません。友達登録をし直してください。')
-
-            if target.zoom_url is None:
-                print(
-                    f'user_services: zoom id of user "{line_user_id}" is None')
-                return None
-
-            return target.zoom_url
+        if len(target) == 0:
+            return None
+        
+        return target[0].mode

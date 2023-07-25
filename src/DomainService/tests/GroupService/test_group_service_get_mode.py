@@ -1,35 +1,42 @@
-from DomainService.GroupService import GroupService
-from repositories import session_scope, group_repository
-from tests.dummies import generate_dummy_group_list
+from DomainService import (
+    group_service,
+)
+from repositories import group_repository
+from DomainModel.entities.Group import Group, GroupMode
+
+dummy_groups = [
+    Group(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        mode=GroupMode.wait.value,
+    )
+]
 
 
-def test_success():
+def test_ok(mocker):
     # Arrange
-    group_service = GroupService()
-    dummy_groups = generate_dummy_group_list()[:3]
-    dummy_group = dummy_groups[0]
-    with session_scope() as session:
-        for record in dummy_groups:
-            group_repository.create(session, record)
+    mocker.patch.object(
+        group_repository,
+        'find',
+        return_value=dummy_groups,
+    )
 
     # Act
-    result = group_service.get_mode(dummy_group.line_group_id)
+    result = group_service.get_mode(line_group_id='hoge')
 
     # Assert
-    assert result == dummy_group.mode
+    assert result == 'wait'
 
 
-def test_not_hit():
+def test_ng_no_user(mocker):
     # Arrange
-    group_service = GroupService()
-    dummy_groups = generate_dummy_group_list()[:3]
-    dummy_group = dummy_groups[0]
-    with session_scope() as session:
-        for record in dummy_groups[1:]:
-            group_repository.create(session, record)
+    mocker.patch.object(
+        group_repository,
+        'find',
+        return_value=[],
+    )
 
     # Act
-    result = group_service.get_mode(dummy_group.line_group_id)
+    mode = group_service.get_mode(line_group_id='hoge')
 
     # Assert
-    assert result is None
+    assert mode is None

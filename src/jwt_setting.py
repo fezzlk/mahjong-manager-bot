@@ -6,7 +6,7 @@ from datetime import timedelta
 # def identity(payload):
 #     with session_scope() as session:
 #         user_id = payload['identity']
-#         users = user_repository.find_by_ids(session, [user_id])
+#         users = user_repository.find(session, [user_id])
 #         if len(users) != 1:
 #             raise ValueError('ユーザーidが取得できません')
 #         return users[0]

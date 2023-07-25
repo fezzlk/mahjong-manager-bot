@@ -1,35 +1,56 @@
-from DomainService.UserService import UserService
-from repositories import session_scope, user_repository
-from tests.dummies import generate_dummy_profile, generate_dummy_user_list
-from DomainModel.entities.User import User
+from DomainService import (
+    user_service,
+)
+from repositories import user_repository
+from DomainModel.entities.User import User, UserMode
+from line_models.Profile import Profile
+
+dummy_users = [
+    User(
+        line_user_name="test_user1",
+        line_user_id="U0123456789abcdefghijklmnopqrstu1",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user1",
+    )
+]
+
+dummy_profile = Profile(
+    display_name='profile',
+    user_id='U0123456789abcdefghijklmnopqrstu1',
+)
 
 
-def test_create_new_user():
+def test_ok_hit_user(mocker):
     # Arrange
-    user_service = UserService()
-    dummy_profile = generate_dummy_profile()
+    mocker.patch.object(
+        user_repository,
+        'find',
+        return_value=dummy_users,
+    )
 
     # Act
-    result = user_service.find_or_create_by_profile(dummy_profile)
+    result = user_service.find_or_create_by_profile(profile=dummy_profile)
 
     # Assert
     assert isinstance(result, User)
-    assert result.line_user_id == dummy_profile.user_id
-    assert result.line_user_name == dummy_profile.display_name
+    assert result.line_user_name == 'test_user1'
 
 
-def test_find_exist_user():
+def test_ok_no_user(mocker):
     # Arrange
-    user_service = UserService()
-    dummy_profile = generate_dummy_profile()
-    dummy_user = generate_dummy_user_list()[4]
-    with session_scope() as session:
-        user_repository.create(session, dummy_user)
+    mocker.patch.object(
+        user_repository,
+        'find',
+        return_value=[],
+    )
+    mock_create = mocker.patch.object(
+        user_repository,
+        'create',
+    )
 
     # Act
-    result = user_service.find_or_create_by_profile(dummy_profile)
+    result = user_service.find_or_create_by_profile(profile=dummy_profile)
 
     # Assert
-    assert isinstance(result, User)
-    assert result.line_user_id == dummy_user.line_user_id
-    assert result.line_user_name == dummy_user.line_user_name
+    assert result.line_user_name == 'profile'
+    mock_create.assert_called_once()

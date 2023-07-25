@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
+from typing import List, Dict, Tuple
 from DomainModel.entities.Match import Match
-from sqlalchemy.orm.session import Session as BaseSession
+from pymongo import ASCENDING
 
 
 class IMatchRepository(metaclass=ABCMeta):
@@ -9,91 +9,29 @@ class IMatchRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        session: BaseSession,
-        new_match: Match,
+        new_record: Match,
     ) -> Match:
         pass
 
     @abstractmethod
-    def find_all(
+    def find(
         self,
-        session: BaseSession,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[Match]:
         pass
 
     @abstractmethod
-    def find_by_ids(
+    def delete(
         self,
-        session: BaseSession,
-        ids: List[Match],
-    ) -> List[Match]:
-        pass
-
-    @abstractmethod
-    def find_archived_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[Match],
-    ) -> List[Match]:
-        pass
-
-    @abstractmethod
-    def find_many_by_line_group_id_and_status(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        status: int
-    ) -> List[Match]:
-        pass
-
-    @abstractmethod
-    def find_one_by_line_group_id_and_status(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        status: int,
-    ) -> Match:
-        pass
-
-    @abstractmethod
-    def update_one_hanchan_ids_by_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        hanchan_id: int,
-    ) -> Match:
-        pass
-
-    @abstractmethod
-    def update_one_status_by_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        status: int,
-    ) -> Match:
-        pass
-
-    @abstractmethod
-    def delete_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[int],
+        query: Dict[str, any] = {},
     ) -> int:
         pass
 
     @abstractmethod
     def update(
         self,
-        session: BaseSession,
-        target: Match,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
     ) -> int:
-        pass
-
-    @abstractmethod
-    def find_many_by_line_group_ids_and_status(
-        self,
-        session: BaseSession,
-        line_group_ids: List[str],
-        status: int,
-    ) -> List[Match]:
         pass

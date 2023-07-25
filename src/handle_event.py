@@ -57,6 +57,7 @@ def handle_event_decorater(function):
             reply_service.reset()
             reply_service.add_message(text='システムエラーが発生しました。')
         reply_service.reply(event)
+        reply_service.reset()
         request_info_service.delete_req_info()
 
     return handle_event

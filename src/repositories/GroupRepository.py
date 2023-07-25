@@ -1,146 +1,56 @@
-from typing import List
-from db_models import GroupModel
+from typing import List, Dict, Tuple
+from datetime import datetime
+from pymongo import ASCENDING
+from mongo_client import groups_collection
+from DomainModel.entities.Group import Group
 from DomainModel.IRepositories.IGroupRepository import IGroupRepository
-from DomainModel.entities.Group import Group, GroupMode
-from sqlalchemy.orm.session import Session as BaseSession
 
 
 class GroupRepository(IGroupRepository):
 
     def create(
         self,
-        session: BaseSession,
-        new_group: Group,
+        new_record: Group,
     ) -> Group:
-        record = GroupModel(
-            line_group_id=new_group.line_group_id,
-            mode=new_group.mode,
-            zoom_url=new_group.zoom_url,
-        )
-        session.add(record)
-        session.commit()
-        new_group._id = record.id
-        return new_group
+        if len(self.find(query={'line_group_id': new_record.line_group_id})) != 0:
+            raise Exception(f'LINE Group ID: {new_record.line_group_id} のGroupはすでに存在しています。')
 
-    def delete_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[int],
-    ) -> int:
-        delete_count = session\
-            .query(GroupModel)\
-            .filter(GroupModel.id.in_(ids))\
-            .delete(synchronize_session=False)
-
-        return delete_count
-
-    def find_all(
-        self,
-        session: BaseSession,
-    ) -> List[Group]:
-        records = session\
-            .query(GroupModel)\
-            .order_by(GroupModel.id)\
-            .all()
-
-        return [
-            self._mapping_record_to_group_domain(record)
-            for record in records
-        ]
-
-    def find_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[str],
-    ) -> List[Group]:
-        records = session\
-            .query(GroupModel)\
-            .filter(GroupModel.id.in_(ids))\
-            .order_by(GroupModel.id)\
-            .all()
-
-        return [
-            self._mapping_record_to_group_domain(record)
-            for record in records
-        ]
-
-    def find_one_by_line_group_id(
-        self,
-        session: BaseSession,
-        line_group_id: int,
-    ) -> Group:
-        record = session\
-            .query(GroupModel)\
-            .filter(GroupModel.line_group_id == line_group_id)\
-            .first()
-
-        if record is None:
-            return None
-
-        return self._mapping_record_to_group_domain(record)
-
-    def update_one_mode_by_line_group_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        mode: str,
-    ) -> Group:
-        if line_group_id is None:
-            raise ValueError
-
-        record = session\
-            .query(GroupModel)\
-            .filter(GroupModel.line_group_id == line_group_id)\
-            .first()
-
-        if record is None:
-            return None
-
-        record.mode = mode
-
-        return self._mapping_record_to_group_domain(record)
-
-    def update_one_zoom_url_by_line_group_id(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        zoom_url: str,
-    ) -> Group:
-        record = session\
-            .query(GroupModel)\
-            .filter(GroupModel.line_group_id == line_group_id)\
-            .first()
-
-        if record is None:
-            return None
-
-        record.zoom_url = zoom_url
-
-        return self._mapping_record_to_group_domain(record)
+        new_dict = new_record.__dict__.copy()
+        if new_record._id is None:
+            new_dict.pop('_id')
+        result = groups_collection.insert_one(new_dict)
+        new_record._id = result.inserted_id
+        return new_record
 
     def update(
         self,
-        session: BaseSession,
-        target: Group,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
     ) -> int:
-        updated = GroupModel(
-            line_group_id=target.line_group_id,
-            mode=target.mode,
-            zoom_url=target.zoom_url,
-        ).__dict__
-        updated.pop('_sa_instance_state')
+        new_values['updated_at'] = datetime.now()
+        result = groups_collection.update_many(query, {'$set': new_values})
+        return result.matched_count
 
-        result: int = session\
-            .query(GroupModel)\
-            .filter(GroupModel.id == target._id)\
-            .update(updated)
+    def find(
+        self,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+    ) -> List[Group]:
+        records = groups_collection\
+            .find(filter=query)\
+            .sort(sort)
+        return [self._mapping_record_to_domain(record) for record in records]
 
-        return result
+    def delete(
+        self,
+        query: Dict[str, any] = {},
+    ) -> int:
+        result = groups_collection.delete_many(filter=query)
+        return result.deleted_count
 
-    def _mapping_record_to_group_domain(self, record: GroupModel) -> Group:
+    def _mapping_record_to_domain(self, record: Dict[str, any]) -> Group:
         return Group(
-            line_group_id=record.line_group_id,
-            zoom_url=record.zoom_url,
-            mode=GroupMode[record.mode].value,
-            _id=record.id,
+            line_group_id=record['line_group_id'],
+            mode=record['mode'],
+            _id=record['_id'],
         )

@@ -7,22 +7,22 @@
 #         .query(MatchModel).filter(and_(
 #         MatchModel.status == 2,
 #         MatchModel.line_group_id == group_id,
-#         )).order_by(MatchModel.id.desc())\
+#         )).order_by(MatchModel._id.desc())\
 #         .all()
 #         match = matches[0]
 #         print(match)
 #         以下ResultServiceに移植
 #         results = session\
 #         .query(Results).filter(
-#         Results.id.in_([int(s) for s in json.loads(match.hanchan_ids)]),
+#         Results._id.in_([int(s) for s in json.loads(match.hanchan_ids)]),
 #         )\
-#         .order_by(Results.id)\
+#         .order_by(Results._id)\
 #         .all()
 #         x = []
 #         y = pd.DataFrame({})
 #         print(results)
 #         for result in results:
-#         y = y.append(pd.Series(json.loads(result.result), name=result.id))
+#         y = y.append(pd.Series(json.loads(result.result), name=result._id))
 #         print(y)
 #         plt.figure()
 

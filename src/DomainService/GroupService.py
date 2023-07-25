@@ -1,104 +1,46 @@
 from .interfaces.IGroupService import IGroupService
 from DomainModel.entities.Group import Group, GroupMode
-from repositories import session_scope, group_repository
-from ApplicationService import (
-    reply_service,
-)
+from repositories import group_repository
 
 
 class GroupService(IGroupService):
 
-    def find_or_create(self, group_id: str) -> Group:
-        with session_scope() as session:
-            group = group_repository.find_one_by_line_group_id(
-                session, group_id)
+    def find_or_create(self, line_group_id: str) -> Group:
+        groups = group_repository.find({'line_group_id': line_group_id})
 
-            if group is None:
-                group = Group(
-                    line_group_id=group_id,
-                    zoom_url=None,
-                    mode=GroupMode.wait.value,
-                )
-                group_repository.create(session, group)
-                print(f'create group: {group_id}')
-
-            return group
+        if len(groups) > 0:
+            return groups[0]
+    
+        group = Group(
+            line_group_id=line_group_id,
+            mode=GroupMode.wait.value,
+        )
+        result = group_repository.create(group)
+        print(f'create group: ID = {result._id}(line group id: {line_group_id})')
+        return result
 
     def chmod(
         self,
         line_group_id: str,
         mode: GroupMode,
-    ) -> Group:
-        if mode not in GroupMode:
-            print(
-                'failed to change mode: unexpected mode request received.'
-            )
-            return None
+    ) -> None:
+        if not isinstance(mode, GroupMode):
+            raise ValueError(f'予期しないモード変更リクエストを受け取りました。\'{mode}\'')
 
-        with session_scope() as session:
-            record = group_repository.update_one_mode_by_line_group_id(
-                session,
-                line_group_id,
-                mode.value
-            )
-            if record is None:
-                print(
-                    'failed to change mode: group is not found'
-                )
-                return None
+        if line_group_id is None:
+            raise ValueError('LINE Group ID が None のためモードの変更ができません。')
 
-            return record
+        result = group_repository.update(
+            {'line_group_id': line_group_id},
+            {'mode': mode.value},
+        )
+        if result > 0:
+            print(f'chmod: {line_group_id}: {mode.value}')
 
     def get_mode(self, line_group_id: str) -> GroupMode:
-        with session_scope() as session:
-            # find にし、複数件ヒットした場合にはエラーを返す
-            target = group_repository.find_one_by_line_group_id(
-                session, line_group_id)
+        groups = group_repository.find({'line_group_id': line_group_id})
 
-            if target is None:
-                reply_service.add_message(
-                    'トークルームが登録されていません。招待し直してください。'
-                )
-                return
+        if len(groups) == 0:
+            return None
 
-            return target.mode
-
-    def set_zoom_url(
-        self,
-        line_group_id: str,
-        zoom_url: str,
-    ) -> Group:
-        with session_scope() as session:
-            record = group_repository.update_one_zoom_url_by_line_group_id(
-                session,
-                line_group_id,
-                zoom_url,
-            )
-
-            if record is None:
-                print(
-                    f'fail to set zoom url: group "{line_group_id}" is not found')
-                raise Exception('トークルームが登録されていません。招待し直してください。')
-
-            print(f'set_zoom_url: {zoom_url} to {line_group_id}')
-            return record
-
-    def get_zoom_url(
-        self,
-        line_group_id: str,
-    ) -> str:
-        with session_scope() as session:
-            target = group_repository.find_one_by_line_group_id(
-                session, line_group_id)
-
-            if target is None:
-                print(
-                    f'fail to get zoom url: group "{line_group_id}" is not found.')
-                raise Exception('トークルームが登録されていません。招待し直してください。')
-
-            if target.zoom_url is None:
-                print(
-                    f'fail to get zoom url: group "{line_group_id}" does not have zoom url.')
-                return None
-
-            return target.zoom_url
+        return groups[0].mode

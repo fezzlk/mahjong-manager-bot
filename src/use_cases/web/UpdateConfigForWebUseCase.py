@@ -1,8 +1,8 @@
 from flask import request
 from repositories import (
-    config_repository, session_scope
+    group_setting_repository, session_scope
 )
-from DomainModel.entities.Config import Config
+from DomainModel.entities.GroupSetting import Config
 
 
 class UpdateConfigForWebUseCase:
@@ -16,4 +16,4 @@ class UpdateConfigForWebUseCase:
             _id=int(form['_id']),
         ),
         with session_scope() as session:
-            return config_repository.update(session, updated)
+            return group_setting_repository.update(session, updated)

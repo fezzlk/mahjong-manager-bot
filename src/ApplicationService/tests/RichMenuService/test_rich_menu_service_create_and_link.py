@@ -15,6 +15,11 @@ def test_success(mocker):
         'link_rich_menu_to_user',
         return_value=None
     )
+    mocker.patch.object(
+        line_bot_api,
+        'set_rich_menu_image',
+        return_value=None
+    )
 
     # Act
     rich_menu_service.create_and_link(dummy_user.line_user_id)

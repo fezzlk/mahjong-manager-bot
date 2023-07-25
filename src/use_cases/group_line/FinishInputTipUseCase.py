@@ -21,7 +21,7 @@ class FinishInputTipUseCase:
 
         if sum_tip_count != 0:
             reply_service.add_message(
-                f'チップ増減数の合計が{("+" if sum_tip_count > 0 else "") + str(sum_tip_count)}です。0になるようにしてください。（中断する場合は「_exit」）'
+                f'チップ増減数の合計が{("+" if sum_tip_count > 0 else "") + str(sum_tip_count)}です。0になるようにしてください。）'
             )
             return
 

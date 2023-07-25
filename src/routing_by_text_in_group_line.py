@@ -9,36 +9,32 @@ from ApplicationService import (
     reply_service,
 )
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
-from use_cases.group_line.CalculateUseCase import CalculateUseCase
+from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
 
 from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
-from use_cases.group_line.SetZoomUrlToGroupUseCase import SetZoomUrlToGroupUseCase
-from use_cases.group_line.SetMyZoomUrlToGroupUseCase import SetMyZoomUrlToGroupUseCase
 from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
 from use_cases.group_line.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
 from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
 from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
 from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
-from use_cases.group_line.ReplyGroupZoomUrlUseCase import ReplyGroupZoomUrlUseCase
 from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
 
 from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
 from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
-from use_cases.group_line.ReplySumHanchansUseCase import ReplySumHanchansUseCase
 
 from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
 from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
-from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
+# from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
 from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
 from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
-from use_cases.group_line.UpdateGroupConfigUseCase import UpdateGroupConfigUseCase
+from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
-from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
+# from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
 
 from DomainModel.entities.Group import GroupMode
 
@@ -63,8 +59,6 @@ class RCommands(Enum):
     drop_m = 'drop_m'
     add_result = 'add_result'
     update_config = 'update_config'
-    zoom = 'zoom'
-    my_zoom = 'my_zoom'
     sum_matches = 'sum_matches'
     graph = 'graph'
     my_results = 'my_results'
@@ -107,10 +101,6 @@ def routing_by_text_in_group_line(text: str):
     if len(resultRows) == 4:
         AddHanchanByPointsTextUseCase().execute(text)
 
-    """if zoom url, register to group"""
-    if '.zoom.us' in text:
-        SetZoomUrlToGroupUseCase().execute(text)
-
 
 def routing_for_group_by_method(method, body):
     """routing by method"""
@@ -132,9 +122,6 @@ def routing_for_group_by_method(method, body):
     # setting
     elif method == RCommands.setting.name:
         ReplyGroupSettingsMenuUseCase().execute(body)
-    # results
-    elif method == RCommands.results.name:
-        ReplySumHanchansUseCase().execute()
     # results by match id
     elif method == RCommands.match.name:
         ReplySumHanchansByMatchIdUseCase().execute(body)
@@ -158,22 +145,16 @@ def routing_for_group_by_method(method, body):
         ReplyMatchesUseCase().execute()
     # tobi
     elif method == RCommands.tobi.name:
-        CalculateUseCase().execute(
+        SubmitHanchanUseCase().execute(
             tobashita_player_id=body
         )
     # update config
     elif method == RCommands.update_config.name:
         key = body.split(' ')[0]
         value = body.split(' ')[1]
-        UpdateGroupConfigUseCase().execute(
+        UpdateGroupSettingsUseCase().execute(
             key, value
         )
-    # zoom
-    elif method == RCommands.zoom.name:
-        ReplyGroupZoomUrlUseCase().execute()
-    # my_zoom
-    elif method == RCommands.my_zoom.name:
-        SetMyZoomUrlToGroupUseCase().execute()
     # history
     elif method == RCommands.history.name:
         ReplyMultiHistoryUseCase().execute()
@@ -183,23 +164,23 @@ def routing_for_group_by_method(method, body):
     # badai
     elif method == RCommands.badai.name:
         ReplyApplyBadaiUseCase().execute(body)
-    # entry
-    elif method == RCommands.entry.name:
-        LinkUserToGroupUseCase().execute()
+    # # entry
+    # elif method == RCommands.entry.name:
+    #     LinkUserToGroupUseCase().execute()
     # sum_matches
-    elif method == RCommands.sum_matches.name:
-        args = body.split(' ')
-        # while 'to' in args:
-        #     index = args.index('to')
-        #     if index != 0 and len(args) - 1 > index:
-        #         args += [
-        #             str(i) for i in range(
-        #                 int(args[index - 1]),
-        #                 int(args[index + 1]) + 1
-        #             )
-        #         ]
-        #     args.remove('to')
-        ReplySumMatchesByIdsUseCase().execute(args)
+    # elif method == RCommands.sum_matches.name:
+    #     args = body.split(' ')
+    #     # while 'to' in args:
+    #     #     index = args.index('to')
+    #     #     if index != 0 and len(args) - 1 > index:
+    #     #         args += [
+    #     #             str(i) for i in range(
+    #     #                 int(args[index - 1]),
+    #     #                 int(args[index + 1]) + 1
+    #     #             )
+    #     #         ]
+    #     #     args.remove('to')
+    #     ReplySumMatchesByIdsUseCase().execute(args)
     # # graphs
     # elif method == RCommands.graph.name:
     #     matches_use_cases.plot()

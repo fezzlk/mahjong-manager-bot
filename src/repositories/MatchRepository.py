@@ -1,212 +1,56 @@
-from typing import List
-from db_models import MatchModel
-from sqlalchemy import and_
-from DomainModel.IRepositories.IMatchRepository import IMatchRepository
+from typing import List, Dict, Tuple
+from datetime import datetime
+from pymongo import ASCENDING
+from mongo_client import matches_collection
 from DomainModel.entities.Match import Match
-from sqlalchemy.orm.session import Session as BaseSession
-import json
+from DomainModel.IRepositories.IMatchRepository import IMatchRepository
 
 
 class MatchRepository(IMatchRepository):
 
     def create(
         self,
-        session: BaseSession,
-        new_match: Match,
+        new_record: Match,
     ) -> Match:
-        record = MatchModel(
-            line_group_id=new_match.line_group_id,
-            hanchan_ids=json.dumps(new_match.hanchan_ids),
-            status=new_match.status,
-            tip_scores=json.dumps(new_match.tip_scores),
-        )
-
-        session.add(record)
-        session.commit()
-        new_match._id = record.id
-        return new_match
-
-    def find_all(
-        self,
-        session: BaseSession,
-    ) -> List[Match]:
-        records = session\
-            .query(MatchModel)\
-            .order_by(MatchModel.id)\
-            .all()
-
-        return [
-            self._mapping_record_to_match_domain(record)
-            for record in records
-        ]
-
-    def find_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[Match],
-    ) -> List[Match]:
-        records = session\
-            .query(MatchModel)\
-            .filter(MatchModel.id.in_([int(s) for s in ids]))\
-            .order_by(MatchModel.id)\
-            .all()
-
-        return [
-            self._mapping_record_to_match_domain(record)
-            for record in records
-        ]
-
-    def find_archived_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[Match],
-    ) -> List[Match]:
-        records = session\
-            .query(MatchModel)\
-            .filter(and_(
-                MatchModel.id.in_([int(s) for s in ids]),
-                MatchModel.status == 2,
-            ))\
-            .order_by(MatchModel.id)\
-            .all()
-
-        return [
-            self._mapping_record_to_match_domain(record)
-            for record in records
-        ]
-
-    def find_many_by_line_group_id_and_status(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        status: int,
-    ) -> List[Match]:
-        records = session\
-            .query(MatchModel).filter(and_(
-                MatchModel.line_group_id == line_group_id,
-                MatchModel.status == status,
-            )).order_by(MatchModel.id.desc())\
-            .all()
-
-        return [
-            self._mapping_record_to_match_domain(record)
-            for record in records
-        ]
-
-    def find_many_by_line_group_ids_and_status(
-        self,
-        session: BaseSession,
-        line_group_ids: List[str],
-        status: int,
-    ) -> List[Match]:
-        records = session\
-            .query(MatchModel).filter(and_(
-                MatchModel.line_group_id in line_group_ids,
-                MatchModel.status == status,
-            )).order_by(MatchModel.id.desc())\
-            .all()
-
-        return [
-            self._mapping_record_to_match_domain(record)
-            for record in records
-        ]
-
-    def find_one_by_line_group_id_and_status(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        status: int,
-    ) -> Match:
-        record = session\
-            .query(MatchModel).filter(and_(
-                MatchModel.line_group_id == line_group_id,
-                MatchModel.status == status,
-            )).order_by(MatchModel.id.desc())\
-            .first()
-
-        if record is None:
-            return None
-
-        return self._mapping_record_to_match_domain(record)
-
-    def update_one_hanchan_ids_by_id(
-        self,
-        session: BaseSession,
-        match_id: int,
-        hanchan_ids: List[int],
-    ) -> Match:
-        record: MatchModel = session\
-            .query(MatchModel).filter(MatchModel.id == match_id)\
-            .first()
-
-        if record is None:
-            return None
-
-        record.hanchan_ids = json.dumps(hanchan_ids)
-
-        return self._mapping_record_to_match_domain(record)
-
-    def update_one_status_by_id(
-        self,
-        session: BaseSession,
-        match_id: int,
-        status: int,
-    ) -> Match:
-        record = session\
-            .query(MatchModel).filter(MatchModel.id == match_id)\
-            .first()
-
-        if record is None:
-            return None
-
-        record.status = status
-
-        return self._mapping_record_to_match_domain(record)
-
-    def delete_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[int],
-    ) -> int:
-        delete_count = session\
-            .query(MatchModel)\
-            .filter(MatchModel.id.in_(ids))\
-            .delete(synchronize_session=False)
-
-        return delete_count
+        new_dict = new_record.__dict__.copy()
+        if new_record._id is None:
+            new_dict.pop('_id')
+        result = matches_collection.insert_one(new_dict)
+        new_record._id = result.inserted_id
+        return new_record
 
     def update(
         self,
-        session: BaseSession,
-        target: Match,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
     ) -> int:
-        updated = MatchModel(
-            line_group_id=target.line_group_id,
-            hanchan_ids=json.dumps(target.hanchan_ids),
-            tip_scores=json.dumps(target.tip_scores),
-            status=target.status,
-        ).__dict__
-        updated.pop('_sa_instance_state')
+        new_values['updated_at'] = datetime.now()
+        result = matches_collection.update_many(query, {'$set': new_values})
+        return result.matched_count
 
-        result: int = session\
-            .query(MatchModel)\
-            .filter(MatchModel.id == target._id)\
-            .update(updated)
+    def find(
+        self,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+    ) -> List[Match]:
+        records = matches_collection\
+            .find(filter=query)\
+            .sort(sort)
+        return [self._mapping_record_to_domain(record) for record in records]
 
-        return result
+    def delete(
+        self,
+        query: Dict[str, any] = {},
+    ) -> int:
+        result = matches_collection.delete_many(filter=query)
+        return result.deleted_count
 
-    def _mapping_record_to_match_domain(self, record: MatchModel) -> Match:
+    def _mapping_record_to_domain(self, record: Dict[str, any]) -> Match:
         return Match(
-            _id=record.id,
-            line_group_id=record.line_group_id,
-            hanchan_ids=json.loads(record.hanchan_ids),
-
-            users=record.users,
-            status=record.status,
-            tip_scores=(
-                json.loads(
-                    record.tip_scores
-                ) if record.tip_scores is not None else {}
-            ),
-            created_at=record.created_at,
+            line_group_id=record['line_group_id'],
+            status=record['status'],
+            hanchan_ids=record['hanchan_ids'],
+            created_at=record['created_at'],
+            tip_scores=record['tip_scores'],
+            _id=record['_id'],
         )

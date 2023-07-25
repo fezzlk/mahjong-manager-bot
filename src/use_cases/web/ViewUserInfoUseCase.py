@@ -18,7 +18,7 @@ class ViewUserInfoUseCase():
         login_user_id: str = session.get('login_user_id', None)
         with session_scope() as db_session:
             login_user = web_user_repository.find_by_id(
-                session=db_session, id=login_user_id
+                session=db_session, _id=login_user_id
             )
 
             if login_user is not None:

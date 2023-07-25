@@ -1,5 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
+from bson.objectid import ObjectId
 
 
 class GroupMode(Enum):
@@ -11,19 +12,19 @@ class GroupMode(Enum):
 
 @dataclass()
 class Group:
-    _id: int
-    line_group_id: str = ''
-    zoom_url: str = None
-    mode: str = ''
+    _id: ObjectId
+    line_group_id: str
+    mode: str
 
     def __init__(
         self,
         line_group_id: str,
-        mode: str,
-        zoom_url: str = None,
-        _id=None,
+        mode: str = GroupMode.wait.value,
+        _id: ObjectId = None,
     ):
+        if mode not in GroupMode._member_names_:
+            raise ValueError(f'GroupMode の値({mode})が不適切です。')
+   
         self._id = _id
         self.line_group_id = line_group_id
         self.mode = mode
-        self.zoom_url = zoom_url

@@ -16,7 +16,7 @@ class ViewApproveLinkLineUseCase():
         with session_scope() as session:
             login_user: WebUser = web_user_repository.find_by_id(
                 session=session,
-                id=page_contents.login_user._id
+                _id=page_contents.login_user._id
             )
 
             page_contents.line_user_name = ''
