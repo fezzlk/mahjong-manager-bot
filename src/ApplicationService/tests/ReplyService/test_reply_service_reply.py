@@ -19,7 +19,7 @@ def test_reply_to_user(mocker):
         TextSendMessage(text=dummy_text)
     ]
 
-    mocker.patch.object(
+    mock = mocker.patch.object(
         line_bot_api,
         'reply_message',
         return_value=None,
@@ -29,7 +29,8 @@ def test_reply_to_user(mocker):
     reply_service.reply(dummy_event)
 
     # Assert
-    assert len(reply_service.texts) == 0
+    assert len(reply_service.texts) == 1
+    mock.assert_called_once()
 
 
 def test_reply_to_group(mocker):
@@ -41,7 +42,7 @@ def test_reply_to_group(mocker):
         TextSendMessage(text=dummy_text)
     ]
 
-    mocker.patch.object(
+    mock = mocker.patch.object(
         line_bot_api,
         'reply_message',
         return_value=None,
@@ -51,29 +52,14 @@ def test_reply_to_group(mocker):
     reply_service.reply(dummy_event)
 
     # Assert
-    assert len(reply_service.texts) == 0
+    assert len(reply_service.texts) == 1
+    mock.assert_called_once()
 
 
 def test_content_0(mocker):
     # Arrange
     reply_service = ReplyService()
     dummy_event = generate_dummy_text_message_event_from_group()
-
-    # Act
-    reply_service.reply(dummy_event)
-
-    # Assert
-    assert len(reply_service.texts) == 0
-
-
-def test_not_reply(mocker):
-    # Arrange
-    reply_service = ReplyService()
-    dummy_event = generate_dummy_text_message_event_from_group()
-    dummy_text = 'dummy_text'
-    reply_service.texts = [
-        TextSendMessage(text=dummy_text)
-    ]
 
     # Act
     reply_service.reply(dummy_event)

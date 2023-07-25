@@ -31,5 +31,5 @@ class DropHanchanByIndexUseCase:
         )
 
         reply_service.add_message(
-            f'現在の対戦結果の第{i}半荘の結果を削除しました。'
+            f'現在の対戦の第{i}半荘の結果を削除しました。'
         )

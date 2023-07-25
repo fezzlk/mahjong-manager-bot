@@ -56,4 +56,4 @@ def test_execute():
     assert hanchan[0].status == 0
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextSendMessage)
-    assert reply_service.texts[0].text == '対戦ID=1の結果を削除しました。'
+    assert reply_service.texts[0].text == '前回の対戦結果を削除しました。'

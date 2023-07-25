@@ -42,7 +42,7 @@ def test_execute():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '[設定]\n4人麻雀\nレート: 点3\n順位点: 1着20,2着10,3着-10,4着-20\n飛び賞: 10点\nチップ: 1枚1点\n計算方法: 3万点以下切り上げ/以上切り捨て'
+    assert reply_service.texts[0].text == '[設定]\n4人麻雀\nレート: 点3\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: 1枚1点\n計算方法: 3万点以下切り上げ/以上切り捨て'
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateSendMessage)
 
@@ -57,7 +57,7 @@ def test_execute_no_settings():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '[設定]\n4人麻雀\nレート: 点0\n順位点: 1着20,2着10,3着-10,4着-20\n飛び賞: 10点\nチップ: 1枚0点\n計算方法: 3万点以下切り上げ/以上切り捨て'
+    assert reply_service.texts[0].text == '[設定]\n4人麻雀\nレート: 点0\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: 1枚0点\n計算方法: 3万点以下切り上げ/以上切り捨て'
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateSendMessage)
 

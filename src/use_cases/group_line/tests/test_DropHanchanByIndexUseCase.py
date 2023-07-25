@@ -71,4 +71,4 @@ def test_execute():
     hanchan = hanchan_repository.find({'_id': 2})
     assert hanchan[0].status == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '半荘ID=2の結果を削除しました。'
+    assert reply_service.texts[0].text == '現在の対戦の第2半荘の結果を削除しました。'

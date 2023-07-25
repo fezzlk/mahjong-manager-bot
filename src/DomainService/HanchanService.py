@@ -105,7 +105,7 @@ class HanchanService(IHanchanService):
             },
             {'status': status},
         )
-        print(update_count)
+
         if update_count > 0:
             print(
                 f'Change hanchan status in group({line_group_id}) to {STATUS_LIST[status]}'

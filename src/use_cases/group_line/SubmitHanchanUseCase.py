@@ -125,8 +125,14 @@ class SubmitHanchanUseCase:
         # current_match = match_service.add_hanchan_id(
         #     line_group_id, updated_hanchan._id)
 
+        # 一半荘の結果をアーカイブ
+        hanchan_service.update_status_active_hanchan(line_group_id, 2)
+
         # 結果の表示
-        hanchans = hanchan_repository.find({'match_id': current.match_id})
+        hanchans = hanchan_repository.find({
+            'match_id': current.match_id,
+            'status': 2,
+        })
 
         sum_hanchans = {}
         for r in hanchans:
@@ -160,9 +166,6 @@ class SubmitHanchanUseCase:
         reply_service.add_message(
             message_service.get_finish_hanchan_message()
         )
-
-        # 一半荘の結果をアーカイブ
-        hanchan_service.update_status_active_hanchan(line_group_id, 2)
 
         # ルームを待機モードにする
         group_service.chmod(line_group_id, GroupMode.wait)
