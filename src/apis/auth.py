@@ -9,12 +9,11 @@ from flask import (
     jsonify,
 )
 from oauth_client import oauth
-from db_setting import Session
 from repositories import web_user_repository
 from linebot import WebhookHandler
 import env_var
 from flask_bcrypt import Bcrypt
-from repositories import user_repository, session_scope
+from repositories import user_repository
 from flask_jwt_extended import create_access_token
 
 handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)
@@ -33,12 +32,10 @@ def api_login():
 
 
 def authenticate(line_user_id: str) -> str:
-    with session_scope() as session:
-        user = user_repository.find_one_by_line_user_id(
-            session, line_user_id=line_user_id)
-        if user is None:
-            raise ValueError('ユーザーがいないか、複数存在します。')
-        return create_access_token(identity=user.line_user_id)
+    users = user_repository.find({'line_user_id': line_user_id})
+    if len(users) == 0:
+        raise ValueError('ユーザーがいないか、複数存在します。')
+    return create_access_token(identity=users[0].line_user_id)
 
 
 @ auth_blueprint.route('/google/login')
@@ -57,11 +54,9 @@ def google_authorize():
     user_info = resp.json()
 
     # ユーザ検索
-    db_session = Session()
     email = user_info['email']
-    web_user = web_user_repository.find_one_by_email(
-        session=db_session,
-        email=email
+    web_user = web_user_repository.find(
+        {'email': email}
     )
 
     # ヒットしない場合は新規登録画面
