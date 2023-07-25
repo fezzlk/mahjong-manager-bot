@@ -24,8 +24,8 @@ class Hanchan:
         line_group_id: str,
         match_id: int,
         status: int,
-        raw_scores: Dict[str, int] = [],
-        converted_scores: Dict[str, int] = [],
+        raw_scores: Dict[str, int] = {},
+        converted_scores: Dict[str, int] = {},
         _id: ObjectId = None,
         original_id: Optional[int] = None,
     ):

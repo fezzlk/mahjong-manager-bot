@@ -1,25 +1,27 @@
 from DomainService import (
-    config_service,
+    group_setting_service,
 )
 from ApplicationService import (
     reply_service,
     request_info_service,
 )
+from DomainModel.entities.GroupSetting import ROUNDING_METHOD_LIST
 
 
 class ReplyGroupSettingsMenuUseCase:
 
     def execute(self, body) -> None:
-        # リクエスト元ルームIDの取得（ルームからのリクエストでなければユーザーID)
-        if request_info_service.req_line_group_id is not None:
-            target_id = request_info_service.req_line_group_id
-        else:
-            target_id = request_info_service.req_line_user_id
-
-        configs = config_service.get_current_settings_by_target(target_id)
+        settings = group_setting_service.find_or_create(request_info_service.req_line_group_id)
 
         if body == '':
-            s = [f'{key}: {str(value)}' for key, value in configs.items()]
-            reply_service.add_message('[設定]\n' + '\n'.join(s))
+            r = settings.ranking_prize
 
+            s = ['[設定]']
+            s.append(f'{settings.num_of_players}人麻雀')
+            s.append(f'レート: 点{settings.rate}')
+            s.append(f'順位点: 1着{r[0]}/2着{r[1]}/3着{r[2]}/4着{r[3]}')
+            s.append(f'飛び賞: {settings.tobi_prize}点')
+            s.append(f'チップ: 1枚{settings.tip_rate}点')
+            s.append(f'計算方法: {ROUNDING_METHOD_LIST[settings.rounding_method]}')
+            reply_service.add_message('\n'.join(s))
         reply_service.add_settings_menu(body)

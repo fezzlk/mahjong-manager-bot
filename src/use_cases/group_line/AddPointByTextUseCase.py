@@ -30,6 +30,10 @@ class AddPointByTextUseCase:
 
         raw_scores = hanchan.raw_scores
 
+        if len(raw_scores) == 0:
+            reply_service.add_message('点数を入力してください。')
+            return
+
         res = [
             f'{user_service.get_name_by_line_user_id(line_user_id)}: {raw_score}'
             for line_user_id, raw_score in raw_scores.items()

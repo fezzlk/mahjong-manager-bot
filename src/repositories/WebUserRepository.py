@@ -28,7 +28,7 @@ class WebUserRepository(IWebUserRepository):
         new_values: Dict[str, any],
     ) -> int:
         new_values['updated_at'] = datetime.now()
-        result = web_users_collection.update_one(query, {'$set': new_values})
+        result = web_users_collection.update_many(query, {'$set': new_values})
         return result.matched_count
 
     def find(

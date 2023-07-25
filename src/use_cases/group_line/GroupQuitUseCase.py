@@ -13,7 +13,7 @@ class GroupQuitUseCase:
 
     def execute(self) -> None:
         line_group_id = request_info_service.req_line_group_id
-        hanchan_service.disable(line_group_id)
+        hanchan_service.update_status_active_hanchan(line_group_id, 0)
         group_service.chmod(
             line_group_id,
             GroupMode.wait,

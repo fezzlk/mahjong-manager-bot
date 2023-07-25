@@ -1,11 +1,14 @@
 from DomainService import (
     match_service,
-    hanchan_service,
 )
 from ApplicationService import (
     request_info_service,
     reply_service,
 )
+from repositories import (
+    hanchan_repository,
+)
+from pymongo import ASCENDING
 
 
 class DropHanchanByIndexUseCase:
@@ -13,17 +16,20 @@ class DropHanchanByIndexUseCase:
     def execute(self, i: int) -> None:
         line_group_id = request_info_service.req_line_group_id
         current_match = match_service.get_current(line_group_id=line_group_id)
-        if current_match is None or len(current_match.hanchan_ids) == 0:
+        if current_match is None:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
             return
-        current = match_service.get_current(line_group_id)
-        hanchan_ids = current.hanchan_ids
-        group_id = request_info_service.req_line_group_id
-        hanchan_service.disabled_by_id(group_id, hanchan_ids[i - 1])
-        reply_service.add_message(
-            f'hanchan _id={hanchan_ids[i - 1]}の結果を削除しました。'
+        hanchans = hanchan_repository.find(
+            {'match_id': current_match._id},
+            [('_id', ASCENDING)])
+        
+        hanchan_repository.update(
+            {'_id': hanchans[i - 1]._id},
+            {'status': 0},
         )
-        hanchan_ids.pop(i - 1)
-        match_service.remove_hanchan_id(hanchan_ids, line_group_id)
+
+        reply_service.add_message(
+            f'現在の対戦結果の第{i}半荘の結果を削除しました。'
+        )

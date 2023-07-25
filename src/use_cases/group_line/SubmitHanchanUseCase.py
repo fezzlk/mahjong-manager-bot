@@ -84,7 +84,10 @@ class SubmitHanchanUseCase:
 
         # その半荘の結果を更新
         hanchan_repository.update(
-            query={'line_group_id': line_group_id},
+            query={
+                'line_group_id': line_group_id,
+                'status': 1,
+            },
             new_values={'converted_scores': calculate_result}
         )
 
@@ -159,7 +162,7 @@ class SubmitHanchanUseCase:
         )
 
         # 一半荘の結果をアーカイブ
-        hanchan_service.archive(line_group_id)
+        hanchan_service.update_status_active_hanchan(line_group_id, 2)
 
         # ルームを待機モードにする
         group_service.chmod(line_group_id, GroupMode.wait)

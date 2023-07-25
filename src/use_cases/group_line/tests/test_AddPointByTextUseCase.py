@@ -200,7 +200,7 @@ def test_execute_not_int_point(case2):
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == 'text'
-    assert reply_service.texts[0].text == '点数は整数で入力してください。'
+    assert reply_service.texts[0].text == '整数で入力してください。'
     hanchans = hanchan_repository.find()
     expected_raw_scores = dummy_hanchans[0].raw_scores
     assert len(hanchans[0].raw_scores) == len(expected_raw_scores)

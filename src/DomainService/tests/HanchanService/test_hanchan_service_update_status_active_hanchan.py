@@ -8,7 +8,8 @@ dummy_hanchans = [
     Hanchan(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=1,
-        match_id=1
+        match_id=1,
+        _id=1,
     )
 ]
 
@@ -20,14 +21,23 @@ def test_ok_hit_hanchan(mocker):
         'find',
         return_value=dummy_hanchans,
     )
+    mock_update = mocker.patch.object(
+        hanchan_repository,
+        'update',
+        return_value=1,
+    )
 
     # Act
-    result = hanchan_service.get_current('G0123456789abcdefghijklmnopqrstu1')
+    hanchan_service.update_status_active_hanchan(
+        'G0123456789abcdefghijklmnopqrstu1',
+        0,
+    )
 
     # Assert
-    assert isinstance(result, Hanchan)
-    assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
-    assert result.status == 1
+    mock_update.assert_called_once_with(
+        {'_id': 1},
+        {'status': 0},
+    )
 
 
 def test_ok_no_hanchan(mocker):
@@ -37,9 +47,17 @@ def test_ok_no_hanchan(mocker):
         'find',
         return_value=[],
     )
+    mock_update = mocker.patch.object(
+        hanchan_repository,
+        'update',
+        return_value=1,
+    )
 
     # Act
-    result = hanchan_service.get_current('G0123456789abcdefghijklmnopqrstu1')
+    hanchan_service.update_status_active_hanchan(
+        'G0123456789abcdefghijklmnopqrstu1',
+        0,
+    )
 
     # Assert
-    assert result is None
+    mock_update.assert_not_called()

@@ -97,29 +97,19 @@ class HanchanService(IHanchanService):
         self,
         line_group_id: str,
         status: int,
-    ) -> Hanchan:
-        current = self.get_current(line_group_id=line_group_id)
-
-        if current is None:
-            return None
-        
+    ) -> None:
         update_count = hanchan_repository.update(
-            {'_id': current._id},
+            {
+                'status': 1,
+                'line_group_id': line_group_id,
+            },
             {'status': status},
         )
-
-        if update_count == 1:
+        print(update_count)
+        if update_count > 0:
             print(
-                f'{STATUS_LIST[status]} hanchan: _id={current._id}'
+                f'Change hanchan status in group({line_group_id}) to {STATUS_LIST[status]}'
             )
-
-        return current
-
-    def archive(self, line_group_id: str) -> Hanchan:
-        return self.update_status_active_hanchan(line_group_id, 2)
-
-    def disable(self, line_group_id: str) -> Hanchan:
-        return self.update_status_active_hanchan(line_group_id, 0)
 
     # # def get_point_and_name_from_text(
     # #     self,

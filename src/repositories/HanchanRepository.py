@@ -25,7 +25,7 @@ class HanchanRepository(IHanchanRepository):
         new_values: Dict[str, any],
     ) -> int:
         new_values['updated_at'] = datetime.now()
-        result = hanchans_collection.update_one(query, {'$set': new_values})
+        result = hanchans_collection.update_many(query, {'$set': new_values})
         return result.matched_count
 
     def find(

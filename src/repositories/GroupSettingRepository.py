@@ -20,6 +20,7 @@ class GroupSettingRepository(IGroupSettingRepository):
             new_dict.pop('_id')
         result = group_settings_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
+
         return new_record
 
     def update(
@@ -28,7 +29,7 @@ class GroupSettingRepository(IGroupSettingRepository):
         new_values: Dict[str, any],
     ) -> int:
         new_values['updated_at'] = datetime.now()
-        result = group_settings_collection.update_one(query, {'$set': new_values})
+        result = group_settings_collection.update_many(query, {'$set': new_values})
         return result.matched_count
     
     def find(
@@ -55,6 +56,7 @@ class GroupSettingRepository(IGroupSettingRepository):
             rate=record["rate"],
             ranking_prize=record["ranking_prize"],
             tobi_prize=record["tobi_prize"],
+            tip_rate=record["tip_rate"],
             num_of_players=record["num_of_players"],
             rounding_method=record["rounding_method"],
         )

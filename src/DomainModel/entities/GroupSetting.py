@@ -3,7 +3,7 @@ from typing import List
 from bson.objectid import ObjectId
 
 RATE_LIST = [0, 1, 2, 3, 4, 5, 10]
-TIP_RATE_LIST = [0, 10]
+TIP_RATE_LIST = [0, 1]
 NUM_OF_PLAYERS_LIST = [3, 4]
 RANKING_PRIZE_LIST = [
     ['20', '10', '-10', '-20'],

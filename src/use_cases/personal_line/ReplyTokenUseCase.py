@@ -33,14 +33,16 @@ class ReplyTokenUseCase:
                 'ユーザが登録されていません。友達追加し直してください。'
             )
             return
+
         response = requests.post(
             env_var.SERVER_URL + env_var.JWT_AUTH_PATH,
             json={
-                '_id': users[0]._id,
+                '_id': str(users[0]._id),
                 'line_user_id': line_user_id,
             },
             headers={'Content-Type': 'application/json'},
         )
+
         jwt_res = JwtResponse(response.json())
         reply_service.add_message(
             'JWT ' + jwt_res.access_token

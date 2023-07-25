@@ -22,11 +22,11 @@ class IHanchanService(metaclass=ABCMeta):
     #     pass
 
     @abstractmethod
-    def archive(self, line_group_id: str) -> Hanchan:
-        pass
-
-    @abstractmethod
-    def disable(self, line_group_id: str) -> Hanchan:
+    def update_status_active_hanchan(
+        self,
+        line_group_id: str,
+        status: int,
+    ) -> None:
         pass
 
     @abstractmethod

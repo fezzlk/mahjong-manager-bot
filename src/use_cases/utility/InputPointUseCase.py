@@ -43,7 +43,7 @@ class InputPointUseCase:
 
         if not point.isdigit():
             reply_service.add_message(
-                '点数は整数で入力してください。',
+                '整数で入力してください。',
             )
             return (None, None)
 
