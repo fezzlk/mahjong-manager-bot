@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from bson.objectid import ObjectId
 
 MATCH_STATUS = ['DISABLE', 'ACTIVE', 'ARCHIVE']
@@ -10,7 +10,6 @@ MATCH_STATUS = ['DISABLE', 'ACTIVE', 'ARCHIVE']
 class Match:
     _id: ObjectId
     line_group_id: str
-    hanchan_ids: List[int]
     status: int
     tip_scores: Dict[str, int]
     created_at: datetime
@@ -20,7 +19,6 @@ class Match:
         self,
         line_group_id: str,
         status: int,
-        hanchan_ids: List[int] = [],
         created_at: datetime = datetime.now(),
         tip_scores: Dict[str, int] = {},
         _id: ObjectId = None,
@@ -28,7 +26,6 @@ class Match:
     ):
         self._id = _id
         self.line_group_id = line_group_id
-        self.hanchan_ids = hanchan_ids
         self.status = status
         self.tip_scores = tip_scores
         self.created_at = created_at

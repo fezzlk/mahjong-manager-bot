@@ -21,7 +21,6 @@ def test_success_find_records():
         assert isinstance(result[i], Match)
         assert type(result[i]._id) == ObjectId
         assert result[i].line_group_id == dummy_matches[i].line_group_id
-        assert result[i].hanchan_ids == dummy_matches[i].hanchan_ids
         assert result[i].status == dummy_matches[i].status
 
 
@@ -58,7 +57,6 @@ def test_hit_1_record():
     assert isinstance(result[0], Match)
     assert type(result[0]._id) == ObjectId
     assert result[0].line_group_id == target_match.line_group_id
-    assert result[0].hanchan_ids == target_match.hanchan_ids
     assert result[0].status == target_match.status
 
 
@@ -86,7 +84,6 @@ def test_hit_records():
         assert isinstance(result[i], Match)
         assert type(result[i]._id) == ObjectId
         assert result[i].line_group_id == target_matches[i].line_group_id
-        assert result[i].hanchan_ids == target_matches[i].hanchan_ids
         assert result[i].status == target_matches[i].status
 
 

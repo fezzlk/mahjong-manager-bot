@@ -28,7 +28,6 @@ def test_hit_with_line_group_id():
     for i in range(len(record_on_db)):
         assert isinstance(record_on_db[i], Match)
         assert record_on_db[i].line_group_id == other_matches[i].line_group_id
-        assert record_on_db[i].hanchan_ids == other_matches[i].hanchan_ids
         assert record_on_db[i].status == other_matches[i].status
 
 
@@ -52,5 +51,4 @@ def test_hit_0_record():
     for i in range(len(record_on_db)):
         assert isinstance(record_on_db[i], Match)
         assert record_on_db[i].line_group_id == dummy_matches[i].line_group_id
-        assert record_on_db[i].hanchan_ids == dummy_matches[i].hanchan_ids
         assert record_on_db[i].status == dummy_matches[i].status

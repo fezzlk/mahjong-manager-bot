@@ -252,31 +252,26 @@ def generate_dummy_match_list() -> List[Match]:
     return [
         Match(
             line_group_id=groups[0].line_group_id,
-            hanchan_ids=[1, 2, 3, 6, 7],
             status=1,
             _id=ObjectId('644c838186bbd9e20a91b783'),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
-            hanchan_ids=[4],
             status=2,
             _id=ObjectId('644c838186bbd9e20a91b784'),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
-            hanchan_ids=[],
             status=0,
             _id=ObjectId('644c838186bbd9e20a91b785'),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
-            hanchan_ids=[],
             status=0,
             _id=ObjectId('644c838186bbd9e20a91b786'),
         ),
         Match(
             line_group_id=groups[1].line_group_id,
-            hanchan_ids=[4],
             status=0,
             _id=ObjectId('644c838186bbd9e20a91b787'),
         ),
