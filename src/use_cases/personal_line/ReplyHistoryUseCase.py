@@ -101,6 +101,6 @@ class ReplyHistoryUseCase:
         plt.clf()
         plt.close()
 
-        # path = f'uploads/personal_history/{req_line_id}.png'
-        # image_url = f'{env_var.SERVER_URL}{path}'
-        # reply_service.add_image(image_url)
+        path = f'uploads/personal_history/{req_line_id}.png'
+        image_url = f'{env_var.SERVER_URL}{path}'
+        reply_service.add_image(image_url)
