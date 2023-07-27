@@ -58,7 +58,7 @@ class ReplyHistoryUseCase:
 
         for match in matches:
             score = 0
-            for hanchan in [hanchan for hanchan in all_hanchans if hanchan.match_id == match]:
+            for hanchan in [hanchan for hanchan in all_hanchans if hanchan.match_id == match._id]:
                 if req_line_id in hanchan.converted_scores:
                     score += hanchan.converted_scores[req_line_id]
             total += score
@@ -78,7 +78,9 @@ class ReplyHistoryUseCase:
             '累計: ' + strTotal
         )
 
+        import matplotlib
         import matplotlib.pyplot as plt
+        matplotlib.use('agg')
         fig = plt.figure()
         plt.xlim([datetime(2021, 2, 1), datetime.today()])
         plt.step(history[0], history[1], where='post')

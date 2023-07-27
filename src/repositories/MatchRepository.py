@@ -49,8 +49,8 @@ class MatchRepository(IMatchRepository):
         return Match(
             line_group_id=record['line_group_id'],
             status=record['status'],
-            hanchan_ids=record['hanchan_ids'],
             created_at=record['created_at'],
             tip_scores=record['tip_scores'],
             _id=record['_id'],
+            original_id=record['original_id'],
         )

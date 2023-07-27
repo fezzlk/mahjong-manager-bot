@@ -8,7 +8,6 @@ from tests.dummies import (
 
 dummy_match = Match(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    hanchan_ids=[1, 2, 3, 6, 7],
     status=1,
 ),
 

@@ -229,7 +229,6 @@ def test_success_assert_sum_point_in_match():
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     dm = deepcopy(dummy_match)
-    dm.hanchan_ids = [1]
     match_repository.create(dm)
     hanchan_repository.create(dummy_archived_hanchan)
     hanchan_repository.create(dummy_disabled_hanchan)
