@@ -7,7 +7,7 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
-from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
+from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
 
 
 class FinishInputTipUseCase:
@@ -26,4 +26,4 @@ class FinishInputTipUseCase:
             return
 
         group_service.chmod(line_group_id, GroupMode.tip_ok)
-        MatchFinishUseCase().execute()
+        FinishMatchUseCase().execute()

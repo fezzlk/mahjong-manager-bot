@@ -16,8 +16,12 @@ class StartInputUseCase:
     def execute(self) -> None:
         line_group_id = request_info_service.req_line_group_id
 
-        if group_service.get_mode(line_group_id) == GroupMode.input:
-            reply_service.add_message('すでに入力モードです')
+        mode = group_service.get_mode(line_group_id)
+        if mode is None:
+            reply_service.add_message('トークルームが登録されていません。招待し直してください。')
+            return
+        if mode == GroupMode.input:
+            reply_service.add_message('すでに入力モードです。')
             return
 
         current_match = match_service.find_or_create_current(line_group_id)

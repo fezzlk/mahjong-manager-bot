@@ -272,16 +272,43 @@ class ReplyService(IReplyService):
             ))
         elif key == 'チップ':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Calculate Method Setting2',
+                alt_text='Tip Rate Setting',
                 template=ButtonsTemplate(
                     title='チップ',
                     text='どれにしますか？',
                     actions=[
                         PostbackAction(
-                            label=f'1枚{i}点',
-                            display_text=f'1枚{i}点',
+                            label=f'1枚{i}円',
+                            display_text=f'1枚{i}円',
                             data=f'_update_config チップ {i}'
-                        ) for i in [0, 1, 2, 3]
+                        ) for i in [0, 10, 30]
+                    ] + [
+                        PostbackAction(
+                            label='1枚50円以上',
+                            display_text='1枚50円以上',
+                            data='_setting 高チップ'
+                        )
+                    ]
+                )
+            ))
+        elif key == '高チップ':
+            self.buttons.append(TemplateSendMessage(
+                alt_text='High Tip Rate Setting',
+                template=ButtonsTemplate(
+                    title='チップ',
+                    text='どれにしますか？',
+                    actions=[
+                        PostbackAction(
+                            label=f'1枚{i}円',
+                            display_text=f'1枚{i}円',
+                            data=f'_update_config チップ {i}'
+                        ) for i in [50, 100, 500]
+                    ] + [
+                        PostbackAction(
+                            label='1枚30円以下',
+                            display_text='1枚30円以下',
+                            data='_setting チップ'
+                        )
                     ]
                 )
             ))

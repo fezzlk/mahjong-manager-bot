@@ -2,6 +2,9 @@ from pymongo import MongoClient
 import env_var
 
 mongo_client = MongoClient(env_var.DATABASE_URL)
+# ローカルから MongoDB Atlas に接続する場合は以下を使用
+# import certifi
+# mongo_client = MongoClient(env_var.DATABASE_URL, tlsCAFile=certifi.where())
 
 line_users_collection = mongo_client.db.line_users
 user_groups_collection = mongo_client.db.user_groups
