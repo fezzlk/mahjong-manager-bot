@@ -14,11 +14,7 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     # @abstractmethod
-    # def update_current_converted_score(
-    #     self,
-    #     line_group_id: str,
-    #     converted_scores: Dict[str, int],
-    # ) -> Hanchan:
+    # def find_or_create_current(self, line_group_id: str, match_id) -> Hanchan:
     #     pass
 
     @abstractmethod

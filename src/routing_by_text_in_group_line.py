@@ -29,7 +29,7 @@ from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHancha
 # from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
 from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
-from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
+from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
 from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
 from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
@@ -133,7 +133,7 @@ def routing_for_group_by_method(method, body):
         DisableMatchUseCase().execute()
     # finish
     elif method == RCommands.finish.name:
-        MatchFinishUseCase().execute()
+        FinishMatchUseCase().execute()
     # fortune
     elif method == RCommands.fortune.name:
         ReplyFortuneUseCase().execute()

@@ -12,7 +12,7 @@ from ApplicationService import (
 from repositories import hanchan_repository
 
 
-class MatchFinishUseCase:
+class FinishMatchUseCase:
 
     def execute(self) -> None:
         line_group_id = request_info_service.req_line_group_id
@@ -25,7 +25,9 @@ class MatchFinishUseCase:
         hanchans = hanchan_repository.find({
             'match_id': current_match._id,
             'line_group_id': request_info_service.req_line_group_id,
+            'status': 2,
         })
+
         if len(hanchans) == 0:
             reply_service.add_message(
                 'まだ対戦結果がありません。')
@@ -51,24 +53,6 @@ class MatchFinishUseCase:
                 sum_hanchans[line_user_id] += converted_score
 
         tip_scores = current_match.tip_scores
-        if tip_rate == 0:
-            # チップなし表記
-            reply_service.add_message(
-                '\n'.join([
-                    f'{user_service.get_name_by_line_user_id(line_user_id)}: {converted_score}'
-                    for line_user_id, converted_score in sum_hanchans.items()
-                ])
-            )
-        else:
-            # チップあり表記
-            show_sum_result_list = []
-            for line_user_id, converted_score in sum_hanchans.items():
-                nullable_tip_count = tip_scores.get(line_user_id)
-                tip_count = 0 if nullable_tip_count is None else nullable_tip_count
-                show_sum_result_list.append(
-                    f'{user_service.get_name_by_line_user_id(line_user_id)}: {converted_score} ({tip_count}枚)')
-            show_sum_result_message = '\n'.join(show_sum_result_list)
-            reply_service.add_message(show_sum_result_message)
 
         rate = settings.rate * 10
         show_prize_money_list = []

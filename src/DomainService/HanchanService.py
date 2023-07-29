@@ -8,34 +8,6 @@ STATUS_LIST = ['disabled', 'active', 'archived']
 
 class HanchanService(IHanchanService):
 
-    # def disabled_by_id(
-    #     self,
-    #     line_group_id: str,
-    #     hanchan_id: int,
-    # ) -> Hanchan:
-    #     """disabled target hanchan"""
-    #     with session_scope() as session:
-    #         target = hanchan_repository.find_one_by_id_and_line_group_id(
-    #             session=session,
-    #             hanchan_id=hanchan_id,
-    #             line_group_id=line_group_id,
-    #         )
-
-    #         if target is None:
-    #             raise ValueError('Not found hanchan')
-
-    #         updated_hanchan = hanchan_repository.update_one_status_by_id(
-    #             session,
-    #             hanchan_id=target._id,
-    #             status=0,
-    #         )
-
-    #         print(
-    #             f'disabled: _id={updated_hanchan._id}'
-    #         )
-
-    #         return updated_hanchan
-
     def add_or_drop_raw_score(
         self,
         line_group_id: str,
@@ -69,30 +41,6 @@ class HanchanService(IHanchanService):
         target.raw_scores = raw_scores
         return target
 
-    # def update_current_converted_score(
-    #     self,
-    #     line_group_id: str,
-    #     converted_scores: Dict[str, int],
-    # ) -> Hanchan:
-    #     with session_scope() as session:
-    #         target = hanchan_repository.find_and_status(
-    #             session=session,
-    #             line_group_id=line_group_id,
-    #             status=1,
-    #         )
-
-    #         if target is None:
-    #             raise ValueError('Not found hanchan')
-
-    #         updated_hanchan = hanchan_repository.update_one_converted_scores_by_id(
-    #             session=session, hanchan_id=target._id, converted_scores=converted_scores)
-
-    #         print(
-    #             f'update hanchan: _id={updated_hanchan._id}'
-    #         )
-
-    #     return updated_hanchan
-
     def update_status_active_hanchan(
         self,
         line_group_id: str,
@@ -111,25 +59,13 @@ class HanchanService(IHanchanService):
                 f'Change hanchan status in group({line_group_id}) to {STATUS_LIST[status]}'
             )
 
-    # # def get_point_and_name_from_text(
-    # #     self,
-    # #     text: str,
-    # # ) -> Tuple[str, str]:
-    # #     s = text.split()
-    # #     if len(s) >= 2:
-    # #         # ユーザー名に空白がある場合を考慮し、最後の要素をポイント、そのほかをユーザー名として判断する
-    # #         return s[-1], ' '.join(s[:-1])
-    # #     # fixme: ユーザー名「taro 100」の点数を削除しようとした場合に上の条件にひっかかる
-    # #     # 名前のみによるメッセージでの削除機能自体をやめるか(更新できるから削除は需要ない)
-    # #     elif len(s) == 1:
-    # #         return 'delete', s[0]
-
-    # def find_or_create_current(self, line_group_id: str) -> Hanchan:
+    # def find_or_create_current(self, line_group_id: str, match_id) -> Hanchan:
     #     current = self.get_current(line_group_id)
 
     #     if current is None:
     #         new_hanchan = Hanchan(
     #             line_group_id=line_group_id,
+    #             match_id=match_id,
     #             status=1,
     #         )
     #         hanchan_repository.create(new_hanchan)
