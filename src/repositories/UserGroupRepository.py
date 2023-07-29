@@ -1,95 +1,50 @@
-from typing import List
-from db_models import UserGroupModel
-from DomainModel.IRepositories.IUserGroupRepository import IUserGroupRepository
+from typing import List, Dict, Tuple
+from pymongo import ASCENDING
+from mongo_client import user_groups_collection
 from DomainModel.entities.UserGroup import UserGroup
-from sqlalchemy.orm.session import Session as BaseSession
+from DomainModel.IRepositories.IUserGroupRepository import IUserGroupRepository
 
 
 class UserGroupRepository(IUserGroupRepository):
 
     def create(
         self,
-        session: BaseSession,
-        new_user_group: UserGroup,
+        new_record: UserGroup,
     ) -> UserGroup:
-        record = UserGroupModel(
-            line_user_id=new_user_group.line_user_id,
-            line_group_id=new_user_group.line_group_id,
-        )
-        session.add(record)
-        session.commit()
-        return new_user_group
+        if len(self.find(query={
+            'line_user_id': new_record.line_user_id,
+            'line_group_id': new_record.line_group_id,
+        })) != 0:
+            raise Exception(f'LINE User ID({new_record.line_user_id}とLINE Group ID({new_record.line_group_id}) のUserGroupはすでに存在しています。')
 
-    def find_all(
+        new_dict = new_record.__dict__.copy()
+        if new_record._id is None:
+            new_dict.pop('_id')
+        result = user_groups_collection.insert_one(new_dict)
+        new_record._id = result.inserted_id
+        return new_record
+
+    def find(
         self,
-        session: BaseSession,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[UserGroup]:
-        records = session\
-            .query(UserGroupModel)\
-            .order_by(UserGroupModel.line_group_id, UserGroupModel.line_user_id)\
-            .all()
+        records = user_groups_collection\
+            .find(filter=query)\
+            .sort(sort)
+        return [self._mapping_record_to_domain(record) for record in records]
 
-        return [
-            self._mapping_record_to_user_group_domain(record)
-            for record in records
-        ]
-
-    def find_by_line_group_id(
+    def delete(
         self,
-        session: BaseSession,
-        line_group_id: str
-    ) -> List[UserGroup]:
-        records = session\
-            .query(UserGroupModel)\
-            .filter(
-                UserGroupModel.line_group_id == line_group_id,
-            )\
-            .all()
+        query: Dict[str, any] = {},
+    ) -> int:
+        result = user_groups_collection.delete_many(filter=query)
+        return result.deleted_count
 
-        return [
-            self._mapping_record_to_user_group_domain(record)
-            for record in records
-        ]
-
-    def find_by_line_user_id(
-        self,
-        session: BaseSession,
-        line_user_id: str
-    ) -> List[UserGroup]:
-        records = session\
-            .query(UserGroupModel)\
-            .filter(
-                UserGroupModel.line_user_id == line_user_id,
-            )\
-            .all()
-
-        return [
-            self._mapping_record_to_user_group_domain(record)
-            for record in records
-        ]
-
-    def find_one(
-        self,
-        session: BaseSession,
-        line_group_id: str,
-        line_user_id: str,
-    ) -> UserGroup:
-        record = session\
-            .query(UserGroupModel)\
-            .filter(
-                UserGroupModel.line_group_id == line_group_id,
-                UserGroupModel.line_user_id == line_user_id,
-            )\
-            .first()
-
-        if record is None:
-            return None
-
-        return self._mapping_record_to_user_group_domain(record)
-
-    def _mapping_record_to_user_group_domain(
-            self, record: UserGroupModel) -> UserGroup:
+    def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserGroup:
         return UserGroup(
-            line_user_id=record.line_user_id,
-            line_group_id=record.line_group_id,
+            line_user_id=record["line_user_id"],
+            line_group_id=record["line_group_id"],
+            _id=record["_id"],
         )
+

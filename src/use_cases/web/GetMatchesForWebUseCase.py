@@ -7,4 +7,4 @@ class GetMatchesForWebUseCase:
 
     def execute(self) -> List[Match]:
         with session_scope() as session:
-            return match_repository.find_all(session=session)
+            return match_repository.find(session=session)

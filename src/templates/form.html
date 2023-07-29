@@ -3,7 +3,12 @@
   {% for k in keys %}
   <p>
     <label for="{{ k }}">{{ k }}:</label>
-    <input type="text" name="{{ k }}" id="{{ k }}" value="{{ init_data[k] }}" />
+    <input
+      type="text"
+      name="{{ k }}"
+      _id="{{ k }}"
+      value="{{ init_data[k] }}"
+    />
   </p>
   {% endfor %}
   <p>

@@ -5,7 +5,7 @@ from ApplicationService import (
     request_info_service,
 )
 import requests
-from repositories import user_repository, session_scope
+from repositories import user_repository
 import env_var
 
 
@@ -25,17 +25,24 @@ class ReplyTokenUseCase:
 
     def execute(self) -> None:
         line_user_id = request_info_service.req_line_user_id
-        with session_scope() as session:
-            user = user_repository.find_one_by_line_user_id(
-                session, line_user_id)
+        users = user_repository.find(
+            query={'line_user_id': line_user_id},
+        )
+        if len(users) == 0:
+            reply_service.add_message(
+                'ユーザが登録されていません。友達追加し直してください。'
+            )
+            return
+
         response = requests.post(
             env_var.SERVER_URL + env_var.JWT_AUTH_PATH,
             json={
-                '_id': user._id,
+                '_id': str(users[0]._id),
                 'line_user_id': line_user_id,
             },
             headers={'Content-Type': 'application/json'},
         )
+
         jwt_res = JwtResponse(response.json())
         reply_service.add_message(
             'JWT ' + jwt_res.access_token

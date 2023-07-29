@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
+from typing import List, Dict
 from DomainModel.entities.UserMatch import UserMatch
-from sqlalchemy.orm.session import Session as BaseSession
 
 
 class IUserMatchRepository(metaclass=ABCMeta):
@@ -9,31 +8,20 @@ class IUserMatchRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        session: BaseSession,
-        new_user_match: UserMatch,
+        new_record: UserMatch,
     ) -> UserMatch:
         pass
 
     @abstractmethod
-    def find_all(
+    def find(
         self,
-        session: BaseSession,
+        query: Dict[str, any] = {},
     ) -> List[UserMatch]:
         pass
 
     @abstractmethod
-    def find_by_user_ids(
+    def delete(
         self,
-        session: BaseSession,
-        user_ids: List[str],
-    ) -> List[UserMatch]:
+        query: Dict[str, any] = {},
+    ) -> int:
         pass
-
-    @abstractmethod
-    def find_by_match_id(
-        self,
-        session: BaseSession,
-        match_id: int,
-    ) -> List[UserMatch]:
-        pass
-    

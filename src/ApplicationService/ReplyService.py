@@ -14,6 +14,7 @@ from messaging_api_setting import line_bot_api
 from .interfaces.IReplyService import IReplyService
 from linebot.models.events import Event
 from linebot.exceptions import LineBotApiError
+from DomainModel.entities.GroupSetting import ROUNDING_METHOD_LIST
 
 
 class ReplyService(IReplyService):
@@ -94,9 +95,9 @@ class ReplyService(IReplyService):
         )
 
     def add_settings_menu(self, key: str = '') -> None:
-        if key == '':
-            button = TemplateSendMessage(
-                alt_text='Settings Menu',
+        if key == '' or key == 'メニュー1':
+            self.buttons.append(TemplateSendMessage(
+                alt_text='Settings Menu1',
                 template=ButtonsTemplate(
                     title='設定',
                     text='変更したい項目を選んでください。',
@@ -119,14 +120,14 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label='飛び賞、端数計算方法',
                             display_text='飛び賞、端数計算方法',
-                            data='_setting その他'
+                            data='_setting メニュー2'
                         ),
                     ]
                 )
-            )
-        if key == 'その他':
-            button = TemplateSendMessage(
-                alt_text='Settings Menu',
+            ))
+        if key == 'メニュー2':
+            self.buttons.append(TemplateSendMessage(
+                alt_text='Settings Menu2',
                 template=ButtonsTemplate(
                     title='設定',
                     text='変更したい項目を選んでください。',
@@ -144,13 +145,13 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label='レート、順位点、チップ',
                             display_text='レート、順位点、チップ',
-                            data='_setting'
+                            data='_setting メニュー1'
                         ),
                     ]
                 )
-            )
+            ))
         elif key == 'レート':
-            button = TemplateSendMessage(
+            self.buttons.append(TemplateSendMessage(
                 alt_text='Low Rate Setting',
                 template=ButtonsTemplate(
                     title='レート変更',
@@ -159,7 +160,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label=f'点{i}',
                             display_text=f'点{i}',
-                            data=f'_update_config レート 点{i}'
+                            data=f'_update_config レート {i}'
                         ) for i in range(1, 4)
                     ] + [
                         PostbackAction(
@@ -169,9 +170,9 @@ class ReplyService(IReplyService):
                         )
                     ]
                 )
-            )
+            ))
         elif key == '高レート':
-            button = TemplateSendMessage(
+            self.buttons.append(TemplateSendMessage(
                 alt_text='High Rate Setting',
                 template=ButtonsTemplate(
                     title='レート変更',
@@ -180,7 +181,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label=f'点{i}',
                             display_text=f'点{i}',
-                            data=f'_update_config レート 点{i}'
+                            data=f'_update_config レート {i}'
                         ) for i in [4, 5, 10]
                     ] + [
                         PostbackAction(
@@ -190,27 +191,27 @@ class ReplyService(IReplyService):
                         )
                     ]
                 )
-            )
+            ))
         elif key == '順位点':
-            button = TemplateSendMessage(
+            self.buttons.append(TemplateSendMessage(
                 alt_text='Ranking Point Setting',
                 template=ButtonsTemplate(
                     title='順位点変更',
                     text='いくらにしますか？',
                     actions=[
                         PostbackAction(
-                            label=i,
-                            display_text=i,
-                            data=f'_update_config 順位点 {i}'
+                            label='/'.join(i),
+                            display_text='/'.join(i),
+                            data=f"_update_config 順位点 {','.join(i)}"
                         ) for i in [
-                            ','.join(['20', '10', '-10', '-20']),
-                            ','.join(['30', '10', '-10', '-30']),
+                            ['20', '10', '-10', '-20'],
+                            ['30', '10', '-10', '-30'],
                         ]
                     ]
                 )
-            )
+            ))
         elif key == '飛び賞':
-            button = TemplateSendMessage(
+            self.buttons.append(TemplateSendMessage(
                 alt_text='Tobi Bonus Setting',
                 template=ButtonsTemplate(
                     title='飛び賞変更',
@@ -223,25 +224,21 @@ class ReplyService(IReplyService):
                         ) for i in [0, 10, 20, 30]
                     ]
                 )
-            )
+            ))
 
         elif key == '端数計算方法':
-            button = TemplateSendMessage(
+            self.buttons.append(TemplateSendMessage(
                 alt_text='Calculate Method Setting1',
                 template=ButtonsTemplate(
                     title='端数計算方法変更',
                     text='どれにしますか？',
                     actions=[
                         PostbackAction(
-                            label=i,
-                            display_text=i,
+                            label=ROUNDING_METHOD_LIST[i],
+                            display_text=ROUNDING_METHOD_LIST[i],
                             data=f'_update_config 端数計算方法 {i}'
                         )
-                        for i in [
-                            '3万点以下切り上げ/以上切り捨て',
-                            '五捨六入',
-                            '四捨五入',
-                        ]
+                        for i in range(3)
                     ] + [
                         PostbackAction(
                             label='その他',
@@ -250,23 +247,20 @@ class ReplyService(IReplyService):
                         )
                     ]
                 )
-            )
+            ))
 
         elif key == '端数計算方法2':
-            button = TemplateSendMessage(
+            self.buttons.append(TemplateSendMessage(
                 alt_text='Calculate Method Setting2',
                 template=ButtonsTemplate(
                     title='端数計算方法変更',
                     text='どれにしますか？',
                     actions=[
                         PostbackAction(
-                            label=i,
-                            display_text=i,
+                            label=ROUNDING_METHOD_LIST[i],
+                            display_text=ROUNDING_METHOD_LIST[i],
                             data=f'_update_config 端数計算方法 {i}'
-                        ) for i in [
-                            '切り捨て',
-                            '切り上げ',
-                        ]
+                        ) for i in range(3, 5)
                     ] + [
                         PostbackAction(
                             label='その他',
@@ -275,10 +269,10 @@ class ReplyService(IReplyService):
                         )
                     ]
                 )
-            )
+            ))
         elif key == 'チップ':
-            button = TemplateSendMessage(
-                alt_text='Calculate Method Setting2',
+            self.buttons.append(TemplateSendMessage(
+                alt_text='Tip Rate Setting',
                 template=ButtonsTemplate(
                     title='チップ',
                     text='どれにしますか？',
@@ -287,12 +281,37 @@ class ReplyService(IReplyService):
                             label=f'1枚{i}円',
                             display_text=f'1枚{i}円',
                             data=f'_update_config チップ {i}'
-                        ) for i in [0, 10, 20, 30]
+                        ) for i in [0, 10, 30]
+                    ] + [
+                        PostbackAction(
+                            label='1枚50円以上',
+                            display_text='1枚50円以上',
+                            data='_setting 高チップ'
+                        )
                     ]
                 )
-            )
-
-        self.buttons.append(button)
+            ))
+        elif key == '高チップ':
+            self.buttons.append(TemplateSendMessage(
+                alt_text='High Tip Rate Setting',
+                template=ButtonsTemplate(
+                    title='チップ',
+                    text='どれにしますか？',
+                    actions=[
+                        PostbackAction(
+                            label=f'1枚{i}円',
+                            display_text=f'1枚{i}円',
+                            data=f'_update_config チップ {i}'
+                        ) for i in [50, 100, 500]
+                    ] + [
+                        PostbackAction(
+                            label='1枚30円以下',
+                            display_text='1枚30円以下',
+                            data='_setting チップ'
+                        )
+                    ]
+                )
+            ))
 
     def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
         self.buttons.append(
@@ -305,7 +324,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label=player_id_and_name['name'],
                             display_text=player_id_and_name['name'],
-                            data='_tobi ' + player_id_and_name['id'],
+                            data='_tobi ' + player_id_and_name['_id'],
                         ) for player_id_and_name in player_id_and_names
                     ] + [
                         PostbackAction(
@@ -363,8 +382,6 @@ class ReplyService(IReplyService):
                     to=env_var.SERVER_ADMIN_LINE_USER_ID,
                     message=str(err),
                 )
-
-        self.reset()
 
     def push_a_message(self, to: str, message: str) -> None:
         line_bot_api.push_message(to, [TextSendMessage(text=message)])

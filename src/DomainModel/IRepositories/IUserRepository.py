@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from typing import List
+from typing import Dict, List, Tuple
 from DomainModel.entities.User import User
-from sqlalchemy.orm.session import Session as BaseSession
+from pymongo import ASCENDING
 
 
 class IUserRepository(metaclass=ABCMeta):
@@ -9,80 +9,29 @@ class IUserRepository(metaclass=ABCMeta):
     @abstractmethod
     def create(
         self,
-        session: BaseSession,
-        new_user: User,
+        new_record: User,
     ) -> User:
         pass
 
     @abstractmethod
-    def delete_by_ids(
+    def delete(
         self,
-        session: BaseSession,
-        ids: List[int],
+        query: Dict[str, any] = {},
     ) -> int:
         pass
 
     @abstractmethod
-    def delete_by_line_user_id(
+    def find(
         self,
-        session: BaseSession,
-        line_user_id: str,
-    ) -> int:
-        pass
-
-    @abstractmethod
-    def find_all(
-        self,
-        session: BaseSession,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[User]:
-        pass
-
-    @abstractmethod
-    def find_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[str],
-    ) -> List[User]:
-        pass
-
-    @abstractmethod
-    def find_one_by_line_user_id(
-        self,
-        session: BaseSession,
-        line_user_id: str,
-    ) -> User:
-        pass
-
-    @abstractmethod
-    def find_by_name(
-        self,
-        session: BaseSession,
-        line_user_name: str,
-    ) -> User:
-        pass
-
-    @abstractmethod
-    def update_one_mode_by_line_user_id(
-        self,
-        session: BaseSession,
-        line_user_id: str,
-        mode: str,
-    ) -> User:
-        pass
-
-    @abstractmethod
-    def update_one_zoom_url_by_line_user_id(
-        self,
-        session: BaseSession,
-        line_user_id: str,
-        zoom_url: str,
-    ) -> User:
         pass
 
     @abstractmethod
     def update(
         self,
-        session: BaseSession,
-        target: User,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
     ) -> int:
         pass

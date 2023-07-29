@@ -7,7 +7,7 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
-from use_cases.group_line.MatchFinishUseCase import MatchFinishUseCase
+from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
 
 
 class FinishInputTipUseCase:
@@ -21,9 +21,9 @@ class FinishInputTipUseCase:
 
         if sum_tip_count != 0:
             reply_service.add_message(
-                f'チップ増減数の合計が{("+" if sum_tip_count > 0 else "") + str(sum_tip_count)}です。0になるようにしてください。（中断する場合は「_exit」）'
+                f'チップ増減数の合計が{("+" if sum_tip_count > 0 else "") + str(sum_tip_count)}です。0になるようにしてください。）'
             )
             return
 
         group_service.chmod(line_group_id, GroupMode.tip_ok)
-        MatchFinishUseCase().execute()
+        FinishMatchUseCase().execute()

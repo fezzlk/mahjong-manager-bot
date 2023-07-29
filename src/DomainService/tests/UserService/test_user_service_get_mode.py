@@ -1,48 +1,44 @@
-import pytest
-from DomainService import UserService
-from repositories import (
-    user_repository, session_scope
+from DomainService import (
+    user_service,
 )
-from tests.dummies import generate_dummy_user_list
+from repositories import user_repository
+from DomainModel.entities.User import User, UserMode
 
-dummy_users = generate_dummy_user_list()[0:3]
+dummy_users = [
+    User(
+        line_user_name="test_user1",
+        line_user_id="U0123456789abcdefghijklmnopqrstu1",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user1",
+    )
+]
 
 
-def test_success():
-    # Arrage
-    user_service = UserService()
-
-    with session_scope() as session:
-        for dummy_user in dummy_users:
-            user_repository.create(
-                session=session,
-                new_user=dummy_user,
-            )
-
-    # Act
-    result = user_service.get_mode(
-        line_user_id=dummy_users[0].line_user_id,
+def test_ok(mocker):
+    # Arrange
+    mocker.patch.object(
+        user_repository,
+        'find',
+        return_value=dummy_users,
     )
 
+    # Act
+    result = user_service.get_mode(line_user_id='hoge')
+
     # Assert
-    assert result == dummy_users[0].mode
+    assert result == 'wait'
 
 
-def test_fail_not_found():
-    with pytest.raises(ValueError):
-        # Arrage
-        user_service = UserService()
+def test_ng_no_user(mocker):
+    # Arrange
+    mocker.patch.object(
+        user_repository,
+        'find',
+        return_value=[],
+    )
 
-        with session_scope() as session:
-            for dummy_user in dummy_users[:2]:
-                user_repository.create(
-                    session=session,
-                    new_user=dummy_user,
-                )
+    # Act
+    result = user_service.get_mode(line_user_id='hoge')
 
-        # Act
-        user_service.get_mode(
-            line_user_id=dummy_users[2].line_user_id,
-        )
-
-        # Assert
+    # Assert
+    assert result is None

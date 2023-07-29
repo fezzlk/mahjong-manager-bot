@@ -12,7 +12,7 @@ from messaging_api_setting import line_bot_api
 
 
 def test_execute(mocker):
-    # Arrage
+    # Arrange
     dummy_event = generate_dummy_text_message_event_from_user()
     request_info_service.set_req_info(event=dummy_event)
     use_case = FollowUseCase()

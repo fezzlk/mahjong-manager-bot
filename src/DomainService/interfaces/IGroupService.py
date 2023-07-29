@@ -9,28 +9,13 @@ class IGroupService(metaclass=ABCMeta):
         self,
         line_group_id: str,
         mode: GroupMode,
-    ) -> Group:
+    ) -> None:
         pass
 
     @abstractmethod
-    def find_or_create(self, group_id: str) -> Group:
+    def find_or_create(self, line_group_id: str) -> Group:
         pass
 
     @abstractmethod
-    def get_mode(self, group_id: str) -> GroupMode:
-        pass
-
-    @abstractmethod
-    def set_zoom_url(
-        self,
-        line_group_id: str,
-        zoom_url: str,
-    ) -> Group:
-        pass
-
-    @abstractmethod
-    def get_zoom_url(
-        self,
-        line_group_id: str,
-    ) -> str:
+    def get_mode(self, line_group_id: str) -> GroupMode:
         pass

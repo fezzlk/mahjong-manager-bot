@@ -1,12 +1,12 @@
 """services"""
-from .ConfigService import ConfigService
-from .HanchanService import HanchanService
-from .MatchService import MatchService
-from .GroupService import GroupService
 from .UserService import UserService
+from .GroupService import GroupService
+from .GroupSettingService import GroupSettingService
+from .MatchService import MatchService
+from .HanchanService import HanchanService
 
-config_service = ConfigService()
-hanchan_service = HanchanService()
-match_service = MatchService()
-group_service = GroupService()
 user_service = UserService()
+group_service = GroupService()
+group_setting_service = GroupSettingService()
+match_service = MatchService()
+hanchan_service = HanchanService()

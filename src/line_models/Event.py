@@ -17,7 +17,7 @@ class Event:
         mode='active',
     ):
         self.type = event_type
-        self.replyToken = 'dummy_reply_token'
+        self.reply_token = 'dummy_reply_token'
         self.source = Source(
             user_id=user_id,
             source_type=source_type,

@@ -1,153 +1,61 @@
-from typing import List, Optional
-from db_models import WebUserModel
-from DomainModel.IRepositories.IWebUserRepository import IWebUserRepository
+from typing import List, Dict, Tuple
+from datetime import datetime
+from pymongo import ASCENDING
+from mongo_client import web_users_collection
 from DomainModel.entities.WebUser import WebUser
-from sqlalchemy.orm.session import Session as BaseSession
+from DomainModel.IRepositories.IWebUserRepository import IWebUserRepository
 
 
 class WebUserRepository(IWebUserRepository):
 
     def create(
         self,
-        session: BaseSession,
-        new_web_user: WebUser,
+        new_record: WebUser,
     ) -> WebUser:
-        record = WebUserModel(
-            user_code=new_web_user.user_code,
-            name=new_web_user.name,
-            email=new_web_user.email,
-            linked_line_user_id=new_web_user.linked_line_user_id,
-            is_approved_line_user=new_web_user.is_approved_line_user,
-        )
-        session.add(record)
-        session.commit()
-        return self._mapping_record_to_web_user_domain(record)
+        if len(self.find(query={'user_code': new_record.user_code})) != 0:
+            raise Exception(f'User Code: {new_record.user_code} のWeb Userはすでに存在しています。')
 
-    def find_all(
+        new_dict = new_record.__dict__.copy()
+        if new_record._id is None:
+            new_dict.pop('_id')
+        result = web_users_collection.insert_one(new_dict)
+        new_record._id = result.inserted_id
+        return new_record
+
+    def update(
         self,
-        session: BaseSession,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
+    ) -> int:
+        new_values['updated_at'] = datetime.now()
+        result = web_users_collection.update_many(query, {'$set': new_values})
+        return result.matched_count
+
+    def find(
+        self,
+        query: Dict[str, any] = {},
+        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[WebUser]:
-        records = session\
-            .query(WebUserModel)\
-            .order_by(WebUserModel.id)\
-            .all()
+        records = web_users_collection\
+            .find(filter=query)\
+            .sort(sort)
+        return [self._mapping_record_to_domain(record) for record in records]
 
-        return [
-            self._mapping_record_to_web_user_domain(record)
-            for record in records
-        ]
-
-    def find_by_id(
+    def delete(
         self,
-        session: BaseSession,
-        id: str,
-    ) -> WebUser:
-        record = session\
-            .query(WebUserModel)\
-            .filter(WebUserModel.id == id)\
-            .first()
-        
-        if record is None:
-            return None
+        query: Dict[str, any] = {},
+    ) -> int:
+        result = web_users_collection.delete_many(filter=query)
+        return result.deleted_count
 
-        return self._mapping_record_to_web_user_domain(record)
-
-    def find_by_ids(
-        self,
-        session: BaseSession,
-        ids: List[str],
-    ) -> List[WebUser]:
-        records = session\
-            .query(WebUserModel)\
-            .filter(WebUserModel.id.in_(ids))\
-            .order_by(WebUserModel.id)\
-            .all()
-        
-        return [
-            self._mapping_record_to_web_user_domain(record)
-            for record in records
-        ]
-
-    def find_one_by_email(
-        self,
-        session: BaseSession,
-        email: str,
-    ) -> Optional[WebUser]:
-        record = session\
-            .query(WebUserModel)\
-            .filter(WebUserModel.email == email)\
-            .order_by(WebUserModel.id)\
-            .first()
-
-        if record is None:
-            return None
-
-        return self._mapping_record_to_web_user_domain(record)
-
-    def approve_line(
-        self,
-        session: BaseSession,
-        id: str,
-    ) -> Optional[WebUser]:
-        record: WebUserModel = session\
-            .query(WebUserModel)\
-            .filter(WebUserModel.id == id)\
-            .first()
-
-        if record is None:
-            return None
-
-        record.is_approved_line_user = True
-        session.commit()
-
-        return self._mapping_record_to_web_user_domain(record)
-
-    def reset_line(
-        self,
-        session: BaseSession,
-        id: str,
-    ) -> Optional[WebUser]:
-        record: WebUserModel = session\
-            .query(WebUserModel)\
-            .filter(WebUserModel.id == id)\
-            .first()
-
-        if record is None:
-            return None
-
-        record.is_approved_line_user = False
-        record.linked_line_user_id = ''
-        session.commit()
-        return self._mapping_record_to_web_user_domain(record)
-
-    def update_linked_line_user_id(
-        self,
-        session: BaseSession,
-        id: str,
-        line_user_id: str,
-    ) -> Optional[WebUser]:
-        record: WebUserModel = session\
-            .query(WebUserModel)\
-            .filter(WebUserModel.id == id)\
-            .first()
-
-        if record is None:
-            return None
-
-        record.linked_line_user_id = line_user_id
-        session.commit()
-        return self._mapping_record_to_web_user_domain(record)
-
-    def _mapping_record_to_web_user_domain(
-        self,
-        record: WebUserModel
-    ) -> WebUser:
+    def _mapping_record_to_domain(self, record: Dict[str, any]) -> WebUser:
         return WebUser(
-            _id=record.id,
-            name=record.name,
-            email=record.email,
-            linked_line_user_id=record.linked_line_user_id,
-            is_approved_line_user=record.is_approved_line_user,
-            created_at=record.created_at,
-            updated_at=record.updated_at,
+            _id=record["_id"],
+            user_code=record["user_code"],
+            name=record["name"],
+            email=record["email"],
+            linked_line_user_id=record["linked_line_user_id"],
+            is_approved_line_user=record["is_approved_line_user"],
+            created_at=record["created_at"],
+            updated_at=record["updated_at"],
         )

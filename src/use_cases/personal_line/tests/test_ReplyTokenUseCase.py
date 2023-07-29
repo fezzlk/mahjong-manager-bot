@@ -5,17 +5,14 @@ from ApplicationService import (
     reply_service,
 )
 from line_models.Event import Event
-from repositories import session_scope, user_repository
+from repositories import user_repository
 import requests
 
 dummy_user = User(
     line_user_name="test_user1",
     line_user_id="U0123456789abcdefghijklmnopqrstu1",
-    zoom_url="https://us00web.zoom.us/j/01234567891?pwd=abcdefghijklmnopqrstuvwxyz",
     mode=UserMode.wait.value,
     jantama_name="jantama_user1",
-    matches=[],
-    _id=1,
 )
 
 dummy_event = Event(
@@ -33,9 +30,8 @@ class Dummy:
 
 
 def test_execute(mocker):
-    # Arrage
-    with session_scope() as session:
-        user_repository.create(session, dummy_user)
+    # Arrange
+    user_repository.create(dummy_user)
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyTokenUseCase()
     dummy_response = Dummy()
@@ -55,3 +51,29 @@ def test_execute(mocker):
 
     # Assert
     assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == 'JWT hoge'
+
+
+def test_execute_no_user(mocker):
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyTokenUseCase()
+    dummy_response = Dummy()
+    mocker.patch.object(
+        requests,
+        'post',
+        return_value=dummy_response,
+    )
+    mocker.patch.object(
+        dummy_response,
+        'json',
+        return_value={'access_token': 'hoge'},
+    )
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == 'ユーザが登録されていません。友達追加し直してください。'
+                

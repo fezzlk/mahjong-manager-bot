@@ -7,4 +7,4 @@ class GetHanchansForWebUseCase:
 
     def execute(self) -> List[Hanchan]:
         with session_scope() as session:
-            return hanchan_repository.find_all(session=session)
+            return hanchan_repository.find(session=session)

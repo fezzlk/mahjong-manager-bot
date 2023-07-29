@@ -2,10 +2,8 @@ from dataclasses import dataclass
 from typing import Generic, TypeVar
 from flask import Request
 from flask.sessions import SessionMixin
-from repositories import (
-    web_user_repository, session_scope
-)
 from DomainModel.entities.WebUser import WebUser
+from repositories import web_user_repository
 
 
 @dataclass()
@@ -58,13 +56,12 @@ class PageContents(Generic[T]):
         self.session = dict(session)
         self.login_user = None
         login_user_id: str = session.get('login_user_id', None)
-        with session_scope() as db_session:
-            login_user = web_user_repository.find_by_id(
-                session=db_session, id=login_user_id
-            )
+        login_user = web_user_repository.find(
+            {'_id': login_user_id}
+        )
 
-            if login_user is not None:
-                self.login_user = login_user
+        if login_user is not None:
+            self.login_user = login_user
 
         self.next_page_url = session.get('next_page_url', '')
         self.line_user_name = ''

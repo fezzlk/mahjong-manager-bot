@@ -1,48 +1,71 @@
-import pytest
-from DomainService import UserService
-from repositories import (
-    user_repository, session_scope
+from DomainService import (
+    user_service,
 )
-from tests.dummies import generate_dummy_user_list
+from repositories import user_repository
+from DomainModel.entities.User import User, UserMode
+from line_models.Profile import Profile
 
-dummy_users = generate_dummy_user_list()[1:4]
+dummy_users = [
+    User(
+        line_user_name="test_user1",
+        line_user_id="U0123456789abcdefghijklmnopqrstu1",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user1",
+    ),
+    User(
+        line_user_name="test_user1",
+        line_user_id="U0123456789abcdefghijklmnopqrstu2",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user2",
+    )
+]
+
+dummy_profile = Profile(
+    display_name='profile',
+    user_id='U0123456789abcdefghijklmnopqrstu1',
+)
 
 
-def test_success_get_line_user_id():
-    # Arrage
-    user_service = UserService()
-
-    with session_scope() as session:
-        for dummy_user in dummy_users:
-            user_repository.create(
-                session=session,
-                new_user=dummy_user,
-            )
-
-    # Act
-    result = user_service.get_line_user_id_by_name(
-        line_user_name=dummy_users[0].line_user_name,
+def test_ok_hit_user(mocker):
+    # Arrange
+    mocker.patch.object(
+        user_repository,
+        'find',
+        return_value=dummy_users[:1],
     )
 
+    # Act
+    result = user_service.get_line_user_id_by_name(line_user_name='test_user1')
+
     # Assert
-    assert result == dummy_users[0].line_user_id
+    assert result == 'U0123456789abcdefghijklmnopqrstu1'
 
 
-def test_fail_because_hit_multi_user():
-    with pytest.raises(ValueError):
-        # Arrage
-        user_service = UserService()
+def test_ok_no_user(mocker):
+    # Arrange
+    mocker.patch.object(
+        user_repository,
+        'find',
+        return_value=[],
+    )
 
-        with session_scope() as session:
-            for dummy_user in dummy_users:
-                user_repository.create(
-                    session=session,
-                    new_user=dummy_user,
-                )
+    # Act
+    result = user_service.get_line_user_id_by_name(line_user_name='test_user1')
 
-        # Act
-        user_service.get_line_user_id_by_name(
-            line_user_name=dummy_users[1].line_user_name,
-        )
+    # Assert
+    assert result is None
 
-        # Assert
+
+def test_ok_hit_multi_user(mocker):
+    # Arrange
+    mocker.patch.object(
+        user_repository,
+        'find',
+        return_value=dummy_users,
+    )
+
+    # Act
+    result = user_service.get_line_user_id_by_name(line_user_name='test_user1')
+
+    # Assert
+    assert result is None

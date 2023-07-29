@@ -1,35 +1,58 @@
-from DomainService.GroupService import GroupService
-from repositories import session_scope, group_repository
-from tests.dummies import generate_dummy_group_list
-from DomainModel.entities.Group import Group
+from DomainService import (
+    group_service,
+)
+from repositories import group_repository
+from DomainModel.entities.Group import Group, GroupMode
+
+dummy_groups = [
+    Group(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        mode=GroupMode.wait.value,
+    )
+]
 
 
-def test_create_new_user():
+def test_ok_hit_group(mocker):
     # Arrange
-    group_service = GroupService()
-    dummy_group = generate_dummy_group_list()[0]
+    mocker.patch.object(
+        group_repository,
+        'find',
+        return_value=dummy_groups,
+    )
+    mock_create = mocker.patch.object(
+        group_repository,
+        'create',
+        return_value=dummy_groups[0],
+    )
 
     # Act
-    result = group_service.find_or_create(dummy_group.line_group_id)
+    result = group_service.find_or_create('G0123456789abcdefghijklmnopqrstu1')
 
     # Assert
     assert isinstance(result, Group)
-    assert result.line_group_id == dummy_group.line_group_id
+    assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
+    assert result.mode == 'wait'
+    mock_create.assert_not_called()
 
 
-def test_find_exist_group():
+def test_ok_no_group(mocker):
     # Arrange
-    group_service = GroupService()
-    dummy_group = generate_dummy_group_list()[0]
-    with session_scope() as session:
-        group_repository.create(session, dummy_group)
+    mocker.patch.object(
+        group_repository,
+        'find',
+        return_value=[],
+    )
+
+    mocker.patch.object(
+        group_repository,
+        'create',
+        return_value=dummy_groups[0],
+    )
 
     # Act
-    result = group_service.find_or_create(dummy_group.line_group_id)
+    result = group_service.find_or_create('G0123456789abcdefghijklmnopqrstu1')
 
     # Assert
     assert isinstance(result, Group)
-    assert result.line_group_id == dummy_group.line_group_id
-    with session_scope() as session:
-        records = group_repository.find_all(session)
-        assert len(records) == 1
+    assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
+    assert result.mode == 'wait'

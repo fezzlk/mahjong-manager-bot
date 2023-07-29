@@ -9,4 +9,4 @@ class GetUsersForWebUseCase:
 
     def execute(self) -> List[User]:
         with session_scope() as session:
-            return user_repository.find_all(session)
+            return user_repository.find(session)
