@@ -38,9 +38,9 @@
   - Mahjong player's LINE account
 - Group
   - LINE chat group
+- Group Setting
+  - Mahjong rule setting on group
 - Hanchan
   - Result of a hanchan
 - Match
   - Overall result of hanchans
-- Config
-  - Setting value
