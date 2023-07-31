@@ -18,10 +18,10 @@
 
 ## Build Server
 - Install Python
-- Create a virtual env(not required, but recommend)
-  - `$ python -m venv venv`
+- Create a virtual env(recommend)
+  - `$ python -m venv mmvenv`
 - apply the virtual env
-  - `$ source venv/bin/activate`
+  - `$ source mmvenv/bin/activate`
 - Install dependencies
   - `$ python -m pip install --upgrade pip`
   - `$ pip install -r requirements.txt`
