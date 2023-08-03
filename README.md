@@ -34,4 +34,12 @@
 - Install Docker
 - run docker-compose on root directory of mahjong-manager
   - `$ docker-compose up`
- 
+
+
+## Architecture
+### Servers
+![SALB_Devlop_Isoflow_Diagram_2021_12_10 (1)](https://github.com/fezzlk/mahjong-manager-bot/assets/38426468/00731ee3-07bd-4e37-958d-2c35cb312b3c)
+
+### Layers
+![ScreenShot 2023-08-03 23 31 48](https://github.com/fezzlk/mahjong-manager-bot/assets/38426468/9a7e471d-0736-4bda-bac0-f99c47d03f73)
+
