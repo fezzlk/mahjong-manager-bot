@@ -30,17 +30,8 @@
 - run flask server
   - `$ flask run`
 
-## Architecture
-(TBD)
-
-### Domains
-- User
-  - Mahjong player's LINE account
-- Group
-  - LINE chat group
-- Group Setting
-  - Mahjong rule setting on group
-- Hanchan
-  - Result of a hanchan
-- Match
-  - Overall result of hanchans
+## Build Mongo DB Container by docker-compose(Recommend)
+- Install Docker
+- run docker-compose on root directory of mahjong-manager
+  - `$ docker-compose up`
+ 
