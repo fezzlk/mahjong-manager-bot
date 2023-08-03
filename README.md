@@ -18,10 +18,10 @@
 
 ## Build Server
 - Install Python
-- Create a virtual env(not required, but recommend)
-  - `$ python -m venv venv`
+- Create a virtual env(recommend)
+  - `$ python -m venv mmvenv`
 - apply the virtual env
-  - `$ source venv/bin/activate`
+  - `$ source mmvenv/bin/activate`
 - Install dependencies
   - `$ python -m pip install --upgrade pip`
   - `$ pip install -r requirements.txt`
@@ -38,9 +38,9 @@
   - Mahjong player's LINE account
 - Group
   - LINE chat group
+- Group Setting
+  - Mahjong rule setting on group
 - Hanchan
   - Result of a hanchan
 - Match
   - Overall result of hanchans
-- Config
-  - Setting value
