@@ -37,7 +37,7 @@ def test_execute():
     assert len(result) == 1
     assert result[0].line_group_id == dummy_event.source.group_id
     assert result[0].mode == 'wait'
-    assert len(reply_service.texts) == 1
+    assert len(reply_service.texts) == 2
     assert isinstance(reply_service.texts[0], TextSendMessage)
     assert reply_service.texts[0].text == '麻雀の成績管理Botです。参加者は友達登録してください。'
     assert reply_service.texts[1].text == '「_start」でスタートメニューを表示します。'
