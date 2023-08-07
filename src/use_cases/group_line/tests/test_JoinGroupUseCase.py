@@ -39,4 +39,5 @@ def test_execute():
     assert result[0].mode == 'wait'
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextSendMessage)
-    assert reply_service.texts[0].text == 'こんにちは、今日は麻雀日和ですね。'
+    assert reply_service.texts[0].text == '麻雀の成績管理Botです。参加者は友達登録してください。'
+    assert reply_service.texts[1].text == '「_start」でスタートメニューを表示します。'
