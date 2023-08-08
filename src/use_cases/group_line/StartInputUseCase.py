@@ -20,7 +20,7 @@ class StartInputUseCase:
         if mode is None:
             reply_service.add_message('トークルームが登録されていません。招待し直してください。')
             return
-        if mode == GroupMode.input:
+        if mode == GroupMode.input.value:
             reply_service.add_message('すでに入力モードです。')
             return
 

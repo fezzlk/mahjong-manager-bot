@@ -15,5 +15,8 @@ class JoinGroupUseCase:
             raise ValueError('登録する line_group_id が未指定です。')
         group_service.find_or_create(line_group_id)
         reply_service.add_message(
-            'こんにちは、今日は麻雀日和ですね。'
+            '麻雀の成績管理Botです。参加者は友達登録してください。'
+        )
+        reply_service.add_message(
+            '「_start」でスタートメニューを表示します。'
         )

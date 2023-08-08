@@ -97,9 +97,9 @@ def routing_by_text_in_group_line(text: str):
     """wait mode"""
     """if text is result, add result"""
 
-    resultRows = [r for r in text.split('\n') if ':' in r]
-    if len(resultRows) == 4:
-        AddHanchanByPointsTextUseCase().execute(text)
+    # resultRows = [r for r in text.split('\n') if ':' in r]
+    # if len(resultRows) == 4:
+    #     AddHanchanByPointsTextUseCase().execute(text)
 
 
 def routing_for_group_by_method(method, body):

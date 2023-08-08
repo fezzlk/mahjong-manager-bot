@@ -18,10 +18,10 @@
 
 ## Build Server
 - Install Python
-- Create a virtual env(not required, but recommend)
-  - `$ python -m venv venv`
+- Create a virtual env(recommend)
+  - `$ python -m venv mmvenv`
 - apply the virtual env
-  - `$ source venv/bin/activate`
+  - `$ source mmvenv/bin/activate`
 - Install dependencies
   - `$ python -m pip install --upgrade pip`
   - `$ pip install -r requirements.txt`
@@ -30,17 +30,46 @@
 - run flask server
   - `$ flask run`
 
-## Architecture
-(TBD)
+## Build Mongo DB Container by docker-compose(Recommend)
+- Install Docker
+- run docker-compose on root directory of mahjong-manager
+  - `$ docker-compose up`
 
-### Domains
-- User
-  - Mahjong player's LINE account
-- Group
-  - LINE chat group
-- Hanchan
-  - Result of a hanchan
-- Match
-  - Overall result of hanchans
-- Config
-  - Setting value
+## Architecture
+### Servers
+![SALB_Devlop_Isoflow_Diagram_2021_12_10 (1)](https://github.com/fezzlk/mahjong-manager-bot/assets/38426468/00731ee3-07bd-4e37-958d-2c35cb312b3c)
+
+### Layers
+![ScreenShot 2023-08-05 8 58 15](https://github.com/fezzlk/mahjong-manager-bot/assets/38426468/3e980260-48b5-4bcc-b12d-3798c93ba12a)
+
+#### View Layer
+クライアントからの受け口となる層
+
+- LINE Handler
+  - LINE APP のアクションをトリガーに呼ばれる処理
+  - ReplyService に返答情報を格納し、LINE のテキストメッセージとして返答する。
+- Views
+  - Web ブラウザの画面表示処理
+  - 基本的にhtmlを返す
+- Apis:
+  - 基本的にjsonを返す
+
+#### Application Service Layer
+クライアントの求める機能を提供する層
+- Use Cases
+  - ユーザの1アクションが求める1シナリオ
+  - そのシナリオの流れがわかるように詳細な処理はできる限りApp ServiceやDomain Serviceに任せる
+- Application Service
+  - データに直接関係しない、共有可能な処理（Utility的な）
+
+#### Domain Layer
+ドメイン（このアプリで管理する業務データのこと）の情報や操作に関する層
+- Domain Service
+  - ドメインを操作する処理
+- Entity
+  - ドメインの情報を表すクラス
+
+#### Infrastructure Layer
+DBアクセス層
+- Repository
+  - データのレコード操作処理
