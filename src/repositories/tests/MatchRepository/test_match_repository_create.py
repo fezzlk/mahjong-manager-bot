@@ -30,7 +30,6 @@ def test_success_without_id():
     # Arrange
     dummy_match = Match(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
     )
 
     # Act

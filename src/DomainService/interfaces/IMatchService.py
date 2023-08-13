@@ -13,30 +13,6 @@ class IMatchService(metaclass=ABCMeta):
     # ) -> Match:
     #     pass
 
-    @abstractmethod
-    def get_current(self, line_group_id: str) -> Match:
-        pass
-
-    # @abstractmethod
-    # def update_current_status(
-    #     self,
-    #     line_group_id: str,
-    #     status: int,
-    # ) -> Match:
-    #     pass
-
-    @abstractmethod
-    def update_status_active_match(
-        self,
-        line_group_id: str,
-        status: int,
-    ) -> Match:
-        pass
-
-    @abstractmethod
-    def find_or_create_current(self, line_group_id: str) -> Match:
-        pass
-
     # @abstractmethod
     # def remove_hanchan_id(
     #     self,

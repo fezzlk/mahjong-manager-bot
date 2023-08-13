@@ -6,10 +6,12 @@ from ApplicationService import (
 from repositories import (
     match_repository,
     hanchan_repository,
+    group_repository,
 )
 from line_models.Event import Event
 from DomainModel.entities.Match import Match
 from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Group import Group, GroupMode
 
 
 dummy_event = Event(
@@ -21,10 +23,17 @@ dummy_event = Event(
     text='dummy_text',
 )
 
+dummy_group = Group(
+    line_group_id="G0123456789abcdefghijklmnopqrstu1",
+    mode=GroupMode.input.value,
+    active_match_id=1,
+    _id=1,
+)
+
 dummy_matches = [
     Match(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         _id=1,
     ),
 ]
@@ -50,7 +59,7 @@ dummy_hanchans = [
     Hanchan(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         match_id=1,
-        status=1,
+        status=2,
         _id=4,
     ),
 ]
@@ -60,6 +69,7 @@ def test_execute():
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(dummy_group)
     match_repository.create(dummy_matches[0])
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(dummy_hanchan)
@@ -68,7 +78,7 @@ def test_execute():
     use_case.execute(2)
 
     # Assert
-    hanchan = hanchan_repository.find({'_id': 2})
-    assert hanchan[0].status == 0
+    hanchans = hanchan_repository.find({'_id': 2})
+    assert len(hanchans) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == '現在の対戦の第2半荘の結果を削除しました。'

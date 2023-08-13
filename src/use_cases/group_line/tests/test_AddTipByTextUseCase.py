@@ -69,7 +69,7 @@ dummy_matches = [
     ),
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=1,
+        status=2,
         _id=3,
     ),
     Match(
@@ -84,7 +84,7 @@ dummy_matches = [
     ),
     Match(
         line_group_id='dummy',
-        status=1,
+        status=2,
         _id=6,
     ),
     Match(
@@ -102,6 +102,7 @@ def test_execute():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
+    dummy_group.active_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -114,8 +115,7 @@ def test_execute():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'test_user1: 10'
     matches = match_repository.find({
-        'line_group_id': dummy_group.line_group_id,
-        'status': 1
+        '_id': 3,
     })
     expected_tip_scores = {dummy_users[0].line_user_id: 10}
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
@@ -130,6 +130,7 @@ def test_execute_not_int_point():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
+    dummy_group.active_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -154,6 +155,7 @@ def test_execute_with_mention():
         'U0123456789abcdefghijklmnopqrstu1']
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
+    dummy_group.active_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -166,8 +168,7 @@ def test_execute_with_mention():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'test_user1: 10'
     matches = match_repository.find({
-        'line_group_id': dummy_group.line_group_id,
-        'status': 1
+        '_id': 3,
     })
     expected_tip_scores = {'U0123456789abcdefghijklmnopqrstu1': 10}
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
@@ -186,6 +187,7 @@ def test_execute_multi_mentions():
     ]
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
+    dummy_group.active_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -198,8 +200,7 @@ def test_execute_multi_mentions():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'メンションは1回につき1人を指定するようにしてください。'
     matches = match_repository.find({
-        'line_group_id': dummy_group.line_group_id,
-        'status': 1
+        '_id': 3,
     })
     assert len(matches[0].tip_scores) == 0
 
@@ -212,6 +213,7 @@ def test_execute_not_registered_user():
     request_info_service.mention_line_ids = ['dummy_line_id']
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
+    dummy_group.active_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -224,8 +226,7 @@ def test_execute_not_registered_user():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'dummy_line_id: 10'
     matches = match_repository.find({
-        'line_group_id': dummy_group.line_group_id,
-        'status': 1
+        '_id': 3,
     })
     expected_tip_scores = {'dummy_line_id': 10}
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
@@ -236,7 +237,7 @@ def test_execute_not_registered_user():
 dummy_matches2 = [
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=1,
+        status=2,
         _id=1,
         tip_scores={
             dummy_users[0].line_user_id: 20,
@@ -253,6 +254,7 @@ def test_execute_update():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches2:
         match_repository.create(dummy_match)
+    dummy_group.active_match_id = 1
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -265,8 +267,7 @@ def test_execute_update():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'test_user1: -10\ntest_user2: -20'
     matches = match_repository.find({
-        'line_group_id': dummy_group.line_group_id,
-        'status': 1
+        '_id': 1,
     })
     expected_tip_scores = {
         dummy_users[0].line_user_id: -10,
@@ -284,6 +285,7 @@ def test_execute_delete():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches2:
         match_repository.create(dummy_match)
+    dummy_group.active_match_id = 1
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -296,8 +298,7 @@ def test_execute_delete():
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == 'test_user2: -20'
     matches = match_repository.find({
-        'line_group_id': dummy_group.line_group_id,
-        'status': 1
+        '_id': 1,
     })
     expected_tip_scores = {
         dummy_users[1].line_user_id: -20,

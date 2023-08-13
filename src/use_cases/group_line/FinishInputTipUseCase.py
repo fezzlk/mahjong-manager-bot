@@ -14,9 +14,20 @@ class FinishInputTipUseCase:
 
     def execute(self) -> None:
         line_group_id = request_info_service.req_line_group_id
-        current = match_service.get_current(line_group_id)
+        group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
+        if group is None:
+            reply_service.add_message(
+                'グループが登録されていません。招待し直してください。'
+            )
+            return
+        active_match = match_service.find_one_by_id(group.active_match_id)
+        if active_match is None:
+            reply_service.add_message(
+                '計算対象の試合が見つかりません。'
+            )
+            return
         sum_tip_count = 0
-        for tip in current.tip_scores.values():
+        for tip in active_match.tip_scores.values():
             sum_tip_count += tip
 
         if sum_tip_count != 0:

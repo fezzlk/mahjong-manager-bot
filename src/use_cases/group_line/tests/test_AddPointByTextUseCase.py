@@ -19,6 +19,7 @@ from repositories import (
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     mode=GroupMode.input.value,
+    active_match_id=1,
     _id=1,
 )
 
@@ -66,7 +67,7 @@ dummy_hanchans = [
         raw_scores={},
         converted_scores={},
         match_id=1,
-        status=1,
+        status=2,
         _id=1,
     ),
     Hanchan(  # 更新
@@ -74,7 +75,7 @@ dummy_hanchans = [
         raw_scores={dummy_users[0].line_user_id: 2000},
         converted_scores={},
         match_id=1,
-        status=1,
+        status=2,
         _id=2,
     ),
     Hanchan(  # 別ユーザー新規追加
@@ -82,7 +83,7 @@ dummy_hanchans = [
         raw_scores={dummy_users[1].line_user_id: 2000},
         converted_scores={},
         match_id=1,
-        status=1,
+        status=2,
         _id=2,
     ),
     Hanchan(
@@ -94,7 +95,7 @@ dummy_hanchans = [
         },
         converted_scores={},
         match_id=1,
-        status=1,
+        status=2,
         _id=1,
     ),
     Hanchan(
@@ -107,7 +108,7 @@ dummy_hanchans = [
         },
         converted_scores={},
         match_id=1,
-        status=1,
+        status=2,
         _id=1,
     ),
     Hanchan(
@@ -128,7 +129,7 @@ dummy_hanchans = [
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
-    status=1,
+    status=2,
     _id=1,
 )
 
@@ -154,9 +155,10 @@ def test_execute(case1):
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
-    match_repository.create(dummy_match)
     hanchan_repository.create(dummy_hanchans[case1[0]])
     hanchan_repository.create(dummy_hanchans[5])
+    dummy_match.active_hanchan_id = dummy_hanchans[case1[0]]._id
+    match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -168,7 +170,7 @@ def test_execute(case1):
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == case1[2]
-    hanchans = hanchan_repository.find({'status': 1})
+    hanchans = hanchan_repository.find({'_id': dummy_hanchans[case1[0]]._id})
     expected_raw_scores = case1[3]
     assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
     for k in expected_raw_scores:
@@ -188,8 +190,9 @@ def test_execute_not_int_point(case2):
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
-    match_repository.create(dummy_match)
     hanchan_repository.create(dummy_hanchans[0])
+    dummy_match.active_hanchan_id = dummy_hanchans[0]._id
+    match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -215,8 +218,9 @@ def test_execute_with_mention():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     request_info_service.mention_line_ids = [
         'U0123456789abcdefghijklmnopqrstu1']
-    match_repository.create(dummy_match)
     hanchan_repository.create(dummy_hanchans[0])
+    dummy_match.active_hanchan_id = dummy_hanchans[0]._id
+    match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -244,8 +248,9 @@ def test_execute_multi_mentions():
         'U0123456789abcdefghijklmnopqrstu1',
         'U0123456789abcdefghijklmnopqrstu2',
     ]
-    match_repository.create(dummy_match)
     hanchan_repository.create(dummy_hanchans[0])
+    dummy_match.active_hanchan_id = dummy_hanchans[0]._id
+    match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -267,8 +272,9 @@ def test_execute_not_registered_user():
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     request_info_service.mention_line_ids = ['dummy_line_id']
-    match_repository.create(dummy_match)
     hanchan_repository.create(dummy_hanchans[0])
+    dummy_match.active_hanchan_id = dummy_hanchans[0]._id
+    match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -292,8 +298,9 @@ def test_execute_fourth_input():
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
-    match_repository.create(dummy_match)
     hanchan_repository.create(dummy_hanchans[3])
+    dummy_match.active_hanchan_id = dummy_hanchans[3]._id
+    match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -324,8 +331,9 @@ def test_execute_fifth_input():
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
-    match_repository.create(dummy_match)
     hanchan_repository.create(dummy_hanchans[4])
+    dummy_match.active_hanchan_id = dummy_hanchans[4]._id
+    match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)

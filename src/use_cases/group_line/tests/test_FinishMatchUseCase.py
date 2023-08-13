@@ -58,13 +58,14 @@ dummy_users = [
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     mode=GroupMode.input.value,
+    active_match_id=1,
     _id=1,
 )
 
 dummy_matches = [
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=1,
+        status=2,
         _id=1,
     ),
     Match(
@@ -91,6 +92,7 @@ dummy_hanchans = [
         },
         match_id=1,
         status=2,
+        _id=1,
     ),
     Hanchan(
         line_group_id=dummy_group.line_group_id,
@@ -108,6 +110,7 @@ dummy_hanchans = [
         },
         match_id=1,
         status=2,
+        _id=2,
     ),
     Hanchan(
         line_group_id=dummy_group.line_group_id,
@@ -125,6 +128,7 @@ dummy_hanchans = [
         },
         match_id=1,
         status=0,
+        _id=3,
     ),
     Hanchan(
         line_group_id=dummy_group.line_group_id,
@@ -142,6 +146,7 @@ dummy_hanchans = [
         },
         match_id=2,
         status=2,
+        _id=4,
     ),
 ]
 
@@ -178,6 +183,7 @@ def test_success():
     group_repository.create(Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         mode=GroupMode.input.value,
+        active_match_id=1,
         _id=1,
     ))
     group_setting_repository.create(GroupSetting(
@@ -200,8 +206,7 @@ def test_success():
         "test_user3: -2000円 (-40(0枚))\ntest_user4: -2000円 (-40(0枚))\ntest_user5: -2000円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
-    matches = match_repository.find({'_id': 1})
-    assert matches[0].status == 2
+    assert groups[0].active_match_id is None
 
 
 def test_success_with_tip_init():
@@ -228,8 +233,7 @@ def test_success_with_tip_init():
     assert reply_service.texts[0].text == 'チップの増減数を入力してください。完了したら「_tip_ok」と入力してください。'
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.tip_input.value
-    matches = match_repository.find({'_id': 1})
-    assert matches[0].status == 1
+    assert groups[0].active_match_id == 1
 
 
 def test_success_with_tip():
@@ -239,6 +243,7 @@ def test_success_with_tip():
     group_repository.create(Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         mode=GroupMode.tip_ok.value,
+        active_match_id=1,
         _id=1,
     ))
     dummy_group_setting = GroupSetting(
@@ -251,7 +256,6 @@ def test_success_with_tip():
     match_repository.create(Match(
         line_group_id=dummy_group.line_group_id,
         tip_scores={"U0123456789abcdefghijklmnopqrstu1": 3, "U0123456789abcdefghijklmnopqrstu2": -3},
-        status=1,
         _id=1,
     ))
     for dummy_hanchan in dummy_hanchans:
@@ -266,11 +270,10 @@ def test_success_with_tip():
         "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
-    matches = match_repository.find({'_id': 1})
-    assert matches[0].status == 2
+    assert groups[0].active_match_id is None
 
 
-def test_success_without_current_match():
+def test_success_without_active_match():
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -287,7 +290,7 @@ def test_success_without_current_match():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'まだ対戦結果がありません。'
+    assert reply_service.texts[0].text == '計算対象の試合が見つかりません。'
 
 
 def test_success_without_hanchan():

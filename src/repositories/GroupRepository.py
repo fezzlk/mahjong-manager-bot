@@ -52,5 +52,6 @@ class GroupRepository(IGroupRepository):
         return Group(
             line_group_id=record['line_group_id'],
             mode=record['mode'],
+            active_match_id=record['active_match_id'],
             _id=record['_id'],
         )

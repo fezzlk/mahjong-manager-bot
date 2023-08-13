@@ -25,6 +25,7 @@ class HanchanRepository(IHanchanRepository):
         new_values: Dict[str, any],
     ) -> int:
         new_values['updated_at'] = datetime.now()
+        query['status'] = 2
         result = hanchans_collection.update_many(query, {'$set': new_values})
         return result.matched_count
 
@@ -33,6 +34,7 @@ class HanchanRepository(IHanchanRepository):
         query: Dict[str, any] = {},
         sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[Hanchan]:
+        query['status'] = 2
         records = hanchans_collection\
             .find(filter=query)\
             .sort(sort)

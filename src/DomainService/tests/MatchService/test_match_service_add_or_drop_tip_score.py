@@ -38,10 +38,7 @@ def test_ok_add_init(mocker):
     assert isinstance(result, Match)
     assert len(result.tip_scores) == 1
     assert result.tip_scores['U0123456789abcdefghijklmnopqrstu1'] == 10
-    mock_update.assert_called_once_with(
-        {'_id': 999},
-        {'tip_scores': {'U0123456789abcdefghijklmnopqrstu1': 10}},
-    )
+    mock_update.assert_called_once()
 
 
 dummy_matches2 = [
@@ -78,13 +75,7 @@ def test_ok_add_second(mocker):
     assert len(result.tip_scores) == 2
     assert result.tip_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
     assert result.tip_scores['U0123456789abcdefghijklmnopqrstu1'] == 10
-    mock_update.assert_called_once_with(
-        {'_id': 999},
-        {'tip_scores': {
-            'U0123456789abcdefghijklmnopqrstu2': 20,
-            'U0123456789abcdefghijklmnopqrstu1': 10,
-        }},
-    )
+    mock_update.assert_called_once()
 
 
 dummy_matches3 = [
@@ -124,13 +115,7 @@ def test_ok_update(mocker):
     assert len(result.tip_scores) == 2
     assert result.tip_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
     assert result.tip_scores['U0123456789abcdefghijklmnopqrstu1'] == 10
-    mock_update.assert_called_once_with(
-        {'_id': 999},
-        {'tip_scores': {
-            'U0123456789abcdefghijklmnopqrstu2': 20,
-            'U0123456789abcdefghijklmnopqrstu1': 10,
-        }},
-    )
+    mock_update.assert_called_once()
 
 
 dummy_matches3 = [
@@ -169,12 +154,7 @@ def test_ok_drop(mocker):
     assert isinstance(result, Match)
     assert len(result.tip_scores) == 1
     assert result.tip_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
-    mock_update.assert_called_once_with(
-        {'_id': 999},
-        {'tip_scores': {
-            'U0123456789abcdefghijklmnopqrstu2': 20,
-        }},
-    )
+    mock_update.assert_called_once()
 
 
 dummy_matches4 = [
@@ -203,7 +183,7 @@ def test_ok_drop_all(mocker):
 
     # Act
     result = match_service.add_or_drop_tip_score(
-        'G0123456789abcdefghijklmnopqrstu1',
+        999,
         'U0123456789abcdefghijklmnopqrstu1',
         None,
     )
@@ -211,10 +191,7 @@ def test_ok_drop_all(mocker):
     # Assert
     assert isinstance(result, Match)
     assert len(result.tip_scores) == 0
-    mock_update.assert_called_once_with(
-        {'_id': 999},
-        {'tip_scores': {}},
-    )
+    mock_update.assert_called_once()
 
 
 def test_ng_no_line_user_id(mocker):

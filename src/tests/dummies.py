@@ -121,6 +121,7 @@ def generate_dummy_group_list() -> List[Group]:
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu1",
             mode=GroupMode.wait.value,
+            active_match_id=ObjectId('644c838186bbd9e20a91b785'),
         ),
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu2",
@@ -163,8 +164,37 @@ def generate_dummy_group_setting_list() -> List[GroupSetting]:
         GroupSetting(
             line_group_id="G0123456789abcdefghijklmnopqrstu3",
         ),
+        GroupSetting(
+            line_group_id="G0123456789abcdefghijklmnopqrstu4",
+        ),
+        GroupSetting(
+            line_group_id="G0123456789abcdefghijklmnopqrstu5",
+        ),
     ]
     
+
+def generate_dummy_match_list() -> List[Match]:
+    groups = generate_dummy_group_list()
+
+    return [
+        Match(
+            line_group_id=groups[0].line_group_id,
+            status=2,
+            _id=ObjectId('644c838186bbd9e20a91b783'),
+        ),
+        Match(
+            line_group_id=groups[0].line_group_id,
+            status=0,
+            _id=ObjectId('644c838186bbd9e20a91b784'),
+        ),
+        Match(
+            line_group_id=groups[0].line_group_id,
+            status=2,
+            active_hanchan_id=ObjectId('644c838186bbd9e20a91b784'),
+            _id=ObjectId('644c838186bbd9e20a91b785'),
+        ),
+    ]
+
 
 def generate_dummy_hanchan_list() -> List[Hanchan]:
     groups = generate_dummy_group_list()
@@ -173,113 +203,26 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
     return [
         Hanchan(
             line_group_id=groups[0].line_group_id,
-            match_id=ObjectId('644c838186bbd9e20a91b783'),
-            status=2,
-        ),
-        Hanchan(
-            line_group_id=groups[1].line_group_id,
-            raw_scores={},
-            converted_scores={},
-            match_id=ObjectId('644c838186bbd9e20a91b783'),
+            match_id=ObjectId('644c838186bbd9e20a91b785'),
             status=2,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
-            match_id=ObjectId('644c838186bbd9e20a91b783'),
+            match_id=ObjectId('644c838186bbd9e20a91b785'),
             status=0,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
-            match_id=ObjectId('644c838186bbd9e20a91b784'),
-            status=1,
-        ),
-        Hanchan(
-            line_group_id=groups[2].line_group_id,
-            raw_scores={
-                users[0].line_user_id: 40000,
-                users[1].line_user_id: 30000,
-                users[2].line_user_id: 20000,
-                users[3].line_user_id: 10000,
-            },
-            converted_scores={},
-            match_id=ObjectId('644c838186bbd9e20a91b783'),
-            status=1,
-        ),
-        Hanchan(
-            line_group_id=groups[2].line_group_id,
-            raw_scores={
-                users[0].line_user_id: 40000,
-                users[1].line_user_id: 30000,
-                users[2].line_user_id: 20000,
-                users[4].line_user_id: 10000,
-            },
-            converted_scores={
-                users[0].line_user_id: 50,
-                users[1].line_user_id: 10,
-                users[2].line_user_id: -20,
-                users[4].line_user_id: -40,
-            },
-            match_id=ObjectId('644c838186bbd9e20a91b783'),
-            status=1,
-        ),
-        Hanchan(
-            line_group_id=groups[2].line_group_id,
-            raw_scores={
-                users[0].line_user_id: 40000,
-                users[1].line_user_id: 30000,
-                users[2].line_user_id: 20000,
-                users[4].line_user_id: 10000,
-            },
-            converted_scores={
-                users[0].line_user_id: 50,
-                users[1].line_user_id: 10,
-                users[2].line_user_id: -20,
-                users[4].line_user_id: -40,
-            },
-            match_id=ObjectId('644c838186bbd9e20a91b783'),
-            status=1,
+            match_id=ObjectId('644c838186bbd9e20a91b785'),
+            status=2,
         ),
     ]
 
 
-def generate_dummy_match_list() -> List[Match]:
-    groups = generate_dummy_group_list()
-
-    return [
-        Match(
-            line_group_id=groups[0].line_group_id,
-            status=1,
-            _id=ObjectId('644c838186bbd9e20a91b783'),
-        ),
-        Match(
-            line_group_id=groups[0].line_group_id,
-            status=2,
-            _id=ObjectId('644c838186bbd9e20a91b784'),
-        ),
-        Match(
-            line_group_id=groups[0].line_group_id,
-            status=0,
-            _id=ObjectId('644c838186bbd9e20a91b785'),
-        ),
-        Match(
-            line_group_id=groups[0].line_group_id,
-            status=0,
-            _id=ObjectId('644c838186bbd9e20a91b786'),
-        ),
-        Match(
-            line_group_id=groups[1].line_group_id,
-            status=0,
-            _id=ObjectId('644c838186bbd9e20a91b787'),
-        ),
-        Match(
-            line_group_id=groups[0].line_group_id,
-            status=2,
-        ),
-    ]
 
 
 def generate_dummy_follow_event() -> Event:
