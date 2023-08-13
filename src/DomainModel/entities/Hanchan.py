@@ -23,7 +23,7 @@ class Hanchan:
         self,
         line_group_id: str,
         match_id: int,
-        status: int,
+        status: int = 2,
         raw_scores: Dict[str, int] = {},
         converted_scores: Dict[str, int] = {},
         _id: ObjectId = None,

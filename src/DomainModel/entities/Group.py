@@ -15,11 +15,13 @@ class Group:
     _id: ObjectId
     line_group_id: str
     mode: str
+    active_match_id: ObjectId
 
     def __init__(
         self,
         line_group_id: str,
         mode: str = GroupMode.wait.value,
+        active_match_id: ObjectId = None,
         _id: ObjectId = None,
     ):
         if mode not in GroupMode._member_names_:
@@ -28,3 +30,4 @@ class Group:
         self._id = _id
         self.line_group_id = line_group_id
         self.mode = mode
+        self.active_match_id = active_match_id
