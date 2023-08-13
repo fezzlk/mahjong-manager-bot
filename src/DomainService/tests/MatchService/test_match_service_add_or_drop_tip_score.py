@@ -9,7 +9,7 @@ dummy_matches1 = [
     Match(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         tip_scores={}
     )
 ]
@@ -45,7 +45,7 @@ dummy_matches2 = [
     Match(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         tip_scores={'U0123456789abcdefghijklmnopqrstu2': 20}
     )
 ]
@@ -82,7 +82,7 @@ dummy_matches3 = [
     Match(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         tip_scores={
             'U0123456789abcdefghijklmnopqrstu2': 20,
             'U0123456789abcdefghijklmnopqrstu1': 30,
@@ -122,7 +122,7 @@ dummy_matches3 = [
     Match(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         tip_scores={
             'U0123456789abcdefghijklmnopqrstu2': 20,
             'U0123456789abcdefghijklmnopqrstu1': 30,
@@ -161,7 +161,7 @@ dummy_matches4 = [
     Match(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         tip_scores={
             'U0123456789abcdefghijklmnopqrstu1': 30,
         }

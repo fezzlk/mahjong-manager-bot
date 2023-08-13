@@ -41,7 +41,7 @@ class AddHanchanByPointsTextUseCase:
             raw_scores=points,
             converted_scores=[],
             match_id=active_match._id,
-            status=1,
+            status=2,
         )
         hanchan_repository.create(new_hanchan)
         if len(points) == 4:

@@ -58,3 +58,8 @@ class GroupService(IGroupService):
             {'_id': target._id},
             target.__dict__,
         )
+
+    def delete_by_line_group_id(self, line_group_id: str) -> None:
+        group_repository.delete(
+            {'line_group_id': line_group_id},
+        )

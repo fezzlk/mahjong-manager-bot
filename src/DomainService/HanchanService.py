@@ -38,24 +38,6 @@ class HanchanService(IHanchanService):
         target.raw_scores = raw_scores
         return target
 
-    def update_status_active_hanchan(
-        self,
-        line_group_id: str,
-        status: int,
-    ) -> None:
-        update_count = hanchan_repository.update(
-            {
-                'status': 1,
-                'line_group_id': line_group_id,
-            },
-            {'status': status},
-        )
-
-        if update_count > 0:
-            print(
-                f'Change hanchan status in group({line_group_id}) to {STATUS_LIST[status]}'
-            )
-
     def find_one_by_id(self, _id: ObjectId) -> Optional[Hanchan]:
         matches = hanchan_repository.find(
             {'_id': _id}

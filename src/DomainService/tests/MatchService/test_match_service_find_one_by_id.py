@@ -8,7 +8,7 @@ dummy_matches = [
     Match(
         _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
     )
 ]
 
@@ -27,7 +27,7 @@ def test_ok_hit_match(mocker):
     # Assert
     assert isinstance(result, Match)
     assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
-    assert result.status == 1
+    assert result.status == 2
 
 
 def test_ok_no_match(mocker):

@@ -23,3 +23,7 @@ class IGroupService(metaclass=ABCMeta):
     @abstractmethod
     def update(self, target: Group) -> None:
         pass
+
+    @abstractmethod
+    def delete_by_line_group_id(self, line_group_id: str) -> None:
+        pass

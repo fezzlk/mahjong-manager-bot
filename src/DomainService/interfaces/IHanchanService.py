@@ -16,15 +16,6 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def update_status_active_hanchan(
-        self,
-        line_group_id: str,
-        status: int,
-    ) -> None:
-        pass
-
-
-    @abstractmethod
     def find_one_by_id(self, _id: ObjectId) -> Optional[Hanchan]:
         pass
 
