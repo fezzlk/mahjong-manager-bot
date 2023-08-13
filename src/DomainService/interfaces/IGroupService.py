@@ -19,3 +19,7 @@ class IGroupService(metaclass=ABCMeta):
     @abstractmethod
     def get_mode(self, line_group_id: str) -> GroupMode:
         pass
+
+    @abstractmethod
+    def update(self, target: Group) -> None:
+        pass

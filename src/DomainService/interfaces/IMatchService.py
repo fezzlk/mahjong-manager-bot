@@ -1,25 +1,10 @@
 from typing import Optional
 from abc import ABCMeta, abstractmethod
 from DomainModel.entities.Match import Match
+from bson.objectid import ObjectId
 
 
 class IMatchService(metaclass=ABCMeta):
-
-    # @abstractmethod
-    # def add_hanchan_id(
-    #     self,
-    #     line_group_id: str,
-    #     hanchan_id: int,
-    # ) -> Match:
-    #     pass
-
-    # @abstractmethod
-    # def remove_hanchan_id(
-    #     self,
-    #     match_id: int,
-    #     hanchan_id: int,
-    # ) -> Match:
-    #     pass
 
     @abstractmethod
     def add_or_drop_tip_score(
@@ -28,4 +13,16 @@ class IMatchService(metaclass=ABCMeta):
         line_user_id: str,
         tip_score: Optional[int],
     ) -> Match:
+        pass
+
+    @abstractmethod
+    def find_one_by_id(self, _id: ObjectId) -> Optional[Match]:
+        pass
+    
+    @abstractmethod
+    def create_with_line_group_id(self, line_group_id: str) -> Match:
+        pass
+
+    @abstractmethod
+    def update(self, target: Match) -> None:
         pass

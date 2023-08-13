@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from DomainModel.entities.Hanchan import Hanchan
+from typing import Optional, List
+from bson.objectid import ObjectId
 
 
 class IHanchanService(metaclass=ABCMeta):
@@ -19,4 +21,21 @@ class IHanchanService(metaclass=ABCMeta):
         line_group_id: str,
         status: int,
     ) -> None:
+        pass
+
+
+    @abstractmethod
+    def find_one_by_id(self, _id: ObjectId) -> Optional[Hanchan]:
+        pass
+
+    @abstractmethod
+    def create_with_line_group_id_and_match_id(self, line_group_id: str, match_id: ObjectId) -> Hanchan:
+        pass
+
+    @abstractmethod
+    def find_all_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
+        pass
+
+    @abstractmethod
+    def update(self, target: Hanchan) -> None:
         pass
