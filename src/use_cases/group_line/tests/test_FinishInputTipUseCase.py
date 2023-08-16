@@ -229,7 +229,7 @@ def test_fail_tip_sum_mismatch():
     assert reply_service.texts[0].text == 'チップ増減数の合計が+1です。0になるようにしてください。）'
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.tip_input.value
-    assert groups[0].active_match_id is 1
+    assert groups[0].active_match_id == 1
 
 
 
