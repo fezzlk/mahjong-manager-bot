@@ -25,5 +25,5 @@ def test_create_dummy_use_case():
     assert len(web_users) == 4
     assert len(groups) == 5
     assert len(groups_settings) == 3
-    assert len(hanchans) == 7
-    assert len(matches) == 6
+    assert len(hanchans) == 2
+    assert len(matches) == 2

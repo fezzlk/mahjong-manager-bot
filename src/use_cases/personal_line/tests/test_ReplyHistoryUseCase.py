@@ -61,7 +61,7 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu3": -20,
             "U0123456789abcdefghijklmnopqrstu4": -40,
         },
-        status=1,
+        status=2,
         match_id=ObjectId('644c838186bbd9e20a91b783'),
     ),
 ]

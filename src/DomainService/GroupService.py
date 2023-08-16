@@ -1,7 +1,7 @@
 from .interfaces.IGroupService import IGroupService
 from DomainModel.entities.Group import Group, GroupMode
 from repositories import group_repository
-
+from typing import Optional
 
 class GroupService(IGroupService):
 
@@ -44,3 +44,22 @@ class GroupService(IGroupService):
             return None
 
         return groups[0].mode
+
+    def find_one_by_line_group_id(self, line_group_id: str) -> Optional[Group]:
+        groups = group_repository.find({'line_group_id': line_group_id})
+
+        if len(groups) == 0:
+            return None
+
+        return groups[0]
+
+    def update(self, target: Group) -> None:
+        group_repository.update(
+            {'_id': target._id},
+            target.__dict__,
+        )
+
+    def delete_by_line_group_id(self, line_group_id: str) -> None:
+        group_repository.delete(
+            {'line_group_id': line_group_id},
+        )

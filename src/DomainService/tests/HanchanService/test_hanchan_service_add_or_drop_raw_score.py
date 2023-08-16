@@ -9,7 +9,7 @@ dummy_hanchans1 = [
     Hanchan(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         match_id=1,
         raw_scores={}
     )
@@ -49,7 +49,7 @@ dummy_hanchans2 = [
     Hanchan(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         match_id=1,
         raw_scores={'U0123456789abcdefghijklmnopqrstu2': 2000}
     )
@@ -93,7 +93,7 @@ dummy_hanchans3 = [
     Hanchan(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         match_id=1,
         raw_scores={
             'U0123456789abcdefghijklmnopqrstu2': 2000,
@@ -140,7 +140,7 @@ dummy_hanchans3 = [
     Hanchan(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         match_id=1,
         raw_scores={
             'U0123456789abcdefghijklmnopqrstu2': 2000,
@@ -185,7 +185,7 @@ dummy_hanchans4 = [
     Hanchan(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
         match_id=1,
         raw_scores={
             'U0123456789abcdefghijklmnopqrstu1': 3000,

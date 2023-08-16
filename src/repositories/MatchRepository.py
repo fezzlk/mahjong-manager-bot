@@ -24,6 +24,7 @@ class MatchRepository(IMatchRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
+        query['status'] = 2
         new_values['updated_at'] = datetime.now()
         result = matches_collection.update_many(query, {'$set': new_values})
         return result.matched_count
@@ -33,6 +34,7 @@ class MatchRepository(IMatchRepository):
         query: Dict[str, any] = {},
         sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[Match]:
+        query['status'] = 2
         records = matches_collection\
             .find(filter=query)\
             .sort(sort)
@@ -51,6 +53,7 @@ class MatchRepository(IMatchRepository):
             status=record['status'],
             created_at=record['created_at'],
             tip_scores=record['tip_scores'],
+            active_hanchan_id=record['active_hanchan_id'],
             _id=record['_id'],
             original_id=record['original_id'],
         )

@@ -21,10 +21,12 @@ def test_ok(mocker):
     )
 
     # Act
-    result = group_service.get_mode(line_group_id='hoge')
+    result = group_service.find_one_by_line_group_id(line_group_id='hoge')
 
     # Assert
-    assert result == 'wait'
+    assert isinstance(result, Group)
+    assert result.line_group_id == 'G0123456789abcdefghijklmnopqrstu1'
+    assert result.mode == 'wait'
 
 
 def test_ng_no_group(mocker):
@@ -36,7 +38,7 @@ def test_ng_no_group(mocker):
     )
 
     # Act
-    mode = group_service.get_mode(line_group_id='hoge')
+    mode = group_service.find_one_by_line_group_id(line_group_id='hoge')
 
     # Assert
     assert mode is None

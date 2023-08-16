@@ -6,12 +6,9 @@ from typing import Optional
 
 
 class InputPointUseCase:
-    """InputPointService
-        受け取った点数入力メッセージに関する処理
-    """
 
     """
-    受け取ったメッセージから登録先ユーザと値の取得
+    受け取ったメッセージから点数登録先ユーザと値の取得
     """
 
     def execute(self, text: str) -> tuple[str, Optional[int]]:

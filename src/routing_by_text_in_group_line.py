@@ -19,15 +19,15 @@ from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
 from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
 from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
 
-from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
+# from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
 from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 
 from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
-from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
+# from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
 # from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
-from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
+# from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
 from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
@@ -122,15 +122,15 @@ def routing_for_group_by_method(method, body):
     # setting
     elif method == RCommands.setting.name:
         ReplyGroupSettingsMenuUseCase().execute(body)
-    # results by match id
-    elif method == RCommands.match.name:
-        ReplySumHanchansByMatchIdUseCase().execute(body)
+    # # results by match id
+    # elif method == RCommands.match.name:
+    #     ReplySumHanchansByMatchIdUseCase().execute(body)
     # drop
     elif method == RCommands.drop.name:
         DropHanchanByIndexUseCase().execute(int(body))
     # drop match
-    elif method == RCommands.drop_m.name:
-        DisableMatchUseCase().execute()
+    # elif method == RCommands.drop_m.name:
+    #     DisableMatchUseCase().execute()
     # finish
     elif method == RCommands.finish.name:
         FinishMatchUseCase().execute()
