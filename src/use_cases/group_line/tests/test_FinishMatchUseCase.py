@@ -176,7 +176,7 @@ def test_success_with_default_settings():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == \
-        "対戦結果: \ntest_user1: 0円 (+100(0枚))\ntest_user2: 0円 (+20(0枚))\ntest_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
+        "【対戦結果】 \ntest_user1: 0円 (+100(0枚))\ntest_user2: 0円 (+20(0枚))\ntest_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
     matches = match_repository.find({'_id': 1})
@@ -209,7 +209,7 @@ def test_success():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "対戦結果: \ntest_user1: 5000円 (+100(0枚))\ntest_user2: 1000円 (+20(0枚))\n" + \
+    assert reply_service.texts[0].text == "【対戦結果】 \ntest_user1: 5000円 (+100(0枚))\ntest_user2: 1000円 (+20(0枚))\n" + \
         "test_user3: -2000円 (-40(0枚))\ntest_user4: -2000円 (-40(0枚))\ntest_user5: -2000円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
@@ -307,7 +307,7 @@ def test_success_with_tip():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "対戦結果: \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n" + \
+    assert reply_service.texts[0].text == "【対戦結果】 \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n" + \
         "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value

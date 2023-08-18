@@ -93,5 +93,5 @@ class FinishMatchUseCase:
                 f'{name}: {str(price)}円 ({score}{additional_tip_message})')
 
         reply_service.add_message(
-            '対戦結果: \n' + '\n'.join(show_prize_money_list)
+            '【対戦結果】 \n' + '\n'.join(show_prize_money_list)
         )
