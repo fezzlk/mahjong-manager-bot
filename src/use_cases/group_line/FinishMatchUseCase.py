@@ -10,6 +10,7 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
+from typing import Dict
 
 
 class FinishMatchUseCase:
@@ -39,44 +40,58 @@ class FinishMatchUseCase:
 
         settings = group_setting_service.find_or_create(request_info_service.req_line_group_id)
         tip_rate = settings.tip_rate
-        str_current_mode = group_service.get_mode(line_group_id)
-        if tip_rate != 0 and str_current_mode != GroupMode.tip_ok.value:
+        if tip_rate != 0 and group_service.get_mode(line_group_id) != GroupMode.tip_ok.value:
             group.mode = GroupMode.tip_input.value
             group_service.update(group)
             reply_service.add_message(
                 'チップの増減数を入力してください。完了したら「_tip_ok」と入力してください。')
             return
         
+
+        # 精算
+        rate = settings.rate * 10
+        sum_scores = active_match.sum_scores
+        tip_scores = active_match.tip_scores
+
+        tip_prices: Dict[str, int] = {}
+        sum_prices: Dict[str, int] = {}
+        sum_prices_with_tip: Dict[str, int] = {}
+        for line_user_id, converted_score in sum_scores.items():
+            if tip_scores.get(line_user_id) is None:
+                tip_score = 0
+                tip_scores[line_user_id] = 0
+            else:
+                tip_score = tip_scores.get(line_user_id)
+
+            tip_price = tip_score * tip_rate
+            tip_prices[line_user_id] = tip_price
+
+            price = converted_score * rate
+            sum_prices[line_user_id] = price
+
+            sum_prices_with_tip[line_user_id] = price + tip_price
+
         # 試合のアーカイブ
+        active_match.tip_prices = tip_prices
+        active_match.sum_prices = sum_prices
+        active_match.sum_prices_with_tip = sum_prices_with_tip
+        match_service.update(active_match)
         group.mode = GroupMode.wait.value
         group.active_match_id = None
         group_service.update(group)
 
-        # 応答メッセージの作成
-        sum_hanchans = {}
-        for h in hanchans:
-            converted_scores = h.converted_scores
-
-            for line_user_id, converted_score in converted_scores.items():
-                if line_user_id not in sum_hanchans.keys():
-                    sum_hanchans[line_user_id] = 0
-                sum_hanchans[line_user_id] += converted_score
-
-        tip_scores = active_match.tip_scores
-
-        rate = settings.rate * 10
+        # 応答メッセージ作成
         show_prize_money_list = []
-        for line_user_id, converted_score in sum_hanchans.items():
+        for line_user_id, converted_score in sum_scores.items():
             name = user_service.get_name_by_line_user_id(line_user_id)
-            nullable_tip_count = tip_scores.get(line_user_id)
-            tip_count = 0 if nullable_tip_count is None else nullable_tip_count
-            price = converted_score * rate + tip_count * tip_rate
+            price = sum_prices_with_tip[line_user_id]
             score = ("+" if converted_score > 0 else "") + str(converted_score)
-            additional_tip_message = f'({("+" if tip_count > 0 else "") + str(tip_count)}枚)'
+            tip_score = tip_scores[line_user_id]
+            additional_tip_message = f'({("+" if tip_score > 0 else "") + str(tip_score)}枚)'
+            
             show_prize_money_list.append(
                 f'{name}: {str(price)}円 ({score}{additional_tip_message})')
 
         reply_service.add_message(
-            '対戦ID: ' + str(active_match._id) + '\n' + '\n'.join(show_prize_money_list)
+            '対戦結果: \n' + '\n'.join(show_prize_money_list)
         )
-
