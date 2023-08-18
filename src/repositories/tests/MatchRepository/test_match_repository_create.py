@@ -24,6 +24,11 @@ def test_success():
     assert record_on_db[0]._id == dummy_match._id
     assert record_on_db[0].line_group_id == dummy_match.line_group_id
     assert record_on_db[0].status == dummy_match.status
+    assert record_on_db[0].sum_prices == {}
+    assert record_on_db[0].sum_prices_with_tip == {}
+    assert record_on_db[0].tip_prices == {}
+    assert record_on_db[0].tip_scores == {}
+    assert record_on_db[0].sum_scores == {}
 
 
 def test_success_without_id():
@@ -48,3 +53,8 @@ def test_success_without_id():
     assert type(record_on_db[0]._id) == ObjectId
     assert record_on_db[0].line_group_id == dummy_match.line_group_id
     assert record_on_db[0].status == dummy_match.status
+    assert record_on_db[0].sum_prices == {}
+    assert record_on_db[0].sum_prices_with_tip == {}
+    assert record_on_db[0].tip_prices == {}
+    assert record_on_db[0].tip_scores == {}
+    assert record_on_db[0].sum_scores == {}

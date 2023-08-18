@@ -53,7 +53,11 @@ class MatchRepository(IMatchRepository):
             status=record['status'],
             created_at=record['created_at'],
             tip_scores=record['tip_scores'],
+            tip_prices=record['tip_prices'],
             active_hanchan_id=record['active_hanchan_id'],
+            sum_scores=record['sum_scores'],
+            sum_prices=record['sum_prices'],
+            sum_prices_with_tip=record['sum_prices_with_tip'],
             _id=record['_id'],
             original_id=record['original_id'],
         )
