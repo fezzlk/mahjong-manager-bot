@@ -8,6 +8,7 @@ from linebot.models import (
     FollowEvent,
     UnfollowEvent,
     JoinEvent,
+    LeaveEvent,
     MessageEvent,
     TextMessage,
     ImageMessage,
@@ -20,6 +21,7 @@ from ApplicationService import (
 from use_cases.personal_line.FollowUseCase import FollowUseCase
 from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
 from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
+from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
 # from use_cases.group_line.InputResultFromImageUseCase import (
 #     InputResultFromImageUseCase)
 import env_var
@@ -79,6 +81,12 @@ def handle_unfollow(event):
 @handle_event_decorater
 def handle_join(event):
     JoinGroupUseCase().execute()
+
+
+@handler.add(LeaveEvent)
+@handle_event_decorater
+def handle_leave(event):
+    GroupQuitUseCase().execute()
 
 
 @handler.add(MessageEvent, message=TextMessage)
