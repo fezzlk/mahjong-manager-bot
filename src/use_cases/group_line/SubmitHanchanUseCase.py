@@ -14,10 +14,16 @@ from DomainModel.entities.Group import GroupMode
 from DomainModel.entities.UserMatch import UserMatch
 from DomainModel.entities.UserGroup import UserGroup
 from repositories import (
-    hanchan_repository,
     user_match_repository,
     user_group_repository,
 )
+from DomainService import (
+    group_service,
+    match_service,
+    hanchan_service,
+    user_group_service,
+)
+from typing import Dict
 
 from line_models.Profile import Profile
 
@@ -31,14 +37,26 @@ class SubmitHanchanUseCase:
         # 得点計算の準備および結果の格納
         line_group_id = request_info_service.req_line_group_id
 
-        # 現在 active な result (current)のポイントを計算対象にする
-        current = hanchan_service.get_current(line_group_id)
-        if current is None:
+        # active 半荘を取得
+        group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
+        if group is None:
+            reply_service.add_message(
+                'グループが登録されていません。招待し直してください。'
+            )
+            return
+        active_match = match_service.find_one_by_id(group.active_match_id)
+        if active_match is None:
+            reply_service.add_message(
+                '計算対象の試合が見つかりません。'
+            )
+            return
+        active_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
+        if active_hanchan is None:
             reply_service.add_message(
                 '計算対象の半荘が見つかりません。'
             )
             return
-        points = current.raw_scores
+        points = active_hanchan.raw_scores
 
         # 計算可能な points かチェック
         # 4人分の点数がない、または超えている場合中断する
@@ -83,17 +101,12 @@ class SubmitHanchanUseCase:
         )
 
         # その半荘の結果を更新
-        hanchan_repository.update(
-            query={
-                'line_group_id': line_group_id,
-                'status': 1,
-            },
-            new_values={'converted_scores': calculate_result}
-        )
+        active_hanchan.converted_scores = calculate_result
+        hanchan_service.update(active_hanchan)
 
         # user_match, user_group の作成
         user_ids_in_hanchan = []
-        user_groups = user_group_repository.find({'line_group_id': line_group_id})
+        user_groups = user_group_service.find_all_by_line_group_id(line_group_id)
         line_user_ids_in_group = [ug.line_user_id for ug in user_groups]
 
         for user_line_id in calculate_result:
@@ -110,38 +123,33 @@ class SubmitHanchanUseCase:
                 user_ids_in_hanchan.append(user._id)
 
         user_matches = user_match_repository.find(
-            {'match_id': current.match_id}
+            {'match_id': active_hanchan.match_id}
         )
         linked_user_ids = [um.user_id for um in user_matches]
         target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
         for user_id in target_user_ids:
             user_match = UserMatch(
                 user_id=user_id,
-                match_id=current.match_id,
+                match_id=active_hanchan.match_id,
             )
             user_match_repository.create(user_match)
 
-        # # 総合結果に半荘結果を追加
-        # current_match = match_service.add_hanchan_id(
-        #     line_group_id, updated_hanchan._id)
+        # 半荘合計の更新
+        hanchans = hanchan_service.find_all_by_match_id(active_hanchan.match_id)
 
-        # 一半荘の結果をアーカイブ
-        hanchan_service.update_status_active_hanchan(line_group_id, 2)
+        sum_scores: Dict[str, int] = {}
+        for h in hanchans:
+            for line_user_id, converted_score in h.converted_scores.items():
+                if line_user_id not in sum_scores.keys():
+                    sum_scores[line_user_id] = 0
+                sum_scores[line_user_id] += converted_score
+
+       # 一半荘の結果をアーカイブ
+        active_match.active_hanchan_id = None
+        active_match.sum_scores = sum_scores
+        match_service.update(active_match)
 
         # 結果の表示
-        hanchans = hanchan_repository.find({
-            'match_id': current.match_id,
-            'status': 2,
-        })
-
-        sum_hanchans = {}
-        for r in hanchans:
-            converted_scores = r.converted_scores
-            for line_user_id, converted_score in converted_scores.items():
-                if line_user_id not in sum_hanchans.keys():
-                    sum_hanchans[line_user_id] = 0
-                sum_hanchans[line_user_id] += converted_score
-
         reply_service.add_message(
             '一半荘お疲れ様でした。結果を表示します。'
         )
@@ -155,7 +163,7 @@ class SubmitHanchanUseCase:
             name = user_service.get_name_by_line_user_id(r[0])
             score = ("+" if r[1] > 0 else "") + str(r[1])
             sum_score = (
-                "+" if sum_hanchans[r[0]] > 0 else "") + str(sum_hanchans[r[0]])
+                "+" if sum_scores[r[0]] > 0 else "") + str(sum_scores[r[0]])
             score_text_list.append(
                 f'{name}: {score} ({sum_score})'
             )

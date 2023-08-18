@@ -50,12 +50,12 @@ class WebUserRepository(IWebUserRepository):
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> WebUser:
         return WebUser(
-            _id=record["_id"],
-            user_code=record["user_code"],
-            name=record["name"],
-            email=record["email"],
-            linked_line_user_id=record["linked_line_user_id"],
-            is_approved_line_user=record["is_approved_line_user"],
-            created_at=record["created_at"],
-            updated_at=record["updated_at"],
+            _id=record.get("_id"),
+            user_code=record.get("user_code"),
+            name=record.get("name"),
+            email=record.get("email"),
+            linked_line_user_id=record.get("linked_line_user_id"),
+            is_approved_line_user=record.get("is_approved_line_user"),
+            created_at=record.get("created_at"),
+            updated_at=record.get("updated_at"),
         )

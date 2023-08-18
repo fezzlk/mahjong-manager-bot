@@ -50,10 +50,10 @@ class UserRepository(IUserRepository):
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> User:
         return User(
-            line_user_id=record["line_user_id"],
-            line_user_name=record["line_user_name"],
-            mode=record["mode"],
-            jantama_name=record["jantama_name"],
-            original_id=record["original_id"],
-            _id=record['_id'],
+            line_user_id=record.get("line_user_id"),
+            line_user_name=record.get("line_user_name"),
+            mode=record.get("mode"),
+            jantama_name=record.get("jantama_name"),
+            original_id=record.get("original_id"),
+            _id=record.get('_id'),
         )

@@ -7,29 +7,27 @@ from repositories import hanchan_repository, match_repository
 
 def test_hit_with_line_group_id():
     # Arrange
-    dummy_matches = generate_dummy_match_list()[:3]
+    dummy_matches = generate_dummy_match_list()
     for dummy_match in dummy_matches:
         match_repository.create(
             dummy_match,
         )
-    dummy_hanchans = generate_dummy_hanchan_list()[:7]
+    dummy_hanchans = generate_dummy_hanchan_list()
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(
             dummy_hanchan,
         )
-    other_hanchans = dummy_hanchans[2:]
-    target_hanchans = dummy_hanchans[:2]
-    line_group_ids = [target_hanchan.line_group_id for target_hanchan in target_hanchans]
-    
+    other_hanchans = dummy_hanchans[0:1]
+
     # Act
     result = hanchan_repository.delete(
-        query={'line_group_id': {'$in': line_group_ids}},
+        query={'line_group_id': {'$in': [dummy_hanchans[2].line_group_id]}},
     )
 
     # Assert
-    assert result == len(target_hanchans)
+    assert result == 2
     record_on_db = hanchan_repository.find()
-    assert len(record_on_db) == len(other_hanchans)
+    assert len(record_on_db) == 1
     for i in range(len(record_on_db)):
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
@@ -41,17 +39,17 @@ def test_hit_with_line_group_id():
 
 def test_hit_0_record():
     # Arrange
-    dummy_matches = generate_dummy_match_list()[:3]
+    dummy_matches = generate_dummy_match_list()
     for dummy_match in dummy_matches:
         match_repository.create(
             dummy_match,
         )
-    dummy_hanchans = generate_dummy_hanchan_list()[:3]
+    dummy_hanchans = generate_dummy_hanchan_list()
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(
             dummy_hanchan,
         )
-    other_hanchans = dummy_hanchans
+    other_hanchans = dummy_hanchans[0:1] + dummy_hanchans[2:3]
 
     # Act
     result = hanchan_repository.delete(

@@ -58,13 +58,21 @@ dummy_users = [
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     mode=GroupMode.input.value,
+    active_match_id=1,
     _id=1,
 )
 
 dummy_matches = [
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=1,
+        status=2,
+        sum_scores={
+            'U0123456789abcdefghijklmnopqrstu1': 100,
+            'U0123456789abcdefghijklmnopqrstu2': 20,
+            'U0123456789abcdefghijklmnopqrstu3': -40,
+            'U0123456789abcdefghijklmnopqrstu4': -40,
+            'U0123456789abcdefghijklmnopqrstu5': -40,
+        },
         _id=1,
     ),
     Match(
@@ -91,6 +99,7 @@ dummy_hanchans = [
         },
         match_id=1,
         status=2,
+        _id=1,
     ),
     Hanchan(
         line_group_id=dummy_group.line_group_id,
@@ -108,6 +117,7 @@ dummy_hanchans = [
         },
         match_id=1,
         status=2,
+        _id=2,
     ),
     Hanchan(
         line_group_id=dummy_group.line_group_id,
@@ -125,6 +135,7 @@ dummy_hanchans = [
         },
         match_id=1,
         status=0,
+        _id=3,
     ),
     Hanchan(
         line_group_id=dummy_group.line_group_id,
@@ -142,6 +153,7 @@ dummy_hanchans = [
         },
         match_id=2,
         status=2,
+        _id=4,
     ),
 ]
 
@@ -164,7 +176,7 @@ def test_success_with_default_settings():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == \
-        "対戦ID: 1\ntest_user1: 0円 (+100(0枚))\ntest_user2: 0円 (+20(0枚))\ntest_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
+        "【対戦結果】 \ntest_user1: 0円 (+100(0枚))\ntest_user2: 0円 (+20(0枚))\ntest_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
     matches = match_repository.find({'_id': 1})
@@ -178,6 +190,7 @@ def test_success():
     group_repository.create(Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         mode=GroupMode.input.value,
+        active_match_id=1,
         _id=1,
     ))
     group_setting_repository.create(GroupSetting(
@@ -196,12 +209,38 @@ def test_success():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "対戦ID: 1\ntest_user1: 5000円 (+100(0枚))\ntest_user2: 1000円 (+20(0枚))\n" + \
+    assert reply_service.texts[0].text == "【対戦結果】 \ntest_user1: 5000円 (+100(0枚))\ntest_user2: 1000円 (+20(0枚))\n" + \
         "test_user3: -2000円 (-40(0枚))\ntest_user4: -2000円 (-40(0枚))\ntest_user5: -2000円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
+    assert groups[0].active_match_id is None
+
     matches = match_repository.find({'_id': 1})
     assert matches[0].status == 2
+    assert len(matches[0].tip_prices) == 5
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu1'] == 0
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu2'] == 0
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu3'] == 0
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu4'] == 0
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu5'] == 0
+    assert len(matches[0].sum_scores) == 5
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu1'] == 100
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu3'] == -40
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu4'] == -40
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu5'] == -40
+    assert len(matches[0].sum_prices) == 5
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu1'] == 5000
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu2'] == 1000
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu3'] == -2000
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu4'] == -2000
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu5'] == -2000
+    assert len(matches[0].sum_prices_with_tip) == 5
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu1'] == 5000
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu2'] == 1000
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu3'] == -2000
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu4'] == -2000
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu5'] == -2000
 
 
 def test_success_with_tip_init():
@@ -228,8 +267,7 @@ def test_success_with_tip_init():
     assert reply_service.texts[0].text == 'チップの増減数を入力してください。完了したら「_tip_ok」と入力してください。'
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.tip_input.value
-    matches = match_repository.find({'_id': 1})
-    assert matches[0].status == 1
+    assert groups[0].active_match_id == 1
 
 
 def test_success_with_tip():
@@ -239,6 +277,7 @@ def test_success_with_tip():
     group_repository.create(Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         mode=GroupMode.tip_ok.value,
+        active_match_id=1,
         _id=1,
     ))
     dummy_group_setting = GroupSetting(
@@ -251,7 +290,13 @@ def test_success_with_tip():
     match_repository.create(Match(
         line_group_id=dummy_group.line_group_id,
         tip_scores={"U0123456789abcdefghijklmnopqrstu1": 3, "U0123456789abcdefghijklmnopqrstu2": -3},
-        status=1,
+        sum_scores={
+            'U0123456789abcdefghijklmnopqrstu1': 100,
+            'U0123456789abcdefghijklmnopqrstu2': 20,
+            'U0123456789abcdefghijklmnopqrstu3': -40,
+            'U0123456789abcdefghijklmnopqrstu4': -40,
+            'U0123456789abcdefghijklmnopqrstu5': -40,
+        },
         _id=1,
     ))
     for dummy_hanchan in dummy_hanchans:
@@ -262,15 +307,40 @@ def test_success_with_tip():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "対戦ID: 1\ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n" + \
+    assert reply_service.texts[0].text == "【対戦結果】 \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n" + \
         "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
-    matches = match_repository.find({'_id': 1})
+    assert groups[0].active_match_id is None
+    matches = match_repository.find()
     assert matches[0].status == 2
+    assert len(matches[0].tip_prices) == 5
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu1'] == 150
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu2'] == -150
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu3'] == 0
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu4'] == 0
+    assert matches[0].tip_prices['U0123456789abcdefghijklmnopqrstu5'] == 0
+    assert len(matches[0].sum_scores) == 5
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu1'] == 100
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu3'] == -40
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu4'] == -40
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu5'] == -40
+    assert len(matches[0].sum_prices) == 5
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu1'] == 0
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu2'] == 0
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu3'] == 0
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu4'] == 0
+    assert matches[0].sum_prices['U0123456789abcdefghijklmnopqrstu5'] == 0
+    assert len(matches[0].sum_prices_with_tip) == 5
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu1'] == 150
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu2'] == -150
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu3'] == 0
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu4'] == 0
+    assert matches[0].sum_prices_with_tip['U0123456789abcdefghijklmnopqrstu5'] == 0
 
 
-def test_success_without_current_match():
+def test_success_without_active_match():
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -287,7 +357,7 @@ def test_success_without_current_match():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'まだ対戦結果がありません。'
+    assert reply_service.texts[0].text == '計算対象の試合が見つかりません。'
 
 
 def test_success_without_hanchan():

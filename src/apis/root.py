@@ -67,3 +67,60 @@ def logout():
 def create_dummy():
     CreateDummyUseCase().execute()
     return 'Done'
+
+@views_blueprint.route('/migrate', methods=['POST'])
+def migrate():
+    from typing import Dict
+    from repositories import (
+        match_repository
+    )
+    from DomainService import (
+        group_setting_service,
+        hanchan_service,
+        match_service,
+    )
+    matches = match_repository.find()
+    for active_match in matches:
+        setting = group_setting_service.find_or_create(active_match.line_group_id)
+        if setting.rate == 0:
+            setting.rate = 3
+        if setting.tip_rate == 0:
+            setting.tip_rate = 30
+        hanchans = hanchan_service.find_all_by_match_id(active_match._id)
+
+        sum_scores: Dict[str, int] = {}
+        for h in hanchans:
+            for line_user_id, converted_score in h.converted_scores.items():
+                if line_user_id not in sum_scores.keys():
+                    sum_scores[line_user_id] = 0
+                sum_scores[line_user_id] += converted_score
+
+
+        rate = setting.rate * 10
+        tip_scores = active_match.tip_scores
+
+        tip_prices: Dict[str, int] = {}
+        sum_prices: Dict[str, int] = {}
+        sum_prices_with_tip: Dict[str, int] = {}
+        for line_user_id, converted_score in sum_scores.items():
+            if tip_scores.get(line_user_id) is None:
+                tip_score = 0
+                tip_scores[line_user_id] = 0
+            else:
+                tip_score = tip_scores.get(line_user_id)
+
+            tip_price = tip_score * setting.tip_rate
+            tip_prices[line_user_id] = tip_price
+
+            price = converted_score * rate
+            sum_prices[line_user_id] = price
+
+            sum_prices_with_tip[line_user_id] = price + tip_price
+
+        # 試合のアーカイブ
+        active_match.tip_prices = tip_prices
+        active_match.sum_scores = sum_scores
+        active_match.sum_prices = sum_prices
+        active_match.sum_prices_with_tip = sum_prices_with_tip
+        match_service.update(active_match)
+    return 'done'

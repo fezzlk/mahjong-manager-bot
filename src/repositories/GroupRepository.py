@@ -50,7 +50,8 @@ class GroupRepository(IGroupRepository):
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Group:
         return Group(
-            line_group_id=record['line_group_id'],
-            mode=record['mode'],
-            _id=record['_id'],
+            line_group_id=record.get('line_group_id'),
+            mode=record.get('mode'),
+            active_match_id=record.get('active_match_id'),
+            _id=record.get('_id'),
         )

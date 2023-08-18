@@ -51,12 +51,12 @@ class GroupSettingRepository(IGroupSettingRepository):
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> GroupSetting:
         return GroupSetting(
-            _id=record["_id"],
-            line_group_id=record["line_group_id"],
-            rate=record["rate"],
-            ranking_prize=record["ranking_prize"],
-            tobi_prize=record["tobi_prize"],
-            tip_rate=record["tip_rate"],
-            num_of_players=record["num_of_players"],
-            rounding_method=record["rounding_method"],
+            _id=record.get("_id"),
+            line_group_id=record.get("line_group_id"),
+            rate=record.get("rate"),
+            ranking_prize=record.get("ranking_prize"),
+            tobi_prize=record.get("tobi_prize"),
+            tip_rate=record.get("tip_rate"),
+            num_of_players=record.get("num_of_players"),
+            rounding_method=record.get("rounding_method"),
         )

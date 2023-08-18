@@ -6,8 +6,9 @@ from DomainModel.entities.Match import Match
 
 dummy_matches = [
     Match(
+        _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=1,
+        status=2,
     )
 ]
 
@@ -21,12 +22,12 @@ def test_ok_hit_match(mocker):
     )
 
     # Act
-    result = match_service.get_current('G0123456789abcdefghijklmnopqrstu1')
+    result = match_service.find_one_by_id(1)
 
     # Assert
     assert isinstance(result, Match)
     assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
-    assert result.status == 1
+    assert result.status == 2
 
 
 def test_ok_no_match(mocker):
@@ -38,7 +39,7 @@ def test_ok_no_match(mocker):
     )
 
     # Act
-    result = match_service.get_current('G0123456789abcdefghijklmnopqrstu1')
+    result = match_service.find_one_by_id(1)
 
     # Assert
     assert result is None

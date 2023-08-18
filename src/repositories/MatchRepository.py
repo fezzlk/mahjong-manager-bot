@@ -24,6 +24,7 @@ class MatchRepository(IMatchRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
+        query['status'] = 2
         new_values['updated_at'] = datetime.now()
         result = matches_collection.update_many(query, {'$set': new_values})
         return result.matched_count
@@ -33,6 +34,7 @@ class MatchRepository(IMatchRepository):
         query: Dict[str, any] = {},
         sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
     ) -> List[Match]:
+        query['status'] = 2
         records = matches_collection\
             .find(filter=query)\
             .sort(sort)
@@ -47,10 +49,15 @@ class MatchRepository(IMatchRepository):
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Match:
         return Match(
-            line_group_id=record['line_group_id'],
-            status=record['status'],
-            created_at=record['created_at'],
-            tip_scores=record['tip_scores'],
-            _id=record['_id'],
-            original_id=record['original_id'],
+            line_group_id=record.get('line_group_id'),
+            status=record.get('status'),
+            created_at=record.get('created_at'),
+            tip_scores=record.get('tip_scores', {}),
+            tip_prices=record.get('tip_prices', {}),
+            active_hanchan_id=record.get('active_hanchan_id'),
+            sum_scores=record.get('sum_scores', {}),
+            sum_prices=record.get('sum_prices', {}),
+            sum_prices_with_tip=record.get('sum_prices_with_tip', {}),
+            _id=record.get('_id'),
+            original_id=record.get('original_id'),
         )

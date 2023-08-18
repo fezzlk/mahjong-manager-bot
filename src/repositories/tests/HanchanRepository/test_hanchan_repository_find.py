@@ -5,6 +5,7 @@ from tests.dummies import (
 from repositories import hanchan_repository, match_repository
 from DomainModel.entities.Hanchan import Hanchan
 from bson.objectid import ObjectId
+from typing import List
 
 
 def test_success_find_records():
@@ -19,20 +20,24 @@ def test_success_find_records():
         hanchan_repository.create(
             dummy_hanchan,
         )
+    target_hanchans:List[Hanchan] = []
+    target_hanchans.append(dummy_hanchans[0])
+    target_hanchans.append(dummy_hanchans[2])
+
 
     # Act
     result = hanchan_repository.find()
 
     # Assert
-    assert len(result) == len(dummy_hanchans)
+    assert len(result) == len(target_hanchans)
     for i in range(len(result)):
         assert isinstance(result[i], Hanchan)
         assert type(result[0]._id) == ObjectId
-        assert result[i].line_group_id == dummy_hanchans[i].line_group_id
-        assert result[i].match_id == dummy_hanchans[i].match_id
-        assert result[i].raw_scores == dummy_hanchans[i].raw_scores
-        assert result[i].converted_scores == dummy_hanchans[i].converted_scores
-        assert result[i].status == dummy_hanchans[i].status
+        assert result[i].line_group_id == target_hanchans[i].line_group_id
+        assert result[i].match_id == target_hanchans[i].match_id
+        assert result[i].raw_scores == target_hanchans[i].raw_scores
+        assert result[i].converted_scores == target_hanchans[i].converted_scores
+        assert result[i].status == target_hanchans[i].status
 
 
 def test_hit_1_record():
