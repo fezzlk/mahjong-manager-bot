@@ -43,7 +43,7 @@ class UserMatchRepository(IUserMatchRepository):
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserMatch:
         return UserMatch(
-            user_id=record["user_id"],
-            match_id=record["match_id"],
-            _id=record["_id"],
+            user_id=record.get("user_id"),
+            match_id=record.get("match_id"),
+            _id=record.get("_id"),
         )

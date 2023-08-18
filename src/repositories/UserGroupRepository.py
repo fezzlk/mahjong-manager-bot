@@ -43,8 +43,8 @@ class UserGroupRepository(IUserGroupRepository):
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserGroup:
         return UserGroup(
-            line_user_id=record["line_user_id"],
-            line_group_id=record["line_group_id"],
-            _id=record["_id"],
+            line_user_id=record.get("line_user_id"),
+            line_group_id=record.get("line_group_id"),
+            _id=record.get("_id"),
         )
 

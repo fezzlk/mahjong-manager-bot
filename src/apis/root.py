@@ -75,11 +75,17 @@ def migrate():
         match_repository
     )
     from DomainService import (
+        group_setting_service,
         hanchan_service,
         match_service,
     )
     matches = match_repository.find()
     for active_match in matches:
+        setting = group_setting_service.find_or_create(active_match.line_group_id)
+        if setting.rate == 0:
+            setting.rate = 3
+        if setting.tip_rate == 0:
+            setting.tip_rate = 30
         hanchans = hanchan_service.find_all_by_match_id(active_match._id)
 
         sum_scores: Dict[str, int] = {}
@@ -90,7 +96,7 @@ def migrate():
                 sum_scores[line_user_id] += converted_score
 
 
-        rate = 30
+        rate = setting.rate * 10
         tip_scores = active_match.tip_scores
 
         tip_prices: Dict[str, int] = {}
@@ -103,7 +109,7 @@ def migrate():
             else:
                 tip_score = tip_scores.get(line_user_id)
 
-            tip_price = tip_score * 30
+            tip_price = tip_score * setting.tip_rate
             tip_prices[line_user_id] = tip_price
 
             price = converted_score * rate
@@ -117,3 +123,4 @@ def migrate():
         active_match.sum_prices = sum_prices
         active_match.sum_prices_with_tip = sum_prices_with_tip
         match_service.update(active_match)
+    return 'done'

@@ -49,10 +49,10 @@ class HanchanRepository(IHanchanRepository):
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Hanchan:
         return Hanchan(
-            line_group_id=record['line_group_id'],
-            match_id=record['match_id'],
-            status=record['status'],
-            raw_scores=record['raw_scores'],
-            converted_scores=record['converted_scores'],
-            _id=record['_id'],
+            line_group_id=record.get('line_group_id'),
+            match_id=record.get('match_id'),
+            status=record.get('status'),
+            raw_scores=record.get('raw_scores'),
+            converted_scores=record.get('converted_scores'),
+            _id=record.get('_id'),
         )
