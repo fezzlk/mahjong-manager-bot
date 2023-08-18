@@ -221,7 +221,11 @@ def test_success():
     assert groups[0].mode == GroupMode.wait.value
     matches = match_repository.find({'_id': 1})
     assert matches[0].active_hanchan_id is None
-    
+    assert len(matches[0].sum_scores) == 4
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu1'] == 50
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu2'] == 10
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu3'] == -20
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu4'] == -40
     reply_service.reset()
 
 
@@ -248,6 +252,12 @@ def test_success_assert_sum_point_in_match():
     assert reply_service.texts[1].text == "test_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user5: -40 (-40)"
     matches = match_repository.find({'_id': 1})
     assert matches[0].active_hanchan_id is None
+    assert len(matches[0].sum_scores) == 5
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu1'] == 100
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu3'] == -40
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu4'] == -40
+    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu5'] == -40
 
     reply_service.reset()
 

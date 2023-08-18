@@ -71,6 +71,13 @@ dummy_group_setting = GroupSetting(
 dummy_match= Match(
         line_group_id=dummy_group.line_group_id,
         tip_scores={"U0123456789abcdefghijklmnopqrstu1": 3, "U0123456789abcdefghijklmnopqrstu2": -3},
+        sum_scores={
+            'U0123456789abcdefghijklmnopqrstu1': 100,
+            'U0123456789abcdefghijklmnopqrstu2': 20,
+            'U0123456789abcdefghijklmnopqrstu3': -40,
+            'U0123456789abcdefghijklmnopqrstu4': -40,
+            'U0123456789abcdefghijklmnopqrstu5': -40,
+        },
         _id=1,
     )
 
@@ -252,7 +259,7 @@ def test_success():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "対戦ID: 1\ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n" + \
+    assert reply_service.texts[0].text == "対戦結果: \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n" + \
         "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value

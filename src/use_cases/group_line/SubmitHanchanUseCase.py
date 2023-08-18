@@ -14,7 +14,6 @@ from DomainModel.entities.Group import GroupMode
 from DomainModel.entities.UserMatch import UserMatch
 from DomainModel.entities.UserGroup import UserGroup
 from repositories import (
-    hanchan_repository,
     user_match_repository,
     user_group_repository,
 )
@@ -24,6 +23,7 @@ from DomainService import (
     hanchan_service,
     user_group_service,
 )
+from typing import Dict
 
 from line_models.Profile import Profile
 
@@ -134,21 +134,22 @@ class SubmitHanchanUseCase:
             )
             user_match_repository.create(user_match)
 
-        # 一半荘の結果をアーカイブ
+        # 半荘合計の更新
+        hanchans = hanchan_service.find_all_by_match_id(active_hanchan.match_id)
+
+        sum_scores: Dict[str, int] = {}
+        for h in hanchans:
+            for line_user_id, converted_score in h.converted_scores.items():
+                if line_user_id not in sum_scores.keys():
+                    sum_scores[line_user_id] = 0
+                sum_scores[line_user_id] += converted_score
+
+       # 一半荘の結果をアーカイブ
         active_match.active_hanchan_id = None
+        active_match.sum_scores = sum_scores
         match_service.update(active_match)
 
         # 結果の表示
-        hanchans = hanchan_service.find_all_by_match_id(active_hanchan.match_id)
-
-        sum_hanchans = {}
-        for r in hanchans:
-            converted_scores = r.converted_scores
-            for line_user_id, converted_score in converted_scores.items():
-                if line_user_id not in sum_hanchans.keys():
-                    sum_hanchans[line_user_id] = 0
-                sum_hanchans[line_user_id] += converted_score
-
         reply_service.add_message(
             '一半荘お疲れ様でした。結果を表示します。'
         )
@@ -162,7 +163,7 @@ class SubmitHanchanUseCase:
             name = user_service.get_name_by_line_user_id(r[0])
             score = ("+" if r[1] > 0 else "") + str(r[1])
             sum_score = (
-                "+" if sum_hanchans[r[0]] > 0 else "") + str(sum_hanchans[r[0]])
+                "+" if sum_scores[r[0]] > 0 else "") + str(sum_scores[r[0]])
             score_text_list.append(
                 f'{name}: {score} ({sum_score})'
             )
