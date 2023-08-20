@@ -74,7 +74,7 @@ class ReplyApplyBadaiUseCase:
             score = ("+" if converted_score > 0 else "") + str(converted_score)
             additional_tip_message = f'({("+" if tip_count > 0 else "") + str(tip_count)}枚)'
             show_prize_money_list.append(
-                f'{user_service.get_name_by_line_user_id(line_user_id)}: {str(price)}円 ({score}{additional_tip_message})')
+                f'{user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"}: {str(price)}円 ({score}{additional_tip_message})')
 
         str_fraction = '' if fraction == 0 else str(fraction) + '円'
         reply_service.add_message(

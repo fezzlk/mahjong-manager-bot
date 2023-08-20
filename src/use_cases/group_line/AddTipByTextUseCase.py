@@ -47,7 +47,7 @@ class AddTipByTextUseCase:
             return
         
         res = [
-            f'{user_service.get_name_by_line_user_id(line_user_id)}: {tip}'
+            f'{user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"}: {tip}'
             for line_user_id, tip in tips.items()
         ]
 

@@ -126,7 +126,7 @@ class ReplyMultiHistoryUseCase:
             reply_service.add_message(text='システムエラーが発生しました。')
             messages = [
                 '対戦履歴の画像アップロードに失敗しました',
-                '送信者: ' + user_service.get_name_by_line_user_id(req_line_user_id),
+                '送信者: ' + user_service.get_name_by_line_user_id(req_line_user_id) or req_line_user_id,
             ]
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
