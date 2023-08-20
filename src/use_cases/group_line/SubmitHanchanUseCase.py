@@ -83,7 +83,7 @@ class SubmitHanchanUseCase:
         # 飛び賞が発生した場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
         if any(x < 0 for x in points.values()) and tobashita_player_id is None:
             reply_service.add_tobi_menu([
-                {'_id': p_id, 'name': user_service.get_name_by_line_user_id(p_id), }
+                {'_id': p_id, 'name': user_service.get_name_by_line_user_id(p_id) or "友達未登録", }
                 for p_id in points.keys() if points[p_id] > 0
             ])
             return
@@ -160,7 +160,7 @@ class SubmitHanchanUseCase:
             key=lambda x: x[1],
             reverse=True
         ):
-            name = user_service.get_name_by_line_user_id(r[0])
+            name = user_service.get_name_by_line_user_id(r[0]) or "友達未登録"
             score = ("+" if r[1] > 0 else "") + str(r[1])
             sum_score = (
                 "+" if sum_scores[r[0]] > 0 else "") + str(sum_scores[r[0]])

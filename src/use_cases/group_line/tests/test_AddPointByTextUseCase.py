@@ -285,7 +285,7 @@ def test_execute_not_registered_user():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == 'text'
-    assert reply_service.texts[0].text == 'dummy_line_id: 1000'
+    assert reply_service.texts[0].text == '友達未登録: 1000'
     hanchans = hanchan_repository.find()
     expected_raw_scores = {'dummy_line_id': 1000}
     assert len(hanchans[0].raw_scores) == len(expected_raw_scores)

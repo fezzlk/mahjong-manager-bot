@@ -46,4 +46,4 @@ def test_success_return_id():
     result = user_service.get_name_by_line_user_id('dummy_line_id')
 
     # Assert
-    assert result == 'dummy_line_id'
+    assert result is None

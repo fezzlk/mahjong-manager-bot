@@ -224,7 +224,7 @@ def test_execute_not_registered_user():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == 'text'
-    assert reply_service.texts[0].text == 'dummy_line_id: 10'
+    assert reply_service.texts[0].text == '友達未登録: 10'
     matches = match_repository.find({
         '_id': 3,
     })

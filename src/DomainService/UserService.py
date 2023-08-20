@@ -41,7 +41,7 @@ class UserService(IUserService):
         """
             LINE Bot API から名前の取得を試みる
             -> 失敗したら DB から名前の取得を試みる
-            -> 失敗したら LINE User ID を返す
+            -> 失敗したら None を返す
         """
         try:
             profile = line_bot_api.get_profile(
@@ -57,7 +57,7 @@ class UserService(IUserService):
 
             if len(target) == 0:
                 print(f'user({line_user_id}) is not found')
-                return line_user_id
+                return None
 
             return target[0].line_user_name
 
