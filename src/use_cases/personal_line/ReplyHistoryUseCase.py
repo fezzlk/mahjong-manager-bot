@@ -54,7 +54,8 @@ class ReplyHistoryUseCase:
         message = ''
         total = 0
 
-        history = [[datetime(2021, 2, 1)], [0]]
+        # グラフ描画用プロットデータ
+        history = {}
 
         for match in matches:
             score = 0
@@ -66,24 +67,49 @@ class ReplyHistoryUseCase:
             message += match.created_at.strftime(
                 "%Y/%m/%d") + ': ' + strScore + '\n'
 
-            history[0].append(match.created_at)
-            history[1].append(total)
+            history[match.created_at] = total
 
+        # 今までの全半荘一覧
         reply_service.add_message(
             message
         )
 
+        # 合計
         strTotal = ('+' + str(total)) if total > 0 else str(total)
         reply_service.add_message(
             '累計: ' + strTotal
         )
 
+        # グラフ描画
+        # 初回値に0を追加
+        from datetime import timedelta
+        start_date: datetime = min(history.keys())
+        end_date: datetime = max(history.keys())
+        history[start_date - timedelta(minutes=2)] = 0
+        history[start_date - timedelta(minutes=1)] = 0
+        history = dict(sorted(history.items()))
+
+        x =[]
+        y =[]
+        for k, v in history.items():
+            x.append(k)
+            y.append(v)
+
         import matplotlib
         import matplotlib.pyplot as plt
+        import matplotlib.dates as mdates
         matplotlib.use('agg')
-        fig = plt.figure()
-        plt.xlim([datetime(2021, 2, 1), datetime.today()])
-        plt.step(history[0], history[1], where='post')
+
+        fig, ax = plt.subplots()
+        plt.step(history.keys(), history.values(), where='mid')
+
+        plt.grid(which='major', axis='y')
+        plt.xlim([start_date - timedelta(minutes=2), end_date])
+        plt.xticks(rotation=30)
+        # locator = mdates.DayLocator()
+        # ax.xaxis.set_major_locator(locator)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H時"))
+
         try:
             fig.savefig(f"src/uploads/personal_history/{req_line_id}.png")
         except FileNotFoundError:

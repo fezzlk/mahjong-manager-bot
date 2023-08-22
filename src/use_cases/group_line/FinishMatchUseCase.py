@@ -83,7 +83,7 @@ class FinishMatchUseCase:
         # 応答メッセージ作成
         show_prize_money_list = []
         for line_user_id, converted_score in sum_scores.items():
-            name = user_service.get_name_by_line_user_id(line_user_id)
+            name = user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"
             price = sum_prices_with_tip[line_user_id]
             score = ("+" if converted_score > 0 else "") + str(converted_score)
             tip_score = tip_scores[line_user_id]

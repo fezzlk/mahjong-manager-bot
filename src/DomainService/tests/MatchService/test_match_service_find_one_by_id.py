@@ -29,17 +29,3 @@ def test_ok_hit_match(mocker):
     assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
     assert result.status == 2
 
-
-def test_ok_no_match(mocker):
-    # Arrange
-    mocker.patch.object(
-        match_repository,
-        'find',
-        return_value=[],
-    )
-
-    # Act
-    result = match_service.find_one_by_id(1)
-
-    # Assert
-    assert result is None

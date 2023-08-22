@@ -42,7 +42,7 @@ class AddPointByTextUseCase:
             return
 
         res = [
-            f'{user_service.get_name_by_line_user_id(line_user_id)}: {raw_score}'
+            f'{user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"}: {raw_score}'
             for line_user_id, raw_score in raw_scores.items()
         ]
 
