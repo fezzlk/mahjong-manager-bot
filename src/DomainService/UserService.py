@@ -103,3 +103,12 @@ class UserService(IUserService):
             return None
         
         return target[0].mode
+
+
+    def find_one_by_line_user_id(self, line_user_id: str) -> User:
+        target = user_repository.find(query={'line_user_id': line_user_id})
+
+        if len(target) == 0:
+            return None
+        
+        return target[0]

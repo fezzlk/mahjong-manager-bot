@@ -2,7 +2,7 @@ from typing import Optional
 from abc import ABCMeta, abstractmethod
 from DomainModel.entities.Match import Match
 from bson.objectid import ObjectId
-
+from typing import List
 
 class IMatchService(metaclass=ABCMeta):
 
@@ -25,4 +25,8 @@ class IMatchService(metaclass=ABCMeta):
 
     @abstractmethod
     def update(self, target: Match) -> None:
+        pass
+
+    @abstractmethod
+    def find_all_for_graph(self, ids: List[ObjectId], line_group_id: str) -> List[Match]:
         pass
