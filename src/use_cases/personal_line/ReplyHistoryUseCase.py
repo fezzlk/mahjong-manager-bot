@@ -55,7 +55,7 @@ class ReplyHistoryUseCase:
         total = 0
 
         # グラフ描画用プロットデータ
-        history = [[], []]
+        history = {}
 
         for match in matches:
             score = 0
@@ -67,8 +67,7 @@ class ReplyHistoryUseCase:
             message += match.created_at.strftime(
                 "%Y/%m/%d") + ': ' + strScore + '\n'
 
-            history[0].append(match.created_at)
-            history[1].append(total)
+            history[match.created_at] = total
 
         # 今までの全半荘一覧
         reply_service.add_message(
@@ -84,12 +83,17 @@ class ReplyHistoryUseCase:
         # グラフ描画
         # 初回値に0を追加
         from datetime import timedelta
-        start_date: datetime = min(history[0])
-        end_date: datetime = max(history[0])
-        history[0].append(start_date - timedelta(minutes=1))
-        history[1].append(0)
-        # history[0].append(start_date - timedelta(minutes=2))
-        # history[1].append(0)
+        start_date: datetime = min(history.keys())
+        end_date: datetime = max(history.keys())
+        history[start_date - timedelta(minutes=2)] = 0
+        history[start_date - timedelta(minutes=1)] = 0
+        history = dict(sorted(history.items()))
+
+        x =[]
+        y =[]
+        for k, v in history.items():
+            x.append(k)
+            y.append(v)
 
         import matplotlib
         import matplotlib.pyplot as plt
@@ -97,16 +101,15 @@ class ReplyHistoryUseCase:
         matplotlib.use('agg')
 
         fig, ax = plt.subplots()
-        plt.plot(history[0], history[1], marker=".")
-        # plt.step(history[0], history[1], where='mid')
+        plt.step(history.keys(), history.values(), where='mid')
 
         plt.grid(which='major', axis='y')
-        plt.xlim([start_date - timedelta(minutes=1), end_date])
+        plt.xlim([start_date - timedelta(minutes=2), end_date])
         plt.xticks(rotation=30)
         # locator = mdates.DayLocator()
         # ax.xaxis.set_major_locator(locator)
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H時"))
-        
+
         try:
             fig.savefig(f"src/uploads/personal_history/{req_line_id}.png")
         except FileNotFoundError:

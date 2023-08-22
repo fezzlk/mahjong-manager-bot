@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, List
 from .interfaces.IMatchService import IMatchService
 from repositories import match_repository
 from DomainModel.entities.Match import Match
 from bson.objectid import ObjectId
+from pymongo import ASCENDING
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
@@ -60,4 +61,11 @@ class MatchService(IMatchService):
         match_repository.update(
             {'_id': target._id},
             target.__dict__,
+        )
+
+    def find_all_for_graph(self, ids: List[ObjectId], line_group_id: str) -> List[Match]:
+        # 将来的にはGroup IDによるフィルターをかける
+        return match_repository.find(
+            query={'_id': {'$in': ids}},
+            sort=[('created_at', ASCENDING)]
         )
