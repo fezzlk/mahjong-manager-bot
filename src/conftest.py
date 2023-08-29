@@ -7,8 +7,7 @@ from mongo_client import mongo_client
 
 from dotenv import load_dotenv
 load_dotenv()
-os.environ.setdefault('IS_TEST', 'True')
-
+import env_var
 import pytest
 
 import server
@@ -20,6 +19,6 @@ from ApplicationService import (
 
 @pytest.fixture(scope='function', autouse=True)
 def reset_services():
-    mongo_client.drop_database("db")
+    mongo_client.drop_database(env_var.DATABASE_NAME)
     request_info_service.delete_req_info()
     reply_service.reset()
