@@ -1,6 +1,11 @@
 import re
 import random
 import datetime
+from DomainModel.entities.Match import Match
+from DomainService import (
+    user_service,
+)
+
 
 KANSUJI = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
 HAI = [k + '萬' for k in KANSUJI] + [k + '筒' for k in KANSUJI] + [k + '索' for k in KANSUJI] + ['白', '發', '中', '東', '南', '西', '北']
@@ -46,3 +51,20 @@ class MessageService:
 
     def get_finish_hanchan_message(self) -> str:
         return random.choice(finish_hanchan_messages)
+
+    def create_show_match_result(self, match: Match) -> str:
+        sum_prices_with_tip = match.sum_prices_with_tip
+        tip_scores = match.tip_scores
+        sum_scores = match.sum_scores
+
+        show_prize_money_list = []
+        for line_user_id, score in sum_scores.items():
+            name = user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"
+            show_score = ("+" if score > 0 else "") + str(score)
+            price = sum_prices_with_tip.get(line_user_id, 0)
+            tip_count = tip_scores.get(line_user_id, 0)
+            additional_tip_message = f'({("+" if tip_count > 0 else "") + str(tip_count)}枚)'
+
+            show_prize_money_list.append(
+                f'{name}: {str(price)}円 ({show_score}{additional_tip_message})')
+        return '\n'.join(show_prize_money_list)

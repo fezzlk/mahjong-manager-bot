@@ -23,25 +23,25 @@ dummy_matches = [
         _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 1, 1)
+        created_at=datetime(2010, 1, 1, 1, 1, 1)
     ),
     Match(
         _id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 1, 2)
+        created_at=datetime(2010, 1, 1, 1, 1, 2)
     ),
     Match(
         _id=3,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=0,
-        created_at=datetime(2010, 1, 1, 1, 1, 1, 3)
+        created_at=datetime(2010, 1, 1, 1, 1, 3)
     ),
     Match(
         _id=4,
         line_group_id="dummy",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 1, 4)
+        created_at=datetime(2010, 1, 1, 1, 1, 4)
     ),
 ]
 
@@ -231,6 +231,17 @@ def test_execute_fail_savefig(mocker):
     mock = mocker.patch.object(
         reply_service,
         'push_a_message',
+    )
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+        side_effect=FileNotFoundError(),
     )
         
     for dummy_match in dummy_matches:

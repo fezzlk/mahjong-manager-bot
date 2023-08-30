@@ -16,7 +16,7 @@ def test_execute():
     use_case = ReplyGroupHelpUseCase()
 
     # Act
-    use_case.execute()
+    use_case.execute([])
 
     # Assert
     assert len(reply_service.texts) == 2
