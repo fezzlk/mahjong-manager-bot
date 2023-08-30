@@ -9,7 +9,7 @@ from DomainService import (
 )
 import env_var
 from pymongo import DESCENDING
-from typing import Dict, List
+from typing import Dict
 
 
 class ReplyMatchGraphUseCase:
@@ -37,6 +37,8 @@ class ReplyMatchGraphUseCase:
             for line_id in hanchan.converted_scores:
                 if line_id not in line_id_name_dict:
                     user = user_service.find_one_by_line_user_id(line_id)
+                    if user is None:
+                        continue
                     line_id_name_dict[user.line_user_id] = user.line_user_name
                     total_score_dict[line_id] = 0
                     score_plot_dict[line_id] = [0]
@@ -73,7 +75,7 @@ class ReplyMatchGraphUseCase:
             reply_service.add_message(text='システムエラーが発生しました。')
             messages = [
                 '対戦履歴の画像アップロードに失敗しました',
-                '送信者: ' + user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id,
+                '送信者: ' + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
             ]
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
