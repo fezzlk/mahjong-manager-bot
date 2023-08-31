@@ -4,11 +4,8 @@ from ApplicationService import (
 )
 from DomainService import (
     user_service,
+    match_service,
 )
-from repositories import (
-    match_repository,
-)
-from pymongo import DESCENDING
 
 
 class ReplyApplyBadaiUseCase:
@@ -25,19 +22,14 @@ class ReplyApplyBadaiUseCase:
 
         line_group_id = request_info_service.req_line_group_id
 
-        matches = match_repository.find(
-            {
-                'line_group_id': line_group_id,
-                'status': 2,
-            },
-            [('created_at', DESCENDING)],
-        )
-        if len(matches) == 0:
+        latest_match = match_service.find_latest_one(line_group_id=line_group_id)
+
+        if latest_match is None:
             reply_service.add_message(
                 'まだ対戦結果がありません。')
             return
 
-        player_count = len(matches[0].sum_prices_with_tip)
+        player_count = len(latest_match.sum_prices_with_tip)
 
         badai_per_player = badai // player_count
         fraction = badai % player_count
@@ -47,7 +39,7 @@ class ReplyApplyBadaiUseCase:
         str_fraction = '' if fraction == 0 else str(fraction) + '円'
 
         str_each_price = []
-        for u_id, p in matches[0].sum_prices_with_tip.items():
+        for u_id, p in latest_match.sum_prices_with_tip.items():
             name = user_service.get_name_by_line_user_id(u_id) or "友達未登録"
             str_each_price.append(f'{name}: {p - badai_per_player}円')
 
@@ -55,7 +47,7 @@ class ReplyApplyBadaiUseCase:
             '直前の対戦の最終会計を表示します。')
         reply_service.add_message(
             '対戦ID: ' +
-            str(matches[0]._id) +
+            str(latest_match._id) +
             '\n' +
             f'場代: {badai}円({badai_per_player}円×{player_count}人{str_fraction})' +
             '\n' +

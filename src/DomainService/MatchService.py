@@ -3,7 +3,7 @@ from .interfaces.IMatchService import IMatchService
 from repositories import match_repository
 from DomainModel.entities.Match import Match
 from bson.objectid import ObjectId
-from pymongo import ASCENDING
+from pymongo import ASCENDING, DESCENDING
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
@@ -63,9 +63,18 @@ class MatchService(IMatchService):
             target.__dict__,
         )
 
-    def find_all_for_graph(self, ids: List[ObjectId], line_group_id: str) -> List[Match]:
-        # 将来的にはGroup IDによるフィルターをかける
+    def find_all_for_graph(self, ids: List[ObjectId]) -> List[Match]:
+        # 将来的にはGroupに含まれるメンバーの半荘のみを対象とする
         return match_repository.find(
             query={'_id': {'$in': ids}},
             sort=[('created_at', ASCENDING)]
         )
+    
+    def find_latest_one(self, line_group_id: str) -> Optional[Match]:
+        matches = match_repository.find(
+            query={'line_group_id': line_group_id},
+            sort=[('created_at', DESCENDING)],
+        )
+        if len(matches) == 0:
+            return None
+        return matches[0]

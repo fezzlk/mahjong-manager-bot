@@ -6,6 +6,7 @@ from repositories import match_repository
 from DomainService import (
     hanchan_service,
     user_service,
+    match_service,
 )
 import env_var
 from pymongo import DESCENDING
@@ -17,17 +18,12 @@ class ReplyMatchGraphUseCase:
     def execute(self) -> None:
         # TODO 将来的には何回目の対戦か指定するようにする
         line_group_id = request_info_service.req_line_group_id
-        matches = match_repository.find(
-            query={'line_group_id': line_group_id},
-            sort=[('created_at', DESCENDING)],
-        )
-        if len(matches) == 0:
+        latest_match = match_service.find_latest_one(line_group_id)
+        if latest_match is None:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
             return
-
-        latest_match = matches[0]
 
         hanchans = hanchan_service.find_all_by_match_id(latest_match._id)
         line_id_name_dict: Dict[str, str] = {}
