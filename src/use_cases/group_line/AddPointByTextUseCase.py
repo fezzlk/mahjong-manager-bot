@@ -25,9 +25,11 @@ class AddPointByTextUseCase:
         if point is None and target_line_user_id is None:
             return
         
-        # Active 半荘を取得し点数を追加
+        # 現在入力中の半荘を取得し点数を追加
         group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
         active_match = match_service.find_one_by_id(group.active_match_id)
+        if active_match.active_hanchan_id is None:
+            return
         hanchan = hanchan_service.add_or_drop_raw_score(
             hanchan_id=active_match.active_hanchan_id,
             line_user_id=target_line_user_id,
