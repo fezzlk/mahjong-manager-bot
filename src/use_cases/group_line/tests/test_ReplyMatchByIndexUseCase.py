@@ -1,6 +1,6 @@
 from DomainModel.entities.Match import Match
 from DomainModel.entities.User import User
-from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
+from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
 from ApplicationService import (
     request_info_service,
     reply_service,
@@ -17,7 +17,15 @@ dummy_matches = [
         _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 1)
+        created_at=datetime(2010, 1, 1, 1, 1, 1),
+                sum_prices_with_tip={
+            "U0123456789abcdefghijklmnopqrstu1": 1000,
+            "U0123456789abcdefghijklmnopqrstu2": 1800,
+            "U0123456789abcdefghijklmnopqrstu3": -1800,
+            "U0123456789abcdefghijklmnopqrstu4": -400,
+            "U0123456789abcdefghijklmnopqrstu5": -300,
+            "dummy": -300,
+        },
     ),
     Match(
         _id=2,
@@ -105,7 +113,7 @@ dummy_event = Event(
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
     message_type='text',
-    text='_badai 3,000',
+    text='_match 2',
 )
 
 
@@ -116,57 +124,45 @@ def test_execute():
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     request_info_service.set_req_info(event=dummy_event)
-    use_case = ReplyApplyBadaiUseCase()
+    use_case = ReplyMatchByIndexUseCase()
 
     # Act
-    use_case.execute('3,000')
+    use_case.execute('2')
 
     # Assert
-    assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == '直前の対戦の最終会計を表示します。'
-    assert reply_service.texts[1].text == '対戦ID: 2\n場代: 3000円(500円×6人)\ntest_user_1: 500円\ntest_user_2: 1300円\ntest_user_3: -2300円\ntest_user_4: -900円\ntest_user_5: -800円\n友達未登録: -800円'
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == '第2回\n2010年01月01日\ntest_user_1: 1000円 (+30(+10枚))\ntest_user_2: 1800円 (+60(0枚))\ntest_user_3: -1800円 (-60(0枚))\ntest_user_4: -400円 (-10(-10枚))\ntest_user_5: -300円 (-10(0枚))\n友達未登録: -300円 (-10(0枚))'
 
 
-def test_execute_with_fraction():
+def test_execute_invalid_arg():
     # Arrange
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     request_info_service.set_req_info(event=dummy_event)
-    use_case = ReplyApplyBadaiUseCase()
-
-    # Act
-    use_case.execute('2,996')
-
-    # Assert
-    assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == '直前の対戦の最終会計を表示します。'
-    assert reply_service.texts[1].text == '対戦ID: 2\n場代: 2996円(500円×6人-4円)\ntest_user_1: 500円\ntest_user_2: 1300円\ntest_user_3: -2300円\ntest_user_4: -900円\ntest_user_5: -800円\n友達未登録: -800円'
-
-
-def test_execute_invalid_badai():
-    # Arrange
-    request_info_service.set_req_info(event=dummy_event)
-    use_case = ReplyApplyBadaiUseCase()
+    use_case = ReplyMatchByIndexUseCase()
 
     # Act
     use_case.execute('dummy')
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '場代は自然数で入力してください。'
+    assert reply_service.texts[0].text == '引数は整数で指定してください。'
 
 
-def test_execute_no_match():
+def test_execute_out_of_index():
     # Arrange
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
     request_info_service.set_req_info(event=dummy_event)
-    use_case = ReplyApplyBadaiUseCase()
+    use_case = ReplyMatchByIndexUseCase()
 
     # Act
-    use_case.execute('0')
+    use_case.execute('3')
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'まだ対戦結果がありません。'
-
+    assert reply_service.texts[0].text == 'このトークルームには全2回までしか登録されていないため第3回はありません。'

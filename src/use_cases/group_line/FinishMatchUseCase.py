@@ -31,7 +31,7 @@ class FinishMatchUseCase:
             )
             return
         
-        hanchans = hanchan_service.find_all_by_match_id(active_match._id)
+        hanchans = hanchan_service.find_all_archived_by_match_id(active_match._id)
 
         if len(hanchans) == 0:
             reply_service.add_message(

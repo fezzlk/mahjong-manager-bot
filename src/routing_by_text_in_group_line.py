@@ -25,7 +25,7 @@ from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 
 from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
-# from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
+from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
 # from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
 # from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
@@ -123,9 +123,9 @@ def routing_for_group_by_method(method, body):
     # setting
     elif method == RCommands.setting.name:
         ReplyGroupSettingsMenuUseCase().execute(body)
-    # # results by match id
-    # elif method == RCommands.match.name:
-    #     ReplySumHanchansByMatchIdUseCase().execute(body)
+    # match detail by index
+    elif method == RCommands.match.name:
+        ReplyMatchByIndexUseCase().execute(body)
     # drop
     elif method == RCommands.drop.name:
         DropHanchanByIndexUseCase().execute(int(body))
@@ -184,7 +184,7 @@ def routing_for_group_by_method(method, body):
     #     ReplySumMatchesByIdsUseCase().execute(args)
     # # graphs
     elif method == RCommands.graph.name:
-        ReplyMatchGraphUseCase().execute()
+        ReplyMatchGraphUseCase().execute(body)
 
 
 # def parse_int_list(args):

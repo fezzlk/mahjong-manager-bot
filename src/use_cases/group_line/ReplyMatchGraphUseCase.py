@@ -2,30 +2,43 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
-from repositories import match_repository
 from DomainService import (
     hanchan_service,
     user_service,
     match_service,
 )
 import env_var
-from pymongo import DESCENDING
-from typing import Dict
+from typing import Dict, Optional
 
 
 class ReplyMatchGraphUseCase:
 
-    def execute(self) -> None:
-        # TODO 将来的には何回目の対戦か指定するようにする
+    def execute(self, str_index: Optional[str] = None) -> None:
         line_group_id = request_info_service.req_line_group_id
-        latest_match = match_service.find_latest_one(line_group_id)
-        if latest_match is None:
-            reply_service.add_message(
-                'まだ対戦結果がありません。'
-            )
-            return
+        if str_index is None or str_index == '':
+            target_match = match_service.find_latest_one(line_group_id)
+            if target_match is None:
+                reply_service.add_message(
+                    'まだ対戦結果がありません。'
+                )
+                return
+        else:
+            if not str_index.isdigit():
+                reply_service.add_message(
+                    '引数は整数で指定してください。'
+                )
+                return
 
-        hanchans = hanchan_service.find_all_by_match_id(latest_match._id)
+            archived_matches = match_service.find_all_archived_by_line_group_id(line_group_id=line_group_id)
+            index = int(str_index)
+            if index < 1 or len(archived_matches) < index:
+                reply_service.add_message(
+                    f'このトークルームには全{len(archived_matches)}回までしか登録されていないため第{index}回はありません。'
+                )
+                return
+            target_match = archived_matches[index-1]
+        
+        hanchans = hanchan_service.find_all_archived_by_match_id(target_match._id)
         line_id_name_dict: Dict[str, str] = {}
         total_score_dict = {}
         score_plot_dict = {}
@@ -65,7 +78,7 @@ class ReplyMatchGraphUseCase:
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
         try:
-            fig.savefig(f"src/uploads/match_detail/{str(latest_match._id)}.png")
+            fig.savefig(f"src/uploads/match_detail/{str(target_match._id)}.png")
         except FileNotFoundError:
             reply_service.reset()
             reply_service.add_message(text='システムエラーが発生しました。')
@@ -81,6 +94,6 @@ class ReplyMatchGraphUseCase:
         plt.clf()
         plt.close()
 
-        path = f'uploads/match_detail/{str(latest_match._id)}.png'
+        path = f'uploads/match_detail/{str(target_match._id)}.png'
         image_url = f'{env_var.SERVER_URL}{path}'
         reply_service.add_image(image_url)

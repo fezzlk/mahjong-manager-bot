@@ -24,9 +24,13 @@ class IHanchanService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def find_all_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
+    def find_all_archived_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
         pass
 
     @abstractmethod
     def update(self, target: Hanchan) -> None:
+        pass
+
+    @abstractmethod
+    def disable_by_match_id(self, match_id: ObjectId) -> None:
         pass

@@ -135,7 +135,7 @@ class SubmitHanchanUseCase:
             user_match_repository.create(user_match)
 
         # 半荘合計の更新
-        hanchans = hanchan_service.find_all_by_match_id(active_hanchan.match_id)
+        hanchans = hanchan_service.find_all_archived_by_match_id(active_hanchan.match_id)
 
         sum_scores: Dict[str, int] = {}
         for h in hanchans:

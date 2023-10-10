@@ -21,13 +21,29 @@ dummy_matches = [
         _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 1)
+        created_at=datetime(2010, 1, 1, 1, 1, 1),
+                sum_prices_with_tip={
+            "U0123456789abcdefghijklmnopqrstu1": 1000,
+            "U0123456789abcdefghijklmnopqrstu2": 1800,
+            "U0123456789abcdefghijklmnopqrstu3": -1800,
+            "U0123456789abcdefghijklmnopqrstu4": -400,
+            "U0123456789abcdefghijklmnopqrstu5": -300,
+            "dummy": -300,
+        }
     ),
     Match(
         _id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 2)
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
+                sum_prices_with_tip={
+            "U0123456789abcdefghijklmnopqrstu1": 1000,
+            "U0123456789abcdefghijklmnopqrstu2": 1800,
+            "U0123456789abcdefghijklmnopqrstu3": -1800,
+            "U0123456789abcdefghijklmnopqrstu4": -400,
+            "U0123456789abcdefghijklmnopqrstu5": -300,
+            "dummy": -300,
+        }
     ),
     Match(
         _id=3,
@@ -262,3 +278,93 @@ def test_execute_fail_savefig_without_sender(mocker):
         to=env_var.SERVER_ADMIN_LINE_USER_ID,
         message='対戦履歴の画像アップロードに失敗しました\n送信者: U0123456789abcdefghijklmnopqrstu1',
     )
+
+def test_execute_with_index(mocker):
+    # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+    )
+
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyMatchGraphUseCase()
+
+    # Act
+    use_case.execute('2')
+
+    # Assert
+    assert len(reply_service.images) == 1
+
+
+def test_execute_with_invalid_arg(mocker):
+    # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+    )
+
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyMatchGraphUseCase()
+
+    # Act
+    use_case.execute('dummy')
+
+    # Assert
+    assert len(reply_service.images) == 0
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == '引数は整数で指定してください。'
+
+
+def test_execute_with_out_of_index(mocker):
+    # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+    )
+
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyMatchGraphUseCase()
+
+    # Act
+    use_case.execute('3')
+
+    # Assert
+    assert len(reply_service.images) == 0
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == 'このトークルームには全2回までしか登録されていないため第3回はありません。'
