@@ -30,6 +30,7 @@ from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
 # from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
+from use_cases.group_line.ReplyFinishConfirmUseCase import ReplyFinishConfirmUseCase
 from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
 from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
@@ -51,6 +52,7 @@ class RCommands(Enum):
     setting = 'setting'
     results = 'results'
     finish = 'finish'
+    finish_confirm = 'finish_confirm'
     fortune = 'fortune'
     others = 'others'
     matches = 'matches'
@@ -135,6 +137,9 @@ def routing_for_group_by_method(method, body):
     # finish
     elif method == RCommands.finish.name:
         FinishMatchUseCase().execute()
+    # finish_confirm
+    elif method == RCommands.finish_confirm.name:
+        ReplyFinishConfirmUseCase().execute()
     # fortune
     elif method == RCommands.fortune.name:
         ReplyFortuneUseCase().execute()

@@ -1,0 +1,9 @@
+from ApplicationService import (
+    reply_service,
+)
+
+
+class ReplyFinishConfirmUseCase:
+
+    def execute(self) -> None:
+        reply_service.confirm_finish()
