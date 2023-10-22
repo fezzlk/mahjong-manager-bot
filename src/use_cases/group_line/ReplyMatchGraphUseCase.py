@@ -6,10 +6,11 @@ from repositories import match_repository
 from DomainService import (
     hanchan_service,
     user_service,
+    match_service,
 )
 import env_var
 from pymongo import DESCENDING
-from typing import Dict, List
+from typing import Dict
 
 
 class ReplyMatchGraphUseCase:
@@ -17,17 +18,12 @@ class ReplyMatchGraphUseCase:
     def execute(self) -> None:
         # TODO 将来的には何回目の対戦か指定するようにする
         line_group_id = request_info_service.req_line_group_id
-        matches = match_repository.find(
-            query={'line_group_id': line_group_id},
-            sort=[('created_at', DESCENDING)],
-        )
-        if len(matches) == 0:
+        latest_match = match_service.find_latest_one(line_group_id)
+        if latest_match is None:
             reply_service.add_message(
                 'まだ対戦結果がありません。'
             )
             return
-
-        latest_match = matches[0]
 
         hanchans = hanchan_service.find_all_by_match_id(latest_match._id)
         line_id_name_dict: Dict[str, str] = {}
@@ -37,6 +33,8 @@ class ReplyMatchGraphUseCase:
             for line_id in hanchan.converted_scores:
                 if line_id not in line_id_name_dict:
                     user = user_service.find_one_by_line_user_id(line_id)
+                    if user is None:
+                        continue
                     line_id_name_dict[user.line_user_id] = user.line_user_name
                     total_score_dict[line_id] = 0
                     score_plot_dict[line_id] = [0]
@@ -73,7 +71,7 @@ class ReplyMatchGraphUseCase:
             reply_service.add_message(text='システムエラーが発生しました。')
             messages = [
                 '対戦履歴の画像アップロードに失敗しました',
-                '送信者: ' + user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id,
+                '送信者: ' + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
             ]
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,

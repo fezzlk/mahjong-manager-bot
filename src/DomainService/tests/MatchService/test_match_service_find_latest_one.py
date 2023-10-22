@@ -2,6 +2,7 @@ from DomainService import (
     match_service,
 )
 from repositories import match_repository
+from pymongo import DESCENDING
 from DomainModel.entities.Match import Match
 
 dummy_matches = [
@@ -9,11 +10,15 @@ dummy_matches = [
         _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-    )
+    ),
+    Match(
+        _id=2,
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        status=2,
+    ),
 ]
 
-
-def test_ok_hit_match(mocker):
+def test_ok(mocker):
     # Arrange
     mock_find = mocker.patch.object(
         match_repository,
@@ -22,16 +27,14 @@ def test_ok_hit_match(mocker):
     )
 
     # Act
-    result = match_service.find_one_by_id(1)
+    result = match_service.find_latest_one('G0123456789abcdefghijklmnopqrstu1')
 
     # Assert
     assert isinstance(result, Match)
-    assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
-    assert result.status == 2
-    mock_find.assert_called_once_with({'_id': 1})
+    mock_find.assert_called_once_with(query={'line_group_id': 'G0123456789abcdefghijklmnopqrstu1'}, sort=[('created_at', DESCENDING)])
 
 
-def test_no_hit(mocker):
+def test_ok(mocker):
     # Arrange
     mock_find = mocker.patch.object(
         match_repository,
@@ -40,8 +43,8 @@ def test_no_hit(mocker):
     )
 
     # Act
-    result = match_service.find_one_by_id(1)
+    result = match_service.find_latest_one('G0123456789abcdefghijklmnopqrstu1')
 
     # Assert
     assert result is None
-    mock_find.assert_called_once_with({'_id': 1})
+    mock_find.assert_called_once_with(query={'line_group_id': 'G0123456789abcdefghijklmnopqrstu1'}, sort=[('created_at', DESCENDING)])

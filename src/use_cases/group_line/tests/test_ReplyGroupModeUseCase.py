@@ -22,7 +22,7 @@ dummy_event = Event(
 )
 
 
-def test_execute(mocker):
+def test_execute():
     # Arrange
     group_repository.create(dummy_group)
     request_info_service.set_req_info(event=dummy_event)

@@ -1,6 +1,5 @@
 from DomainModel.entities.Group import GroupMode
 from DomainService import (
-    user_service,
     match_service,
     group_service,
     group_setting_service,
@@ -9,6 +8,7 @@ from DomainService import (
 from ApplicationService import (
     request_info_service,
     reply_service,
+    message_service,
 )
 from typing import Dict
 
@@ -81,17 +81,6 @@ class FinishMatchUseCase:
         group_service.update(group)
 
         # 応答メッセージ作成
-        show_prize_money_list = []
-        for line_user_id, converted_score in sum_scores.items():
-            name = user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"
-            price = sum_prices_with_tip[line_user_id]
-            score = ("+" if converted_score > 0 else "") + str(converted_score)
-            tip_score = tip_scores[line_user_id]
-            additional_tip_message = f'({("+" if tip_score > 0 else "") + str(tip_score)}枚)'
-            
-            show_prize_money_list.append(
-                f'{name}: {str(price)}円 ({score}{additional_tip_message})')
-
         reply_service.add_message(
-            '【対戦結果】 \n' + '\n'.join(show_prize_money_list)
+            '【対戦結果】 \n' + message_service.create_show_match_result(match=active_match)
         )
