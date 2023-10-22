@@ -215,7 +215,8 @@ def test_success():
         {'user_id': {'$in': [1, 2, 3, 4]}}
     )
     assert len(um) == 4
-    assert len(reply_service.texts) == 4
+    assert len(reply_service.texts) == 3
+    assert len(reply_service.buttons) == 1
     assert reply_service.texts[1].text == "test_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
     groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value

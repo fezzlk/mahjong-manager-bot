@@ -178,8 +178,6 @@ class SubmitHanchanUseCase:
         # ルームを待機モードにする
         group_service.chmod(line_group_id, GroupMode.wait)
 
-        reply_service.add_message(
-            '始める時は「_start」と入力してください。'
-        )
+        reply_service.add_start_menu()
 
         return
