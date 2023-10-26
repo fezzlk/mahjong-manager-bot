@@ -1,14 +1,15 @@
 from ApplicationService import (
     request_info_service,
     reply_service,
+    graph_service,
 )
 from DomainService import (
     hanchan_service,
     user_service,
     match_service,
 )
-import env_var
 from typing import Dict, Optional
+import env_var
 
 
 class ReplyMatchGraphUseCase:
@@ -39,51 +40,26 @@ class ReplyMatchGraphUseCase:
             target_match = archived_matches[index-1]
         
         hanchans = hanchan_service.find_all_archived_by_match_id(target_match._id)
+        line_id_list, score_plot_dict = graph_service.create_users_point_plot_data(
+            hanchans=hanchans,
+        )
         line_id_name_dict: Dict[str, str] = {}
-        total_score_dict = {}
-        score_plot_dict = {}
-        for hanchan in hanchans:
-            for line_id in hanchan.converted_scores:
-                if line_id not in line_id_name_dict:
-                    user = user_service.find_one_by_line_user_id(line_id)
-                    if user is None:
-                        continue
-                    line_id_name_dict[user.line_user_id] = user.line_user_name
-                    total_score_dict[line_id] = 0
-                    score_plot_dict[line_id] = [0]
-  
-        for hanchan in hanchans:
-            for line_id in line_id_name_dict:
-                if line_id in hanchan.converted_scores:
-                    total_score_dict[line_id] += hanchan.converted_scores[line_id]
-                score_plot_dict[line_id].append(total_score_dict[line_id])
+        for line_id in line_id_list:
+            user = user_service.find_one_by_line_user_id(line_id)
+            if user is None:
+                continue
+            line_id_name_dict[line_id] = user.line_user_name
 
-
-        # グラフ描画
-        import matplotlib
-        import matplotlib.pyplot as plt
-        from matplotlib.ticker import MaxNLocator
-        matplotlib.use('agg')
-
- 
-        fig, ax = plt.subplots()
-        for line_id in line_id_name_dict:
-            plt.plot(
-                range(len(score_plot_dict[line_id])),
-                score_plot_dict[line_id],
-                label=line_id_name_dict[line_id])
-            
-        plt.grid(which='major', axis='y')
-        plt.legend()
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-
-        try:
-            fig.savefig(f"src/uploads/match_detail/{str(target_match._id)}.png")
-        except FileNotFoundError:
+        image_url, err_message = graph_service.create_users_point_plot_graph_url(
+            line_id_name_dict=line_id_name_dict,
+            plot_dict=score_plot_dict,
+            upload_file_path=f'/match_detail/{str(target_match._id)}.png',
+        )
+        if err_message is not None:
             reply_service.reset()
             reply_service.add_message(text='システムエラーが発生しました。')
             messages = [
-                '対戦履歴の画像アップロードに失敗しました',
+                err_message,
                 '送信者: ' + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
             ]
             reply_service.push_a_message(
@@ -91,9 +67,4 @@ class ReplyMatchGraphUseCase:
                 message='\n'.join(messages),
             )
             return
-        plt.clf()
-        plt.close()
-
-        path = f'uploads/match_detail/{str(target_match._id)}.png'
-        image_url = f'{env_var.SERVER_URL}{path}'
         reply_service.add_image(image_url)

@@ -5,6 +5,7 @@ from DomainModel.entities.Match import Match
 from DomainService import (
     user_service,
 )
+from .interfaces.IMessageService import IMessageService
 from typing import Dict
 
 
@@ -33,7 +34,7 @@ finish_hanchan_messages = [
 ]
 
 
-class MessageService:
+class MessageService(IMessageService):
 
     def get_random_hai(
         self,

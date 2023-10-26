@@ -50,15 +50,15 @@ def test_success(mocker):
     # Arrange
     def mock_behavior(arg):
         if arg == 'U0123456789abcdefghijklmnopqrstu1':
-            return 'test_user_1'
+            return 'test_user1'
         if arg == 'U0123456789abcdefghijklmnopqrstu2':
-            return 'test_user_2'
+            return 'test_user2'
         if arg == 'U0123456789abcdefghijklmnopqrstu3':
-            return 'test_user_3'
+            return 'test_user3'
         if arg == 'U0123456789abcdefghijklmnopqrstu4':
-            return 'test_user_4'
+            return 'test_user4'
         if arg == 'U0123456789abcdefghijklmnopqrstu5':
-            return 'test_user_5'
+            return 'test_user5'
         
     mocker.patch.object(
         user_service,
@@ -71,4 +71,4 @@ def test_success(mocker):
     result = message_service.create_show_match_result(dummy_match)
 
     # Assert
-    assert result == 'test_user_1: 3100円 (+100(+10枚))\ntest_user_2: 600円 (+20(0枚))\ntest_user_3: -1300円 (-40(-10枚))\ntest_user_4: -1200円 (-40(0枚))\ntest_user_5: -1200円 (-40(0枚))'
+    assert result == 'test_user1: 3100円 (+100(+10枚))\ntest_user2: 600円 (+20(0枚))\ntest_user3: -1300円 (-40(-10枚))\ntest_user4: -1200円 (-40(0枚))\ntest_user5: -1200円 (-40(0枚))'

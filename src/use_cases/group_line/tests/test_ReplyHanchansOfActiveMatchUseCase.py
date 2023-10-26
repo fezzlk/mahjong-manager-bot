@@ -9,11 +9,12 @@ from repositories import (
     match_repository,
     group_repository,
 )
-
+import env_var
 from ApplicationService import (
     reply_service,
     request_info_service,
 )
+import matplotlib.pyplot as plt
 
 dummy_users = [
     User(
@@ -155,8 +156,18 @@ dummy_active_hanchan = Hanchan(
 )
 
 
-def test_success_single_hanchan():
+def test_success_single_hanchan(mocker):
     # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+    )
     use_case = ReplyHanchansOfActiveMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
@@ -175,11 +186,23 @@ def test_success_single_hanchan():
     assert len(reply_service.texts) == 2
     assert reply_service.texts[0].text == '途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。'
     assert reply_service.texts[1].text == "第1回\ntest_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
+    assert len(reply_service.images) == 1
     reply_service.reset()
 
 
-def test_success_multi_hanchan():
+def test_success_multi_hanchan(mocker):
     # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+    )
+
     use_case = ReplyHanchansOfActiveMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
@@ -199,7 +222,51 @@ def test_success_multi_hanchan():
     assert len(reply_service.texts) == 2
     assert reply_service.texts[0].text == '途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。'
     assert reply_service.texts[1].text == "第1回\ntest_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)\n\n第2回\ntest_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user4: -40 (-80)\n\n第3回\ntest_user1: +50 (+150)\ntest_user2: +10 (+30)\ntest_user3: -20 (-60)\ntest_user4: -40 (-120)"
+    assert len(reply_service.images) == 1
     reply_service.reset()
+
+def test_success_fail_savefig(mocker):
+    # Arrange
+    mock = mocker.patch.object(
+        reply_service,
+        'push_a_message',
+    )
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+        side_effect=FileNotFoundError(),
+    )
+
+    use_case = ReplyHanchansOfActiveMatchUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_archived_hanchan in dummy_archived_hanchans:
+        hanchan_repository.create(dummy_archived_hanchan)
+    hanchan_repository.create(dummy_disabled_hanchan)
+    hanchan_repository.create(dummy_active_hanchan)
+    dummy_match.active_hanchan_id = dummy_active_hanchan._id
+    match_repository.create(dummy_match)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.images) == 0
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == 'システムエラーが発生しました。'
+    mock.assert_called_once_with(
+        to=env_var.SERVER_ADMIN_LINE_USER_ID,
+        message='対戦履歴の画像アップロードに失敗しました\n送信者: test_user1',
+    )
 
 
 def test_success_no_group():

@@ -83,27 +83,27 @@ dummy_users = [
     User(
         _id=1,
         line_user_id="U0123456789abcdefghijklmnopqrstu1",
-        line_user_name="test_user_1",
+        line_user_name="test_user1",
     ),
     User(
         _id=2,
         line_user_id="U0123456789abcdefghijklmnopqrstu2",
-        line_user_name="test_user_2",
+        line_user_name="test_user2",
     ),
     User(
         _id=3,
         line_user_id="U0123456789abcdefghijklmnopqrstu3",
-        line_user_name="test_user_3",
+        line_user_name="test_user3",
     ),
     User(
         _id=4,
         line_user_id="U0123456789abcdefghijklmnopqrstu4",
-        line_user_name="test_user_4",
+        line_user_name="test_user4",
     ),
     User(
         _id=5,
         line_user_id="U0123456789abcdefghijklmnopqrstu5",
-        line_user_name="test_user_5",
+        line_user_name="test_user5",
     ),
 ]
 
@@ -131,7 +131,7 @@ def test_execute():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '第2回\n2010年01月01日\ntest_user_1: 1000円 (+30(+10枚))\ntest_user_2: 1800円 (+60(0枚))\ntest_user_3: -1800円 (-60(0枚))\ntest_user_4: -400円 (-10(-10枚))\ntest_user_5: -300円 (-10(0枚))\n友達未登録: -300円 (-10(0枚))'
+    assert reply_service.texts[0].text == '第2回\n2010年01月01日\ntest_user1: 1000円 (+30(+10枚))\ntest_user2: 1800円 (+60(0枚))\ntest_user3: -1800円 (-60(0枚))\ntest_user4: -400円 (-10(-10枚))\ntest_user5: -300円 (-10(0枚))\n友達未登録: -300円 (-10(0枚))'
 
 
 def test_execute_invalid_arg():

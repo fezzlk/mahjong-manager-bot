@@ -31,13 +31,13 @@ def test_success(mocker):
     # Arrange
     def mock_behavior(arg):
         if arg == 'U0123456789abcdefghijklmnopqrstu1':
-            return 'test_user_1'
+            return 'test_user1'
         if arg == 'U0123456789abcdefghijklmnopqrstu2':
-            return 'test_user_2'
+            return 'test_user2'
         if arg == 'U0123456789abcdefghijklmnopqrstu3':
-            return 'test_user_3'
+            return 'test_user3'
         if arg == 'U0123456789abcdefghijklmnopqrstu4':
-            return 'test_user_4'
+            return 'test_user4'
         
     mocker.patch.object(
         user_service,
@@ -50,7 +50,7 @@ def test_success(mocker):
     result = message_service.create_show_converted_scores(converted_scores=converted_score)
 
     # Assert
-    assert result == "test_user_1: +50\ntest_user_2: +10\ntest_user_4: -20\ntest_user_3: -40"
+    assert result == "test_user1: +50\ntest_user2: +10\ntest_user4: -20\ntest_user3: -40"
 
 
 sum_scores={
@@ -63,13 +63,13 @@ def test_success_with_sum_scores(mocker):
     # Arrange
     def mock_behavior(arg):
         if arg == 'U0123456789abcdefghijklmnopqrstu1':
-            return 'test_user_1'
+            return 'test_user1'
         if arg == 'U0123456789abcdefghijklmnopqrstu2':
-            return 'test_user_2'
+            return 'test_user2'
         if arg == 'U0123456789abcdefghijklmnopqrstu3':
-            return 'test_user_3'
+            return 'test_user3'
         if arg == 'U0123456789abcdefghijklmnopqrstu4':
-            return 'test_user_4'
+            return 'test_user4'
         
     mocker.patch.object(
         user_service,
@@ -85,5 +85,5 @@ def test_success_with_sum_scores(mocker):
     )
 
     # Assert
-    assert result == "test_user_1: +50 (+10)\ntest_user_2: +10 (+20)\ntest_user_4: -20 (-20)\ntest_user_3: -40 (-10)"
+    assert result == "test_user1: +50 (+10)\ntest_user2: +10 (+20)\ntest_user4: -20 (-20)\ntest_user3: -40 (-10)"
 
