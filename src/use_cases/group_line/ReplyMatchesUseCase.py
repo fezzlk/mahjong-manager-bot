@@ -17,7 +17,7 @@ class ReplyMatchesUseCase:
             return
 
         reply_service.add_message(
-            'このトークルームで行われた結果を表示します。第N回の詳細は「_match N」')
+            'このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。')
         
         match_details = []
         for i, match in enumerate(archived_matches):

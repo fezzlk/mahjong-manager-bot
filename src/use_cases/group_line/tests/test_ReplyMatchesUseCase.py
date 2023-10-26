@@ -99,7 +99,7 @@ def test_execute():
 
     # Assert
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == 'このトークルームで行われた結果を表示します。第N回の詳細は「_match N」'
+    assert reply_service.texts[0].text == 'このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。'
     assert reply_service.texts[1].text == '第1回 2010-01-01\n第2回 2010-01-01'
 
 

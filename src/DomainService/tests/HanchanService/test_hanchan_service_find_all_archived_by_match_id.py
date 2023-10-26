@@ -3,6 +3,7 @@ from DomainService import (
 )
 from repositories import hanchan_repository
 from DomainModel.entities.Hanchan import Hanchan
+from pymongo import ASCENDING
 
 dummy_hanchans = [
     Hanchan(
@@ -29,7 +30,7 @@ def test_ok_hit_hanchan(mocker):
     )
 
     # Act
-    result = hanchan_service.find_all_by_match_id(1)
+    result = hanchan_service.find_all_archived_by_match_id(1)
 
     # Assert
     assert len(result) == len(dummy_hanchans)
@@ -39,4 +40,4 @@ def test_ok_hit_hanchan(mocker):
         assert result[i].match_id == dummy_hanchans[i].match_id
         assert result[i].line_group_id == dummy_hanchans[i].line_group_id
         assert result[i].status == dummy_hanchans[i].status
-    mock_find.assert_called_once_with({'match_id': 1})
+    mock_find.assert_called_once_with({'match_id': 1, 'converted_scores': {'$ne': {}}}, [('_id', ASCENDING)])
