@@ -80,8 +80,8 @@ class ReplyService(IReplyService):
                     text='何をしますか？',
                     actions=[
                         PostbackAction(
-                            label='結果を確認',
-                            display_text='結果を確認',
+                            label='途中経過を確認',
+                            display_text='途中経過を確認',
                             data='_results'
                         ),
                         PostbackAction(

@@ -30,7 +30,7 @@ dummy_match = Match(
 )
 
 
-def test_success(mocker):
+def test_success_with_unknown_users(mocker):
     # Arrange
     mocker.patch.object(
         user_service,
