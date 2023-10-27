@@ -34,3 +34,7 @@ class IMatchService(metaclass=ABCMeta):
     @abstractmethod
     def find_latest_one(self, line_group_id: str) -> Optional[Match]:
         pass
+
+    @abstractmethod
+    def find_all_archived_by_line_group_id(self, line_group_id: str) -> List[Match]:
+        pass

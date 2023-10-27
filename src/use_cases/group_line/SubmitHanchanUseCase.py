@@ -135,7 +135,7 @@ class SubmitHanchanUseCase:
             user_match_repository.create(user_match)
 
         # 半荘合計の更新
-        hanchans = hanchan_service.find_all_by_match_id(active_hanchan.match_id)
+        hanchans = hanchan_service.find_all_archived_by_match_id(active_hanchan.match_id)
 
         sum_scores: Dict[str, int] = {}
         for h in hanchans:
@@ -150,27 +150,13 @@ class SubmitHanchanUseCase:
         match_service.update(active_match)
 
         # 結果の表示
+        reply_service.add_message('一半荘お疲れ様でした。結果を表示します。')
         reply_service.add_message(
-            '一半荘お疲れ様でした。結果を表示します。'
-        )
-
-        score_text_list = []
-        for r in sorted(
-            calculate_result.items(),
-            key=lambda x: x[1],
-            reverse=True
-        ):
-            name = user_service.get_name_by_line_user_id(r[0]) or "友達未登録"
-            score = ("+" if r[1] > 0 else "") + str(r[1])
-            sum_score = (
-                "+" if sum_scores[r[0]] > 0 else "") + str(sum_scores[r[0]])
-            score_text_list.append(
-                f'{name}: {score} ({sum_score})'
+            message_service.create_show_converted_scores(
+                calculate_result,
+                sum_scores=sum_scores,
             )
-        reply_service.add_message(
-            '\n'.join(score_text_list)
         )
-
         reply_service.add_message(
             message_service.get_finish_hanchan_message()
         )

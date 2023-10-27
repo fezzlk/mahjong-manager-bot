@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from DomainModel.entities.Match import Match
-
+from typing import Dict
 
 class IMessageService(metaclass=ABCMeta):
 
@@ -21,4 +21,8 @@ class IMessageService(metaclass=ABCMeta):
 
     @abstractmethod
     def create_show_match_result(self, match: Match) -> str:
+        pass
+
+    @abstractmethod
+    def create_show_converted_scores(self, converted_scores: Dict[str, int], sum_scores: Dict[str, int] = None) -> str:
         pass

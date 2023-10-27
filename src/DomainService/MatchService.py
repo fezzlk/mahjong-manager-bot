@@ -78,3 +78,14 @@ class MatchService(IMatchService):
         if len(matches) == 0:
             return None
         return matches[0]
+
+    def find_all_archived_by_line_group_id(self, line_group_id: str) -> List[Match]:
+        # 将来的にはGroupに含まれるメンバーの半荘のみを対象とする
+        return match_repository.find(
+            query={
+                'line_group_id': line_group_id,
+                'sum_prices_with_tip': {"$ne": {}},
+            },
+            sort=[('created_at', ASCENDING)]
+        )
+    

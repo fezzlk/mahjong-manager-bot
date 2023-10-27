@@ -25,7 +25,7 @@ from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 
 from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
-# from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
+from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
 # from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
 # from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
@@ -36,7 +36,6 @@ from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
 # from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
-from use_cases.group_line.ReplyMatchGraphUseCase import ReplyMatchGraphUseCase
 
 from DomainModel.entities.Group import GroupMode
 
@@ -63,7 +62,6 @@ class RCommands(Enum):
     add_result = 'add_result'
     update_config = 'update_config'
     sum_matches = 'sum_matches'
-    graph = 'graph'
     my_results = 'my_results'
     history = 'history'
     tip_ok = 'tip_ok'
@@ -125,9 +123,9 @@ def routing_for_group_by_method(method, body):
     # setting
     elif method == RCommands.setting.name:
         ReplyGroupSettingsMenuUseCase().execute(body)
-    # # results by match id
-    # elif method == RCommands.match.name:
-    #     ReplySumHanchansByMatchIdUseCase().execute(body)
+    # match detail by index
+    elif method == RCommands.match.name:
+        ReplyMatchByIndexUseCase().execute(body)
     # drop
     elif method == RCommands.drop.name:
         DropHanchanByIndexUseCase().execute(int(body))
@@ -187,10 +185,6 @@ def routing_for_group_by_method(method, body):
     #     #         ]
     #     #     args.remove('to')
     #     ReplySumMatchesByIdsUseCase().execute(args)
-    # # graphs
-    elif method == RCommands.graph.name:
-        ReplyMatchGraphUseCase().execute()
-
 
 # def parse_int_list(args):
 #     args = body.split(' ')

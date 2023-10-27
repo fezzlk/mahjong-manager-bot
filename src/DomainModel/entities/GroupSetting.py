@@ -37,7 +37,7 @@ class GroupSetting:
         tip_rate: int = 0,
         tobi_prize: int = 10,
         num_of_players: int = 4,
-        rounding_method: int = 0,
+        rounding_method: int = 1,
         _id: ObjectId = None,
     ):
         self._id = _id

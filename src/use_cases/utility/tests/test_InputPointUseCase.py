@@ -9,13 +9,13 @@ def test_execute():
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = 'test_group_id'
-    request_info_service.req_line_user_id = 'test_user_id'
+    request_info_service.req_line_user_id = 'test_userid'
 
     # Act
     result = use_case.execute(text='1000')
 
     # Assert
-    assert result[0] == 'test_user_id'
+    assert result[0] == 'test_userid'
     assert result[1] == 1000
 
 
@@ -56,13 +56,13 @@ def test_execute_with_comma():
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = 'test_group_id'
-    request_info_service.req_line_user_id = 'test_user_id'
+    request_info_service.req_line_user_id = 'test_userid'
 
     # Act
     result = use_case.execute(text='1,000')
 
     # Assert
-    assert result[0] == 'test_user_id'
+    assert result[0] == 'test_userid'
     assert result[1] == 1000
 
 
@@ -70,13 +70,13 @@ def test_execute_minus():
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = 'test_group_id'
-    request_info_service.req_line_user_id = 'test_user_id'
+    request_info_service.req_line_user_id = 'test_userid'
 
     # Act
     result = use_case.execute(text='-1000')
 
     # Assert
-    assert result[0] == 'test_user_id'
+    assert result[0] == 'test_userid'
     assert result[1] == -1000
 
 
@@ -84,13 +84,13 @@ def test_execute_drop():
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = 'test_group_id'
-    request_info_service.req_line_user_id = 'test_user_id'
+    request_info_service.req_line_user_id = 'test_userid'
 
     # Act
     result = use_case.execute(text='-')
 
     # Assert
-    assert result[0] == 'test_user_id'
+    assert result[0] == 'test_userid'
     assert result[1] is None
 
 
@@ -98,7 +98,7 @@ def test_execute_drop_with_mention():
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = 'test_group_id'
-    request_info_service.req_line_user_id = 'test_user_id'
+    request_info_service.req_line_user_id = 'test_userid'
     request_info_service.mention_line_ids = [
         'U0123456789abcdefghijklmnopqrstu1']
 
