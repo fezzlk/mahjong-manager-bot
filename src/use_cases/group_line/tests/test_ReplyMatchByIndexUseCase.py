@@ -1,5 +1,6 @@
 from DomainModel.entities.Match import Match
 from DomainModel.entities.User import User
+from DomainModel.entities.Hanchan import Hanchan
 from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
 from ApplicationService import (
     request_info_service,
@@ -9,6 +10,7 @@ from line_models.Event import Event
 from repositories import (
     user_repository,
     match_repository,
+    hanchan_repository,
 )
 from datetime import datetime
 
@@ -79,6 +81,32 @@ dummy_matches = [
     ),
 ]
 
+dummy_hanchans = [
+    Hanchan(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        converted_scores={            
+            'U0123456789abcdefghijklmnopqrstu1': 30,
+            'U0123456789abcdefghijklmnopqrstu2': 60,
+            'U0123456789abcdefghijklmnopqrstu3': -30,
+            'U0123456789abcdefghijklmnopqrstu4': -60, 
+        },
+        match_id=2,
+        status=2,
+        _id=1,
+    ),
+    Hanchan(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        converted_scores={            
+            'U0123456789abcdefghijklmnopqrstu3': -30,
+            'U0123456789abcdefghijklmnopqrstu4': 50, 
+            'U0123456789abcdefghijklmnopqrstu5': -10, 
+            'dummy': -10, 
+        },
+        match_id=2,
+        status=2,
+        _id=2,
+    ),
+]
 dummy_users = [
     User(
         _id=1,
@@ -121,6 +149,8 @@ def test_execute():
     # Arrange
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     request_info_service.set_req_info(event=dummy_event)
@@ -130,8 +160,10 @@ def test_execute():
     use_case.execute('2')
 
     # Assert
-    assert len(reply_service.texts) == 1
+    assert len(reply_service.texts) == 2
     assert reply_service.texts[0].text == '第2回\n2010年01月01日\ntest_user1: 1000円 (+30(+10枚))\ntest_user2: 1800円 (+60(0枚))\ntest_user3: -1800円 (-60(0枚))\ntest_user4: -400円 (-10(-10枚))\ntest_user5: -300円 (-10(0枚))\n友達未登録: -300円 (-10(0枚))'
+    assert reply_service.texts[1].text == '【半荘情報】\n\n第1回\ntest_user2: +60 (+60)\ntest_user1: +30 (+30)\ntest_user3: -30 (-30)\ntest_user4: -60 (-60)\n\n第2回\ntest_user4: +50 (-10)\ntest_user5: -10 (-10)\n友達未登録: -10 (-10)\ntest_user3: -30 (-60)'
+    assert len(reply_service.images) == 1
 
 
 def test_execute_invalid_arg():
@@ -149,6 +181,7 @@ def test_execute_invalid_arg():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == '引数は整数で指定してください。'
+    assert len(reply_service.images) == 0
 
 
 def test_execute_out_of_index():
@@ -166,3 +199,4 @@ def test_execute_out_of_index():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == 'このトークルームには全2回までしか登録されていないため第3回はありません。'
+    assert len(reply_service.images) == 0

@@ -1,4 +1,5 @@
 from DomainModel.entities.Group import GroupMode
+from use_cases.group_line.CreateMatchDetailGraphUseCase import CreateMatchDetailGraphUseCase
 from DomainService import (
     match_service,
     group_service,
@@ -84,3 +85,5 @@ class FinishMatchUseCase:
         reply_service.add_message(
             '【対戦結果】 \n' + message_service.create_show_match_result(match=active_match)
         )
+
+        reply_service.add_image(CreateMatchDetailGraphUseCase().execute(active_match._id))

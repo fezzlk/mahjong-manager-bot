@@ -36,7 +36,6 @@ from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
 # from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
-from use_cases.group_line.ReplyMatchGraphUseCase import ReplyMatchGraphUseCase
 
 from DomainModel.entities.Group import GroupMode
 
@@ -63,7 +62,6 @@ class RCommands(Enum):
     add_result = 'add_result'
     update_config = 'update_config'
     sum_matches = 'sum_matches'
-    graph = 'graph'
     my_results = 'my_results'
     history = 'history'
     tip_ok = 'tip_ok'
@@ -187,10 +185,6 @@ def routing_for_group_by_method(method, body):
     #     #         ]
     #     #     args.remove('to')
     #     ReplySumMatchesByIdsUseCase().execute(args)
-    # # graphs
-    elif method == RCommands.graph.name:
-        ReplyMatchGraphUseCase().execute(body)
-
 
 # def parse_int_list(args):
 #     args = body.split(' ')

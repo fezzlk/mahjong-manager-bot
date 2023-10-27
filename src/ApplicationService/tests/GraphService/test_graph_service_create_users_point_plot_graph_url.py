@@ -1,4 +1,4 @@
-from use_cases.group_line.ReplyMatchGraphUseCase import ReplyMatchGraphUseCase
+from use_cases.group_line.CreateMatchDetailGraphUseCase import CreateMatchDetailGraphUseCase
 import matplotlib.pyplot as plt
 import env_var
 from ApplicationService import graph_service
