@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 import env_var
-import os
 
 mongo_client = MongoClient(env_var.DATABASE_URL)
 db_name = env_var.DATABASE_NAME
@@ -17,5 +16,6 @@ hanchans_collection = mongo_client[db_name].hanchans
 matches_collection = mongo_client[db_name].matches
 user_matches_collection = mongo_client[db_name].user_matches
 hanchan_matches_collection = mongo_client[db_name].hanchan_matches
+user_hanchans_collection = mongo_client[db_name].user_hanchans
 
 print(f'Connected DB server:{env_var.DATABASE_URL}')
