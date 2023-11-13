@@ -13,9 +13,11 @@ from ApplicationService import (
 from DomainModel.entities.Group import GroupMode
 from DomainModel.entities.UserMatch import UserMatch
 from DomainModel.entities.UserGroup import UserGroup
+from DomainModel.entities.UserHanchan import UserHanchan
 from repositories import (
     user_match_repository,
     user_group_repository,
+    user_hanchan_repository,
 )
 from DomainService import (
     group_service,
@@ -144,11 +146,23 @@ class SubmitHanchanUseCase:
                     sum_scores[line_user_id] = 0
                 sum_scores[line_user_id] += converted_score
 
-       # 一半荘の結果をアーカイブ
+        # 一半荘の結果をアーカイブ
         active_match.active_hanchan_id = None
         active_match.sum_scores = sum_scores
         match_service.update(active_match)
 
+        # UserHanchan の作成
+        sorted_points: list[tuple[str, int]] = sorted(
+            active_hanchan.raw_scores.items(), key=lambda x: x[1], reverse=True)
+        for i in range(len(sorted_points)):
+            line_id, point = sorted_points[i]
+            user_hanchan_repository.create(UserHanchan(
+                line_user_id=line_id,
+                hanchan_id=active_hanchan._id,
+                point=point,
+                rank=i+1,
+            ))
+        
         # 結果の表示
         reply_service.add_message('一半荘お疲れ様でした。結果を表示します。')
         reply_service.add_message(
