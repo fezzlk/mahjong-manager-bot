@@ -45,7 +45,7 @@ class ReplyRankHistoryUseCase:
         ax.set_ylim([1, 4])
         ax.invert_yaxis()
 
-        path = f'/rank_history/{req_line_user_id}'
+        path = f'/rank_history/{req_line_user_id}.png'
         try:
             fig.savefig(f"src/uploads{path}")
         except FileNotFoundError:
