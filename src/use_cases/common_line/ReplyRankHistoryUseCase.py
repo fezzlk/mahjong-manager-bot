@@ -23,6 +23,7 @@ class ReplyRankHistoryUseCase:
                 rank_info[key-1] = len(list(group))/len(user_hanchans)
         reply_service.add_message('\n'.join([f'{i+1}着: {x:.2%}' for i, x in enumerate(rank_info)]))
         
+        reply_service.add_message('直近10半荘の順位状況を表示します。')
         # プロットデータ作成
         plot_data = []
         for uh in user_hanchans[-10:]:

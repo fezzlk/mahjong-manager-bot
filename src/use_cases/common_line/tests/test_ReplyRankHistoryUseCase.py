@@ -187,8 +187,9 @@ def test_success(mocker):
     use_case.execute()
 
     # Assert
-    assert len(reply_service.texts) == 1
+    assert len(reply_service.texts) == 2
     assert reply_service.texts[0].text == '1着: 100.00%\n2着: 0.00%\n3着: 0.00%\n4着: 0.00%'
+    assert reply_service.texts[1].text == '直近10半荘の順位状況を表示します。'
     assert len(reply_service.images) == 1
     reply_service.reset()
 
@@ -219,8 +220,10 @@ def test_success_no_user_hanchan(mocker):
     use_case.execute()
 
     # Assert
-    assert len(reply_service.texts) == 1
+    assert len(reply_service.texts) == 2
     assert reply_service.texts[0].text == '1着: 0.00%\n2着: 0.00%\n3着: 0.00%\n4着: 0.00%'
+    assert reply_service.texts[1].text == '直近10半荘の順位状況を表示します。'
+    assert len(reply_service.images) == 1
     reply_service.reset()
 
 def test_success_fail_savefig(mocker):
