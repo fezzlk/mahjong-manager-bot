@@ -12,6 +12,7 @@ from use_cases.personal_line.ReplyUserHelpUseCase import ReplyUserHelpUseCase
 from use_cases.personal_line.ReplyUserModeUseCase import ReplyUserModeUseCase
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
+from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
 from use_cases.personal_line.ReplyHistoryUseCase import ReplyHistoryUseCase
 from use_cases.personal_line.RequestLinkLineWebUseCase import RequestLinkLineWebUseCase
 
@@ -30,6 +31,7 @@ class UCommands(Enum):
     github = 'github'
     token = 'token'
     url = 'url'
+    rank = 'rank'
 
 
 def routing_by_text_in_personal_line(text: str):
@@ -96,3 +98,6 @@ def routing_by_method(method: str, body: str):
     # url
     elif method == UCommands.url.name:
         ReplyUrlUseCase().execute()
+    # rank
+    elif method == UCommands.rank.name:
+        ReplyRankHistoryUseCase().execute()
