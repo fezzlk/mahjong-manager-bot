@@ -86,7 +86,7 @@ def migrate():
             setting.rate = 3
         if setting.tip_rate == 0:
             setting.tip_rate = 30
-        hanchans = hanchan_service.find_all_by_match_id(active_match._id)
+        hanchans = hanchan_service.find_all_archived_by_match_id(active_match._id)
 
         sum_scores: Dict[str, int] = {}
         for h in hanchans:

@@ -15,7 +15,7 @@ dummy_matches = [
 
 def test_ok_hit_match(mocker):
     # Arrange
-    mocker.patch.object(
+    mock_find = mocker.patch.object(
         match_repository,
         'find',
         return_value=dummy_matches,
@@ -28,4 +28,20 @@ def test_ok_hit_match(mocker):
     assert isinstance(result, Match)
     assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
     assert result.status == 2
+    mock_find.assert_called_once_with({'_id': 1})
 
+
+def test_no_hit(mocker):
+    # Arrange
+    mock_find = mocker.patch.object(
+        match_repository,
+        'find',
+        return_value=[],
+    )
+
+    # Act
+    result = match_service.find_one_by_id(1)
+
+    # Assert
+    assert result is None
+    mock_find.assert_called_once_with({'_id': 1})

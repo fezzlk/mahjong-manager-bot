@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Dict, List
 from ApplicationService import (
     reply_service,
@@ -48,7 +47,6 @@ class ReplyMultiHistoryUseCase:
         umList = user_match_service.find_all_by_user_id_list(target_user_ids)
         matches = match_service.find_all_for_graph(
             ids=[um.match_id for um in umList],
-            line_group_id=request_info_service.req_line_user_id
         )
 
         if len(matches) == 0:

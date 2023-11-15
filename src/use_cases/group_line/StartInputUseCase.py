@@ -38,6 +38,6 @@ class StartInputUseCase:
         group.mode = GroupMode.input.value
         group_service.update(group)
 
-        hanchans = hanchan_service.find_all_by_match_id(active_match._id)
+        hanchans = hanchan_service.find_all_archived_by_match_id(active_match._id)
         reply_service.add_message(
-            f'第{len(hanchans)}回戦お疲れ様です。各自点数を入力してください。\n（同点の場合は上家が高くなるように数点追加してください）')
+            f'第{len(hanchans) + 1}回戦お疲れ様です。各自点数を入力してください。\n（同点の場合は上家が高くなるように数点追加してください）')

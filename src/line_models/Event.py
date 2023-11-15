@@ -11,10 +11,10 @@ class Event:
         user_id='',
         group_id='',
         message_type='text',
-        message='',
         text='dummy_text',
         postback_data='dummy_postback_data',
         mode='active',
+        mention_ids=[],
     ):
         self.type = event_type
         self.reply_token = 'dummy_reply_token'
@@ -24,6 +24,6 @@ class Event:
             group_id=group_id)
         self.mode = mode
         if self.type == 'message':
-            self.message = Message(text=text, message_type=message_type)
+            self.message = Message(text=text, message_type=message_type, mention_ids=mention_ids)
         if self.type == 'postback':
             self.postback == Postback(data=postback_data)

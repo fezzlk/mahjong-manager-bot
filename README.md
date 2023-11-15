@@ -10,13 +10,28 @@
 (TBD)
 
 # For Developer
-## Create Your LINE Bot Messaging API Channel
+## How to Build App
+### Create Your LINE Bot Messaging API Channel
 1. LINE Devlopers にてプロバイダ及び messaging API のチャンネルを作成
    - 参考: https://developers.line.biz/ja/services/messaging-api/
    - messaging API 設定にて、応答メッセージを無効, webhook の利用を有効にする
    - LINE App にて友達登録しておく
+1. チャンネルの Basic settings 画面にて `Channel secret`、Messaging API 画面にて `Channel access token` を取得し、 .env ファイルにて `YOUR_CHANNEL_ACCESS_TOKEN`, `YOUR_CHANNEL_SECRET` にそれぞれセットする
 
-## Build Server
+### Build Mongo DB Container
+#### A. On Local With docker-compose
+- Install Docker
+- run docker-compose on root directory of mahjong-manager
+  - `$ docker-compose up`
+- .envファイルにて環境変数 `EXTERNAL_DATABASE_URL` に `mongodb://localhost:27017/` を設定、`DATABASE_NAME` に `db` を設定
+
+
+#### B. On Cloud
+- Use MongoDB Atlas
+- .envファイルにて環境変数 `EXTERNAL_DATABASE_URL` に Atlas の DB 接続画面から得られる URL を設定、`DATABASE_NAME` に `db` を設定
+
+
+### Build Flask Server
 - Install Python
 - Create a virtual env(recommend)
   - `$ python -m venv mmvenv`
@@ -30,10 +45,13 @@
 - run flask server
   - `$ flask run`
 
-## Build Mongo DB Container by docker-compose(Recommend)
-- Install Docker
-- run docker-compose on root directory of mahjong-manager
-  - `$ docker-compose up`
+### Connect LINE Messaging API Channel
+- Install [ngrok](https://ngrok.com/download)
+- Temporary deploy App
+  - `$ ngrok http 5000`
+  - Copy Forwarding URL(https)
+- LINE チャンネルの　Messaging API画面の 'Webhook URL' に上記URLの末尾に `/callback` を追加したものを入力
+- Verify ボタンで検証成功すれば完了 
 
 ## Architecture
 ### Servers

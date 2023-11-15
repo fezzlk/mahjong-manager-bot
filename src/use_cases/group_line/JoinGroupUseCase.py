@@ -18,5 +18,9 @@ class JoinGroupUseCase:
             '麻雀の成績管理Botです。参加者は友達登録してください。'
         )
         reply_service.add_message(
-            '「_start」でスタートメニューを表示します。'
+            '1半荘が終了したら下のメニューの「結果を入力」を押し、それぞれ素点を入力して下さい。'
         )
+        reply_service.add_message(
+            'レートや点数計算方法は「設定」で変更可能です。'
+        )
+        reply_service.add_start_menu()

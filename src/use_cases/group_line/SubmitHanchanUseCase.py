@@ -13,9 +13,11 @@ from ApplicationService import (
 from DomainModel.entities.Group import GroupMode
 from DomainModel.entities.UserMatch import UserMatch
 from DomainModel.entities.UserGroup import UserGroup
+from DomainModel.entities.UserHanchan import UserHanchan
 from repositories import (
     user_match_repository,
     user_group_repository,
+    user_hanchan_repository,
 )
 from DomainService import (
     group_service,
@@ -135,7 +137,7 @@ class SubmitHanchanUseCase:
             user_match_repository.create(user_match)
 
         # 半荘合計の更新
-        hanchans = hanchan_service.find_all_by_match_id(active_hanchan.match_id)
+        hanchans = hanchan_service.find_all_archived_by_match_id(active_hanchan.match_id)
 
         sum_scores: Dict[str, int] = {}
         for h in hanchans:
@@ -144,33 +146,31 @@ class SubmitHanchanUseCase:
                     sum_scores[line_user_id] = 0
                 sum_scores[line_user_id] += converted_score
 
-       # 一半荘の結果をアーカイブ
+        # 一半荘の結果をアーカイブ
         active_match.active_hanchan_id = None
         active_match.sum_scores = sum_scores
         match_service.update(active_match)
 
+        # UserHanchan の作成
+        sorted_points: list[tuple[str, int]] = sorted(
+            active_hanchan.raw_scores.items(), key=lambda x: x[1], reverse=True)
+        for i in range(len(sorted_points)):
+            line_id, point = sorted_points[i]
+            user_hanchan_repository.create(UserHanchan(
+                line_user_id=line_id,
+                hanchan_id=active_hanchan._id,
+                point=point,
+                rank=i+1,
+            ))
+        
         # 結果の表示
+        reply_service.add_message('一半荘お疲れ様でした。結果を表示します。')
         reply_service.add_message(
-            '一半荘お疲れ様でした。結果を表示します。'
-        )
-
-        score_text_list = []
-        for r in sorted(
-            calculate_result.items(),
-            key=lambda x: x[1],
-            reverse=True
-        ):
-            name = user_service.get_name_by_line_user_id(r[0]) or "友達未登録"
-            score = ("+" if r[1] > 0 else "") + str(r[1])
-            sum_score = (
-                "+" if sum_scores[r[0]] > 0 else "") + str(sum_scores[r[0]])
-            score_text_list.append(
-                f'{name}: {score} ({sum_score})'
+            message_service.create_show_converted_scores(
+                calculate_result,
+                sum_scores=sum_scores,
             )
-        reply_service.add_message(
-            '\n'.join(score_text_list)
         )
-
         reply_service.add_message(
             message_service.get_finish_hanchan_message()
         )
@@ -178,8 +178,6 @@ class SubmitHanchanUseCase:
         # ルームを待機モードにする
         group_service.chmod(line_group_id, GroupMode.wait)
 
-        reply_service.add_message(
-            '始める時は「_start」と入力してください。'
-        )
+        reply_service.add_start_menu()
 
         return

@@ -3,6 +3,7 @@ from DomainModel.entities.Hanchan import Hanchan
 from .interfaces.IHanchanService import IHanchanService
 from typing import Optional, List
 from bson.objectid import ObjectId
+from pymongo import ASCENDING
 
 STATUS_LIST = ['disabled', 'active', 'archived']
 
@@ -56,13 +57,23 @@ class HanchanService(IHanchanService):
         print(f'create hanchan: group "{line_group_id}"')
         return new_match
     
-    def find_all_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
+    def find_all_archived_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
         return hanchan_repository.find(
-            {'match_id': match_id}
+            {
+                'match_id': match_id,
+                'converted_scores': {'$ne': {}},
+            },
+            [('_id', ASCENDING)]
         )
 
     def update(self, target: Hanchan) -> None:
         hanchan_repository.update(
             {'_id': target._id},
             target.__dict__,
+        )
+
+    def disable_by_match_id(self, match_id: ObjectId) -> None:
+        hanchan_repository.update(
+            {'match_id': match_id},
+            {'status': 0},
         )

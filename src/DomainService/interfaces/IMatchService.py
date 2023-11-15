@@ -28,5 +28,13 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def find_all_for_graph(self, ids: List[ObjectId], line_group_id: str) -> List[Match]:
+    def find_all_for_graph(self, ids: List[ObjectId]) -> List[Match]:
+        pass
+
+    @abstractmethod
+    def find_latest_one(self, line_group_id: str) -> Optional[Match]:
+        pass
+
+    @abstractmethod
+    def find_all_archived_by_line_group_id(self, line_group_id: str) -> List[Match]:
         pass

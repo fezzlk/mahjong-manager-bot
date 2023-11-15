@@ -41,7 +41,7 @@ class ReplyService(IReplyService):
     def add_start_menu(self) -> None:
         self.buttons.append(
             TemplateSendMessage(
-                alt_text='Start Menu',
+                alt_text='スタートメニュー',
                 template=ButtonsTemplate(
                     title='スタートメニュー',
                     text='何をしますか？',
@@ -52,14 +52,14 @@ class ReplyService(IReplyService):
                             data='_input'
                         ),
                         PostbackAction(
-                            label='結果を確認',
-                            display_text='結果を確認',
-                            data='_results'
-                        ),
-                        PostbackAction(
                             label='精算',
                             display_text='精算',
-                            data='_finish'
+                            data='_finish_confirm'
+                        ),
+                        PostbackAction(
+                            label='設定',
+                            display_text='設定',
+                            data='_setting'
                         ),
                         PostbackAction(
                             label='その他',
@@ -74,20 +74,20 @@ class ReplyService(IReplyService):
     def add_others_menu(self) -> None:
         self.buttons.append(
             TemplateSendMessage(
-                alt_text='Other Menu',
+                alt_text='その他のメニュー',
                 template=ButtonsTemplate(
                     title='その他のメニュー',
                     text='何をしますか？',
                     actions=[
                         PostbackAction(
+                            label='途中経過を確認',
+                            display_text='途中経過を確認',
+                            data='_active_match'
+                        ),
+                        PostbackAction(
                             label='対戦履歴',
                             display_text='対戦履歴',
                             data='_matches'
-                        ),
-                        PostbackAction(
-                            label='設定',
-                            display_text='設定',
-                            data='_setting'
                         ),
                     ]
                 )
@@ -97,7 +97,7 @@ class ReplyService(IReplyService):
     def add_settings_menu(self, key: str = '') -> None:
         if key == '' or key == 'メニュー1':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Settings Menu1',
+                alt_text='設定メニュー1',
                 template=ButtonsTemplate(
                     title='設定',
                     text='変更したい項目を選んでください。',
@@ -127,7 +127,7 @@ class ReplyService(IReplyService):
             ))
         if key == 'メニュー2':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Settings Menu2',
+                alt_text='設定メニュー2',
                 template=ButtonsTemplate(
                     title='設定',
                     text='変更したい項目を選んでください。',
@@ -152,7 +152,7 @@ class ReplyService(IReplyService):
             ))
         elif key == 'レート':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Low Rate Setting',
+                alt_text='レート設定',
                 template=ButtonsTemplate(
                     title='レート変更',
                     text='レートを選んでください',
@@ -173,7 +173,7 @@ class ReplyService(IReplyService):
             ))
         elif key == '高レート':
             self.buttons.append(TemplateSendMessage(
-                alt_text='High Rate Setting',
+                alt_text='高レート設定',
                 template=ButtonsTemplate(
                     title='レート変更',
                     text='レートを選んでください',
@@ -194,7 +194,7 @@ class ReplyService(IReplyService):
             ))
         elif key == '順位点':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Ranking Point Setting',
+                alt_text='順位点設定',
                 template=ButtonsTemplate(
                     title='順位点変更',
                     text='いくらにしますか？',
@@ -212,7 +212,7 @@ class ReplyService(IReplyService):
             ))
         elif key == '飛び賞':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Tobi Bonus Setting',
+                alt_text='飛び賞設定',
                 template=ButtonsTemplate(
                     title='飛び賞変更',
                     text='いくらにしますか？',
@@ -228,7 +228,7 @@ class ReplyService(IReplyService):
 
         elif key == '端数計算方法':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Calculate Method Setting1',
+                alt_text='計算方法設定1',
                 template=ButtonsTemplate(
                     title='端数計算方法変更',
                     text='どれにしますか？',
@@ -251,7 +251,7 @@ class ReplyService(IReplyService):
 
         elif key == '端数計算方法2':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Calculate Method Setting2',
+                alt_text='計算方法設定2',
                 template=ButtonsTemplate(
                     title='端数計算方法変更',
                     text='どれにしますか？',
@@ -272,7 +272,7 @@ class ReplyService(IReplyService):
             ))
         elif key == 'チップ':
             self.buttons.append(TemplateSendMessage(
-                alt_text='Tip Rate Setting',
+                alt_text='チップ設定',
                 template=ButtonsTemplate(
                     title='チップ',
                     text='どれにしますか？',
@@ -293,7 +293,7 @@ class ReplyService(IReplyService):
             ))
         elif key == '高チップ':
             self.buttons.append(TemplateSendMessage(
-                alt_text='High Tip Rate Setting',
+                alt_text='高チップ設定',
                 template=ButtonsTemplate(
                     title='チップ',
                     text='どれにしますか？',
@@ -316,7 +316,7 @@ class ReplyService(IReplyService):
     def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
         self.buttons.append(
             TemplateSendMessage(
-                alt_text='Select Tobi Player Menu',
+                alt_text='飛び賞プレイヤー選択',
                 template=ButtonsTemplate(
                     title='飛び賞おめでとうございます',
                     text='どなたが飛ばしましたか？',
@@ -340,7 +340,7 @@ class ReplyService(IReplyService):
     def add_submit_results_by_ocr_menu(self, results: Dict[str, int]) -> None:
         self.buttons.append(
             TemplateSendMessage(
-                alt_text='Approve OCR result Menu',
+                alt_text='画像読み込み実行',
                 template=ButtonsTemplate(
                     title='画像読み込み完了',
                     text='内容があっているか確認してください。',
@@ -382,6 +382,29 @@ class ReplyService(IReplyService):
                     to=env_var.SERVER_ADMIN_LINE_USER_ID,
                     message=str(err),
                 )
+
+    def confirm_finish(self) -> None:
+        self.buttons.append(
+            TemplateSendMessage(
+                alt_text='精算実行確認',
+                template=ButtonsTemplate(
+                    title='精算',
+                    text='本日の結果入力を終了し、総合結果を表示します。よろしいですか？',
+                    actions=[
+                        PostbackAction(
+                            label='はい',
+                            display_text='はい',
+                            data='_finish'
+                        ),
+                        PostbackAction(
+                            label='いいえ',
+                            display_text='いいえ',
+                            data='_start'
+                        ),
+                    ]
+                )
+            )
+        )
 
     def push_a_message(self, to: str, message: str) -> None:
         line_bot_api.push_message(to, [TextSendMessage(text=message)])

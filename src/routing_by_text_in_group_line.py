@@ -24,18 +24,20 @@ from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
 from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 
+from use_cases.group_line.ReplyHanchansOfActiveMatchUseCase import ReplyHanchansOfActiveMatchUseCase
 from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
-# from use_cases.group_line.ReplySumHanchansByMatchIdUseCase import ReplySumHanchansByMatchIdUseCase
+from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
 # from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
 # from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
+from use_cases.group_line.ReplyFinishConfirmUseCase import ReplyFinishConfirmUseCase
 from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
 from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
+from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
 # from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
-from use_cases.group_line.ReplyMatchGraphUseCase import ReplyMatchGraphUseCase
 
 from DomainModel.entities.Group import GroupMode
 
@@ -49,8 +51,9 @@ class RCommands(Enum):
     mode = 'mode'
     help = 'help'
     setting = 'setting'
-    results = 'results'
+    active_match = 'active_match'
     finish = 'finish'
+    finish_confirm = 'finish_confirm'
     fortune = 'fortune'
     others = 'others'
     matches = 'matches'
@@ -61,12 +64,12 @@ class RCommands(Enum):
     add_result = 'add_result'
     update_config = 'update_config'
     sum_matches = 'sum_matches'
-    graph = 'graph'
     my_results = 'my_results'
     history = 'history'
     tip_ok = 'tip_ok'
     badai = 'badai'
     entry = 'entry'
+    rank = 'rank'
 
 
 def routing_by_text_in_group_line(text: str):
@@ -123,24 +126,30 @@ def routing_for_group_by_method(method, body):
     # setting
     elif method == RCommands.setting.name:
         ReplyGroupSettingsMenuUseCase().execute(body)
-    # # results by match id
-    # elif method == RCommands.match.name:
-    #     ReplySumHanchansByMatchIdUseCase().execute(body)
+    # match detail by index
+    elif method == RCommands.match.name:
+        ReplyMatchByIndexUseCase().execute(body)
     # drop
     elif method == RCommands.drop.name:
-        DropHanchanByIndexUseCase().execute(int(body))
+        DropHanchanByIndexUseCase().execute(body)
     # drop match
     # elif method == RCommands.drop_m.name:
     #     DisableMatchUseCase().execute()
     # finish
     elif method == RCommands.finish.name:
         FinishMatchUseCase().execute()
+    # finish_confirm
+    elif method == RCommands.finish_confirm.name:
+        ReplyFinishConfirmUseCase().execute()
     # fortune
     elif method == RCommands.fortune.name:
         ReplyFortuneUseCase().execute()
     # others menu
     elif method == RCommands.others.name:
         ReplyOthersMenuUseCase().execute()
+    # active_match
+    elif method == RCommands.active_match.name:
+        ReplyHanchansOfActiveMatchUseCase().execute()
     # matches
     elif method == RCommands.matches.name:
         ReplyMatchesUseCase().execute()
@@ -165,6 +174,9 @@ def routing_for_group_by_method(method, body):
     # badai
     elif method == RCommands.badai.name:
         ReplyApplyBadaiUseCase().execute(body)
+    # rank
+    elif method == RCommands.rank.name:
+        ReplyRankHistoryUseCase().execute()
     # # entry
     # elif method == RCommands.entry.name:
     #     LinkUserToGroupUseCase().execute()
@@ -182,10 +194,6 @@ def routing_for_group_by_method(method, body):
     #     #         ]
     #     #     args.remove('to')
     #     ReplySumMatchesByIdsUseCase().execute(args)
-    # # graphs
-    elif method == RCommands.graph.name:
-        ReplyMatchGraphUseCase().execute()
-
 
 # def parse_int_list(args):
 #     args = body.split(' ')
