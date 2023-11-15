@@ -29,6 +29,11 @@ class ReplyApplyBadaiUseCase:
                 'まだ対戦結果がありません。')
             return
 
+        if latest_match.sum_prices_with_tip is None or len(latest_match.sum_prices_with_tip) == 0:
+            reply_service.add_message(
+                '現在進行中の対戦があります。対戦を終了するには「_finish」と送信してください。')
+            return
+        
         player_count = len(latest_match.sum_prices_with_tip)
 
         badai_per_player = badai // player_count

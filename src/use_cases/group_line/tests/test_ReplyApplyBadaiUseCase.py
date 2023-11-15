@@ -170,3 +170,71 @@ def test_execute_no_match():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == 'まだ対戦結果がありません。'
 
+def test_execute_with_progress_match():
+    # Arrange
+    progress_match = Match(
+        _id=2,
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        status=2,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
+        sum_scores={
+            "U0123456789abcdefghijklmnopqrstu1": 30,
+            "U0123456789abcdefghijklmnopqrstu2": 60,
+            "U0123456789abcdefghijklmnopqrstu3": -60,
+            "U0123456789abcdefghijklmnopqrstu4": -10,
+            "U0123456789abcdefghijklmnopqrstu5": -10,
+            "dummy": -10,
+        },
+        sum_prices={
+            "U0123456789abcdefghijklmnopqrstu1": 900,
+            "U0123456789abcdefghijklmnopqrstu2": 1800,
+            "U0123456789abcdefghijklmnopqrstu3": -1800,
+            "U0123456789abcdefghijklmnopqrstu4": -300,
+            "U0123456789abcdefghijklmnopqrstu5": -300,
+            "dummy": -300,
+        },
+        tip_scores={
+            "U0123456789abcdefghijklmnopqrstu1": 10,
+            "U0123456789abcdefghijklmnopqrstu4": -10,
+        },
+        tip_prices={
+            "U0123456789abcdefghijklmnopqrstu1": 100,
+            "U0123456789abcdefghijklmnopqrstu4": -100,
+        },
+        sum_prices_with_tip={
+        },
+    )
+    match_repository.create(progress_match)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyApplyBadaiUseCase()
+
+    # Act
+    use_case.execute('2,996')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == '現在進行中の対戦があります。対戦を終了するには「_finish」と送信してください。'
+
+
+def test_execute_with_progress_match2():
+    # Arrange
+    progress_match = Match(
+        _id=2,
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        status=2,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
+    )
+    match_repository.create(progress_match)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyApplyBadaiUseCase()
+
+    # Act
+    use_case.execute('2,996')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == '現在進行中の対戦があります。対戦を終了するには「_finish」と送信してください。'
