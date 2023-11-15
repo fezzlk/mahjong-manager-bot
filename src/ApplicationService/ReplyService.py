@@ -82,7 +82,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label='途中経過を確認',
                             display_text='途中経過を確認',
-                            data='_results'
+                            data='_active_match'
                         ),
                         PostbackAction(
                             label='対戦履歴',

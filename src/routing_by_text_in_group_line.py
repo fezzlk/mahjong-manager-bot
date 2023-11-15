@@ -24,6 +24,7 @@ from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
 from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
 from use_cases.group_line.StartInputUseCase import StartInputUseCase
 
+from use_cases.group_line.ReplyHanchansOfActiveMatchUseCase import ReplyHanchansOfActiveMatchUseCase
 from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
 from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
 # from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
@@ -50,7 +51,7 @@ class RCommands(Enum):
     mode = 'mode'
     help = 'help'
     setting = 'setting'
-    results = 'results'
+    active_match = 'active_match'
     finish = 'finish'
     finish_confirm = 'finish_confirm'
     fortune = 'fortune'
@@ -146,6 +147,9 @@ def routing_for_group_by_method(method, body):
     # others menu
     elif method == RCommands.others.name:
         ReplyOthersMenuUseCase().execute()
+    # active_match
+    elif method == RCommands.active_match.name:
+        ReplyHanchansOfActiveMatchUseCase().execute()
     # matches
     elif method == RCommands.matches.name:
         ReplyMatchesUseCase().execute()
