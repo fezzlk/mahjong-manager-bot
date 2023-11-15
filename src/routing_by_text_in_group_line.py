@@ -131,7 +131,7 @@ def routing_for_group_by_method(method, body):
         ReplyMatchByIndexUseCase().execute(body)
     # drop
     elif method == RCommands.drop.name:
-        DropHanchanByIndexUseCase().execute(int(body))
+        DropHanchanByIndexUseCase().execute(body)
     # drop match
     # elif method == RCommands.drop_m.name:
     #     DisableMatchUseCase().execute()
