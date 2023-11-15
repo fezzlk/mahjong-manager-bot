@@ -8,7 +8,7 @@ from DomainService import (
 )
 import env_var
 from itertools import groupby
-
+from DomainModel.entities.UserHanchan import UserHanchan
 
 class ReplyRankHistoryUseCase:
     def execute(self) -> None:
@@ -17,10 +17,13 @@ class ReplyRankHistoryUseCase:
             
         rank_info = [0, 0, 0, 0]
         if len(user_hanchans) != 0:
-            for key, group in groupby(user_hanchans, key=lambda uh: uh.rank):
+            sorted_user_hanchans: list[UserHanchan] = sorted(
+                user_hanchans, key=lambda x: x.rank, reverse=False)
+            for key, group in groupby(sorted_user_hanchans, key=lambda uh: uh.rank):
                 rank_info[key-1] = len(list(group))/len(user_hanchans)
         reply_service.add_message('\n'.join([f'{i+1}着: {x:.2%}' for i, x in enumerate(rank_info)]))
         
+        reply_service.add_message('直近10半荘の順位状況を表示します。')
         # プロットデータ作成
         plot_data = []
         for uh in user_hanchans[-10:]:
@@ -45,7 +48,7 @@ class ReplyRankHistoryUseCase:
         ax.set_ylim([1, 4])
         ax.invert_yaxis()
 
-        path = f'/rank_history/{req_line_user_id}'
+        path = f'/rank_history/{req_line_user_id}.png'
         try:
             fig.savefig(f"src/uploads{path}")
         except FileNotFoundError:
