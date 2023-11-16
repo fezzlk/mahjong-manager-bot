@@ -1,11 +1,19 @@
 from datetime import datetime
 import env_var
-from ApplicationService import request_info_service, reply_service
+from ApplicationService import (
+    request_info_service,
+    reply_service,
+    message_service,
+)
 from repositories import (
     user_match_repository,
     user_repository,
     match_repository,
     hanchan_repository,
+)
+from DomainService import (
+    user_match_service,
+    match_service,
 )
 
 
@@ -25,16 +33,30 @@ class ReplyHistoryUseCase:
                 '既に友達の場合は一度ブロックして、ブロック解除を行ってください。'
             )
             return
-        
-        umList = user_match_repository.find(
-            query={'user_id': users[0]._id},
+        from_str = request_info_service.params.get('from')
+        to_str = request_info_service.params.get('to')
+        from_dt, from_is_invalid = message_service.parse_date_from_text(from_str)
+        to_dt, to_is_invalid = message_service.parse_date_from_text(to_str)
+        if from_is_invalid or to_is_invalid:
+            reply_service.add_message('日付は以下のフォーマットで入力してください。')
+            reply_service.add_message('[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD')
+            return
+        umList = user_match_service.find_all_by_user_id_list(
+            [users[0]._id],
+            from_dt=from_dt,
+            to_dt=to_dt,
         )
-        matches = match_repository.find(
-            query={'$and': [
-                {'_id': {'$in': [um.match_id for um in umList]}},
-                {'status': 2},
-            ]},
+        matches = match_service.find_all_for_graph(
+            ids=[um.match_id for um in umList],
         )
+
+        range_message = ''
+        if from_dt is not None:
+            range_message += f'{from_dt.strftime("%Y年%m月%d日")}から'
+        if to_dt is not None:
+            range_message += f'{to_dt.strftime("%Y年%m月%d日")}まで'
+        if range_message != '':
+            reply_service.add_message('範囲指定: ' + range_message)
 
         if len(matches) == 0:
             reply_service.add_message(

@@ -1,6 +1,6 @@
 import re
 import random
-import datetime
+from datetime import datetime
 from DomainModel.entities.Match import Match
 from DomainService import (
     user_service,
@@ -40,7 +40,7 @@ class MessageService(IMessageService):
         self,
         line_user_id: str,
     ) -> str:
-        now = datetime.datetime.now()
+        now = datetime.now()
         random.seed(
             int(now.year + now.month + now.day) +
             int(re.sub("\\D", "", line_user_id))
@@ -93,3 +93,35 @@ class MessageService(IMessageService):
                 )
 
         return '\n'.join(score_text_list)
+
+    def parse_date_from_text(self, date_str: str) -> (datetime, bool):
+        # 戻り値の二つ目はis invalid。正常に変換できた場合はFalse、フォーマット不正がある場合はTrueを返す
+        result = None
+
+        if date_str is not None:
+            print(date_str.isdecimal())
+            if not date_str.isdecimal():
+                return (None, True)
+            if len(date_str) % 2 == 1:
+                date_str = '0' + date_str
+
+            if len(date_str) == 8:
+                year = int(date_str[:4])
+                month = int(date_str[-4:-2])
+                day = int(date_str[-2:])
+            elif len(date_str) == 6:
+                year = 2000 + int(date_str[:2])
+                month = int(date_str[-4:-2])
+                day = int(date_str[-2:])
+            elif len(date_str) == 4:
+                year = datetime.now().year
+                month = int(date_str[-4:-2])
+                day = int(date_str[-2:])
+            elif len(date_str) == 2:
+                year = datetime.now().year
+                month = datetime.now().month
+                day = int(date_str[-2:])
+            else:
+                return (None, True)
+            result = datetime(year, month, day)
+        return (result, False)
