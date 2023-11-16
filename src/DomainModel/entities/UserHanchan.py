@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from bson.objectid import ObjectId
+from datetime import datetime
 
 
 @dataclass()
@@ -9,6 +10,8 @@ class UserHanchan:
     point: int
     rank: int
     yakuman_count: int
+    created_at: datetime
+    updated_at: datetime
 
     def __init__(
         self,
@@ -17,6 +20,8 @@ class UserHanchan:
         point: int,
         rank: int,
         yakuman_count: int = 0,
+        created_at: datetime = datetime.now(),
+        updated_at: datetime = datetime.now(),
         _id: ObjectId = None,
     ):
         self.line_user_id = line_user_id
@@ -25,3 +30,5 @@ class UserHanchan:
         self.point = point
         self.rank = rank
         self.yakuman_count = yakuman_count
+        self.created_at = created_at
+        self.updated_at = updated_at

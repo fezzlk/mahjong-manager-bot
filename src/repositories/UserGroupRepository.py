@@ -40,11 +40,23 @@ class UserGroupRepository(IUserGroupRepository):
     ) -> int:
         result = user_groups_collection.delete_many(filter=query)
         return result.deleted_count
+    
+    def update(
+        self,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
+    ) -> int:
+        from datetime import datetime
+        new_values['updated_at'] = datetime.now()
+        result = user_groups_collection.update_many(query, {'$set': new_values})
+        return result.matched_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserGroup:
         return UserGroup(
             line_user_id=record.get("line_user_id"),
             line_group_id=record.get("line_group_id"),
+            created_at=record.get('created_at'),
+            updated_at=record.get('updated_at'),
             _id=record.get("_id"),
         )
 

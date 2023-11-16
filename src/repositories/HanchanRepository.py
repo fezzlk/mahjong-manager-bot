@@ -54,5 +54,7 @@ class HanchanRepository(IHanchanRepository):
             status=record.get('status'),
             raw_scores=record.get('raw_scores'),
             converted_scores=record.get('converted_scores'),
+            created_at=record.get('created_at'),
+            updated_at=record.get('updated_at'),
             _id=record.get('_id'),
         )

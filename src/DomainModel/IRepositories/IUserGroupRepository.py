@@ -25,3 +25,11 @@ class IUserGroupRepository(metaclass=ABCMeta):
         query: Dict[str, any] = {},
     ) -> int:
         pass
+
+    @abstractmethod
+    def update(
+        self,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
+    ) -> int:
+        pass

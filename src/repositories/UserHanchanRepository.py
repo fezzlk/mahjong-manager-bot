@@ -40,6 +40,16 @@ class UserHanchanRepository(IUserHanchanRepository):
     ) -> int:
         result = user_hanchans_collection.delete_many(filter=query)
         return result.deleted_count
+    
+    def update(
+        self,
+        query: Dict[str, any],
+        new_values: Dict[str, any],
+    ) -> int:
+        from datetime import datetime
+        new_values['updated_at'] = datetime.now()
+        result = user_hanchans_collection.update_many(query, {'$set': new_values})
+        return result.matched_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserHanchan:
         return UserHanchan(
@@ -48,5 +58,7 @@ class UserHanchanRepository(IUserHanchanRepository):
             point=record.get("point"),
             rank=record.get("rank"),
             yakuman_count=record.get("yakuman_count"),
+            created_at=record.get('created_at'),
+            updated_at=record.get('updated_at'),
             _id=record.get("_id"),
         )

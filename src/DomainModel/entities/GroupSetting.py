@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 from bson.objectid import ObjectId
+from datetime import datetime
 
 RATE_LIST = [0, 1, 2, 3, 4, 5, 10]
 TIP_RATE_LIST = [0, 1]
@@ -28,6 +29,8 @@ class GroupSetting:
     tobi_prize: int
     num_of_players: int
     rounding_method: int
+    created_at: datetime
+    updated_at: datetime
 
     def __init__(
         self,
@@ -37,7 +40,9 @@ class GroupSetting:
         tip_rate: int = 0,
         tobi_prize: int = 10,
         num_of_players: int = 4,
-        rounding_method: int = 1,
+        rounding_method: int = 1,        
+        created_at: datetime = datetime.now(),
+        updated_at: datetime = datetime.now(),
         _id: ObjectId = None,
     ):
         self._id = _id
@@ -48,3 +53,5 @@ class GroupSetting:
         self.tobi_prize = tobi_prize
         self.num_of_players = num_of_players
         self.rounding_method = rounding_method
+        self.created_at = created_at
+        self.updated_at = updated_at
