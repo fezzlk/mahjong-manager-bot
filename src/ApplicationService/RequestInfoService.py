@@ -35,6 +35,10 @@ class RequestInfoService:
         if event.source.type == 'group':
             self.req_line_group_id = event.source.group_id
 
+        if event.type == 'postback':
+            if hasattr(event.postback, 'data'):
+                self.message = event.postback.data
+                self.parse_message()    
         if event.type == 'message':
             if hasattr(event.message, 'text'):
                 self.message = event.message.text
