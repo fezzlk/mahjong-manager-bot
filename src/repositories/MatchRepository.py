@@ -52,6 +52,7 @@ class MatchRepository(IMatchRepository):
             line_group_id=record.get('line_group_id'),
             status=record.get('status'),
             created_at=record.get('created_at'),
+            updated_at=record.get('updated_at'),
             tip_scores=record.get('tip_scores', {}),
             tip_prices=record.get('tip_prices', {}),
             active_hanchan_id=record.get('active_hanchan_id'),

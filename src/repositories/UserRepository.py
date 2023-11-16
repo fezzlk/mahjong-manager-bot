@@ -55,5 +55,7 @@ class UserRepository(IUserRepository):
             mode=record.get("mode"),
             jantama_name=record.get("jantama_name"),
             original_id=record.get("original_id"),
+            created_at=record.get('created_at'),
+            updated_at=record.get('updated_at'),
             _id=record.get('_id'),
         )

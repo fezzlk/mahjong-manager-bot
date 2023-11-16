@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Optional
 from bson.objectid import ObjectId
+from datetime import datetime
 
 HANCHAN_STATUS = ['DISABLE', 'ACTIVE', 'ARCHIVE']
 
@@ -18,6 +19,8 @@ class Hanchan:
     match_id: int
     status: int
     original_id: Optional[int]
+    created_at: datetime
+    updated_at: datetime
 
     def __init__(
         self,
@@ -25,7 +28,9 @@ class Hanchan:
         match_id: int,
         status: int = 2,
         raw_scores: Dict[str, int] = {},
-        converted_scores: Dict[str, int] = {},
+        converted_scores: Dict[str, int] = {},        
+        created_at: datetime = datetime.now(),
+        updated_at: datetime = datetime.now(),
         _id: ObjectId = None,
         original_id: Optional[int] = None,
     ):
@@ -36,3 +41,5 @@ class Hanchan:
         self.match_id = match_id
         self.status = status
         self.original_id = original_id
+        self.created_at = created_at
+        self.updated_at = updated_at
