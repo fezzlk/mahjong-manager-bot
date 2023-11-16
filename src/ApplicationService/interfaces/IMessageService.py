@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from DomainModel.entities.Match import Match
 from typing import Dict
+from datetime import datetime
+
 
 class IMessageService(metaclass=ABCMeta):
 
@@ -25,4 +27,8 @@ class IMessageService(metaclass=ABCMeta):
 
     @abstractmethod
     def create_show_converted_scores(self, converted_scores: Dict[str, int], sum_scores: Dict[str, int] = None) -> str:
+        pass
+
+    @abstractmethod
+    def parse_date_from_text(date_str: str) -> (datetime, bool):
         pass

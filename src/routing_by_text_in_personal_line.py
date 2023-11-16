@@ -36,11 +36,10 @@ class UCommands(Enum):
 
 def routing_by_text_in_personal_line(text: str):
     """routing by text for personal chat"""
-    if (text[0] == '_') & (len(text) > 1):
-        method = text[1:].split()[0]
+    method = request_info_service.method
+    if method is not None:
         if method in [c.name for c in UCommands]:
-            body = text[len(method) + 2:]
-            routing_by_method(method, body)
+            routing_by_method(method)
             return
         else:
             reply_service.add_message(
@@ -60,9 +59,9 @@ def routing_by_text_in_personal_line(text: str):
     )
 
 
-def routing_by_method(method: str, body: str):
+def routing_by_method(method: str):
     """routing by method for personal chat"""
-
+    body = request_info_service.body
     # mode
     if method == UCommands.mode.name:
         ReplyUserModeUseCase().execute()

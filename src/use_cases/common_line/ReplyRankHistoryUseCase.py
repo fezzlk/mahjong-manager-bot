@@ -9,12 +9,34 @@ from DomainService import (
 import env_var
 from itertools import groupby
 from DomainModel.entities.UserHanchan import UserHanchan
+from ApplicationService import message_service
+
 
 class ReplyRankHistoryUseCase:
     def execute(self) -> None:
         req_line_user_id = request_info_service.req_line_user_id
-        user_hanchans = user_hanchan_service.find_all_each_line_user_id(line_user_ids=[req_line_user_id])
+        from_str = request_info_service.params.get('from')
+        to_str = request_info_service.params.get('to')
+        from_dt, from_is_invalid = message_service.parse_date_from_text(from_str)
+        to_dt, to_is_invalid = message_service.parse_date_from_text(to_str)
+        if from_is_invalid or to_is_invalid:
+            reply_service.add_message('日付は以下のフォーマットで入力してください。')
+            reply_service.add_message('[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD')
+            return
+        user_hanchans = user_hanchan_service.find_all_each_line_user_id(
+            line_user_ids=[req_line_user_id],
+            from_dt=from_dt,
+            to_dt=to_dt,
+        )
             
+        range_message = ''
+        if from_dt is not None:
+            range_message += f'{from_dt.strftime("%Y年%m月%d日")}から'
+        if to_dt is not None:
+            range_message += f'{to_dt.strftime("%Y年%m月%d日")}まで'
+        if range_message != '':
+            reply_service.add_message('範囲指定: ' + range_message)
+
         rank_info = [0, 0, 0, 0]
         if len(user_hanchans) != 0:
             sorted_user_hanchans: list[UserHanchan] = sorted(
