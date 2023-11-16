@@ -72,5 +72,5 @@ class RequestInfoService:
         self.mention_line_ids = []
         self.message = None
         self.method = None
-        self.params = []
+        self.params = {}
         self.body = None
