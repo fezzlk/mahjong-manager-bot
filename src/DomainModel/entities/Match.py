@@ -18,6 +18,7 @@ class Match:
     sum_prices_with_tip: Dict[str, int]
     active_hanchan_id: ObjectId
     created_at: datetime
+    updated_at: datetime
     original_id: Optional[int]
 
     def __init__(
@@ -25,6 +26,7 @@ class Match:
         line_group_id: str,
         status: int = 2,
         created_at: datetime = datetime.now(),
+        updated_at: datetime = datetime.now(),
         tip_scores: Dict[str, int] = {},
         tip_prices: Dict[str, int] = {},
         active_hanchan_id: ObjectId = None,
@@ -43,5 +45,6 @@ class Match:
         self.sum_prices = sum_prices
         self.sum_prices_with_tip = sum_prices_with_tip
         self.created_at = created_at
+        self.updated_at = updated_at
         self.active_hanchan_id = active_hanchan_id
         self.original_id = original_id

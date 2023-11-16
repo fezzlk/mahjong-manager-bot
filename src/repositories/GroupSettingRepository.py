@@ -59,4 +59,6 @@ class GroupSettingRepository(IGroupSettingRepository):
             tip_rate=record.get("tip_rate"),
             num_of_players=record.get("num_of_players"),
             rounding_method=record.get("rounding_method"),
+            created_at=record.get('created_at'),
+            updated_at=record.get('updated_at'),
         )

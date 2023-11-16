@@ -53,5 +53,7 @@ class GroupRepository(IGroupRepository):
             line_group_id=record.get('line_group_id'),
             mode=record.get('mode'),
             active_match_id=record.get('active_match_id'),
+            created_at=record.get('created_at'),
+            updated_at=record.get('updated_at'),
             _id=record.get('_id'),
         )
