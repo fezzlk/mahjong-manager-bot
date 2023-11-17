@@ -13,6 +13,7 @@ from use_cases.personal_line.ReplyUserModeUseCase import ReplyUserModeUseCase
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
 from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
+from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
 from use_cases.personal_line.ReplyHistoryUseCase import ReplyHistoryUseCase
 from use_cases.personal_line.RequestLinkLineWebUseCase import RequestLinkLineWebUseCase
 
@@ -32,6 +33,7 @@ class UCommands(Enum):
     token = 'token'
     url = 'url'
     rank = 'rank'
+    rank_detail = 'rank_detail'
 
 
 def routing_by_text_in_personal_line(text: str):
@@ -100,3 +102,6 @@ def routing_by_method(method: str):
     # rank
     elif method == UCommands.rank.name:
         ReplyRankHistoryUseCase().execute()
+    # rank detail
+    elif method == UCommands.rank_detail.name:
+        ReplyRankHistogramUseCase().execute()
