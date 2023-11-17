@@ -95,7 +95,7 @@ class MessageService(IMessageService):
         return '\n'.join(score_text_list)
 
     def parse_date_from_text(self, date_str: str) -> (datetime, bool):
-        # 戻り値の二つ目はis invalid。正常に変換できた場合はFalse、フォーマット不正がある場合はTrueを返す
+        # 戻り値の二つ目はis invalid。正常に変換できた場合はFalse、フォーマット不正がある場合はTrueを返す。
         result = None
 
         if date_str is not None:
@@ -125,3 +125,16 @@ class MessageService(IMessageService):
                 return (None, True)
             result = datetime(year, month, day)
         return (result, False)
+    
+    def create_range_message(self, from_dt: datetime, to_dt: datetime) -> str:
+        range_message = ''
+        if from_dt is not None:
+            range_message += f'{from_dt.strftime("%Y年%m月%d日")}から'
+        if to_dt is not None:
+            range_message += f'{to_dt.strftime("%Y年%m月%d日")}まで'
+       
+        if range_message == '':
+            range_message = None
+        else:
+            range_message = '範囲指定: ' + range_message
+        return range_message

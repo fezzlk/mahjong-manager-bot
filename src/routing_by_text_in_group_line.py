@@ -37,6 +37,7 @@ from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
 from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
+from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
 # from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
 
 from DomainModel.entities.Group import GroupMode
@@ -70,6 +71,7 @@ class RCommands(Enum):
     badai = 'badai'
     entry = 'entry'
     rank = 'rank'
+    rank_detail = 'rank_detail'
 
 
 def routing_by_text_in_group_line(text: str):
@@ -177,6 +179,9 @@ def routing_for_group_by_method(method):
     # rank
     elif method == RCommands.rank.name:
         ReplyRankHistoryUseCase().execute()
+    # rank detail
+    elif method == RCommands.rank_detail.name:
+        ReplyRankHistogramUseCase().execute()
     # # entry
     # elif method == RCommands.entry.name:
     #     LinkUserToGroupUseCase().execute()
