@@ -32,3 +32,7 @@ class IMessageService(metaclass=ABCMeta):
     @abstractmethod
     def parse_date_from_text(date_str: str) -> (datetime, bool):
         pass
+
+    @abstractmethod
+    def create_range_message(from_dt: datetime, to_dt: datetime) -> str:
+        pass
