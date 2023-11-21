@@ -413,3 +413,15 @@ class ReplyService(IReplyService):
         self.texts = []
         self.buttons = []
         self.images = []
+
+    def create_and_reply_file_upload_error(self, title: str, sender: str) -> None:
+        self.reset()
+        self.add_message(text='システムエラーが発生しました。')
+        messages = [
+            f'{title}の画像アップロードに失敗しました',
+            '送信者: ' + sender,
+        ]
+        self.push_a_message(
+            to=env_var.SERVER_ADMIN_LINE_USER_ID,
+            message='\n'.join(messages),
+        )

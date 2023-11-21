@@ -10,6 +10,8 @@ import env_var
 from itertools import groupby
 from DomainModel.entities.UserHanchan import UserHanchan
 from ApplicationService import message_service
+import matplotlib
+import matplotlib.pyplot as plt
 
 
 class ReplyRankHistoryUseCase:
@@ -37,6 +39,9 @@ class ReplyRankHistoryUseCase:
         if range_message != '':
             reply_service.add_message('範囲指定: ' + range_message)
 
+        matplotlib.use('agg')
+
+        # 順位円グラフ作成
         rank_info = [0, 0, 0, 0]
         if len(user_hanchans) != 0:
             sorted_user_hanchans: list[UserHanchan] = sorted(
@@ -45,6 +50,27 @@ class ReplyRankHistoryUseCase:
                 rank_info[key-1] = len(list(group))/len(user_hanchans)
         reply_service.add_message('\n'.join([f'{i+1}着: {x:.2%}' for i, x in enumerate(rank_info)]))
         
+        fig, ax = plt.subplots()
+
+        bar_chart = plt.bar(
+            [f'{i+1}着' for i in range(4)],
+            rank_info,
+            color=["#EA4060", "#41C9B3", "#3392BB", "#F8BA00"]
+        )
+        ax.bar_label(bar_chart, labels=[f'{x:.2%}' for x in rank_info])
+        plt.grid(which='major', axis='y')
+        ax.set_axisbelow(True)
+        path = f'/rank_bar_chart/{req_line_user_id}.png'
+        try:
+            fig.savefig(f"src/uploads{path}")
+        except FileNotFoundError:
+            reply_service.create_and_reply_file_upload_error('順位履歴', user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
+            return
+        plt.clf()
+        plt.close()
+
+        reply_service.add_image(f'{env_var.SERVER_URL}/uploads{path}')
+
         reply_service.add_message('直近10半荘の順位状況を表示します。')
         # プロットデータ作成
         plot_data = []
@@ -52,10 +78,6 @@ class ReplyRankHistoryUseCase:
             plot_data.append(uh.rank)
 
         # グラフ描画
-        import matplotlib
-        import matplotlib.pyplot as plt
-        matplotlib.use('agg')
-
         fig, ax = plt.subplots()
         plt.plot(
             range(1, len(plot_data) + 1),
@@ -74,16 +96,7 @@ class ReplyRankHistoryUseCase:
         try:
             fig.savefig(f"src/uploads{path}")
         except FileNotFoundError:
-            reply_service.reset()
-            reply_service.add_message(text='システムエラーが発生しました。')
-            messages = [
-                '順位履歴の画像アップロードに失敗しました',
-                '送信者: ' + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
-            ]
-            reply_service.push_a_message(
-                to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message='\n'.join(messages),
-            )
+            reply_service.create_and_reply_file_upload_error('順位履歴', user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
             return
         
         plt.clf()
