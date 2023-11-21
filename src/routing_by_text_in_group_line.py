@@ -74,7 +74,7 @@ class RCommands(Enum):
     rank_detail = 'rank_detail'
 
 
-def routing_by_text_in_group_line(text: str):
+def routing_by_text_in_group_line():
     """routing by text"""
     method = request_info_service.method
     if method is not None:
@@ -92,11 +92,11 @@ def routing_by_text_in_group_line(text: str):
     current_mode = group_service.get_mode(group_id)
     """input mode"""
     if current_mode == GroupMode.input.value:
-        AddPointByTextUseCase().execute(text)
+        AddPointByTextUseCase().execute(request_info_service.message)
         return
     """tip input mode"""
     if current_mode == GroupMode.tip_input.value:
-        AddTipByTextUseCase().execute(text)
+        AddTipByTextUseCase().execute(request_info_service.message)
         return
 
     """wait mode"""

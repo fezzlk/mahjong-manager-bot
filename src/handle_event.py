@@ -92,11 +92,10 @@ def handle_leave(event):
 @handler.add(MessageEvent, message=TextMessage)
 @handle_event_decorater
 def handle_text_message(event):
-    text = event.message.text
     if event.source.type == 'room' or event.source.type == 'group':
-        routing_by_text_in_group_line(text)
+        routing_by_text_in_group_line()
     elif event.source.type == 'user':
-        routing_by_text_in_personal_line(text)
+        routing_by_text_in_personal_line()
     else:
         raise BaseException('this source type is not supported')
 
@@ -114,8 +113,7 @@ def handle_image_message(event):
 @ handler.add(PostbackEvent)
 @ handle_event_decorater
 def handle_postback(event):
-    text = event.postback.data
     if event.source.type == 'room' or event.source.type == 'group':
-        routing_by_text_in_group_line(text)
+        routing_by_text_in_group_line()
     elif event.source.type == 'user':
-        routing_by_text_in_personal_line(text)
+        routing_by_text_in_personal_line()
