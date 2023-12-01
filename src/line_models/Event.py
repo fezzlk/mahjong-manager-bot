@@ -6,7 +6,7 @@ from .Postback import Postback
 class Event:
     def __init__(
         self,
-        event_type='message',
+        type='message',
         source_type='user',
         user_id='',
         group_id='',
@@ -16,7 +16,7 @@ class Event:
         mode='active',
         mention_ids=[],
     ):
-        self.type = event_type
+        self.type = type
         self.reply_token = 'dummy_reply_token'
         self.source = Source(
             user_id=user_id,

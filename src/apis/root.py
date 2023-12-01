@@ -79,7 +79,7 @@ def test_personal_line():
         reply_service,
         request_info_service,
     )
-    from ApplicationModels.Line.Event import Event
+    from line_models import Event
     user_id = request.form.get('user_id')
     text = request.form.get('text')
     event = Event(

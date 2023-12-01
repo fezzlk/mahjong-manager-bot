@@ -18,7 +18,7 @@ dummy_user = User(
 )
 
 dummy_event = Event(
-    event_type='message',
+    type='message',
     source_type='user',
     user_id="U0123456789abcdefghijklmnopqrstu1",
     message_type='text',
@@ -38,7 +38,7 @@ def text_case(request) -> int:
 def test_fail_mismatch_massage_format(mocker, text_case):
     # Arrange
     dummy_event = Event(
-        event_type='message',
+        type='message',
         source_type='user',
         user_id="U0123456789abcdefghijklmnopqrstu1",
         message_type='text',
@@ -58,7 +58,7 @@ def test_fail_mismatch_massage_format(mocker, text_case):
 def test_fail_no_web_user(mocker):
     # Arrange
     dummy_event = Event(
-        event_type='message',
+        type='message',
         source_type='user',
         user_id="U0123456789abcdefghijklmnopqrstu1",
         message_type='text',
@@ -92,7 +92,7 @@ def test_fail_no_web_user(mocker):
 def test_fail_have_linked_user(mocker):
     # Arrange
     dummy_event = Event(
-        event_type='message',
+        type='message',
         source_type='user',
         user_id="U0123456789abcdefghijklmnopqrstu1",
         message_type='text',
@@ -126,7 +126,7 @@ def test_fail_have_linked_user(mocker):
 def test_fail_update_web_user(mocker):
     # Arrange
     dummy_event = Event(
-        event_type='message',
+        type='message',
         source_type='user',
         user_id="U0123456789abcdefghijklmnopqrstu1",
         message_type='text',
@@ -161,7 +161,7 @@ def test_fail_update_web_user(mocker):
 def test_success(mocker):
     # Arrange
     dummy_event = Event(
-        event_type='message',
+        type='message',
         source_type='user',
         user_id="U0123456789abcdefghijklmnopqrstu1",
         message_type='text',
