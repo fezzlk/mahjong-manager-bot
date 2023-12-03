@@ -43,16 +43,19 @@ class ReplyRankHistoryUseCase:
 
         # 順位グラフ作成
         rank_info = [0, 0, 0, 0, 0]
+        sum_rank = 0
         if len(user_hanchans) != 0:
             sorted_user_hanchans: list[UserHanchan] = sorted(
                 user_hanchans, key=lambda x: x.rank, reverse=False)
             for key, group in groupby(sorted_user_hanchans, key=lambda uh: uh.rank):
-                rank_info[key-1] = len(list(group))/len(user_hanchans)
+                count = len(list(group))
+                rank_info[key-1] = count/len(user_hanchans)
+                sum_rank += count * key
             # 飛び率
             rank_info[4] = sum([h.point < 0 for h in user_hanchans])/len(user_hanchans)
         
         fig, ax = plt.subplots()
-
+        ax.set_title(f'平均順位: {(sum_rank/len(user_hanchans)):.4}', loc='right')
         bar_chart = plt.bar(
             [f'{i+1}着' for i in range(4)] + ['飛び'],
             rank_info,
