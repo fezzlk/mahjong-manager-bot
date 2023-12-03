@@ -15,12 +15,12 @@ class UserHanchanService(IUserHanchanService):
             from_dt: datetime = None, 
             to_dt: datetime = None,
         ) -> List[UserHanchan]:
-        query = {'line_user_id': {'$in': line_user_ids}}
+        query_list = [{'line_user_id': {'$in': line_user_ids}}]
         if from_dt is not None:
-            query['created_at'] = {'$gte': from_dt}
+            query_list.append({'created_at': {'$gte': from_dt}})
         if to_dt is not None:
-            query['created_at'] = {'$lte': to_dt}
+            query_list.append({'created_at': {'$lte': to_dt}})
         return user_hanchan_repository.find(
-            query,
-            [('hanchan_id', ASCENDING)]
+            query={'$and': query_list},
+            sort=[('hanchan_id', ASCENDING)]
         )
