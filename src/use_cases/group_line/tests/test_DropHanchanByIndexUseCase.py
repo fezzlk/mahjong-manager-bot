@@ -16,7 +16,7 @@ import pytest
 
 
 dummy_event = Event(
-    event_type='message',
+    type='message',
     source_type='group',
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",

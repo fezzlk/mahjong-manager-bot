@@ -99,31 +99,34 @@ class MessageService(IMessageService):
         result = None
 
         if date_str is not None:
-            print(date_str.isdecimal())
-            if not date_str.isdecimal():
-                return (None, True)
-            if len(date_str) % 2 == 1:
-                date_str = '0' + date_str
+            try:
+                if not date_str.isdecimal():
+                    return (None, True)
+                if len(date_str) % 2 == 1:
+                    date_str = '0' + date_str
 
-            if len(date_str) == 8:
-                year = int(date_str[:4])
-                month = int(date_str[-4:-2])
-                day = int(date_str[-2:])
-            elif len(date_str) == 6:
-                year = 2000 + int(date_str[:2])
-                month = int(date_str[-4:-2])
-                day = int(date_str[-2:])
-            elif len(date_str) == 4:
-                year = datetime.now().year
-                month = int(date_str[-4:-2])
-                day = int(date_str[-2:])
-            elif len(date_str) == 2:
-                year = datetime.now().year
-                month = datetime.now().month
-                day = int(date_str[-2:])
-            else:
-                return (None, True)
-            result = datetime(year, month, day)
+                if len(date_str) == 8:
+                    year = int(date_str[:4])
+                    month = int(date_str[-4:-2])
+                    day = int(date_str[-2:])
+                elif len(date_str) == 6:
+                    year = 2000 + int(date_str[:2])
+                    month = int(date_str[-4:-2])
+                    day = int(date_str[-2:])
+                elif len(date_str) == 4:
+                    year = datetime.now().year
+                    month = int(date_str[-4:-2])
+                    day = int(date_str[-2:])
+                elif len(date_str) == 2:
+                    year = datetime.now().year
+                    month = datetime.now().month
+                    day = int(date_str[-2:])
+                else:
+                    return (None, True)
+                result = datetime(year, month, day)
+            except:
+                    return (None, True)
+                
         return (result, False)
     
     def create_range_message(self, from_dt: datetime, to_dt: datetime) -> str:

@@ -227,7 +227,7 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
 
 def generate_dummy_follow_event() -> Event:
     return Event(
-        event_type='follow',
+        type='follow',
         source_type='user',
         user_id=generate_dummy_user_list()[0].line_user_id,
     )
@@ -235,7 +235,7 @@ def generate_dummy_follow_event() -> Event:
 
 def generate_dummy_unfollow_event() -> Event:
     return Event(
-        event_type='unfollow',
+        type='unfollow',
         source_type='user',
         user_id=generate_dummy_user_list()[0].line_user_id,
     )
@@ -243,7 +243,7 @@ def generate_dummy_unfollow_event() -> Event:
 
 def generate_dummy_join_event() -> Event:
     return Event(
-        event_type='join',
+        type='join',
         source_type='group',
         user_id=generate_dummy_user_list()[0].line_user_id,
         group_id=generate_dummy_group_list()[0].line_group_id,
@@ -252,7 +252,7 @@ def generate_dummy_join_event() -> Event:
 
 def generate_dummy_text_message_event_from_user() -> Event:
     return Event(
-        event_type='message',
+        type='message',
         source_type='user',
         user_id=generate_dummy_user_list()[0].line_user_id,
         message_type='text',
@@ -262,7 +262,7 @@ def generate_dummy_text_message_event_from_user() -> Event:
 
 def generate_dummy_text_message_event_from_group() -> Event:
     return Event(
-        event_type='message',
+        type='message',
         source_type='group',
         user_id=generate_dummy_user_list()[0].line_user_id,
         group_id=generate_dummy_group_list()[0].line_group_id,

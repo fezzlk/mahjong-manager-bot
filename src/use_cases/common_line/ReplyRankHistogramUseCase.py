@@ -39,6 +39,9 @@ class ReplyRankHistogramUseCase:
         for i in range(1,5):
             plot_data.append([uh.created_at for uh in user_hanchans if uh.rank == i])
             labels.append(f'{i}着')
+        # 飛び
+        plot_data.append([uh.created_at for uh in user_hanchans if uh.point < 0])
+        labels.append('飛び')
 
         # グラフ描画
         import matplotlib

@@ -36,7 +36,7 @@ class UCommands(Enum):
     rank_detail = 'rank_detail'
 
 
-def routing_by_text_in_personal_line(text: str):
+def routing_by_text_in_personal_line():
     """routing by text for personal chat"""
     method = request_info_service.method
     if method is not None:
@@ -52,7 +52,7 @@ def routing_by_text_in_personal_line(text: str):
     """routing by text on each mode"""
     """wait mode"""
 
-    if 'アカウント連携' == text.split()[0]:
+    if 'アカウント連携' == request_info_service.message.split()[0]:
         RequestLinkLineWebUseCase().execute()
         return
 

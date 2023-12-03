@@ -43,3 +43,7 @@ class IReplyService(metaclass=ABCMeta):
     @abstractmethod
     def reply(self, event: Event) -> None:
         pass
+
+    @abstractmethod
+    def create_and_reply_file_upload_error(self, title: str, sender: str) -> None:
+        pass

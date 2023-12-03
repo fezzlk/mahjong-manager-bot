@@ -185,7 +185,7 @@ dummy_user_matches = [
 ]
 
 dummy_event = Event(
-    event_type='message',
+    type='message',
     source_type='group',
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -323,7 +323,7 @@ def test_execute_contain_unknown_user(mocker):
         user_match_repository.create(dummy_user_match)
 
     request_info_service.set_req_info(event=Event(
-        event_type='message',
+        type='message',
         source_type='group',
         user_id="U0123456789abcdefghijklmnopqrstu1",
         group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -368,7 +368,7 @@ def test_execute_with_mention(mocker):
         user_match_repository.create(dummy_user_match)
 
     request_info_service.set_req_info(event=Event(
-        event_type='message',
+        type='message',
         source_type='group',
         user_id="U0123456789abcdefghijklmnopqrstu1",
         group_id="G0123456789abcdefghijklmnopqrstu1",

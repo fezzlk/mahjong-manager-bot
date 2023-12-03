@@ -135,16 +135,7 @@ class ReplyHistoryUseCase:
         try:
             fig.savefig(f"src/uploads/personal_history/{req_line_id}.png")
         except FileNotFoundError:
-            reply_service.reset()
-            reply_service.add_message(text='システムエラーが発生しました。')
-            messages = [
-                '対戦履歴の画像アップロードに失敗しました',
-                '送信者: ' + req_line_id,
-            ]
-            reply_service.push_a_message(
-                to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message='\n'.join(messages),
-            )
+            reply_service.create_and_reply_file_upload_error('対戦履歴', req_line_id)
             return
         plt.clf()
         plt.close()
