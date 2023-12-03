@@ -41,20 +41,22 @@ class ReplyRankHistoryUseCase:
 
         matplotlib.use('agg')
 
-        # 順位円グラフ作成
+        # 順位グラフ作成
         rank_info = [0, 0, 0, 0]
         if len(user_hanchans) != 0:
             sorted_user_hanchans: list[UserHanchan] = sorted(
                 user_hanchans, key=lambda x: x.rank, reverse=False)
             for key, group in groupby(sorted_user_hanchans, key=lambda uh: uh.rank):
                 rank_info[key-1] = len(list(group))/len(user_hanchans)
+        # 飛び率
+            rank_info.append(sum([h.point < 0 for h in user_hanchans])/len(user_hanchans))
         
         fig, ax = plt.subplots()
 
         bar_chart = plt.bar(
-            [f'{i+1}着' for i in range(4)],
+            [f'{i+1}着' for i in range(4)] + ['飛び'],
             rank_info,
-            color=["#EA4060", "#41C9B3", "#3392BB", "#F8BA00"]
+            color=["#EA4060", "#41C9B3", "#3392BB", "#F8BA00", "#2E3441"]
         )
         ax.bar_label(bar_chart, labels=[f'{x:.2%}' for x in rank_info])
         plt.grid(which='major', axis='y')
