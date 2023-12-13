@@ -27,12 +27,19 @@ dummy_matches = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 1)
+        
     ),
     Match(
         _id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 2)
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
+        sum_scores={
+            "U0123456789abcdefghijklmnopqrstu1": 10,
+            "U0123456789abcdefghijklmnopqrstu2": 20,
+            "U0123456789abcdefghijklmnopqrstu3": -20,
+            "U0123456789abcdefghijklmnopqrstu4": -10,
+        }
     ),
     Match(
         _id=3,
