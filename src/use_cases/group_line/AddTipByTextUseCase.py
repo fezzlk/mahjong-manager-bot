@@ -43,7 +43,7 @@ class AddTipByTextUseCase:
         tips = match.tip_scores
 
         if len(tips) == 0:
-            reply_service.add_message('チップを入力して下さい。')
+            reply_service.add_message('チップの増減枚数を入力して下さい。')
             return
         
         res = [
