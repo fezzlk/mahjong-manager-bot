@@ -383,7 +383,7 @@ class ReplyService(IReplyService):
                     message=str(err),
                 )
 
-    def confirm_finish(self) -> None:
+    def add_confirm_finish_menu(self) -> None:
         self.buttons.append(
             TemplateSendMessage(
                 alt_text='精算実行確認',

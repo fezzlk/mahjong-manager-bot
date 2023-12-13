@@ -190,8 +190,8 @@ def test_execute_not_int_point(case2):
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
-    hanchan_repository.create(dummy_hanchans[0])
-    dummy_match.active_hanchan_id = dummy_hanchans[0]._id
+    hanchan_repository.create(dummy_hanchans[1])
+    dummy_match.active_hanchan_id = dummy_hanchans[1]._id
     match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
@@ -205,7 +205,7 @@ def test_execute_not_int_point(case2):
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == '整数で入力してください。'
     hanchans = hanchan_repository.find()
-    expected_raw_scores = dummy_hanchans[0].raw_scores
+    expected_raw_scores = dummy_hanchans[1].raw_scores
     assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
     for k in expected_raw_scores:
         assert hanchans[0].raw_scores[k] == expected_raw_scores[k]

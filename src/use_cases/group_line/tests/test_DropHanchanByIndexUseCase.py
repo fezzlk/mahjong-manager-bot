@@ -313,7 +313,7 @@ def text_case1(request):
     return request.param
 
 
-def test_execute_no_match(text_case1):
+def test_execute_out_of_index(text_case1):
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
