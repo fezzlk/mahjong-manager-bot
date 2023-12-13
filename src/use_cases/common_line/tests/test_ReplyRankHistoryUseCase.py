@@ -17,6 +17,9 @@ from ApplicationService import (
     request_info_service,
 )
 import matplotlib.pyplot as plt
+import pytest
+from typing import Dict
+
 
 dummy_users = [
     User(
@@ -160,6 +163,31 @@ dummy_user_hanchans = [
 ]
 
 
+@ pytest.fixture(params=[
+    {'from': 'x'},
+    {'to': 'x'},
+    {'from': 'x', 'to': '20220101'},
+    {'from': '20220101', 'to': 'x'},
+    {'from': 'x', 'to': 'x'},
+])
+def case1(request) -> Dict[str, str]:
+    return request.param
+
+def test_ng_invaild_range_format(case1):
+    # Arrange
+    use_case = ReplyRankHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    request_info_service.params = case1
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 2
+    assert reply_service.texts[0].text == '日付は以下のフォーマットで入力してください。'
+    assert reply_service.texts[1].text == '[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD'
+     
+
 def test_success(mocker):
     # Arrange
     fig, ax = plt.subplots()
@@ -191,6 +219,46 @@ def test_success(mocker):
     assert len(reply_service.images) == 2
     reply_service.reset()
 
+@ pytest.fixture(params=[
+    ({'from': '20230101'}, '範囲指定: 2023年01月01日から'),
+    ({'to': '20241231'}, '範囲指定: 2024年12月31日まで'),
+    ({'from': '20230101', 'to': '20241231'}, '範囲指定: 2023年01月01日から2024年12月31日まで'),
+])
+def case2(request) -> Dict[str, str]:
+    return request.param
+
+def test_success_with_range(mocker, case2):
+    # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+    )
+    use_case = ReplyRankHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    request_info_service.params = case2[0]
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_archived_hanchan in dummy_archived_hanchans:
+        hanchan_repository.create(dummy_archived_hanchan)
+    match_repository.create(dummy_match)
+    for dummy_user_hanchan in dummy_user_hanchans:
+        user_hanchan_repository.create(dummy_user_hanchan)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == case2[1]
+    assert len(reply_service.images) == 2
+    reply_service.reset()
 
 def test_success_no_user_hanchan(mocker):
     # Arrange

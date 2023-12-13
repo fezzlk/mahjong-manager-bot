@@ -6,9 +6,7 @@ from ApplicationService import (
     message_service,
 )
 from repositories import (
-    user_match_repository,
     user_repository,
-    match_repository,
     hanchan_repository,
 )
 from DomainService import (
@@ -50,14 +48,6 @@ class ReplyHistoryUseCase:
             ids=[um.match_id for um in umList],
         )
 
-        range_message = ''
-        if from_dt is not None:
-            range_message += f'{from_dt.strftime("%Y年%m月%d日")}から'
-        if to_dt is not None:
-            range_message += f'{to_dt.strftime("%Y年%m月%d日")}まで'
-        if range_message != '':
-            reply_service.add_message('範囲指定: ' + range_message)
-
         if len(matches) == 0:
             reply_service.add_message(
                 '対局履歴がありません。'
@@ -72,6 +62,10 @@ class ReplyHistoryUseCase:
 
         if len(all_hanchans) == 0:
             raise ValueError('半荘情報を取得できませんでした。')
+
+        range_message = message_service.create_range_message(from_dt, to_dt)
+        if range_message is not None:
+            reply_service.add_message(range_message)
 
         message = ''
         total = 0

@@ -464,7 +464,7 @@ def test_success_has_tai():
     reply_service.reset()
 
 
-def test_success_reply_tobi_menu(mocker):
+def test_success_reply_tobi_menu():
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -491,5 +491,59 @@ def test_success_reply_tobi_menu(mocker):
     assert groups[0].mode == GroupMode.input.value
     matches = match_repository.find({'_id': 1})
     assert matches[0].active_hanchan_id == dummy_active_hanchan_has_minus_point._id
+
+    reply_service.reset()
+
+
+def test_fail_no_active_match():
+    # Arrange
+    use_case = SubmitHanchanUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    dummy_group.active_match_id = None
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    hanchan_repository.create(dummy_active_hanchan)
+    match_repository.create(dummy_match)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    hanchan = hanchan_repository.find()[0]
+    assert len(hanchan.converted_scores) == 0
+    um = user_match_repository.find(
+        {'user_id': {'$in': [1, 2, 3, 4]}}
+    )
+    assert len(um) == 0
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == '計算対象の試合が見つかりません。'
+    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    assert groups[0].mode == GroupMode.input.value
+
+    reply_service.reset()
+
+
+def test_fail_no_group():
+    # Arrange
+    use_case = SubmitHanchanUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    hanchan_repository.create(dummy_active_hanchan)
+    match_repository.create(dummy_match)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    hanchan = hanchan_repository.find()[0]
+    assert len(hanchan.converted_scores) == 0
+    um = user_match_repository.find(
+        {'user_id': {'$in': [1, 2, 3, 4]}}
+    )
+    assert len(um) == 0
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == 'グループが登録されていません。招待し直してください。'
 
     reply_service.reset()
