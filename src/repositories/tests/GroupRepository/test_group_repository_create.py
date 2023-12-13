@@ -77,6 +77,6 @@ def test_fail_duplicate_line_group_id():
             dummy_groups[1],
         )
 
-        # Assert
-        record_on_db = group_repository.find()
-        assert len(record_on_db) == 1
+    # Assert
+    record_on_db = group_repository.find()
+    assert len(record_on_db) == 1

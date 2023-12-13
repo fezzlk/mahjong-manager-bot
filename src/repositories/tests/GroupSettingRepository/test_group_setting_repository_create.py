@@ -107,6 +107,6 @@ def test_error_duplicate_line_group_id():
             dummy_group_settings[1],
         )
 
-        # Assert
-        record_on_db = group_setting_repository.find()
-        assert len(record_on_db) == 1
+    # Assert
+    record_on_db = group_setting_repository.find()
+    assert len(record_on_db) == 1
