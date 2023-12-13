@@ -34,3 +34,16 @@ def test_execute():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == 'wait'
+
+
+def test_execute_no_group():
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyGroupModeUseCase()
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == 'トークルームが登録されていません。招待し直してください。'

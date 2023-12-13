@@ -61,20 +61,16 @@ class ReplyMultiHistoryUseCase:
         matches = match_service.find_all_for_graph(
             ids=[um.match_id for um in umList],
         )
-            
-        range_message = ''
-        if from_dt is not None:
-            range_message += f'{from_dt.strftime("%Y年%m月%d日")}から'
-        if to_dt is not None:
-            range_message += f'{to_dt.strftime("%Y年%m月%d日")}まで'
-        if range_message != '':
-            reply_service.add_message('範囲指定: ' + range_message)
 
         if len(matches) == 0:
             reply_service.add_message(
                 '対局履歴がありません。'
             )
             return
+
+        range_message = message_service.create_range_message(from_dt, to_dt)
+        if range_message is not None:
+            reply_service.add_message(range_message)
 
         # 対戦結果の累計を計算
         from datetime import timedelta

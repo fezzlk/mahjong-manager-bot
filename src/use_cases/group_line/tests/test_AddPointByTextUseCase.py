@@ -190,8 +190,8 @@ def test_execute_not_int_point(case2):
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
-    hanchan_repository.create(dummy_hanchans[0])
-    dummy_match.active_hanchan_id = dummy_hanchans[0]._id
+    hanchan_repository.create(dummy_hanchans[1])
+    dummy_match.active_hanchan_id = dummy_hanchans[1]._id
     match_repository.create(dummy_match)
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
@@ -205,7 +205,7 @@ def test_execute_not_int_point(case2):
     assert reply_service.texts[0].type == 'text'
     assert reply_service.texts[0].text == '整数で入力してください。'
     hanchans = hanchan_repository.find()
-    expected_raw_scores = dummy_hanchans[0].raw_scores
+    expected_raw_scores = dummy_hanchans[1].raw_scores
     assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
     for k in expected_raw_scores:
         assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
@@ -355,6 +355,71 @@ def test_execute_fifth_input():
         dummy_users[3].line_user_id: 10000,
         dummy_users[4].line_user_id: 10000,
     }
+    assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
+    for k in expected_raw_scores:
+        assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
+
+
+def test_execute_delete():
+    # Arrange
+    use_case = AddPointByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[1].line_user_id
+    hanchan_repository.create(dummy_hanchans[3])
+    dummy_match.active_hanchan_id = dummy_hanchans[3]._id
+    match_repository.create(dummy_match)
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+
+    # Act
+    use_case.execute(text='-')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == 'test_user3: 10000\ntest_user4: 10000'
+    hanchans = hanchan_repository.find()
+    expected_raw_scores = {
+        dummy_users[2].line_user_id: 10000,
+        dummy_users[3].line_user_id: 10000,
+    }
+    assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
+    for k in expected_raw_scores:
+        assert hanchans[0].raw_scores[k] == expected_raw_scores[k]
+
+
+def test_execute_delete_last_one():
+    # Arrange
+    use_case = AddPointByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[1].line_user_id
+    dummy_hanchan = Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[1].line_user_id: 10000,
+        },
+        converted_scores={},
+        match_id=1,
+        status=2,
+        _id=1,
+    )
+    hanchan_repository.create(dummy_hanchan)
+    dummy_match.active_hanchan_id = dummy_hanchan._id
+    match_repository.create(dummy_match)
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+
+    # Act
+    use_case.execute(text='-')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == '点数を入力してください。'
+    hanchans = hanchan_repository.find()
+    expected_raw_scores = {}
     assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
     for k in expected_raw_scores:
         assert hanchans[0].raw_scores[k] == expected_raw_scores[k]

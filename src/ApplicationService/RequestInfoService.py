@@ -32,6 +32,17 @@ class RequestInfoService:
         self.req_line_user_id = event.source.user_id
         if event.source.type == 'room':
             self.req_line_group_id = event.source.room_id
+            from ApplicationService import reply_service
+            import env_var
+            messages=[
+                'source id: room からのイベントを受け取りました。',
+                self.req_line_user_id,
+                self.req_line_group_id,
+            ]
+            reply_service.push_a_message(
+                to=env_var.SERVER_ADMIN_LINE_USER_ID,
+                message='\n'.join(messages),
+            )
         if event.source.type == 'group':
             self.req_line_group_id = event.source.group_id
 

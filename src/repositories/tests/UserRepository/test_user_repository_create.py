@@ -63,7 +63,7 @@ def test_success_with_id():
     assert record_on_db[0].jantama_name == dummy_user.jantama_name
 
 
-def test_error_duplicate_line_group_id():
+def test_error_duplicate_line_line_id():
     with pytest.raises(Exception):
         # Arrange
         dummy_users = [
@@ -75,7 +75,7 @@ def test_error_duplicate_line_group_id():
             ),
             User(
                 line_user_name="test_user2",
-                line_user_id="U0123456789abcdefghijklmnopqrstu2",
+                line_user_id="U0123456789abcdefghijklmnopqrstu1",
                 mode=UserMode.wait.value,
                 jantama_name="jantama_user2",
             ),
@@ -89,6 +89,7 @@ def test_error_duplicate_line_group_id():
             dummy_users[1],
         )
 
-        # Assert
-        record_on_db = user_repository.find()
-        assert len(record_on_db) == 1
+    # Assert
+    record_on_db = user_repository.find()
+    assert len(record_on_db) == 1
+    

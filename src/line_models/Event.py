@@ -4,6 +4,7 @@ from .Postback import Postback
 
 
 class Event:
+    
     def __init__(
         self,
         type='message',
@@ -26,4 +27,4 @@ class Event:
         if self.type == 'message':
             self.message = Message(text=text, message_type=message_type, mention_ids=mention_ids)
         if self.type == 'postback':
-            self.postback == Postback(data=postback_data)
+            self.postback = Postback(data=postback_data)

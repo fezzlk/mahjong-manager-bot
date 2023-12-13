@@ -6,4 +6,4 @@ from ApplicationService import (
 class ReplyFinishConfirmUseCase:
 
     def execute(self) -> None:
-        reply_service.confirm_finish()
+        reply_service.add_confirm_finish_menu()

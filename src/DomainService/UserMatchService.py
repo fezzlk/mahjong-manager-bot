@@ -16,9 +16,11 @@ class UserMatchService(IUserMatchService):
             from_dt: datetime = None, 
             to_dt: datetime = None,
         ) -> List[UserMatch]:
-        query = {'user_id': {'$in': user_ids}}
+        query_list = [{'user_id': {'$in': user_ids}}]
         if from_dt is not None:
-            query['created_at'] = {'$gte': from_dt}
+            query_list.append({'created_at': {'$gte': from_dt}})
         if to_dt is not None:
-            query['created_at'] = {'$lte': to_dt}
-        return user_match_repository.find(query)
+            query_list.append({'created_at': {'$lte': to_dt}})
+        return user_match_repository.find(
+            query={'$and': query_list},
+        )

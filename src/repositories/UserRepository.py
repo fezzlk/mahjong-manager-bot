@@ -14,7 +14,6 @@ class UserRepository(IUserRepository):
     ) -> User:
         if len(self.find(query={'line_user_id': new_record.line_user_id})) != 0:
             raise Exception(f'LINE User ID: {new_record.line_user_id} のUserはすでに存在しています。')
-
         new_dict = new_record.__dict__.copy()
         if new_record._id is None:
             new_dict.pop('_id')

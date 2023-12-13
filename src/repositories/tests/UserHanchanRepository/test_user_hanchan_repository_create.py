@@ -83,7 +83,7 @@ def test_success_with_id():
     assert record_on_db[0].hanchan_id == dummy_user_hanchan.hanchan_id
 
 
-def test_error_duplicate_line_group_id():
+def test_error_duplicate():
     with pytest.raises(Exception):
         # Arrange
         new_user = user_repository.create(
@@ -95,6 +95,8 @@ def test_error_duplicate_line_group_id():
         dummy_user_hanchan = UserHanchan(
             line_user_id=new_user.line_user_id,
             hanchan_id=new_hanchan._id,
+            point=1000,
+            rank=4,
         )
 
         user_hanchan_repository.create(
@@ -106,6 +108,6 @@ def test_error_duplicate_line_group_id():
             dummy_user_hanchan,
         )
 
-        # Assert
-        record_on_db = user_hanchan_repository.find()
-        assert len(record_on_db) == 1
+    # Assert
+    record_on_db = user_hanchan_repository.find()
+    assert len(record_on_db) == 1

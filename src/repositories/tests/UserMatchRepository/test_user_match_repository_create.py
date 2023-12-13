@@ -101,6 +101,6 @@ def test_error_duplicate_line_group_id():
             dummy_user_match,
         )
 
-        # Assert
-        record_on_db = user_match_repository.find()
-        assert len(record_on_db) == 1
+    # Assert
+    record_on_db = user_match_repository.find()
+    assert len(record_on_db) == 1

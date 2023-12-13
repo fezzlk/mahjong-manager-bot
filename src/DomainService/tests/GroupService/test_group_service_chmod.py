@@ -27,3 +27,11 @@ def test_ng_invalid_mode():
 
         # Act, Assert
         group_service.chmod(line_group_id='hoge', mode='hoge')
+
+
+def test_ng_no_group_id():
+    with pytest.raises(ValueError):
+        # Arrange
+
+        # Act, Assert
+        group_service.chmod(line_group_id=None, mode=GroupMode.wait)

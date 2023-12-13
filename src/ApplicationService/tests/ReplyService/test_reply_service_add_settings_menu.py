@@ -12,6 +12,17 @@ def test_success():
     assert len(reply_service.buttons) == 1
 
 
+def test_success_menu2():
+    # Arrange
+    reply_service = ReplyService()
+
+    # Act
+    reply_service.add_settings_menu('メニュー2')
+
+    # Assert
+    assert len(reply_service.buttons) == 1
+
+
 def test_success_key_rate():
     # Arrange
     reply_service = ReplyService()

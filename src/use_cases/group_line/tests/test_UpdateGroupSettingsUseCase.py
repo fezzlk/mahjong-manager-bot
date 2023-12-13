@@ -160,28 +160,6 @@ def test_execute_rounding_method():
     assert settings[0].rounding_method == 1
 
 
-def test_execute_rounding_method():
-    # Arrange
-    request_info_service.set_req_info(event=dummy_event)
-    use_case = UpdateGroupSettingsUseCase()
-    group_setting_repository.create(dummy_setting)
-
-    # Act
-    use_case.execute('端数計算方法', '1')
-
-    # Assert
-    assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '[端数計算方法]を[五捨六入]に変更しました。'
-    settings = group_setting_repository.find()
-    assert settings[0].line_group_id == 'G0123456789abcdefghijklmnopqrstu1'
-    assert settings[0].rate == 0
-    assert settings[0].ranking_prize == [20, 10, -10, -20]
-    assert settings[0].tip_rate == 0
-    assert settings[0].tobi_prize == 10
-    assert settings[0].num_of_players == 4
-    assert settings[0].rounding_method == 1
-
-
 def test_execute_invalid_key():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
@@ -217,7 +195,7 @@ def test_execute_invalid_key():
 def text_case1(request):
     return request.param
 
-def test_execute_invalid_key(text_case1):
+def test_execute_invalid_value(text_case1):
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()
