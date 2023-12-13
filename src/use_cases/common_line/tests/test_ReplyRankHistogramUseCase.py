@@ -1,4 +1,4 @@
-from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
+from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
 from DomainModel.entities.User import User, UserMode
@@ -175,7 +175,7 @@ def case1(request) -> Dict[str, str]:
 
 def test_ng_invalid_range_format(case1):
     # Arrange
-    use_case = ReplyRankHistoryUseCase()
+    use_case = ReplyRankHistogramUseCase()
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     request_info_service.params = case1
 
@@ -200,7 +200,7 @@ def test_success(mocker):
         fig,
         'savefig',
     )
-    use_case = ReplyRankHistoryUseCase()
+    use_case = ReplyRankHistogramUseCase()
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
@@ -216,7 +216,7 @@ def test_success(mocker):
 
     # Assert
     assert len(reply_service.texts) == 0
-    assert len(reply_service.images) == 2
+    assert len(reply_service.images) == 1
     reply_service.reset()
 
 @ pytest.fixture(params=[
@@ -239,7 +239,7 @@ def test_success_with_range(mocker, case2):
         fig,
         'savefig',
     )
-    use_case = ReplyRankHistoryUseCase()
+    use_case = ReplyRankHistogramUseCase()
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     request_info_service.params = case2[0]
     group_repository.create(dummy_group)
@@ -257,7 +257,7 @@ def test_success_with_range(mocker, case2):
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == case2[1]
-    assert len(reply_service.images) == 2
+    assert len(reply_service.images) == 1
     reply_service.reset()
 
 def test_success_no_user_hanchan(mocker):
@@ -273,7 +273,7 @@ def test_success_no_user_hanchan(mocker):
         'savefig',
     )
 
-    use_case = ReplyRankHistoryUseCase()
+    use_case = ReplyRankHistogramUseCase()
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
@@ -287,7 +287,7 @@ def test_success_no_user_hanchan(mocker):
 
     # Assert
     assert len(reply_service.texts) == 0
-    assert len(reply_service.images) == 2
+    assert len(reply_service.images) == 1
     reply_service.reset()
 
 def test_success_fail_savefig(mocker):
@@ -308,7 +308,7 @@ def test_success_fail_savefig(mocker):
         side_effect=FileNotFoundError(),
     )
 
-    use_case = ReplyRankHistoryUseCase()
+    use_case = ReplyRankHistogramUseCase()
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
