@@ -8,6 +8,7 @@ from linebot.models import (
     TextSendMessage,
 )
 from messaging_api_setting import line_bot_api
+from linebot.exceptions import LineBotApiError
 
 
 def test_reply_to_user(mocker):
@@ -56,7 +57,7 @@ def test_reply_to_group(mocker):
     mock.assert_called_once()
 
 
-def test_content_0(mocker):
+def test_content_0():
     # Arrange
     reply_service = ReplyService()
     dummy_event = generate_dummy_text_message_event_from_group()
