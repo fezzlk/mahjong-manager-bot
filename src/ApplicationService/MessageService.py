@@ -132,9 +132,9 @@ class MessageService(IMessageService):
     def create_range_message(self, from_dt: datetime, to_dt: datetime) -> str:
         range_message = ''
         if from_dt is not None:
-            range_message += f'{from_dt.strftime("%Y年%m月%d日")}から'
+            range_message += f'{from_dt.strftime("%Y年%m月%d日")}0時から'
         if to_dt is not None:
-            range_message += f'{to_dt.strftime("%Y年%m月%d日")}まで'
+            range_message += f'{to_dt.strftime("%Y年%m月%d日")}0時まで'
        
         if range_message == '':
             range_message = None
