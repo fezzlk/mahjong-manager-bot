@@ -73,6 +73,20 @@ class RequestInfoService:
     def parse_message(self):
         if self.message is None or self.message == '':
             return
+        
+        # コマンドエイリアスの確認
+        from repositories import command_alias_repository
+        query = {
+            'line_user_id': self.req_line_user_id,
+            'alias': self.message,
+        }
+        if self.req_line_group_id is not None:
+            query['line_group_id'] = self.req_line_group_id
+        command_alias = command_alias_repository.find(query)
+        if len(command_alias) != 0:
+            self.message = command_alias[0].command
+            self.mention_line_ids = command_alias[0].mentionees
+ 
         if (self.message[0] == '_') & (len(self.message) > 1):
             method_and_params = self.message.split()[0]
             self.body = self.message[len(method_and_params) + 1:]

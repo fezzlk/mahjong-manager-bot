@@ -8,6 +8,7 @@ db_name = env_var.DATABASE_NAME
 # mongo_client = MongoClient(env_var.DATABASE_URL, tlsCAFile=certifi.where())
 
 line_users_collection = mongo_client[db_name].line_users
+command_aliases_collection = mongo_client[db_name].command_aliases
 user_groups_collection = mongo_client[db_name].user_groups
 groups_collection = mongo_client[db_name].groups
 group_settings_collection = mongo_client[db_name].group_settings
