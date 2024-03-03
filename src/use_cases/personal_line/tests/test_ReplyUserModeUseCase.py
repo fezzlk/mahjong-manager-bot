@@ -23,7 +23,7 @@ dummy_event = Event(
 )
 
 
-def test_execute(mocker):
+def test_execute():
     # Arrange
     user_repository.create(dummy_user)
     request_info_service.set_req_info(event=dummy_event)
@@ -36,3 +36,16 @@ def test_execute(mocker):
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == 'wait'
 
+
+
+def test_execute_no_user():
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyUserModeUseCase()
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == 'ユーザーを認識できませんでした。当アカウントを一度ブロックし、ブロック解除してください。'

@@ -206,7 +206,10 @@ def test_execute_arg_int():
 
         # Act
         use_case.execute(1)
-
+    
+    # Assert
+    records_in_db = hanchan_repository.find()
+    assert len(records_in_db) == 6
 
 def test_execute_no_arg():
     with pytest.raises(BaseException):
@@ -221,6 +224,9 @@ def test_execute_no_arg():
         # Act
         use_case.execute(1)
 
+    # Assert
+    records_in_db = hanchan_repository.find()
+    assert len(records_in_db) == 6
 
 def test_execute_arg_no_digit():
     # Arrange
@@ -295,11 +301,10 @@ def test_execute_fail_get_active_match():
         # Act
         use_case.execute('1')
 
-        # Assert
-        hanchans = hanchan_repository.find()
-        assert len(hanchans) == 6
-        assert len(reply_service.texts) == 1
-        assert reply_service.texts[0].text == '現在進行中の対戦がありません。'
+    # Assert
+    hanchans = hanchan_repository.find()
+    assert len(hanchans) == 6
+    assert len(reply_service.texts) == 0
 
 
 
@@ -308,7 +313,7 @@ def text_case1(request):
     return request.param
 
 
-def test_execute_no_match(text_case1):
+def test_execute_out_of_index(text_case1):
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)

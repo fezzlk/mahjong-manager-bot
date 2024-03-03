@@ -6,9 +6,7 @@ from ApplicationService import (
     message_service,
 )
 from repositories import (
-    user_match_repository,
     user_repository,
-    match_repository,
     hanchan_repository,
 )
 from DomainService import (
@@ -50,14 +48,6 @@ class ReplyHistoryUseCase:
             ids=[um.match_id for um in umList],
         )
 
-        range_message = ''
-        if from_dt is not None:
-            range_message += f'{from_dt.strftime("%Y年%m月%d日")}から'
-        if to_dt is not None:
-            range_message += f'{to_dt.strftime("%Y年%m月%d日")}まで'
-        if range_message != '':
-            reply_service.add_message('範囲指定: ' + range_message)
-
         if len(matches) == 0:
             reply_service.add_message(
                 '対局履歴がありません。'
@@ -72,6 +62,10 @@ class ReplyHistoryUseCase:
 
         if len(all_hanchans) == 0:
             raise ValueError('半荘情報を取得できませんでした。')
+
+        range_message = message_service.create_range_message(from_dt, to_dt)
+        if range_message is not None:
+            reply_service.add_message(range_message)
 
         message = ''
         total = 0
@@ -103,14 +97,18 @@ class ReplyHistoryUseCase:
         )
 
         # グラフ描画
-        # 初回値に0を追加
+        # 初回値に0を追加、最後尾には指定された範囲の最終日または現在時点のスコアを追加
         from datetime import timedelta
+        if to_dt is None:
+            to_dt = datetime.now()
+        history[to_dt] = total
+
         start_date: datetime = min(history.keys())
         end_date: datetime = max(history.keys())
         history[start_date - timedelta(minutes=2)] = 0
         history[start_date - timedelta(minutes=1)] = 0
         history = dict(sorted(history.items()))
-
+        
         x =[]
         y =[]
         for k, v in history.items():
@@ -126,7 +124,7 @@ class ReplyHistoryUseCase:
         plt.step(history.keys(), history.values(), where='mid')
 
         plt.grid(which='major', axis='y')
-        plt.xlim([start_date - timedelta(minutes=2), end_date])
+        plt.xlim([start_date - timedelta(minutes=2), end_date + timedelta(seconds=(end_date-start_date).total_seconds() // 300)])
         plt.xticks(rotation=30)
         # locator = mdates.DayLocator()
         # ax.xaxis.set_major_locator(locator)

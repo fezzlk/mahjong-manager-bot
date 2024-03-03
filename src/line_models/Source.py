@@ -10,3 +10,5 @@ class Source:
 
         if source_type == 'group':
             self.group_id = group_id
+        if source_type == 'room':
+            self.room_id = group_id

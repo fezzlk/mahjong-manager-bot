@@ -189,6 +189,39 @@ def test_success_single_hanchan(mocker):
     assert len(reply_service.images) == 1
     reply_service.reset()
 
+def test_success_contain_unknown_user(mocker):
+    # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        'subplots',
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        'savefig',
+    )
+    use_case = ReplyHanchansOfActiveMatchUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    # for dummy_user in dummy_users:
+    #     user_repository.create(dummy_user)
+    hanchan_repository.create(dummy_archived_hanchans[0])
+    hanchan_repository.create(dummy_disabled_hanchan)
+    hanchan_repository.create(dummy_active_hanchan)
+    dummy_match.active_hanchan_id = dummy_active_hanchan._id
+    match_repository.create(dummy_match)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 2
+    assert reply_service.texts[0].text == '途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。'
+    assert reply_service.texts[1].text == "第1回\n友達未登録: +50 (+50)\n友達未登録: +10 (+10)\n友達未登録: -20 (-20)\n友達未登録: -40 (-40)"
+    assert len(reply_service.images) == 1
+    reply_service.reset()
+
 
 def test_success_multi_hanchan(mocker):
     # Arrange

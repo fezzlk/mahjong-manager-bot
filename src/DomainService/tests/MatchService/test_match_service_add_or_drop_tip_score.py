@@ -213,9 +213,9 @@ def test_ng_no_line_user_id(mocker):
             10,
         )
 
-        # Assert
-        mock_find.assert_not_called()
-        mock_update.assert_not_called()
+    # Assert
+    mock_find.assert_not_called()
+    mock_update.assert_not_called()
 
 
 def test_ng_no_hanchan(mocker):
@@ -238,5 +238,5 @@ def test_ng_no_hanchan(mocker):
             10,
         )
 
-        # Assert
-        mock_update.assert_not_called()
+    # Assert
+    mock_update.assert_not_called()

@@ -1,5 +1,7 @@
 from enum import Enum
-
+from DomainService import (
+    user_service
+)
 from ApplicationService import (
     request_info_service,
     reply_service,
@@ -37,6 +39,10 @@ class UCommands(Enum):
 
 
 def routing_by_text_in_personal_line():
+    if user_service.find_one_by_line_user_id(request_info_service.req_line_user_id) is None:
+        reply_service.add_message('ユーザーが登録されていません。友達追加してください。')
+        return
+
     """routing by text for personal chat"""
     method = request_info_service.method
     if method is not None:

@@ -306,3 +306,78 @@ def test_execute_delete():
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
     for k in expected_tip_scores:
         assert matches[0].tip_scores[k] == expected_tip_scores[k]
+
+dummy_matches3 = [
+    Match(
+        line_group_id=dummy_group.line_group_id,
+        status=2,
+        _id=1,
+        tip_scores={
+            dummy_users[0].line_user_id: 20,
+        }
+    ),
+]
+
+def test_execute_delete_last_one():
+    # Arrange
+    use_case = AddTipByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    for dummy_match in dummy_matches3:
+        match_repository.create(dummy_match)
+    dummy_group.active_match_id = 1
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+
+    # Act
+    use_case.execute(text='-')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == 'チップの増減枚数を入力して下さい。'
+    matches = match_repository.find({
+        '_id': 1,
+    })
+    expected_tip_scores = {}
+    assert len(matches[0].tip_scores) == len(expected_tip_scores)
+    for k in expected_tip_scores:
+        assert matches[0].tip_scores[k] == expected_tip_scores[k]
+
+
+
+def test_execute_no_active_match():
+    # Arrange
+    use_case = AddTipByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    for dummy_match in dummy_matches3:
+        match_repository.create(dummy_match)
+    dummy_group.active_match_id = None
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+
+    # Act
+    use_case.execute(text='-')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == '計算対象の試合が見つかりません。'
+
+
+def test_execute_no_group():
+    # Arrange
+    use_case = AddTipByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+
+    # Act
+    use_case.execute(text='-')
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].type == 'text'
+    assert reply_service.texts[0].text == 'グループが登録されていません。招待し直してください。'

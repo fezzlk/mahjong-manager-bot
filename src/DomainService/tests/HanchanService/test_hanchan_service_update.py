@@ -3,6 +3,7 @@ from DomainService import (
 )
 from repositories import hanchan_repository
 from DomainModel.entities.Hanchan import Hanchan
+from datetime import datetime
 
 dummy_hanchans = [
     Hanchan(
@@ -10,6 +11,8 @@ dummy_hanchans = [
         match_id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
+        created_at=datetime(2022, 1, 2, 3, 4, 5),
+        updated_at=datetime(2023, 1, 2, 3, 4, 5),
     )
 ]
 
@@ -26,4 +29,4 @@ def test_ok_hit_hanchan(mocker):
     hanchan_service.update(dummy_hanchans[0])
 
     # Assert
-    mock_update.assert_called_once()
+    mock_update.assert_called_once_with({'_id': 1}, {'_id': 1, 'line_group_id': 'G0123456789abcdefghijklmnopqrstu1', 'raw_scores': {}, 'converted_scores': {}, 'match_id': 1, 'status': 2, 'original_id': None, 'created_at': datetime(2022, 1, 2, 3, 4, 5), 'updated_at': datetime(2023, 1, 2, 3, 4, 5)})

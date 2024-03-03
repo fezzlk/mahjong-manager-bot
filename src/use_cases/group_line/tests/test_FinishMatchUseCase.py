@@ -378,3 +378,22 @@ def test_success_without_hanchan():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == 'まだ対戦結果がありません。'
+
+
+def test_ng_no_group():
+    # Arrange
+    use_case = FinishMatchUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans[2:]:
+        hanchan_repository.create(dummy_hanchan)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == 'グループが登録されていません。招待し直してください。'

@@ -31,13 +31,9 @@ class ReplyRankHistoryUseCase:
             to_dt=to_dt,
         )
             
-        range_message = ''
-        if from_dt is not None:
-            range_message += f'{from_dt.strftime("%Y年%m月%d日")}から'
-        if to_dt is not None:
-            range_message += f'{to_dt.strftime("%Y年%m月%d日")}まで'
-        if range_message != '':
-            reply_service.add_message('範囲指定: ' + range_message)
+        range_message = message_service.create_range_message(from_dt, to_dt)
+        if range_message is not None:
+            reply_service.add_message(range_message)
 
         matplotlib.use('agg')
 

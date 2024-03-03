@@ -15,8 +15,7 @@ class UserHanchanRepository(IUserHanchanRepository):
             'line_user_id': new_record.line_user_id,
             'hanchan_id': new_record.hanchan_id,
         })) != 0:
-            print(f'LINE User ID({new_record.line_user_id}とHanchan ID({new_record.hanchan_id}) のUserHanchanはすでに存在しています。')
-            return
+            raise Exception(f'LINE User ID({new_record.line_user_id}とHanchan ID({new_record.hanchan_id}) のUserHanchanはすでに存在しています。')
         new_dict = new_record.__dict__.copy()
         if new_record._id is None:
             new_dict.pop('_id')

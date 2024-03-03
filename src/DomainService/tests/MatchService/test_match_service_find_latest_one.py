@@ -34,7 +34,7 @@ def test_ok(mocker):
     mock_find.assert_called_once_with(query={'line_group_id': 'G0123456789abcdefghijklmnopqrstu1'}, sort=[('created_at', DESCENDING)])
 
 
-def test_ok(mocker):
+def test_ok_no_hit(mocker):
     # Arrange
     mock_find = mocker.patch.object(
         match_repository,
