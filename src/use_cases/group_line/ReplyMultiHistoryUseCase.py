@@ -73,7 +73,7 @@ class ReplyMultiHistoryUseCase:
             reply_service.add_message(range_message)
 
         # 対戦結果の累計を計算
-        from datetime import timedelta
+        from datetime import datetime, timedelta
         total_dict = {line_id: 0 for line_id in active_user_line_ids}
         start_date = matches[0].created_at
         end_date = matches[-1].created_at
@@ -86,6 +86,11 @@ class ReplyMultiHistoryUseCase:
                 if line_id in active_user_line_ids:
                     total_dict[line_id] += score
                     history_dict[line_id][match.created_at] = total_dict[line_id]
+        if to_dt is None:
+            to_dt = datetime.now()
+        for line_id, score in total_dict.items():
+            history_dict[line_id][to_dt] = score
+        
 
         # グラフ描画
         import matplotlib
@@ -103,10 +108,12 @@ class ReplyMultiHistoryUseCase:
                 label=line_id_name_dict[line_id])
             
         plt.grid(which='major', axis='y')
-        plt.xlim([start_date - timedelta(minutes=1), end_date])
+        plt.xlim([start_date - timedelta(minutes=1), end_date + timedelta(seconds=(end_date-start_date).total_seconds() // 300)])
         plt.xticks(rotation=30)
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H時"))
         plt.legend()
+        # plt.gca().spines['right'].set_visible(False)
+        # plt.gca().spines['top'].set_visible(False)
 
         try:
             fig.savefig(f"src/uploads/group_history/{req_line_user_id}.png")
