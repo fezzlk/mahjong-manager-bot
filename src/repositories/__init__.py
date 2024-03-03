@@ -7,7 +7,9 @@ from .MatchRepository import MatchRepository
 from .UserMatchRepository import UserMatchRepository
 from .UserHanchanRepository import UserHanchanRepository
 from .GroupRepository import GroupRepository
+from .CommandAliasRepository import CommandAliasRepository
 
+command_alias_repository = CommandAliasRepository()
 group_setting_repository = GroupSettingRepository()
 user_repository = UserRepository()
 web_user_repository = WebUserRepository()
