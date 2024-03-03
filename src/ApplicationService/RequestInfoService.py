@@ -12,6 +12,7 @@ class RequestInfoService:
     method: str
     body: str
     params: Dict[str, str]
+    is_mention_all: bool
 
     def __init__(self):
         # 送信元の LINE ユーザー ID, トークルーム ID, グループ ID
@@ -22,6 +23,7 @@ class RequestInfoService:
         self.method = None
         self.params = {}
         self.body = None
+        self.is_mention_all = False
 
     """
     メッセージ送信元情報のセット
@@ -57,7 +59,16 @@ class RequestInfoService:
                 if hasattr(event.message, 'mention') and event.message.mention is not None:
                     mentionees = event.message.mention.mentionees
                     for mentionee in mentionees:
-                        self.mention_line_ids.append(mentionee.user_id)
+                        if hasattr(mentionee, 'user_id') and mentionee.user_id is not None:
+                            self.mention_line_ids.append(mentionee.user_id)
+                        elif '@All' in self.message:
+                            from DomainService import user_group_service
+                            user_groups = user_group_service.find_all_by_line_group_id(self.req_line_group_id)
+                            line_user_ids_in_group = [ug.line_user_id for ug in user_groups]
+                            self.mention_line_ids += line_user_ids_in_group
+                            self.is_mention_all = True
+                        if len(self.mention_line_ids) != 0:
+                            self.mention_line_ids = list(set(self.mention_line_ids))
 
     def parse_message(self):
         if self.message is None or self.message == '':
