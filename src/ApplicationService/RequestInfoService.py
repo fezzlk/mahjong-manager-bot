@@ -110,3 +110,4 @@ class RequestInfoService:
         self.method = None
         self.params = {}
         self.body = None
+        self.is_mention_all = False
