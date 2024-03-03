@@ -124,11 +124,13 @@ class ReplyHistoryUseCase:
         plt.step(history.keys(), history.values(), where='mid')
 
         plt.grid(which='major', axis='y')
-        plt.xlim([start_date - timedelta(minutes=2), end_date + timedelta(seconds=(end_date-start_date).total_seconds() // 300)])
+        plt.xlim([start_date - timedelta(minutes=2), end_date + timedelta(seconds=(end_date-start_date).total_seconds() // 100)])
         plt.xticks(rotation=30)
         # locator = mdates.DayLocator()
         # ax.xaxis.set_major_locator(locator)
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H時"))
+        plt.gca().spines['right'].set_visible(False)
+        plt.gca().spines['top'].set_visible(False)
 
         try:
             fig.savefig(f"src/uploads/personal_history/{req_line_id}.png")

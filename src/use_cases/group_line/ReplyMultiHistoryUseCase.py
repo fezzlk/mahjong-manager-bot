@@ -44,6 +44,9 @@ class ReplyMultiHistoryUseCase:
         if contain_not_friend_user:
             reply_service.add_message("友達登録されていないユーザは表示されません。")
 
+        if request_info_service.is_mention_all:
+            reply_service.add_message("@Allによるメンションでは、このグループでの対戦に参加したことのある全ユーザを対象とします。")
+
         # 関連する対戦結果の取得
         from_str = request_info_service.params.get('from')
         to_str = request_info_service.params.get('to')
@@ -108,12 +111,12 @@ class ReplyMultiHistoryUseCase:
                 label=line_id_name_dict[line_id])
             
         plt.grid(which='major', axis='y')
-        plt.xlim([start_date - timedelta(minutes=1), end_date + timedelta(seconds=(end_date-start_date).total_seconds() // 300)])
+        plt.xlim([start_date - timedelta(minutes=1), end_date + timedelta(seconds=(end_date-start_date).total_seconds() // 100)])
         plt.xticks(rotation=30)
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H時"))
         plt.legend()
-        # plt.gca().spines['right'].set_visible(False)
-        # plt.gca().spines['top'].set_visible(False)
+        plt.gca().spines['right'].set_visible(False)
+        plt.gca().spines['top'].set_visible(False)
 
         try:
             fig.savefig(f"src/uploads/group_history/{req_line_user_id}.png")
