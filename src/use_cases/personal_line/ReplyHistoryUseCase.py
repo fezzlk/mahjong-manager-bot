@@ -97,14 +97,18 @@ class ReplyHistoryUseCase:
         )
 
         # グラフ描画
-        # 初回値に0を追加
+        # 初回値に0を追加、最後尾には指定された範囲の最終日または現在時点のスコアを追加
         from datetime import timedelta
+        if to_dt is None:
+            to_dt = datetime.now()
+        history[to_dt] = total
+
         start_date: datetime = min(history.keys())
         end_date: datetime = max(history.keys())
         history[start_date - timedelta(minutes=2)] = 0
         history[start_date - timedelta(minutes=1)] = 0
         history = dict(sorted(history.items()))
-
+        
         x =[]
         y =[]
         for k, v in history.items():
@@ -120,7 +124,7 @@ class ReplyHistoryUseCase:
         plt.step(history.keys(), history.values(), where='mid')
 
         plt.grid(which='major', axis='y')
-        plt.xlim([start_date - timedelta(minutes=2), end_date])
+        plt.xlim([start_date - timedelta(minutes=2), end_date + timedelta(seconds=(end_date-start_date).total_seconds() // 300)])
         plt.xticks(rotation=30)
         # locator = mdates.DayLocator()
         # ax.xaxis.set_major_locator(locator)
