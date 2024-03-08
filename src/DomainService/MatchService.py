@@ -69,6 +69,11 @@ class MatchService(IMatchService):
             query={'_id': {'$in': ids}},
             sort=[('created_at', ASCENDING)]
         )
+
+    def find_all_by_ids_and_line_group_ids(self, ids: List[ObjectId], line_group_ids: List[str]) -> List[Match]:
+        return match_repository.find(
+            query={'_id': {'$in': ids}, 'line_group_id': {'$in': line_group_ids}},
+        )
     
     def find_latest_one(self, line_group_id: str) -> Optional[Match]:
         matches = match_repository.find(
