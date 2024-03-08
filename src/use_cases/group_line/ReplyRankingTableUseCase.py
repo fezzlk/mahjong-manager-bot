@@ -146,7 +146,7 @@ class ReplyRankingTableUseCase:
         draw = ImageDraw.Draw(base_image)
 
         # 文字設定
-        font_path = 'AquaKana.ttc'
+        font_path = env_var.FONT_FILE_PATH
         font_color = (255,255,255)
 
         col_font_size = 20 * scale
@@ -281,7 +281,7 @@ class ReplyRankingTableUseCase:
         draw = ImageDraw.Draw(base_image)
 
         # 文字設定
-        font_path = 'AquaKana.ttc'
+        font_path = env_var.FONT_FILE_PATH
         font_color = (255,255,255)
 
         col_font_size = 20 * scale
