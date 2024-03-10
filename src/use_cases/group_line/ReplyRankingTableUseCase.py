@@ -15,6 +15,7 @@ from DomainModel.entities.UserHanchan import UserHanchan
 from ApplicationService import message_service
 from messaging_api_setting import line_bot_api
 from PIL import Image, ImageDraw, ImageFont
+from datetime import datetime, timedelta
 
 
 class ReplyRankingTableUseCase:
@@ -94,7 +95,6 @@ class ReplyRankingTableUseCase:
 
         # データ集計
         # 累計スコア
-        from datetime import datetime, timedelta
         total_dict = {line_id: 0 for line_id in active_user_line_ids}
         for match in matches:
             for line_id, score in match.sum_scores.items():
@@ -111,7 +111,11 @@ class ReplyRankingTableUseCase:
 
         ave_rank_dict = {}
         for line_id in rank_dict:
-            ave_rank_dict[line_id] = sum([rank_dict[line_id][i] * i for i in range(1, 5)])
+            h_count = sum([rank_dict[line_id][i] for i in range(1, 5)])
+            if h_count == 0:
+                ave_rank_dict[line_id] = '-'
+            else:
+                ave_rank_dict[line_id] = '{:.2f}'.format(sum([rank_dict[line_id][i] * i for i in range(1, 5)])/h_count)
 
         # 画像生成
         scale = 1
@@ -135,7 +139,7 @@ class ReplyRankingTableUseCase:
             reverse=True
         )
         for i, r in enumerate(sorted_total_dict):
-            profile_image = Image.open(f'src/uploads/profile_image/{line_id}.jpeg')
+            profile_image = Image.open(f'src/uploads/profile_image/{r[0]}.jpeg')
             profile_image = profile_image.resize((50 * scale, 50 * scale))
             mask = Image.new("L", profile_image.size, 0)
             draw_mask = ImageDraw.Draw(mask)
@@ -228,7 +232,7 @@ class ReplyRankingTableUseCase:
             h2 = h1
             draw.line((w1, h1, w2, h2), fill=(255, 255, 255), width=1)
 
-        path = f'/ranking_table/{req_line_user_id}.png'
+        path = f'/ranking_table/{req_line_user_id}_{datetime.now().strftime("%Y%m%d%H%M%S")}.png'
         try:
             base_image.save(f"src/uploads{path}", quality=75)
         except FileNotFoundError:
@@ -270,7 +274,7 @@ class ReplyRankingTableUseCase:
             reverse=False
         )
         for i, r in enumerate(sorted_ave_rank_dict):
-            profile_image = Image.open(f'src/uploads/profile_image/{line_id}.jpeg')
+            profile_image = Image.open(f'src/uploads/profile_image/{r[0]}.jpeg')
             profile_image = profile_image.resize((50 * scale, 50 * scale))
             mask = Image.new("L", profile_image.size, 0)
             draw_mask = ImageDraw.Draw(mask)
@@ -376,7 +380,7 @@ class ReplyRankingTableUseCase:
             h2 = h1
             draw.line((w1, h1, w2, h2), fill=(255, 255, 255), width=1)
 
-        path = f'/ranking_table_rank/{req_line_user_id}.png'
+        path = f'/ranking_table_rank/{req_line_user_id}_{datetime.now().strftime("%Y%m%d%H%M%S")}.png'
         try:
             base_image.save(f"src/uploads{path}", quality=75)
         except FileNotFoundError:
