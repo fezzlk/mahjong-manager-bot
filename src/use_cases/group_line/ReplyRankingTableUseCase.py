@@ -109,13 +109,16 @@ class ReplyRankingTableUseCase:
             if uh.point < 0:
                 rank_dict[uh.line_user_id][0] += 1
 
+        ave_rank_str_dict = {}
         ave_rank_dict = {}
         for line_id in rank_dict:
             h_count = sum([rank_dict[line_id][i] for i in range(1, 5)])
             if h_count == 0:
-                ave_rank_dict[line_id] = '-'
+                ave_rank_str_dict[line_id] = '-'
+                ave_rank_dict[line_id] = 5
             else:
-                ave_rank_dict[line_id] = '{:.2f}'.format(sum([rank_dict[line_id][i] * i for i in range(1, 5)])/h_count)
+                ave_rank_str_dict[line_id] = '{:.2f}'.format(sum([rank_dict[line_id][i] * i for i in range(1, 5)])/h_count)
+                ave_rank_dict[line_id] = sum([rank_dict[line_id][i] * i for i in range(1, 5)])/h_count
 
         # 画像生成
         scale = 1
@@ -177,11 +180,8 @@ class ReplyRankingTableUseCase:
         x, y, x2, y2=draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
         
-        w1 = 0 * scale
-        h1 = 65 * scale
-        w2 = 1024 * scale
-        h2 = h1
-        draw.line((w1, h1, w2, h2), fill=(255, 255, 255), width=2)
+        line_h = 65 * scale
+        draw.line((0, line_h, width, line_h), fill=(255, 255, 255), width=2)
         
         font_size = 30 * scale
         font = ImageFont.truetype(font_path, font_size)
@@ -226,11 +226,8 @@ class ReplyRankingTableUseCase:
             x, y, x2, y2=draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
             
-            w1 = 0 * scale
-            h1 = 175 * scale
-            w2 = 1024 * scale
-            h2 = h1
-            draw.line((w1, h1, w2, h2), fill=(255, 255, 255), width=1)
+            line_h = (175 + 110 * i) * scale
+            draw.line((0, line_h, width, line_h), fill=(255, 255, 255), width=1)
 
         path = f'/ranking_table/{req_line_user_id}_{datetime.now().strftime("%Y%m%d%H%M%S")}.png'
         try:
@@ -344,7 +341,7 @@ class ReplyRankingTableUseCase:
             x, y, x2, y2=draw.textbbox((w, h), text, font=font, anchor='lm')
             draw.text((x, y), text, font_color, font=font, align='left')
 
-            text = str(r[1])
+            text = ave_rank_str_dict[r[0]]
             w = 450 * scale
             x, y, x2, y2=draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
@@ -373,12 +370,9 @@ class ReplyRankingTableUseCase:
             w = 950 * scale
             x, y, x2, y2=draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
-            
-            w1 = 0 * scale
-            h1 = 175 * scale
-            w2 = 1024 * scale
-            h2 = h1
-            draw.line((w1, h1, w2, h2), fill=(255, 255, 255), width=1)
+
+            line_h = (175 + 110 * i) * scale
+            draw.line((0, line_h, width, line_h), fill=(255, 255, 255), width=1)
 
         path = f'/ranking_table_rank/{req_line_user_id}_{datetime.now().strftime("%Y%m%d%H%M%S")}.png'
         try:
