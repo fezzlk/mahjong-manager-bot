@@ -33,6 +33,7 @@ from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUse
 from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
 from use_cases.group_line.ReplyFinishConfirmUseCase import ReplyFinishConfirmUseCase
 from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
+from use_cases.group_line.ReplyRankingTableUseCase import ReplyRankingTableUseCase
 
 from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
@@ -72,6 +73,7 @@ class RCommands(Enum):
     entry = 'entry'
     rank = 'rank'
     rank_detail = 'rank_detail'
+    ranking = 'ranking'
 
 
 def routing_by_text_in_group_line():
@@ -184,6 +186,9 @@ def routing_for_group_by_method(method):
     # rank detail
     elif method == RCommands.rank_detail.name:
         ReplyRankHistogramUseCase().execute()
+    elif method == RCommands.ranking.name:
+        ReplyRankingTableUseCase().execute()
+
     # # entry
     # elif method == RCommands.entry.name:
     #     LinkUserToGroupUseCase().execute()

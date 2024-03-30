@@ -7,8 +7,6 @@ from DomainService import (
     user_hanchan_service,
 )
 import env_var
-from itertools import groupby
-from DomainModel.entities.UserHanchan import UserHanchan
 from ApplicationService import message_service
 
 
@@ -36,7 +34,7 @@ class ReplyRankHistogramUseCase:
         # プロットデータ作成
         plot_data = []
         labels = []
-        for i in range(1,5):
+        for i in range(1, 5):
             plot_data.append([uh.created_at for uh in user_hanchans if uh.rank == i])
             labels.append(f'{i}着')
         # 飛び

@@ -32,6 +32,10 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def find_all_by_ids_and_line_group_ids(self, ids: List[ObjectId], line_group_ids: List[str]) -> List[Match]:
+        pass
+    
+    @abstractmethod
     def find_latest_one(self, line_group_id: str) -> Optional[Match]:
         pass
 

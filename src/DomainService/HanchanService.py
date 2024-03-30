@@ -66,6 +66,15 @@ class HanchanService(IHanchanService):
             [('_id', ASCENDING)]
         )
 
+    def find_all_archived_by_match_ids(self, match_ids: List[ObjectId]) -> List[Hanchan]:
+        return hanchan_repository.find(
+            {
+                'match_id': {'$in': match_ids},
+                'converted_scores': {'$ne': {}},
+            },
+            [('_id', ASCENDING)]
+        )
+
     def update(self, target: Hanchan) -> None:
         hanchan_repository.update(
             {'_id': target._id},

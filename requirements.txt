@@ -11,3 +11,5 @@ Authlib==1.2.0
 WTForms==3.0.1
 flask_bcrypt==1.0.1
 PyMongo==4.3.3
+Pillow==10.2.0
+certifi==2024.2.2
