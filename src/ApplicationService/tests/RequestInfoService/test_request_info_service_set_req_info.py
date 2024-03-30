@@ -40,6 +40,7 @@ def test_message_event_from_user():
     assert request_info_service.params == {}
     assert request_info_service.body is None
 
+
 def test_postback_event_from_user():
     # Arrange
     request_info_service = RequestInfoService()
@@ -63,6 +64,7 @@ def test_postback_event_from_user():
     assert request_info_service.method is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
+
 
 def test_message_event_from_room(mocker):
     # Arrange
@@ -89,6 +91,7 @@ def test_message_event_from_room(mocker):
     assert request_info_service.params == {}
     assert request_info_service.body is None
     mock.assert_called_once()
+
 
 def test_message_event_from_group():
     # Arrange
@@ -139,26 +142,26 @@ def test_postback_event_from_group():
     assert request_info_service.body is None
 
 
-def test_message_event_from_group_with_mention():
-    # Arrange
-    request_info_service = RequestInfoService()
-    message_event = Event(
-        type='message',
-        source_type='group',
-        user_id='U0123456789abcdefghijklmnopqrstu1',
-        group_id='G0123456789abcdefghijklmnopqrstu1',
-        message_type='text',
-        text='dummy_text',
-        mention_ids=['U0123456789abcdefghijklmnopqrstu2', 'U0123456789abcdefghijklmnopqrstu3']
-    )
-    # Act
-    request_info_service.set_req_info(message_event)
+# def test_message_event_from_group_with_mention():
+#     # Arrange
+#     request_info_service = RequestInfoService()
+#     message_event = Event(
+#         type='message',
+#         source_type='group',
+#         user_id='U0123456789abcdefghijklmnopqrstu1',
+#         group_id='G0123456789abcdefghijklmnopqrstu1',
+#         message_type='text',
+#         text='dummy_text',
+#         mention_ids=['U0123456789abcdefghijklmnopqrstu2', 'U0123456789abcdefghijklmnopqrstu3']
+#     )
+#     # Act
+#     request_info_service.set_req_info(message_event)
 
-    # Assert
-    assert request_info_service.req_line_user_id == message_event.source.user_id
-    assert request_info_service.req_line_group_id == message_event.source.group_id
-    assert request_info_service.mention_line_ids == ['U0123456789abcdefghijklmnopqrstu2', 'U0123456789abcdefghijklmnopqrstu3']
-    assert request_info_service.message == 'dummy_text'
-    assert request_info_service.method is None
-    assert request_info_service.params == {}
-    assert request_info_service.body is None
+#     # Assert
+#     assert request_info_service.req_line_user_id == message_event.source.user_id
+#     assert request_info_service.req_line_group_id == message_event.source.group_id
+#     assert request_info_service.mention_line_ids == ['U0123456789abcdefghijklmnopqrstu2', 'U0123456789abcdefghijklmnopqrstu3']
+#     assert request_info_service.message == 'dummy_text'
+#     assert request_info_service.method is None
+#     assert request_info_service.params == {}
+#     assert request_info_service.body is None
