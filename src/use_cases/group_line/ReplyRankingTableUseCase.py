@@ -181,7 +181,7 @@ class ReplyRankingTableUseCase:
         x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
 
-        text = '平均得点'
+        text = '平均素点'
         w = 950 * scale
         x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
