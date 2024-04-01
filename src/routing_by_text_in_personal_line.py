@@ -13,6 +13,7 @@ from use_cases.personal_line.UserExitCommandUseCase import UserExitCommandUseCas
 from use_cases.personal_line.ReplyUserHelpUseCase import ReplyUserHelpUseCase
 from use_cases.personal_line.ReplyUserModeUseCase import ReplyUserModeUseCase
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
+from use_cases.common_line.ReplyFortuneYakuUseCase import ReplyFortuneYakuUseCase
 from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
 from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
 from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
@@ -28,6 +29,7 @@ class UCommands(Enum):
     payment = 'payment'
     analysis = 'analysis'
     fortune = 'fortune'
+    fortune_yaku = 'fortune_yaku'
     history = 'history'
     help = 'help'
     setting = 'setting'
@@ -69,7 +71,6 @@ def routing_by_text_in_personal_line():
 
 def routing_by_method(method: str):
     """routing by method for personal chat"""
-    body = request_info_service.body
     # mode
     if method == UCommands.mode.name:
         ReplyUserModeUseCase().execute()
@@ -87,6 +88,9 @@ def routing_by_method(method: str):
     # fortune
     elif method == UCommands.fortune.name:
         ReplyFortuneUseCase().execute()
+     # fortune_yaku
+    elif method == UCommands.fortune_yaku.name:
+        ReplyFortuneYakuUseCase().execute()
     # history
     elif method == UCommands.history.name:
         ReplyHistoryUseCase().execute()
