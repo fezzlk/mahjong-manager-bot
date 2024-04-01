@@ -108,6 +108,13 @@ class ReplyRankingTableUseCase:
             if uh.point < 0:
                 rank_dict[uh.line_user_id][0] += 1
 
+        dummy_min_score = -10000
+        max_score_dict = {line_id: dummy_min_score for line_id in active_user_line_ids}
+        for h in hanchans:
+            for u, c in h.converted_scores.items():
+                if u in max_score_dict:
+                    max_score_dict[u] = max(max_score_dict[u], c)
+
         ave_rank_str_dict = {}
         ave_rank_dict = {}
         for line_id in rank_dict:
@@ -174,7 +181,7 @@ class ReplyRankingTableUseCase:
         x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
 
-        text = '平均得点'
+        text = '平均素点'
         w = 950 * scale
         x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
@@ -208,10 +215,10 @@ class ReplyRankingTableUseCase:
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
 
-            if len(point_dict[r[0]]) == 0:
+            if max_score_dict[r[0]] == dummy_min_score:
                 text = '-'
             else:
-                m = max(point_dict[r[0]])
+                m = max_score_dict[r[0]]
                 text = ('+' + str(m)) if m > 0 else str(m)
             w = 775 * scale
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
