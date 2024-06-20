@@ -14,7 +14,7 @@
 ### Create Your LINE Bot Messaging API Channel
 1. LINE Devlopers にてプロバイダ及び messaging API のチャンネルを作成
    - 参考: https://developers.line.biz/ja/services/messaging-api/
-   - messaging API 設定にて、応答メッセージを無効, webhook の利用を有効にする
+   - messaging API 設定にて、応答メッセージ、挨拶メッセージを無効, webhook の利用を有効にする
    - LINE App にて友達登録しておく
 1. チャンネルの Basic settings 画面にて `Channel secret`、Messaging API 画面にて `Channel access token` を取得し、 .env ファイルにて `YOUR_CHANNEL_ACCESS_TOKEN`, `YOUR_CHANNEL_SECRET` にそれぞれセットする
 
@@ -36,7 +36,13 @@
 - Create a virtual env(recommend)
   - `$ python -m venv mmvenv`
 - apply the virtual env
-  - `$ source mmvenv/bin/activate`
+  - Mac
+    - `$ source mmvenv/bin/activate`
+  - Windows(powershell)
+    - `$ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force` (Only first time)
+    - `$ python -m venv mmvenv`
+  - Windows(Command)
+    - `$ python -m venv mmvenv`
 - Install dependencies
   - `$ python -m pip install --upgrade pip`
   - `$ pip install -r requirements.txt`
