@@ -1,6 +1,7 @@
 from linebot.models.events import Event
 from typing import List, Dict
 
+
 class RequestInfoService:
     """RequestInfoService
     メッセージ送信元の LINE ユーザー ID, トークルーム ID を管理
@@ -36,7 +37,7 @@ class RequestInfoService:
             self.req_line_group_id = event.source.room_id
             from ApplicationService import reply_service
             import env_var
-            messages=[
+            messages = [
                 'source id: room からのイベントを受け取りました。',
                 self.req_line_user_id,
                 self.req_line_group_id,
