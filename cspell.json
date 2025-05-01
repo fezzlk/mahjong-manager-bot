@@ -36,6 +36,13 @@
     "MMDD",
     "textbbox",
     "reqs",
+    "gunicorn",
+    "matplotlib",
+    "Authlib",
+    "certifi",
+    "autopep8",
+    "pytest",
+    "pylint",
   ],
   // flagWords - list of words to be always considered incorrect
   // This is useful for offensive words and common spelling errors.
