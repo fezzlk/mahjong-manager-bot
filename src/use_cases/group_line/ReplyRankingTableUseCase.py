@@ -73,7 +73,7 @@ class ReplyRankingTableUseCase:
             from_dt=from_dt,
             to_dt=to_dt,
         )
-            
+
         range_message = message_service.create_range_message(from_dt, to_dt)
         if range_message is not None:
             reply_service.add_message(range_message)
@@ -81,7 +81,7 @@ class ReplyRankingTableUseCase:
         display_name_dict = {}
         for line_id in active_user_line_ids:
             profile = line_bot_api.get_profile(line_id)
-            
+
             import certifi
             import urllib3
             request_methods = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
@@ -99,7 +99,7 @@ class ReplyRankingTableUseCase:
             for line_id, score in match.sum_scores.items():
                 if line_id in active_user_line_ids:
                     total_dict[line_id] += score
-        
+
         point_dict = {line_id: [] for line_id in active_user_line_ids}
         rank_dict = {line_id: {1: 0, 2: 0, 3: 0, 4: 0, 0: 0} for line_id in active_user_line_ids}
         for uh in user_hanchans:
@@ -185,13 +185,13 @@ class ReplyRankingTableUseCase:
         w = 950 * scale
         x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
-        
+
         line_h = 65 * scale
         draw.line((0, line_h, width, line_h), fill=(255, 255, 255), width=2)
-        
+
         font_size = 30 * scale
         font = ImageFont.truetype(font_path, font_size)
-    
+
         for i, r in enumerate(sorted_total_dict):
             h = (120 + 110 * i) * scale
 
@@ -223,7 +223,7 @@ class ReplyRankingTableUseCase:
             w = 775 * scale
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
-            
+
             if len(point_dict[r[0]]) == 0:
                 text = '-'
             else:
@@ -231,7 +231,7 @@ class ReplyRankingTableUseCase:
             w = 950 * scale
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
-            
+
             line_h = (175 + 110 * i) * scale
             draw.line((0, line_h, width, line_h), fill=(255, 255, 255), width=1)
 
@@ -250,7 +250,7 @@ class ReplyRankingTableUseCase:
                 message='\n'.join(messages),
             )
             return
-        
+
         reply_service.add_image(f'{env_var.SERVER_URL}/uploads{path}')
 
         # 順位表画像生成
@@ -312,26 +312,26 @@ class ReplyRankingTableUseCase:
         w = 750 * scale
         x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
-                
+
         text = '4位'
         w = 850 * scale
         x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
-        
+
         text = '飛び'
         w = 950 * scale
         x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
         draw.text((x, y), text, font_color, font=col_font, align='center')
-        
+
         w1 = 0 * scale
         h1 = 65 * scale
         w2 = 1024 * scale
         h2 = h1
         draw.line((w1, h1, w2, h2), fill=(255, 255, 255), width=2)
-        
+
         font_size = 30 * scale
         font = ImageFont.truetype(font_path, font_size)
-    
+
         for i, r in enumerate(sorted_ave_rank_dict):
             h = (120 + 110 * i) * scale
 
@@ -354,22 +354,22 @@ class ReplyRankingTableUseCase:
             w = 550 * scale
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
-            
+
             text = str(rank_dict[r[0]][2])
             w = 650 * scale
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
-                        
+
             text = str(rank_dict[r[0]][3])
             w = 750 * scale
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
-            
+
             text = str(rank_dict[r[0]][4])
             w = 850 * scale
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
             draw.text((x, y), text, font_color, font=font, align='center')
-            
+
             text = str(rank_dict[r[0]][0])
             w = 950 * scale
             x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
@@ -393,5 +393,5 @@ class ReplyRankingTableUseCase:
                 message='\n'.join(messages),
             )
             return
-        
+
         reply_service.add_image(f'{env_var.SERVER_URL}/uploads{path}')
