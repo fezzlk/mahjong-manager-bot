@@ -6,7 +6,7 @@ from DomainService import (
     user_service,
 )
 from .interfaces.IMessageService import IMessageService
-from typing import Dict
+from typing import Dict, Tuple
 
 
 KANSUJI = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
@@ -92,7 +92,7 @@ class MessageService(IMessageService):
 
         return '\n'.join(score_text_list)
 
-    def parse_date_from_text(self, date_str: str) -> tuple[datetime, bool]:
+    def parse_date_from_text(self, date_str: str) -> Tuple[datetime, bool]:
         # 戻り値の二つ目はis invalid。正常に変換できた場合はFalse、フォーマット不正がある場合はTrueを返す。
         result = None
 

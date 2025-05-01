@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from DomainModel.entities.Match import Match
-from typing import Dict
+from typing import Dict, Tuple
 from datetime import datetime
 
 
@@ -30,7 +30,7 @@ class IMessageService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def parse_date_from_text(date_str: str) -> tuple[datetime, bool]:
+    def parse_date_from_text(date_str: str) -> Tuple[datetime, bool]:
         pass
 
     @abstractmethod

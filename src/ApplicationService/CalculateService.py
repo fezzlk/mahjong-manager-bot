@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from .interfaces.ICalculateService import ICalculateService
 from DomainModel.entities.GroupSetting import ROUNDING_METHOD_LIST
 
@@ -40,9 +40,9 @@ class CalculateService(ICalculateService):
 
     def convert_raw_score(
         self,
-        sorted_points: list[tuple[str, int]],
+        sorted_points: List[Tuple[str, int]],
         rounding_method: str = None,
-    ) -> tuple[Dict[str, int], List[str]]:
+    ) -> Tuple[Dict[str, int], List[str]]:
         converted_score = {}
         tobasare_players = []
 

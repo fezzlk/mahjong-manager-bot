@@ -206,10 +206,11 @@ def test_execute_arg_int():
 
         # Act
         use_case.execute(1)
-    
+
     # Assert
     records_in_db = hanchan_repository.find()
     assert len(records_in_db) == 6
+
 
 def test_execute_no_arg():
     with pytest.raises(BaseException):
@@ -228,6 +229,7 @@ def test_execute_no_arg():
     records_in_db = hanchan_repository.find()
     assert len(records_in_db) == 6
 
+
 def test_execute_arg_no_digit():
     # Arrange
     use_case = DropHanchanByIndexUseCase()
@@ -239,7 +241,7 @@ def test_execute_arg_no_digit():
 
     # Act
     use_case.execute('test')
-    
+
     # Assert
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 6
@@ -305,7 +307,6 @@ def test_execute_fail_get_active_match():
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 6
     assert len(reply_service.texts) == 0
-
 
 
 @pytest.fixture(params=['0', '5'])

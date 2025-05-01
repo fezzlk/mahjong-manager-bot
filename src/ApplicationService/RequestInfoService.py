@@ -1,6 +1,7 @@
 from linebot.models.events import Event
 from typing import List, Dict
 
+
 class RequestInfoService:
     """RequestInfoService
     メッセージ送信元の LINE ユーザー ID, トークルーム ID を管理
@@ -28,15 +29,13 @@ class RequestInfoService:
     """
     メッセージ送信元情報のセット
     """
-
     def set_req_info(self, event: Event) -> None:
-
         self.req_line_user_id = event.source.user_id
         if event.source.type == 'room':
             self.req_line_group_id = event.source.room_id
             from ApplicationService import reply_service
             import env_var
-            messages=[
+            messages = [
                 'source id: room からのイベントを受け取りました。',
                 self.req_line_user_id,
                 self.req_line_group_id,
@@ -51,7 +50,7 @@ class RequestInfoService:
         if event.type == 'postback':
             if hasattr(event.postback, 'data'):
                 self.message = event.postback.data
-                self.parse_message()    
+                self.parse_message()
         if event.type == 'message':
             if hasattr(event.message, 'text'):
                 self.message = event.message.text
@@ -73,7 +72,7 @@ class RequestInfoService:
     def parse_message(self):
         if self.message is None or self.message == '':
             return
-        
+
         # コマンドエイリアスの確認
         from repositories import command_alias_repository
         query = {
@@ -86,7 +85,7 @@ class RequestInfoService:
         if len(command_alias) != 0:
             self.message = command_alias[0].command
             self.mention_line_ids = command_alias[0].mentionees
- 
+
         if (self.message[0] == '_') & (len(self.message) > 1):
             method_and_params = self.message.split()[0]
             self.body = self.message[len(method_and_params) + 1:]

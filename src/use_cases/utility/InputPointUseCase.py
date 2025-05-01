@@ -2,7 +2,7 @@ from ApplicationService import (
     request_info_service,
     reply_service,
 )
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class InputPointUseCase:
@@ -11,7 +11,7 @@ class InputPointUseCase:
     受け取ったメッセージから点数登録先ユーザと値の取得
     """
 
-    def execute(self, text: str) -> tuple[str, Optional[int]]:
+    def execute(self, text: str) -> Tuple[str, Optional[int]]:
         mention_line_ids = request_info_service.mention_line_ids
 
         if len(mention_line_ids) > 1:

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from .interfaces.IGraphService import IGraphService
 import env_var
 from DomainModel.entities.Hanchan import Hanchan
@@ -10,7 +10,7 @@ class GraphService(IGraphService):
         line_id_name_dict: Dict[str, str],
         plot_dict: Dict[str, List[int]],
         upload_file_path: str,
-    ) -> tuple[str, str]:
+    ) -> Tuple[str, str]:
         # グラフ描画
         import matplotlib
         import matplotlib.pyplot as plt
@@ -42,7 +42,7 @@ class GraphService(IGraphService):
     def create_users_point_plot_data(
         self,
         hanchans: List[Hanchan]
-    ) -> tuple[List[str], Dict[str, List[int]]]:
+    ) -> Tuple[List[str], Dict[str, List[int]]]:
         line_id_list: List[str] = []
         total_score_dict = {}
         score_plot_dict = {}
