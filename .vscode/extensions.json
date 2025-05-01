@@ -3,6 +3,7 @@
       "kevinglasson.cornflakes-linter",
       "njpwerner.autodocstring",
       "streetsidesoftware.code-spell-checker",
-      "ryanluker.vscode-coverage-gutters"
+      "ryanluker.vscode-coverage-gutters",
+      "tamasfe.even-better-toml"
     ]
   }
