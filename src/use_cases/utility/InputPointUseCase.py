@@ -31,7 +31,7 @@ class InputPointUseCase:
         # '-' の場合は削除
         if point == '-':
             return (target_line_user_id, None)
-        
+
         # 入力した点数のバリデート（hack: '-' を含む場合数値として判断できないため一旦エスケープ）
         isMinus = False
         if point[0] == '-':

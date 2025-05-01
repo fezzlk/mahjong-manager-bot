@@ -42,8 +42,7 @@ class MessageService(IMessageService):
     ) -> str:
         now = datetime.now()
         random.seed(
-            int(now.year + now.month + now.day) +
-            int(re.sub("\\D", "", line_user_id))
+            int(now.year + now.month + now.day) + int(re.sub("\\D", "", line_user_id))
         )
 
         return random.choice(HAI)

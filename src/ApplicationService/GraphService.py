@@ -52,7 +52,7 @@ class GraphService(IGraphService):
                     line_id_list.append(line_id)
                     total_score_dict[line_id] = 0
                     score_plot_dict[line_id] = [0]
-  
+
         for hanchan in hanchans:
             for line_id in line_id_list:
                 if line_id in hanchan.converted_scores:
