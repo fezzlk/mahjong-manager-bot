@@ -1,5 +1,6 @@
 from typing import List
-from repositories import session_scope, match_repository
+
+from repositories import match_repository, session_scope
 
 
 class DeleteMatchesForWebUseCase:

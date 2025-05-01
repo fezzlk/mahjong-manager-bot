@@ -1,79 +1,80 @@
 from enum import Enum
 
+from ApplicationService import (
+    reply_service,
+    request_info_service,
+)
+
+# from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
+from DomainModel.entities.Group import GroupMode
 from DomainService import (
     group_service,
 )
-
-from ApplicationService import (
-    request_info_service,
-    reply_service,
-)
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
-from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
-
-from use_cases.group_line.ExitUseCase import ExitUseCase
-from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
-from use_cases.group_line.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
-from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
-from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
-from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
-from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
+from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
+from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
 
 # from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
 from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
-from use_cases.group_line.StartInputUseCase import StartInputUseCase
 
-from use_cases.group_line.ReplyHanchansOfActiveMatchUseCase import ReplyHanchansOfActiveMatchUseCase
-from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
-from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
 # from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
 # from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
-from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
-from use_cases.group_line.ReplyFinishConfirmUseCase import ReplyFinishConfirmUseCase
+from use_cases.group_line.ExitUseCase import ExitUseCase
 from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
-from use_cases.group_line.ReplyRankingTableUseCase import ReplyRankingTableUseCase
-
-from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
+from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
+from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
+from use_cases.group_line.ReplyFinishConfirmUseCase import ReplyFinishConfirmUseCase
+from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
+from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
+from use_cases.group_line.ReplyGroupSettingsMenuUseCase import (
+    ReplyGroupSettingsMenuUseCase,
+)
+from use_cases.group_line.ReplyHanchansOfActiveMatchUseCase import (
+    ReplyHanchansOfActiveMatchUseCase,
+)
+from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
+from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
 from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
-from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
-from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
-# from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
-
-from DomainModel.entities.Group import GroupMode
+from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
+from use_cases.group_line.ReplyRankingTableUseCase import ReplyRankingTableUseCase
+from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
+from use_cases.group_line.StartInputUseCase import StartInputUseCase
+from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
+from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
 
 
 class RCommands(Enum):
     """Commands for group"""
 
-    start = 'start'
-    exit = 'exit'  # danger(入力中の半荘データが disabled になる)
-    input = 'input'
-    mode = 'mode'
-    help = 'help'
-    setting = 'setting'
-    active_match = 'active_match'
-    finish = 'finish'
-    finish_confirm = 'finish_confirm'
-    fortune = 'fortune'
-    others = 'others'
-    matches = 'matches'
-    match = 'match'
-    tobi = 'tobi'
-    drop = 'drop'
-    drop_m = 'drop_m'
-    add_result = 'add_result'
-    update_config = 'update_config'
-    sum_matches = 'sum_matches'
-    my_results = 'my_results'
-    history = 'history'
-    tip_ok = 'tip_ok'
-    badai = 'badai'
-    entry = 'entry'
-    rank = 'rank'
-    rank_detail = 'rank_detail'
-    ranking = 'ranking'
+    start = "start"
+    exit = "exit"  # danger(入力中の半荘データが disabled になる)
+    input = "input"
+    mode = "mode"
+    help = "help"
+    setting = "setting"
+    active_match = "active_match"
+    finish = "finish"
+    finish_confirm = "finish_confirm"
+    fortune = "fortune"
+    others = "others"
+    matches = "matches"
+    match = "match"
+    tobi = "tobi"
+    drop = "drop"
+    drop_m = "drop_m"
+    add_result = "add_result"
+    update_config = "update_config"
+    sum_matches = "sum_matches"
+    my_results = "my_results"
+    history = "history"
+    tip_ok = "tip_ok"
+    badai = "badai"
+    entry = "entry"
+    rank = "rank"
+    rank_detail = "rank_detail"
+    ranking = "ranking"
 
 
 def routing_by_text_in_group_line():
@@ -85,11 +86,10 @@ def routing_by_text_in_group_line():
         if method in [c.name for c in RCommands]:
             routing_for_group_by_method(method)
             return
-        else:
-            reply_service.add_message(
-                '使い方がわからない場合は「_help」と入力してください。'
-            )
-            return
+        reply_service.add_message(
+            "使い方がわからない場合は「_help」と入力してください。",
+        )
+        return
 
     """routing by text on each mode"""
     group_id = request_info_service.req_line_group_id
@@ -112,7 +112,7 @@ def routing_by_text_in_group_line():
 
 
 def routing_for_group_by_method(method):
-    """routing by method"""
+    """Routing by method"""
     body = request_info_service.body
     # input
     if method == RCommands.input.name:
@@ -162,14 +162,14 @@ def routing_for_group_by_method(method):
     # tobi
     elif method == RCommands.tobi.name:
         SubmitHanchanUseCase().execute(
-            tobashita_player_id=body
+            tobashita_player_id=body,
         )
     # update config
     elif method == RCommands.update_config.name:
-        key = body.split(' ')[0]
-        value = body.split(' ')[1]
+        key = body.split(" ")[0]
+        value = body.split(" ")[1]
         UpdateGroupSettingsUseCase().execute(
-            key, value
+            key, value,
         )
     # history
     elif method == RCommands.history.name:

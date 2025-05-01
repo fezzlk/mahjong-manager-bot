@@ -1,9 +1,8 @@
-from DomainModel.entities.Group import GroupMode
-from DomainService import (
-    group_service,
-)
 from ApplicationService import (
     request_info_service,
+)
+from DomainService import (
+    group_service,
 )
 
 

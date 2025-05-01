@@ -1,20 +1,22 @@
+from datetime import datetime
+from typing import Dict, List
+
+from PIL import Image, ImageDraw, ImageFont
+
+import env_var
 from ApplicationService import (
-    request_info_service,
+    message_service,
     reply_service,
+    request_info_service,
 )
 from DomainService import (
-    user_service,
+    hanchan_service,
+    match_service,
     user_hanchan_service,
     user_match_service,
-    match_service,
-    hanchan_service,
+    user_service,
 )
-import env_var
-from ApplicationService import message_service
 from messaging_api_setting import line_bot_api
-from PIL import Image, ImageDraw, ImageFont
-from typing import Dict, List
-from datetime import datetime
 
 
 class ReplyRankingTableUseCase:
@@ -47,13 +49,13 @@ class ReplyRankingTableUseCase:
         if request_info_service.is_mention_all:
             reply_service.add_message("@Allによるメンションでは、このグループでの対戦に参加したことのある全ユーザを対象とします。")
 
-        from_str = request_info_service.params.get('from')
-        to_str = request_info_service.params.get('to')
+        from_str = request_info_service.params.get("from")
+        to_str = request_info_service.params.get("to")
         from_dt, from_is_invalid = message_service.parse_date_from_text(from_str)
         to_dt, to_is_invalid = message_service.parse_date_from_text(to_str)
         if from_is_invalid or to_is_invalid:
-            reply_service.add_message('日付は以下のフォーマットで入力してください。')
-            reply_service.add_message('[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD')
+            reply_service.add_message("日付は以下のフォーマットで入力してください。")
+            reply_service.add_message("[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD")
             return
         umList = user_match_service.find_all_by_user_id_list(
             target_user_ids,
@@ -84,9 +86,9 @@ class ReplyRankingTableUseCase:
 
             import certifi
             import urllib3
-            request_methods = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-            response = request_methods.request('GET', profile.picture_url)
-            f = open(f'src/uploads/profile_image/{line_id}.jpeg', 'wb')
+            request_methods = urllib3.PoolManager(cert_reqs="CERT_REQUIRED", ca_certs=certifi.where())
+            response = request_methods.request("GET", profile.picture_url)
+            f = open(f"src/uploads/profile_image/{line_id}.jpeg", "wb")
             f.write(response.data)
             f.close()
 
@@ -94,7 +96,7 @@ class ReplyRankingTableUseCase:
 
         # データ集計
         # 累計スコア
-        total_dict = {line_id: 0 for line_id in active_user_line_ids}
+        total_dict = dict.fromkeys(active_user_line_ids, 0)
         for match in matches:
             for line_id, score in match.sum_scores.items():
                 if line_id in active_user_line_ids:
@@ -109,7 +111,7 @@ class ReplyRankingTableUseCase:
                 rank_dict[uh.line_user_id][0] += 1
 
         dummy_min_score = -10000
-        max_score_dict = {line_id: dummy_min_score for line_id in active_user_line_ids}
+        max_score_dict = dict.fromkeys(active_user_line_ids, dummy_min_score)
         for h in hanchans:
             for u, c in h.converted_scores.items():
                 if u in max_score_dict:
@@ -120,10 +122,10 @@ class ReplyRankingTableUseCase:
         for line_id in rank_dict:
             h_count = sum([rank_dict[line_id][i] for i in range(1, 5)])
             if h_count == 0:
-                ave_rank_str_dict[line_id] = '-'
+                ave_rank_str_dict[line_id] = "-"
                 ave_rank_dict[line_id] = 5
             else:
-                ave_rank_str_dict[line_id] = '{:.2f}'.format(sum([rank_dict[line_id][i] * i for i in range(1, 5)]) / h_count)
+                ave_rank_str_dict[line_id] = f"{sum([rank_dict[line_id][i] * i for i in range(1, 5)]) / h_count:.2f}"
                 ave_rank_dict[line_id] = sum([rank_dict[line_id][i] * i for i in range(1, 5)]) / h_count
 
         # 画像生成
@@ -134,9 +136,9 @@ class ReplyRankingTableUseCase:
 
         # 王冠画像添付
         crowns_image = Image.new("RGBA", base_image.size, (255, 255, 255, 0))
-        gold = Image.open('src/static/images/ranking_table/crown_gold.png')
-        silver = Image.open('src/static/images/ranking_table/crown_silver.png')
-        bronze = Image.open('src/static/images/ranking_table/crown_bronze.png')
+        gold = Image.open("src/static/images/ranking_table/crown_gold.png")
+        silver = Image.open("src/static/images/ranking_table/crown_silver.png")
+        bronze = Image.open("src/static/images/ranking_table/crown_bronze.png")
         crowns = [(gold, 7, 77), (silver, 13, 190), (bronze, 7, 300)]
         for i in range(min(3, len(active_user_line_ids))):
             crowns_image.paste(crowns[i][0], (crowns[i][1] * scale, crowns[i][2] * scale))
@@ -145,10 +147,10 @@ class ReplyRankingTableUseCase:
         sorted_total_dict = sorted(
             total_dict.items(),
             key=lambda x: x[1],
-            reverse=True
+            reverse=True,
         )
         for i, r in enumerate(sorted_total_dict):
-            profile_image = Image.open(f'src/uploads/profile_image/{r[0]}.jpeg')
+            profile_image = Image.open(f"src/uploads/profile_image/{r[0]}.jpeg")
             profile_image = profile_image.resize((50 * scale, 50 * scale))
             mask = Image.new("L", profile_image.size, 0)
             draw_mask = ImageDraw.Draw(mask)
@@ -165,26 +167,26 @@ class ReplyRankingTableUseCase:
         col_font_size = 20 * scale
         col_font = ImageFont.truetype(font_path, col_font_size)
 
-        text = '累計得点'
+        text = "累計得点"
         w = 450 * scale
         h = 50 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
-        text = '参加半荘数'
+        text = "参加半荘数"
         w = 600 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
-        text = '最高得点'
+        text = "最高得点"
         w = 775 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
-        text = '平均素点'
+        text = "平均素点"
         w = 950 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
         line_h = 65 * scale
         draw.line((0, line_h, width, line_h), fill=(255, 255, 255), width=2)
@@ -197,40 +199,40 @@ class ReplyRankingTableUseCase:
 
             text = str(i + 1)
             w = 50 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, stroke_width=1, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, stroke_width=1, align="center")
 
             text = display_name_dict[r[0]]
             w = 190 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='lm')
-            draw.text((x, y), text, font_color, font=font, align='left')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="lm")
+            draw.text((x, y), text, font_color, font=font, align="left")
 
-            text = ('+' + str(r[1])) if r[1] > 0 else str(r[1])
+            text = ("+" + str(r[1])) if r[1] > 0 else str(r[1])
             w = 450 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(len(point_dict[r[0]]))
             w = 600 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             if max_score_dict[r[0]] == dummy_min_score:
-                text = '-'
+                text = "-"
             else:
                 m = max_score_dict[r[0]]
-                text = ('+' + str(m)) if m > 0 else str(m)
+                text = ("+" + str(m)) if m > 0 else str(m)
             w = 775 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             if len(point_dict[r[0]]) == 0:
-                text = '-'
+                text = "-"
             else:
                 text = str(int(sum(point_dict[r[0]]) / len(point_dict[r[0]])))
             w = 950 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             line_h = (175 + 110 * i) * scale
             draw.line((0, line_h, width, line_h), fill=(255, 255, 255), width=1)
@@ -240,18 +242,18 @@ class ReplyRankingTableUseCase:
             base_image.save(f"src/uploads{path}", quality=75)
         except FileNotFoundError:
             reply_service.reset()
-            reply_service.add_message(text='システムエラーが発生しました。')
+            reply_service.add_message(text="システムエラーが発生しました。")
             messages = [
-                'ランキングの画像アップロードに失敗しました',
-                '送信者: ' + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
+                "ランキングの画像アップロードに失敗しました",
+                "送信者: " + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
             ]
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message='\n'.join(messages),
+                message="\n".join(messages),
             )
             return
 
-        reply_service.add_image(f'{env_var.SERVER_URL}/uploads{path}')
+        reply_service.add_image(f"{env_var.SERVER_URL}/uploads{path}")
 
         # 順位表画像生成
         scale = 1
@@ -261,9 +263,9 @@ class ReplyRankingTableUseCase:
 
         # 王冠画像添付
         crowns_image = Image.new("RGBA", base_image.size, (255, 255, 255, 0))
-        gold = Image.open('src/static/images/ranking_table/crown_gold.png')
-        silver = Image.open('src/static/images/ranking_table/crown_silver.png')
-        bronze = Image.open('src/static/images/ranking_table/crown_bronze.png')
+        gold = Image.open("src/static/images/ranking_table/crown_gold.png")
+        silver = Image.open("src/static/images/ranking_table/crown_silver.png")
+        bronze = Image.open("src/static/images/ranking_table/crown_bronze.png")
         crowns = [(gold, 7, 77), (silver, 13, 190), (bronze, 7, 300)]
         for i in range(min(3, len(active_user_line_ids))):
             crowns_image.paste(crowns[i][0], (crowns[i][1] * scale, crowns[i][2] * scale))
@@ -272,10 +274,10 @@ class ReplyRankingTableUseCase:
         sorted_ave_rank_dict = sorted(
             ave_rank_dict.items(),
             key=lambda x: x[1],
-            reverse=False
+            reverse=False,
         )
         for i, r in enumerate(sorted_ave_rank_dict):
-            profile_image = Image.open(f'src/uploads/profile_image/{r[0]}.jpeg')
+            profile_image = Image.open(f"src/uploads/profile_image/{r[0]}.jpeg")
             profile_image = profile_image.resize((50 * scale, 50 * scale))
             mask = Image.new("L", profile_image.size, 0)
             draw_mask = ImageDraw.Draw(mask)
@@ -292,36 +294,36 @@ class ReplyRankingTableUseCase:
         col_font_size = 20 * scale
         col_font = ImageFont.truetype(font_path, col_font_size)
 
-        text = '平均順位'
+        text = "平均順位"
         w = 450 * scale
         h = 50 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
-        text = '1位'
+        text = "1位"
         w = 550 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
-        text = '2位'
+        text = "2位"
         w = 650 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
-        text = '3位'
+        text = "3位"
         w = 750 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
-        text = '4位'
+        text = "4位"
         w = 850 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
-        text = '飛び'
+        text = "飛び"
         w = 950 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor='mm')
-        draw.text((x, y), text, font_color, font=col_font, align='center')
+        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        draw.text((x, y), text, font_color, font=col_font, align="center")
 
         w1 = 0 * scale
         h1 = 65 * scale
@@ -337,43 +339,43 @@ class ReplyRankingTableUseCase:
 
             text = str(i + 1)
             w = 50 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, stroke_width=1, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, stroke_width=1, align="center")
 
             text = display_name_dict[r[0]]
             w = 190 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='lm')
-            draw.text((x, y), text, font_color, font=font, align='left')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="lm")
+            draw.text((x, y), text, font_color, font=font, align="left")
 
             text = ave_rank_str_dict[r[0]]
             w = 450 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][1])
             w = 550 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][2])
             w = 650 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][3])
             w = 750 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][4])
             w = 850 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][0])
             w = 950 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor='mm')
-            draw.text((x, y), text, font_color, font=font, align='center')
+            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            draw.text((x, y), text, font_color, font=font, align="center")
 
             line_h = (175 + 110 * i) * scale
             draw.line((0, line_h, width, line_h), fill=(255, 255, 255), width=1)
@@ -383,15 +385,15 @@ class ReplyRankingTableUseCase:
             base_image.save(f"src/uploads{path}", quality=75)
         except FileNotFoundError:
             reply_service.reset()
-            reply_service.add_message(text='システムエラーが発生しました。')
+            reply_service.add_message(text="システムエラーが発生しました。")
             messages = [
-                'ランキングの画像アップロードに失敗しました',
-                '送信者: ' + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
+                "ランキングの画像アップロードに失敗しました",
+                "送信者: " + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
             ]
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message='\n'.join(messages),
+                message="\n".join(messages),
             )
             return
 
-        reply_service.add_image(f'{env_var.SERVER_URL}/uploads{path}')
+        reply_service.add_image(f"{env_var.SERVER_URL}/uploads{path}")

@@ -1,38 +1,39 @@
+"""LINE messaging API handler
 """
-LINE messaging API handler
-"""
-from apis.root import handler
-from routing_by_text_in_group_line import routing_by_text_in_group_line
-from routing_by_text_in_personal_line import routing_by_text_in_personal_line
+import traceback
+
 from linebot.models import (
     FollowEvent,
-    UnfollowEvent,
+    ImageMessage,
     JoinEvent,
     LeaveEvent,
     MessageEvent,
-    TextMessage,
-    ImageMessage,
     PostbackEvent,
+    TextMessage,
+    UnfollowEvent,
 )
-from ApplicationService import (
-    request_info_service,
-    reply_service,
-)
-from use_cases.personal_line.FollowUseCase import FollowUseCase
-from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
-from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
-from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
+
 # from use_cases.group_line.InputResultFromImageUseCase import (
 #     InputResultFromImageUseCase)
 import env_var
-import traceback
+from apis.root import handler
+from ApplicationService import (
+    reply_service,
+    request_info_service,
+)
 from messaging_api_setting import line_bot_api
+from routing_by_text_in_group_line import routing_by_text_in_group_line
+from routing_by_text_in_personal_line import routing_by_text_in_personal_line
+from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
+from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
+from use_cases.personal_line.FollowUseCase import FollowUseCase
+from use_cases.personal_line.UnfollowUseCase import UnfollowUseCase
 
 
 def handle_event_decorater(function):
     def handle_event(*args, **kwargs):
         event = args[0]
-        print('receipt an event:')
+        print("receipt an event:")
         print(event)
 
         try:
@@ -42,11 +43,11 @@ def handle_event_decorater(function):
         except BaseException as err:
             traceback.print_exc()
             profile = line_bot_api.get_profile(
-                request_info_service.req_line_user_id
+                request_info_service.req_line_user_id,
             )
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message=f'From: {profile.display_name}\n{request_info_service.message}',
+                message=f"From: {profile.display_name}\n{request_info_service.message}",
             )
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
@@ -54,10 +55,10 @@ def handle_event_decorater(function):
             )
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message='heroku logs -a mahjong-manager -t',
+                message="heroku logs -a mahjong-manager -t",
             )
             reply_service.reset()
-            reply_service.add_message(text='システムエラーが発生しました。')
+            reply_service.add_message(text="システムエラーが発生しました。")
         reply_service.reply(event)
         reply_service.reset()
         request_info_service.delete_req_info()
@@ -92,12 +93,12 @@ def handle_leave(event):
 @handler.add(MessageEvent, message=TextMessage)
 @handle_event_decorater
 def handle_text_message(event):
-    if event.source.type == 'room' or event.source.type == 'group':
+    if event.source.type == "room" or event.source.type == "group":
         routing_by_text_in_group_line()
-    elif event.source.type == 'user':
+    elif event.source.type == "user":
         routing_by_text_in_personal_line()
     else:
-        raise BaseException('this source type is not supported')
+        raise BaseException("this source type is not supported")
 
 
 @handler.add(MessageEvent, message=ImageMessage)
@@ -113,7 +114,7 @@ def handle_image_message(event):
 @handler.add(PostbackEvent)
 @handle_event_decorater
 def handle_postback(event):
-    if event.source.type == 'room' or event.source.type == 'group':
+    if event.source.type == "room" or event.source.type == "group":
         routing_by_text_in_group_line()
-    elif event.source.type == 'user':
+    elif event.source.type == "user":
         routing_by_text_in_personal_line()

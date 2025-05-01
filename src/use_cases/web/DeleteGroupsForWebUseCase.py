@@ -1,7 +1,6 @@
 from typing import List
-from repositories import (
-    group_repository, session_scope
-)
+
+from repositories import group_repository, session_scope
 
 
 class DeleteGroupsForWebUseCase:

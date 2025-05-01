@@ -1,17 +1,20 @@
+from typing import Dict
+
+from ApplicationService import (
+    message_service,
+    reply_service,
+    request_info_service,
+)
 from DomainModel.entities.Group import GroupMode
-from use_cases.group_line.CreateMatchDetailGraphUseCase import CreateMatchDetailGraphUseCase
 from DomainService import (
-    match_service,
     group_service,
     group_setting_service,
     hanchan_service,
+    match_service,
 )
-from ApplicationService import (
-    request_info_service,
-    reply_service,
-    message_service,
+from use_cases.group_line.CreateMatchDetailGraphUseCase import (
+    CreateMatchDetailGraphUseCase,
 )
-from typing import Dict
 
 
 class FinishMatchUseCase:
@@ -21,22 +24,22 @@ class FinishMatchUseCase:
         group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
         if group is None:
             reply_service.add_message(
-                'グループが登録されていません。招待し直してください。'
+                "グループが登録されていません。招待し直してください。",
             )
             return
 
         active_match = match_service.find_one_by_id(group.active_match_id)
         if active_match is None:
             reply_service.add_message(
-                '計算対象の試合が見つかりません。'
+                "計算対象の試合が見つかりません。",
             )
             return
-        
+
         hanchans = hanchan_service.find_all_archived_by_match_id(active_match._id)
 
         if len(hanchans) == 0:
             reply_service.add_message(
-                'まだ対戦結果がありません。')
+                "まだ対戦結果がありません。")
             return
 
         settings = group_setting_service.find_or_create(request_info_service.req_line_group_id)
@@ -45,9 +48,9 @@ class FinishMatchUseCase:
             group.mode = GroupMode.tip_input.value
             group_service.update(group)
             reply_service.add_message(
-                'チップの増減数を入力してください。完了したら「_tip_ok」と入力してください。')
+                "チップの増減数を入力してください。完了したら「_tip_ok」と入力してください。")
             return
-        
+
 
         # 精算
         rate = settings.rate * 10
@@ -83,7 +86,7 @@ class FinishMatchUseCase:
 
         # 応答メッセージ作成
         reply_service.add_message(
-            '【対戦結果】 \n' + message_service.create_show_match_result(match=active_match)
+            "【対戦結果】 \n" + message_service.create_show_match_result(match=active_match),
         )
 
         reply_service.add_image(CreateMatchDetailGraphUseCase().execute(active_match._id))

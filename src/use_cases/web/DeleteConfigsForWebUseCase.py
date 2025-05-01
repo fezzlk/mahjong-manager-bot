@@ -1,4 +1,5 @@
 from typing import List
+
 from repositories import group_setting_repository, session_scope
 
 
@@ -8,5 +9,5 @@ class DeleteConfigsForWebUseCase:
         with session_scope() as session:
             group_setting_repository.delete_by_ids(
                 session=session,
-                ids=ids
+                ids=ids,
             )
