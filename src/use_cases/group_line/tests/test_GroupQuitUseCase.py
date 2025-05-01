@@ -1,10 +1,8 @@
-from DomainModel.entities.Group import Group, GroupMode
-from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
-from repositories import group_repository
+from ApplicationService import request_info_service
 from DomainModel.entities.Group import Group, GroupMode
 from line_models.Event import Event
-from ApplicationService import request_info_service
-
+from repositories import group_repository
+from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
 
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -13,12 +11,12 @@ dummy_group = Group(
 )
 
 dummy_event = Event(
-    type='message',
-    source_type='group',
+    type="message",
+    source_type="group",
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
-    message_type='text',
-    text='_exit',
+    message_type="text",
+    text="_exit",
 )
 
 def test_fail_no_line_group_id():

@@ -1,11 +1,11 @@
-from DomainModel.entities.Group import Group, GroupMode
-from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
 from ApplicationService import (
-    request_info_service,
     reply_service,
+    request_info_service,
 )
+from DomainModel.entities.Group import Group, GroupMode
 from line_models.Event import Event
 from repositories import group_repository
+from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
 
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -13,12 +13,12 @@ dummy_group = Group(
 )
 
 dummy_event = Event(
-    type='message',
-    source_type='group',
+    type="message",
+    source_type="group",
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
-    message_type='text',
-    text='dummy_text',
+    message_type="text",
+    text="dummy_text",
 )
 
 
@@ -33,7 +33,7 @@ def test_execute():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'wait'
+    assert reply_service.texts[0].text == "wait"
 
 
 def test_execute_no_group():
@@ -46,4 +46,4 @@ def test_execute_no_group():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'トークルームが登録されていません。招待し直してください。'
+    assert reply_service.texts[0].text == "トークルームが登録されていません。招待し直してください。"

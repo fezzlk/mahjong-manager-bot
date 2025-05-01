@@ -1,26 +1,27 @@
-from DomainModel.entities.UserMatch import UserMatch
-from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
-from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.UserHanchan import UserHanchan
-from DomainModel.entities.Match import Match
-from DomainModel.entities.User import User, UserMode
-from DomainModel.entities.Group import Group, GroupMode
-from ApplicationService import calculate_service
-from pymongo import ASCENDING
 from copy import deepcopy
-from repositories import (
-    user_repository,
-    hanchan_repository,
-    match_repository,
-    group_repository,
-    user_match_repository,
-    user_hanchan_repository,
-)
+
+from pymongo import ASCENDING
 
 from ApplicationService import (
+    calculate_service,
     reply_service,
     request_info_service,
 )
+from DomainModel.entities.Group import Group, GroupMode
+from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Match import Match
+from DomainModel.entities.User import User, UserMode
+from DomainModel.entities.UserHanchan import UserHanchan
+from DomainModel.entities.UserMatch import UserMatch
+from repositories import (
+    group_repository,
+    hanchan_repository,
+    match_repository,
+    user_hanchan_repository,
+    user_match_repository,
+    user_repository,
+)
+from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
 
 dummy_users = [
     User(
@@ -216,53 +217,53 @@ def test_success():
         assert hanchan.converted_scores[k] == expected_c_scores[k]
     assert hanchan.status == 2
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4]}}
+        {"user_id": {"$in": [1, 2, 3, 4]}},
     )
     assert len(um) == 4
     assert len(reply_service.texts) == 3
     assert len(reply_service.buttons) == 1
     assert reply_service.texts[1].text == "test_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
-    matches = match_repository.find({'_id': 1})
+    matches = match_repository.find({"_id": 1})
     assert matches[0].active_hanchan_id is None
     assert len(matches[0].sum_scores) == 4
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu1'] == 50
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu2'] == 10
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu3'] == -20
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu4'] == -40
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] == 50
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] == 10
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu3"] == -20
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu4"] == -40
 
     expected_uhs = [
         UserHanchan(
-            line_user_id='U0123456789abcdefghijklmnopqrstu1',
+            line_user_id="U0123456789abcdefghijklmnopqrstu1",
             hanchan_id=1,
             point=40010,
             rank=1,
             yakuman_count=0,
         ),
         UserHanchan(
-            line_user_id='U0123456789abcdefghijklmnopqrstu2',
+            line_user_id="U0123456789abcdefghijklmnopqrstu2",
             hanchan_id=1,
             point=30000,
             rank=2,
             yakuman_count=0,
         ),
         UserHanchan(
-            line_user_id='U0123456789abcdefghijklmnopqrstu3',
+            line_user_id="U0123456789abcdefghijklmnopqrstu3",
             hanchan_id=1,
             point=20000,
             rank=3,
             yakuman_count=0,
         ),
         UserHanchan(
-            line_user_id='U0123456789abcdefghijklmnopqrstu4',
+            line_user_id="U0123456789abcdefghijklmnopqrstu4",
             hanchan_id=1,
             point=10000,
             rank=4,
             yakuman_count=0,
         ),
     ]
-    uhs = user_hanchan_repository.find(sort=[('rank', ASCENDING)])
+    uhs = user_hanchan_repository.find(sort=[("rank", ASCENDING)])
     for i in range(len(uhs)):
         assert uhs[i].line_user_id == expected_uhs[i].line_user_id
         assert uhs[i].hanchan_id == expected_uhs[i].hanchan_id
@@ -294,14 +295,14 @@ def test_success_assert_sum_point_in_match():
     # Assert
     hanchan_repository.find()
     assert reply_service.texts[1].text == "test_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user5: -40 (-40)"
-    matches = match_repository.find({'_id': 1})
+    matches = match_repository.find({"_id": 1})
     assert matches[0].active_hanchan_id is None
     assert len(matches[0].sum_scores) == 5
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu1'] == 100
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu3'] == -40
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu4'] == -40
-    assert matches[0].sum_scores['U0123456789abcdefghijklmnopqrstu5'] == -40
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] == 100
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu3"] == -40
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu4"] == -40
+    assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu5"] == -40
 
     reply_service.reset()
 
@@ -327,7 +328,7 @@ def test_success_update_user_matches():
 
     # Assert
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4, 5]}}
+        {"user_id": {"$in": [1, 2, 3, 4, 5]}},
     )
     assert len(um) == 5
 
@@ -347,7 +348,7 @@ def test_success_not_active_hanchan(mocker):
 
     mock = mocker.patch.object(
         calculate_service,
-        'run',
+        "run",
         return_value=None,
     )
 
@@ -357,12 +358,12 @@ def test_success_not_active_hanchan(mocker):
     # Assert
     assert mock.call_count == 0
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4]}}
+        {"user_id": {"$in": [1, 2, 3, 4]}},
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "計算対象の半荘が見つかりません。"
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
 
     reply_service.reset()
@@ -386,14 +387,14 @@ def test_success_does_not_have_4_points():
     hanchan = hanchan_repository.find()[0]
     assert len(hanchan.converted_scores) == 0
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4]}}
+        {"user_id": {"$in": [1, 2, 3, 4]}},
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
-    matches = match_repository.find({'_id': 1})
+    matches = match_repository.find({"_id": 1})
     assert matches[0].active_hanchan_id == dummy_active_hanchan_has_5_points._id
 
 
@@ -419,14 +420,14 @@ def test_success_does_invalid_sum_point():
     hanchan = hanchan_repository.find()[0]
     assert len(hanchan.converted_scores) == 0
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4]}}
+        {"user_id": {"$in": [1, 2, 3, 4]}},
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "点数の合計が110000点です。合計100000点+αになるように修正してください。"
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
-    matches = match_repository.find({'_id': 1})
+    matches = match_repository.find({"_id": 1})
     assert matches[0].active_hanchan_id == dummy_active_hanchan_has_invalid_sum_point._id
 
     reply_service.reset()
@@ -451,14 +452,14 @@ def test_success_has_tai():
     hanchan = hanchan_repository.find()[0]
     assert len(hanchan.converted_scores) == 0
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4]}}
+        {"user_id": {"$in": [1, 2, 3, 4]}},
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。"
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
-    matches = match_repository.find({'_id': 1})
+    matches = match_repository.find({"_id": 1})
     assert matches[0].active_hanchan_id == dummy_active_hanchan_has_tai._id
 
     reply_service.reset()
@@ -484,12 +485,12 @@ def test_success_reply_tobi_menu():
     hanchan = hanchan_repository.find()[0]
     assert len(hanchan.converted_scores) == 0
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4]}}
+        {"user_id": {"$in": [1, 2, 3, 4]}},
     )
     assert len(um) == 0
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
-    matches = match_repository.find({'_id': 1})
+    matches = match_repository.find({"_id": 1})
     assert matches[0].active_hanchan_id == dummy_active_hanchan_has_minus_point._id
 
     reply_service.reset()
@@ -513,12 +514,12 @@ def test_fail_no_active_match():
     hanchan = hanchan_repository.find()[0]
     assert len(hanchan.converted_scores) == 0
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4]}}
+        {"user_id": {"$in": [1, 2, 3, 4]}},
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '計算対象の試合が見つかりません。'
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    assert reply_service.texts[0].text == "計算対象の試合が見つかりません。"
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
 
     reply_service.reset()
@@ -540,10 +541,10 @@ def test_fail_no_group():
     hanchan = hanchan_repository.find()[0]
     assert len(hanchan.converted_scores) == 0
     um = user_match_repository.find(
-        {'user_id': {'$in': [1, 2, 3, 4]}}
+        {"user_id": {"$in": [1, 2, 3, 4]}},
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'グループが登録されていません。招待し直してください。'
+    assert reply_service.texts[0].text == "グループが登録されていません。招待し直してください。"
 
     reply_service.reset()

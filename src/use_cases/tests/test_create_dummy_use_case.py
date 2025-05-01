@@ -1,12 +1,12 @@
-from use_cases.CreateDummyUseCase import CreateDummyUseCase
 from repositories import (
+    group_repository,
     group_setting_repository,
+    hanchan_repository,
+    match_repository,
     user_repository,
     web_user_repository,
-    hanchan_repository,
-    group_repository,
-    match_repository,
 )
+from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
 
 def test_create_dummy_use_case():

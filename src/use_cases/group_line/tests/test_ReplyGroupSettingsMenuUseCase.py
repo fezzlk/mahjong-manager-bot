@@ -1,14 +1,18 @@
-from use_cases.group_line.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
+from typing import Tuple
+
+import pytest
+from linebot.models import TemplateSendMessage
+
 from ApplicationService import (
     reply_service,
     request_info_service,
 )
-from linebot.models import TemplateSendMessage
 from DomainModel.entities.GroupSetting import GroupSetting
-from repositories import group_setting_repository
 from line_models.Event import Event
-import pytest
-from typing import Tuple
+from repositories import group_setting_repository
+from use_cases.group_line.ReplyGroupSettingsMenuUseCase import (
+    ReplyGroupSettingsMenuUseCase,
+)
 
 dummy_group_settings = GroupSetting(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -22,12 +26,12 @@ dummy_group_settings = GroupSetting(
 )
 
 dummy_event = Event(
-    type='message',
-    source_type='group',
+    type="message",
+    source_type="group",
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
-    message_type='text',
-    text='dummy_text',
+    message_type="text",
+    text="dummy_text",
 )
 
 
@@ -38,11 +42,11 @@ def test_execute():
     group_setting_repository.create(dummy_group_settings)
 
     # Act
-    use_case.execute('')
+    use_case.execute("")
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '[設定]\n4人麻雀\nレート: 点3\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: 1枚1点\n計算方法: 3万点以下切り上げ/以上切り捨て'
+    assert reply_service.texts[0].text == "[設定]\n4人麻雀\nレート: 点3\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: 1枚1点\n計算方法: 3万点以下切り上げ/以上切り捨て"
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateSendMessage)
 
@@ -53,24 +57,24 @@ def test_execute_no_settings():
     use_case = ReplyGroupSettingsMenuUseCase()
 
     # Act
-    use_case.execute('')
+    use_case.execute("")
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '[設定]\n4人麻雀\nレート: 点0\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: 1枚0点\n計算方法: 五捨六入'
+    assert reply_service.texts[0].text == "[設定]\n4人麻雀\nレート: 点0\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: 1枚0点\n計算方法: 五捨六入"
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateSendMessage)
 
 
 @ pytest.fixture(params=[
-    ('メニュー2'),
-    ('レート'),
-    ('高レート'),
-    ('順位点'),
-    ('飛び賞'),
-    ('端数計算方法'),
-    ('端数計算方法2'),
-    ('チップ'),
+    ("メニュー2"),
+    ("レート"),
+    ("高レート"),
+    ("順位点"),
+    ("飛び賞"),
+    ("端数計算方法"),
+    ("端数計算方法2"),
+    ("チップ"),
 ])
 def case1(request) -> Tuple[int]:
     return request.param

@@ -1,7 +1,7 @@
-from use_cases.personal_line.ReplyUrlUseCase import ReplyUrlUseCase
 from ApplicationService import (
     reply_service,
 )
+from use_cases.personal_line.ReplyUrlUseCase import ReplyUrlUseCase
 
 
 def test_execute():
