@@ -1,7 +1,8 @@
 from abc import ABCMeta, abstractmethod
-from DomainModel.entities.Match import Match
-from typing import Dict, Tuple
 from datetime import datetime
+from typing import Dict, Tuple
+
+from DomainModel.entities.Match import Match
 
 
 class IMessageService(metaclass=ABCMeta):

@@ -4,9 +4,9 @@ from ApplicationService.ReplyService import ReplyService
 def test_success():
     # Arrange
     reply_service = ReplyService()
-    reply_service.texts = ['dummy_text']
-    reply_service.buttons = ['dummy_button']
-    reply_service.images = ['dummy_image']
+    reply_service.texts = ["dummy_text"]
+    reply_service.buttons = ["dummy_button"]
+    reply_service.images = ["dummy_image"]
 
     # Act
     reply_service.reset()

@@ -17,7 +17,7 @@ def test_success_menu2():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu('メニュー2')
+    reply_service.add_settings_menu("メニュー2")
 
     # Assert
     assert len(reply_service.buttons) == 1
@@ -28,7 +28,7 @@ def test_success_key_rate():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu('レート')
+    reply_service.add_settings_menu("レート")
 
     # Assert
     assert len(reply_service.buttons) == 1
@@ -39,7 +39,7 @@ def test_success_key_high_rate():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu('高レート')
+    reply_service.add_settings_menu("高レート")
 
     # Assert
     assert len(reply_service.buttons) == 1
@@ -50,7 +50,7 @@ def test_success_key_tip():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu('チップ')
+    reply_service.add_settings_menu("チップ")
 
     # Assert
     assert len(reply_service.buttons) == 1
@@ -61,7 +61,7 @@ def test_success_key_high_high_tip():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu('高チップ')
+    reply_service.add_settings_menu("高チップ")
 
     # Assert
     assert len(reply_service.buttons) == 1
@@ -72,7 +72,7 @@ def test_success_key_ranking_point():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu('順位点')
+    reply_service.add_settings_menu("順位点")
 
     # Assert
     assert len(reply_service.buttons) == 1
@@ -83,7 +83,7 @@ def test_success_key_tobi_bonus():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu('飛び賞')
+    reply_service.add_settings_menu("飛び賞")
 
     # Assert
     assert len(reply_service.buttons) == 1
@@ -94,7 +94,7 @@ def test_success_key_calculate_method1():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu('端数計算方法')
+    reply_service.add_settings_menu("端数計算方法")
 
     # Assert
     assert len(reply_service.buttons) == 1
@@ -105,7 +105,7 @@ def test_success_key_calculate_method2():
     reply_service = ReplyService()
 
     # Act
-    reply_service.add_settings_menu(key='端数計算方法2')
+    reply_service.add_settings_menu(key="端数計算方法2")
 
     # Assert
     assert len(reply_service.buttons) == 1

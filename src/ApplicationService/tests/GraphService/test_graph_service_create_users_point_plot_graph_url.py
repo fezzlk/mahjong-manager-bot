@@ -1,5 +1,5 @@
-from use_cases.group_line.CreateMatchDetailGraphUseCase import CreateMatchDetailGraphUseCase
 import matplotlib.pyplot as plt
+
 import env_var
 from ApplicationService import graph_service
 
@@ -9,12 +9,12 @@ def test_execute(mocker):
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
     )
 
     line_id_name_dict = {
@@ -28,7 +28,7 @@ def test_execute(mocker):
 
     # Act
     image_url, err_message = graph_service.create_users_point_plot_graph_url(
-        line_id_name_dict, plot_dict, "/image_path"
+        line_id_name_dict, plot_dict, "/image_path",
     )
 
     # Assert
@@ -41,15 +41,15 @@ def test_execute_fail_savefig(mocker):
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
         side_effect=FileNotFoundError(),
     )
-        
+
     line_id_name_dict = {
         "U0123456789abcdefghijklmnopqrstu1": "test_user1",
         "U0123456789abcdefghijklmnopqrstu2": "test_user2",
@@ -61,7 +61,7 @@ def test_execute_fail_savefig(mocker):
 
     # Act
     image_url, err_message = graph_service.create_users_point_plot_graph_url(
-        line_id_name_dict, plot_dict, "/image_path"
+        line_id_name_dict, plot_dict, "/image_path",
     )
 
     # Assert

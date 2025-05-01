@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
-from linebot.models.events import Event
 from typing import Dict, List
+
+from linebot.models.events import Event
 
 
 class IReplyService(metaclass=ABCMeta):
@@ -25,7 +26,7 @@ class IReplyService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_settings_menu(self, key: str = '') -> None:
+    def add_settings_menu(self, key: str = "") -> None:
         pass
 
     @abstractmethod

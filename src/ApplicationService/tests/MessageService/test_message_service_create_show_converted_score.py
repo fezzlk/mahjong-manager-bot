@@ -1,13 +1,13 @@
-from ApplicationService.MessageService import MessageService, wait_messages
+from ApplicationService.MessageService import MessageService
 from DomainService import (
     user_service,
 )
 
 converted_score={
-    'U0123456789abcdefghijklmnopqrstu1': 50,
-    'U0123456789abcdefghijklmnopqrstu3': -40,
-    'U0123456789abcdefghijklmnopqrstu2': 10,
-    'U0123456789abcdefghijklmnopqrstu4': -20,
+    "U0123456789abcdefghijklmnopqrstu1": 50,
+    "U0123456789abcdefghijklmnopqrstu3": -40,
+    "U0123456789abcdefghijklmnopqrstu2": 10,
+    "U0123456789abcdefghijklmnopqrstu4": -20,
 }
 
 
@@ -15,7 +15,7 @@ def test_success_with_unknown_users(mocker):
     # Arrange
     mocker.patch.object(
         user_service,
-        'get_name_by_line_user_id',
+        "get_name_by_line_user_id",
         return_value=None,
     )
     message_service = MessageService()
@@ -30,22 +30,22 @@ def test_success_with_unknown_users(mocker):
 def test_success(mocker):
     # Arrange
     def mock_behavior(arg):
-        if arg == 'U0123456789abcdefghijklmnopqrstu1':
-            return 'test_user1'
-        if arg == 'U0123456789abcdefghijklmnopqrstu2':
-            return 'test_user2'
-        if arg == 'U0123456789abcdefghijklmnopqrstu3':
-            return 'test_user3'
-        if arg == 'U0123456789abcdefghijklmnopqrstu4':
-            return 'test_user4'
-        
+        if arg == "U0123456789abcdefghijklmnopqrstu1":
+            return "test_user1"
+        if arg == "U0123456789abcdefghijklmnopqrstu2":
+            return "test_user2"
+        if arg == "U0123456789abcdefghijklmnopqrstu3":
+            return "test_user3"
+        if arg == "U0123456789abcdefghijklmnopqrstu4":
+            return "test_user4"
+
     mocker.patch.object(
         user_service,
-        'get_name_by_line_user_id',
+        "get_name_by_line_user_id",
         side_effect=mock_behavior,
     )
     message_service = MessageService()
-    
+
     # Act
     result = message_service.create_show_converted_scores(converted_scores=converted_score)
 
@@ -54,30 +54,30 @@ def test_success(mocker):
 
 
 sum_scores={
-    'U0123456789abcdefghijklmnopqrstu1': 10,
-    'U0123456789abcdefghijklmnopqrstu3': -10,
-    'U0123456789abcdefghijklmnopqrstu2': 20,
+    "U0123456789abcdefghijklmnopqrstu1": 10,
+    "U0123456789abcdefghijklmnopqrstu3": -10,
+    "U0123456789abcdefghijklmnopqrstu2": 20,
 }
 
 def test_success_with_sum_scores(mocker):
     # Arrange
     def mock_behavior(arg):
-        if arg == 'U0123456789abcdefghijklmnopqrstu1':
-            return 'test_user1'
-        if arg == 'U0123456789abcdefghijklmnopqrstu2':
-            return 'test_user2'
-        if arg == 'U0123456789abcdefghijklmnopqrstu3':
-            return 'test_user3'
-        if arg == 'U0123456789abcdefghijklmnopqrstu4':
-            return 'test_user4'
-        
+        if arg == "U0123456789abcdefghijklmnopqrstu1":
+            return "test_user1"
+        if arg == "U0123456789abcdefghijklmnopqrstu2":
+            return "test_user2"
+        if arg == "U0123456789abcdefghijklmnopqrstu3":
+            return "test_user3"
+        if arg == "U0123456789abcdefghijklmnopqrstu4":
+            return "test_user4"
+
     mocker.patch.object(
         user_service,
-        'get_name_by_line_user_id',
+        "get_name_by_line_user_id",
         side_effect=mock_behavior,
     )
     message_service = MessageService()
-    
+
     # Act
     result = message_service.create_show_converted_scores(
         converted_scores=converted_score,

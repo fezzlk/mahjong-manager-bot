@@ -1,8 +1,8 @@
 from ApplicationService.RichMenuService import RichMenuService
+from messaging_api_setting import line_bot_api
 from tests.dummies import (
     generate_dummy_user_list,
 )
-from messaging_api_setting import line_bot_api
 
 
 def test_success(mocker):
@@ -12,13 +12,13 @@ def test_success(mocker):
 
     mocker.patch.object(
         line_bot_api,
-        'link_rich_menu_to_user',
-        return_value=None
+        "link_rich_menu_to_user",
+        return_value=None,
     )
     mocker.patch.object(
         line_bot_api,
-        'set_rich_menu_image',
-        return_value=None
+        "set_rich_menu_image",
+        return_value=None,
     )
 
     # Act
