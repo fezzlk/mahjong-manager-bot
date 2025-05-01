@@ -1,9 +1,10 @@
 {
     "recommendations": [
-      "kevinglasson.cornflakes-linter",
       "njpwerner.autodocstring",
       "streetsidesoftware.code-spell-checker",
       "ryanluker.vscode-coverage-gutters",
-      "tamasfe.even-better-toml"
+      "tamasfe.even-better-toml",
+      "mhutchie.git-graph",
+      "eamodio.gitlens"
     ]
   }
