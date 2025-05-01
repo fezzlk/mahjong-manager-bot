@@ -1,6 +1,7 @@
-from DomainModel.entities.WebUser import WebUser
 from datetime import datetime
-from bson.objectid import ObjectId
+
+from DomainModel.entities.WebUser import WebUser
+
 
 def test_success():
     # Arrange
@@ -8,21 +9,21 @@ def test_success():
     # Act
     webuser = WebUser(
         user_code="code",
-        name='name',
-        email='email',
+        name="name",
+        email="email",
         _id=1,
-        linked_line_user_id='U0123456789abcdefghijklmnopqrstu2',
+        linked_line_user_id="U0123456789abcdefghijklmnopqrstu2",
         is_approved_line_user=True,
         created_at=datetime(2022, 1, 2, 3, 4, 5),
         updated_at=datetime(2023, 1, 2, 3, 4, 5),
     )
-    
+
     # Assert
     assert webuser._id == 1
     assert webuser.user_code == "code"
     assert webuser.linked_line_user_id == "U0123456789abcdefghijklmnopqrstu2"
-    assert webuser.name == 'name'
-    assert webuser.email == 'email'
+    assert webuser.name == "name"
+    assert webuser.email == "email"
     assert webuser.is_approved_line_user == True
     assert webuser.created_at == datetime(2022, 1, 2, 3, 4, 5)
     assert webuser.updated_at == datetime(2023, 1, 2, 3, 4, 5)
@@ -35,7 +36,7 @@ def test_success_default():
     webuser = WebUser(
         user_code="code",
     )
-    
+
     # Assert
     assert webuser._id is None
     assert webuser.user_code == "code"

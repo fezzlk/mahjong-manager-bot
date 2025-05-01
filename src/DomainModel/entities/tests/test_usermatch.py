@@ -1,6 +1,7 @@
-from DomainModel.entities.UserMatch import UserMatch
 from datetime import datetime
-from bson.objectid import ObjectId
+
+from DomainModel.entities.UserMatch import UserMatch
+
 
 def test_success():
     # Arrange
@@ -13,7 +14,7 @@ def test_success():
         created_at=datetime(2022, 1, 2, 3, 4, 5),
         updated_at=datetime(2023, 1, 2, 3, 4, 5),
     )
-    
+
     # Assert
     assert um._id == 1
     assert um.user_id == 2
@@ -30,7 +31,7 @@ def test_success_default():
         user_id=2,
         match_id=3,
     )
-    
+
     # Assert
     assert um._id is None
     assert um.user_id == 2

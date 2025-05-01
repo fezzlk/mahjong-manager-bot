@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List, Tuple
-from DomainModel.entities.Hanchan import Hanchan
+
 from pymongo import ASCENDING
+
+from DomainModel.entities.Hanchan import Hanchan
 
 
 class IHanchanRepository(metaclass=ABCMeta):
@@ -24,7 +26,7 @@ class IHanchanRepository(metaclass=ABCMeta):
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[Hanchan]:
         pass
 

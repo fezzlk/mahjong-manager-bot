@@ -1,7 +1,8 @@
-from tests.dummies import generate_dummy_group_list
-from repositories import group_repository
-from DomainModel.entities.Group import Group
 from bson.objectid import ObjectId
+
+from DomainModel.entities.Group import Group
+from repositories import group_repository
+from tests.dummies import generate_dummy_group_list
 
 
 def test_success_find_records():
@@ -35,7 +36,7 @@ def test_hit_0_record():
 
     # Act
     result = group_repository.find(
-        query={'line_group_id': target_group.line_group_id},
+        query={"line_group_id": target_group.line_group_id},
     )
 
     # Assert
@@ -54,7 +55,7 @@ def test_hit_1_record():
 
     # Act
     result = group_repository.find(
-        query={'line_group_id': target_line_group_id},
+        query={"line_group_id": target_line_group_id},
     )
 
     # Assert

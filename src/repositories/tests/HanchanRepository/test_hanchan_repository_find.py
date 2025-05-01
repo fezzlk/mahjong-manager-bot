@@ -1,11 +1,13 @@
+from typing import List
+
+from bson.objectid import ObjectId
+
+from DomainModel.entities.Hanchan import Hanchan
+from repositories import hanchan_repository, match_repository
 from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from repositories import hanchan_repository, match_repository
-from DomainModel.entities.Hanchan import Hanchan
-from bson.objectid import ObjectId
-from typing import List
 
 
 def test_success_find_records():
@@ -57,8 +59,8 @@ def test_hit_1_record():
     # Act
     result = hanchan_repository.find(
         query={
-            'line_group_id': target_hanchan.line_group_id,
-            'status': target_hanchan.status,
+            "line_group_id": target_hanchan.line_group_id,
+            "status": target_hanchan.status,
         },
     )
 
@@ -89,7 +91,7 @@ def test_hit_0_record_with_not_exist_line_group_id():
     # Act
     result = hanchan_repository.find(
         query={
-            'line_group_id': 'dummy',
+            "line_group_id": "dummy",
         },
     )
 
@@ -114,8 +116,8 @@ def test_hit_0_record_with_not_exist_status():
     # Act
     result = hanchan_repository.find(
         query={
-            'line_group_id': target_hanchan.line_group_id,
-            'status': target_hanchan.status,
+            "line_group_id": target_hanchan.line_group_id,
+            "status": target_hanchan.status,
         },
     )
 

@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
+
 from linebot.models.responses import Profile
+
 from DomainModel.entities.User import User, UserMode
 
 

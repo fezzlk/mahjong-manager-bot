@@ -1,8 +1,11 @@
-from tests.dummies import generate_dummy_match_list
-from repositories import match_repository
-from DomainModel.entities.Match import Match
-from bson.objectid import ObjectId
 from typing import List
+
+from bson.objectid import ObjectId
+
+from DomainModel.entities.Match import Match
+from repositories import match_repository
+from tests.dummies import generate_dummy_match_list
+
 
 def test_success_find_records():
     # Arrange
@@ -52,7 +55,7 @@ def test_hit_records():
     # Act
     result = match_repository.find(
         query={
-            'line_group_id': target_matches[0].line_group_id,
+            "line_group_id": target_matches[0].line_group_id,
         },
     )
 
@@ -76,7 +79,7 @@ def test_hit_0_record_with_not_exist_line_group_id():
     # Act
     result = match_repository.find(
         query={
-            'line_group_id': 'dummy',
+            "line_group_id": "dummy",
         },
     )
 

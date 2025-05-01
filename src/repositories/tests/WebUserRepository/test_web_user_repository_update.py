@@ -1,7 +1,7 @@
-from repositories import web_user_repository
-from DomainModel.entities.WebUser import WebUser
 from datetime import datetime
 
+from DomainModel.entities.WebUser import WebUser
+from repositories import web_user_repository
 
 before = WebUser(
     user_code="code",
@@ -26,16 +26,16 @@ after = WebUser(
 def test_hit_1_record():
     # Arrange
     web_user_repository.create(
-        before
+        before,
     )
 
     # Act
     web_user_repository.update(
-        query={'user_code': before.user_code},
+        query={"user_code": before.user_code},
         new_values={
-            'name': after.name,
-            'email': after.email,
-            'is_approved_line_user': after.is_approved_line_user,
+            "name": after.name,
+            "email": after.email,
+            "is_approved_line_user": after.is_approved_line_user,
         },
     )
 

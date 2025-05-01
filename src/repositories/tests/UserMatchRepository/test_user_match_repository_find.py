@@ -1,16 +1,18 @@
-from DomainModel.entities.User import User
+from typing import List
+
+from pymongo import DESCENDING
+
 from DomainModel.entities.Match import Match
+from DomainModel.entities.User import User
 from DomainModel.entities.UserMatch import UserMatch
 from repositories import (
-    user_repository,
     match_repository,
     user_match_repository,
+    user_repository,
 )
-from typing import List
-from pymongo import DESCENDING
 from tests.dummies import (
-    generate_dummy_user_list,
     generate_dummy_match_list,
+    generate_dummy_user_list,
 )
 
 dummy_users = generate_dummy_user_list()
@@ -23,11 +25,11 @@ def test_success():
     matches: List[Match] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_match in dummy_matches:
         matches.append(
-            match_repository.create(dummy_match)
+            match_repository.create(dummy_match),
         )
     dummy_user_matches = [
         UserMatch(
@@ -64,11 +66,11 @@ def test_success_with_filter():
     matches: List[Match] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_match in dummy_matches:
         matches.append(
-            match_repository.create(dummy_match)
+            match_repository.create(dummy_match),
         )
     dummy_user_matches = [
         UserMatch(
@@ -93,8 +95,8 @@ def test_success_with_filter():
     # Act
     result = user_match_repository.find(
         query={
-            'user_id': target.user_id,
-            'match_id': target.match_id,
+            "user_id": target.user_id,
+            "match_id": target.match_id,
         },
     )
 
@@ -109,11 +111,11 @@ def test_success_with_sort():
     matches: List[Match] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_match in dummy_matches:
         matches.append(
-            match_repository.create(dummy_match)
+            match_repository.create(dummy_match),
         )
     dummy_user_matches = [
         UserMatch(
@@ -137,11 +139,11 @@ def test_success_with_sort():
     # Act
     result = user_match_repository.find(
         query={
-            'user_id': dummy_user_matches[0].user_id,
+            "user_id": dummy_user_matches[0].user_id,
         },
-        sort=[('match_id', DESCENDING)]
+        sort=[("match_id", DESCENDING)],
     )
-    
+
     # Assert
     expected = [
         UserMatch(

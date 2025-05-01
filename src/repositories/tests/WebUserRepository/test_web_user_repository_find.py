@@ -1,7 +1,8 @@
-from tests.dummies import generate_dummy_web_user_list
-from repositories import web_user_repository
-from DomainModel.entities.WebUser import WebUser
 from bson.objectid import ObjectId
+
+from DomainModel.entities.WebUser import WebUser
+from repositories import web_user_repository
+from tests.dummies import generate_dummy_web_user_list
 
 
 def test_success_find_records():
@@ -49,7 +50,7 @@ def test_hit_1_record():
 
     # Act
     result = web_user_repository.find(
-        query={'user_code': target_web_user.user_code},
+        query={"user_code": target_web_user.user_code},
     )
 
     # Assert

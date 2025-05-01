@@ -1,12 +1,12 @@
-from DomainModel.entities.Match import Match
+from typing import List
+
 from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Match import Match
 from repositories import hanchan_repository, match_repository
 from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from typing import List
-
 
 dummy_match = Match(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -37,7 +37,7 @@ def test_hit_0_record():
     # Act
     result = hanchan_repository.update(
         query={},
-        new_values={'status': dummy_hanchans[1].status},
+        new_values={"status": dummy_hanchans[1].status},
     )
 
     # Assert
@@ -56,16 +56,16 @@ def test_success():
         hanchan_repository.create(
             dummy_hanchan,
         )
-    dummy_raw_scores = {'a': 10000}
-    
+    dummy_raw_scores = {"a": 10000}
+
     target_hanchans: List[Hanchan] = []
     target_hanchans.append(dummy_hanchans[0])
     target_hanchans.append(dummy_hanchans[2])
 
     # Act
     result = hanchan_repository.update(
-        query={'line_group_id': dummy_hanchans[0].line_group_id},
-        new_values={'raw_scores': dummy_raw_scores},
+        query={"line_group_id": dummy_hanchans[0].line_group_id},
+        new_values={"raw_scores": dummy_raw_scores},
     )
 
     # Assert

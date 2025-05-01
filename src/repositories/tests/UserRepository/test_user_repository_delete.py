@@ -1,6 +1,6 @@
-from tests.dummies import generate_dummy_user_list
-from repositories import user_repository
 from DomainModel.entities.User import User
+from repositories import user_repository
+from tests.dummies import generate_dummy_user_list
 
 
 def test_hit_1_record():
@@ -15,7 +15,7 @@ def test_hit_1_record():
 
     # Act
     result = user_repository.delete(
-        query={'line_user_id': target_line_user_id},
+        query={"line_user_id": target_line_user_id},
     )
 
     # Assert
@@ -43,7 +43,7 @@ def test_hit_0_record():
 
     # Act
     result = user_repository.delete(
-        query={'_id': {'$in': ids}},
+        query={"_id": {"$in": ids}},
     )
 
     # Assert

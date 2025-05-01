@@ -1,8 +1,10 @@
 from abc import ABCMeta, abstractmethod
-from DomainModel.entities.UserMatch import UserMatch
-from typing import List
-from bson.objectid import ObjectId
 from datetime import datetime
+from typing import List
+
+from bson.objectid import ObjectId
+
+from DomainModel.entities.UserMatch import UserMatch
 
 
 class IUserMatchService(metaclass=ABCMeta):

@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List, Tuple
-from DomainModel.entities.WebUser import WebUser
+
 from pymongo import ASCENDING
+
+from DomainModel.entities.WebUser import WebUser
 
 
 class IWebUserRepository(metaclass=ABCMeta):
@@ -17,7 +19,7 @@ class IWebUserRepository(metaclass=ABCMeta):
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[WebUser]:
         pass
 

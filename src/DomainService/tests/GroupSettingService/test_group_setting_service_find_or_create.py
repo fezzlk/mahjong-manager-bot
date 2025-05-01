@@ -1,8 +1,8 @@
+from DomainModel.entities.GroupSetting import GroupSetting
 from DomainService import (
     group_setting_service,
 )
 from repositories import group_setting_repository
-from DomainModel.entities.GroupSetting import GroupSetting
 
 dummy_group_settings = [
     GroupSetting(
@@ -13,7 +13,7 @@ dummy_group_settings = [
         tobi_prize=10,
         num_of_players=4,
         rounding_method=0,
-    )
+    ),
 ]
 
 
@@ -21,17 +21,17 @@ def test_ok_hit_group_setting(mocker):
     # Arrange
     mocker.patch.object(
         group_setting_repository,
-        'find',
+        "find",
         return_value=dummy_group_settings,
     )
     mock_create = mocker.patch.object(
         group_setting_repository,
-        'create',
+        "create",
         return_value=dummy_group_settings[0],
     )
 
     # Act
-    result = group_setting_service.find_or_create('G0123456789abcdefghijklmnopqrstu1')
+    result = group_setting_service.find_or_create("G0123456789abcdefghijklmnopqrstu1")
 
     # Assert
     assert isinstance(result, GroupSetting)
@@ -43,18 +43,18 @@ def test_ok_no_group_setting(mocker):
     # Arrange
     mocker.patch.object(
         group_setting_repository,
-        'find',
+        "find",
         return_value=[],
     )
 
     mock_create = mocker.patch.object(
         group_setting_repository,
-        'create',
+        "create",
         return_value=dummy_group_settings[0],
     )
 
     # Act
-    result = group_setting_service.find_or_create('G0123456789abcdefghijklmnopqrstu1')
+    result = group_setting_service.find_or_create("G0123456789abcdefghijklmnopqrstu1")
 
     # Assert
     assert isinstance(result, GroupSetting)

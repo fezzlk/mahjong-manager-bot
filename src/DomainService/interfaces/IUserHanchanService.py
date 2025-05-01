@@ -1,8 +1,10 @@
 from abc import ABCMeta, abstractmethod
-from DomainModel.entities.UserHanchan import UserHanchan
-from typing import List
 from datetime import datetime
+from typing import List
+
 from bson.objectid import ObjectId
+
+from DomainModel.entities.UserHanchan import UserHanchan
 
 
 class IUserHanchanService(metaclass=ABCMeta):

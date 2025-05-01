@@ -1,8 +1,9 @@
 import pytest
-from tests.dummies import generate_dummy_group_setting_list
+from bson.objectid import ObjectId
+
 from DomainModel.entities.GroupSetting import GroupSetting
 from repositories import group_setting_repository
-from bson.objectid import ObjectId
+from tests.dummies import generate_dummy_group_setting_list
 
 
 def test_success():
@@ -45,7 +46,7 @@ def test_success_with_id():
         tobi_prize=10,
         num_of_players=4,
         rounding_method=0,
-        _id=ObjectId('644c838186bbd9e20a91b783'),
+        _id=ObjectId("644c838186bbd9e20a91b783"),
     )
 
     # Act

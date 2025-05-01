@@ -1,7 +1,8 @@
-import pytest
-from DomainModel.entities.Group import Group, GroupMode
 from datetime import datetime
-from bson.objectid import ObjectId
+
+import pytest
+
+from DomainModel.entities.Group import Group, GroupMode
 
 
 def test_success():
@@ -16,7 +17,7 @@ def test_success():
         created_at=datetime(2022, 1, 2, 3, 4, 5),
         updated_at=datetime(2023, 1, 2, 3, 4, 5),
     )
-    
+
     # Assert
     assert group._id == 1
     assert group.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
@@ -32,7 +33,7 @@ def test_success_default():
     group = Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
     )
-    
+
     # Assert
     assert group._id is None
     assert group.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
@@ -49,6 +50,6 @@ def test_error_invalid_mode():
         # Act
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu2",
-            mode='',
+            mode="",
         )
         # Assert

@@ -1,8 +1,9 @@
+import pytest
+from bson.objectid import ObjectId
+
 from DomainModel.entities.User import User, UserMode
 from repositories import user_repository
 from tests.dummies import generate_dummy_user_list
-from bson.objectid import ObjectId
-import pytest
 
 
 def test_success():
@@ -38,7 +39,7 @@ def test_success_with_id():
         line_user_id="U0123456789abcdefghijklmnopqrstu1",
         mode=UserMode.wait.value,
         jantama_name="jantama_user1",
-        _id=ObjectId('644c838186bbd9e20a91b783'),
+        _id=ObjectId("644c838186bbd9e20a91b783"),
     )
 
     # Act
@@ -92,4 +93,3 @@ def test_error_duplicate_line_line_id():
     # Assert
     record_on_db = user_repository.find()
     assert len(record_on_db) == 1
-    

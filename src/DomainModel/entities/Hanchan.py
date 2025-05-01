@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import Dict, Optional
-from bson.objectid import ObjectId
 from datetime import datetime
+from typing import Dict, Optional
 
-HANCHAN_STATUS = ['DISABLE', 'ACTIVE', 'ARCHIVE']
+from bson.objectid import ObjectId
+
+HANCHAN_STATUS = ["DISABLE", "ACTIVE", "ARCHIVE"]
 
 
 @dataclass()

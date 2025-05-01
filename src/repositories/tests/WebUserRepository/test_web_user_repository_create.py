@@ -1,9 +1,11 @@
-from tests.dummies import generate_dummy_web_user_list
+from datetime import datetime
+
+import pytest
+from bson.objectid import ObjectId
+
 from DomainModel.entities.WebUser import WebUser
 from repositories import web_user_repository
-from bson.objectid import ObjectId
-from datetime import datetime
-import pytest
+from tests.dummies import generate_dummy_web_user_list
 
 
 def test_success():
@@ -45,7 +47,7 @@ def test_success_with_id():
         is_approved_line_user=False,
         created_at=datetime(2022, 1, 1, 12, 0, 0),
         updated_at=datetime(2022, 1, 1, 12, 0, 0),
-        _id=ObjectId('644c838186bbd9e20a91b783'),
+        _id=ObjectId("644c838186bbd9e20a91b783"),
     )
 
     # Act

@@ -1,6 +1,5 @@
-from repositories import user_repository
 from DomainModel.entities.User import User, UserMode
-
+from repositories import user_repository
 
 before = User(
     line_user_name="test_user1",
@@ -19,15 +18,15 @@ after = User(
 def test_hit_1_record():
     # Arrange
     user_repository.create(
-        before
+        before,
     )
 
     # Act
     user_repository.update(
-        query={'line_user_id': before.line_user_id},
+        query={"line_user_id": before.line_user_id},
         new_values={
-            'line_user_name': after.line_user_name,
-            'jantama_name': after.jantama_name,
+            "line_user_name": after.line_user_name,
+            "jantama_name": after.jantama_name,
         },
     )
 

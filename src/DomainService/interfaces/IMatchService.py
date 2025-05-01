@@ -1,8 +1,9 @@
-from typing import Optional
 from abc import ABCMeta, abstractmethod
-from DomainModel.entities.Match import Match
+from typing import List, Optional
+
 from bson.objectid import ObjectId
-from typing import List
+
+from DomainModel.entities.Match import Match
 
 
 class IMatchService(metaclass=ABCMeta):

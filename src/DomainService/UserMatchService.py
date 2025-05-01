@@ -1,11 +1,14 @@
 """user"""
 
-from .interfaces.IUserMatchService import IUserMatchService
+from datetime import datetime
+from typing import List
+
+from bson.objectid import ObjectId
+
 from DomainModel.entities.UserMatch import UserMatch
 from repositories import user_match_repository
-from typing import List
-from bson.objectid import ObjectId
-from datetime import datetime
+
+from .interfaces.IUserMatchService import IUserMatchService
 
 
 class UserMatchService(IUserMatchService):
@@ -16,11 +19,11 @@ class UserMatchService(IUserMatchService):
         from_dt: datetime = None,
         to_dt: datetime = None,
     ) -> List[UserMatch]:
-        query_list = [{'user_id': {'$in': user_ids}}]
+        query_list = [{"user_id": {"$in": user_ids}}]
         if from_dt is not None:
-            query_list.append({'created_at': {'$gte': from_dt}})
+            query_list.append({"created_at": {"$gte": from_dt}})
         if to_dt is not None:
-            query_list.append({'created_at': {'$lte': to_dt}})
+            query_list.append({"created_at": {"$lte": to_dt}})
         return user_match_repository.find(
-            query={'$and': query_list},
+            query={"$and": query_list},
         )

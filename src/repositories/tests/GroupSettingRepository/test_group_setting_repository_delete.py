@@ -1,5 +1,5 @@
-from tests.dummies import generate_dummy_group_setting_list
 from repositories import group_setting_repository
+from tests.dummies import generate_dummy_group_setting_list
 
 
 def test_hit_with_ids():
@@ -15,7 +15,7 @@ def test_hit_with_ids():
 
     # Act
     result = group_setting_repository.delete(
-        query={'_id': {'$in': ids}},
+        query={"_id": {"$in": ids}},
     )
 
     # Assert
@@ -43,7 +43,7 @@ def test_hit_0_record():
 
     # Act
     result = group_setting_repository.delete(
-        query={'_id': {'$in': ids}},
+        query={"_id": {"$in": ids}},
     )
 
     # Assert

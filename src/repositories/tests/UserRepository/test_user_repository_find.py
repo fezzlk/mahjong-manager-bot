@@ -1,7 +1,8 @@
-from tests.dummies import generate_dummy_user_list
-from repositories import user_repository
-from DomainModel.entities.User import User
 from bson.objectid import ObjectId
+
+from DomainModel.entities.User import User
+from repositories import user_repository
+from tests.dummies import generate_dummy_user_list
 
 
 def test_success_find_records():
@@ -48,7 +49,7 @@ def test_hit_1_record():
 
     # Act
     result = user_repository.find(
-        query={'line_user_id': target_user.line_user_id},
+        query={"line_user_id": target_user.line_user_id},
     )
 
     # Assert

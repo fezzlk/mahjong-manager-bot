@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Dict, Tuple
-from DomainModel.entities.CommandAlias import CommandAlias
+from typing import Dict, List, Tuple
+
 from pymongo import ASCENDING
+
+from DomainModel.entities.CommandAlias import CommandAlias
 
 
 class ICommandAliasRepository(metaclass=ABCMeta):
@@ -24,7 +26,7 @@ class ICommandAliasRepository(metaclass=ABCMeta):
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[CommandAlias]:
         pass
 

@@ -1,15 +1,16 @@
+import pytest
+from bson.objectid import ObjectId
+
 from DomainModel.entities.UserHanchan import UserHanchan
 from repositories import (
-    user_repository,
     hanchan_repository,
     user_hanchan_repository,
+    user_repository,
 )
-from bson.objectid import ObjectId
 from tests.dummies import (
-    generate_dummy_user_list,
     generate_dummy_hanchan_list,
+    generate_dummy_user_list,
 )
-import pytest
 
 dummy_user = generate_dummy_user_list()[0]
 dummy_hanchan = generate_dummy_hanchan_list()[0]
@@ -62,7 +63,7 @@ def test_success_with_id():
         point=10000,
         rank=4,
         yakuman_count=False,
-        _id=ObjectId('644c838186bbd9e20a91b783'),
+        _id=ObjectId("644c838186bbd9e20a91b783"),
     )
 
     # Act

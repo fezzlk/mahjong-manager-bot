@@ -1,8 +1,9 @@
 import pytest
-from tests.dummies import generate_dummy_group_list
+from bson.objectid import ObjectId
+
 from DomainModel.entities.Group import Group, GroupMode
 from repositories import group_repository
-from bson.objectid import ObjectId
+from tests.dummies import generate_dummy_group_list
 
 
 def test_success():
@@ -33,7 +34,7 @@ def test_success_with_id():
     dummy_group = Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
         mode=GroupMode.wait.value,
-        _id=ObjectId('644c838186bbd9e20a91b783'),
+        _id=ObjectId("644c838186bbd9e20a91b783"),
     )
     # Act
     result = group_repository.create(

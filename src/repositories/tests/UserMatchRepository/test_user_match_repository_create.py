@@ -1,15 +1,16 @@
+import pytest
+from bson.objectid import ObjectId
+
 from DomainModel.entities.UserMatch import UserMatch
 from repositories import (
-    user_repository,
     match_repository,
     user_match_repository,
+    user_repository,
 )
-from bson.objectid import ObjectId
 from tests.dummies import (
-    generate_dummy_user_list,
     generate_dummy_match_list,
+    generate_dummy_user_list,
 )
-import pytest
 
 dummy_user = generate_dummy_user_list()[0]
 dummy_match = generate_dummy_match_list()[0]
@@ -57,7 +58,7 @@ def test_success_with_id():
     dummy_user_match = UserMatch(
         user_id=new_user._id,
         match_id=new_match._id,
-        _id=ObjectId('644c838186bbd9e20a91b783'),
+        _id=ObjectId("644c838186bbd9e20a91b783"),
     )
 
     # Act

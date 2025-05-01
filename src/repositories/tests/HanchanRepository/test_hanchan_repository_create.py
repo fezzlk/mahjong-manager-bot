@@ -1,9 +1,10 @@
+from bson.objectid import ObjectId
+
 from DomainModel.entities.Hanchan import Hanchan
+from repositories import hanchan_repository
 from tests.dummies import (
     generate_dummy_hanchan_list,
 )
-from repositories import hanchan_repository
-from bson.objectid import ObjectId
 
 
 def test_success():
@@ -38,11 +39,11 @@ def test_success_with_id():
     # Arrange
     dummy_hanchan = Hanchan(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
-        match_id=ObjectId('644c838186bbd9e20a91b783'),
+        match_id=ObjectId("644c838186bbd9e20a91b783"),
         status=2,
-        _id=ObjectId('644c838186bbd9e20a91b781'),
+        _id=ObjectId("644c838186bbd9e20a91b781"),
     )
-    
+
     # Act
     result = hanchan_repository.create(
         dummy_hanchan,

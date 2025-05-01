@@ -1,6 +1,8 @@
 from typing import Dict, List, Tuple
-from .interfaces.ICalculateService import ICalculateService
+
 from DomainModel.entities.GroupSetting import ROUNDING_METHOD_LIST
+
+from .interfaces.ICalculateService import ICalculateService
 
 
 class CalculateService(ICalculateService):
@@ -23,7 +25,7 @@ class CalculateService(ICalculateService):
             sorted_points,
             rounding_method=rounding_method,
         )
-        isTobi = not (tobashita_player_id is None or tobashita_player_id == '')
+        isTobi = not (tobashita_player_id is None or tobashita_player_id == "")
 
         # 順位点、飛び賞加算
         for i, t in enumerate(sorted_points):

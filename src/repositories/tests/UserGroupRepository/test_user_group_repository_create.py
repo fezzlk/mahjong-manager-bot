@@ -1,16 +1,16 @@
+import pytest
+from bson.objectid import ObjectId
+
 from DomainModel.entities.UserGroup import UserGroup
-from tests.dummies import (
-    generate_dummy_user_list,
-    generate_dummy_group_list,
-)
 from repositories import (
-    user_repository,
     group_repository,
     user_group_repository,
+    user_repository,
 )
-from bson.objectid import ObjectId
-import pytest
-
+from tests.dummies import (
+    generate_dummy_group_list,
+    generate_dummy_user_list,
+)
 
 dummy_users = generate_dummy_user_list()
 dummy_groups = generate_dummy_group_list()
@@ -58,7 +58,7 @@ def test_success_with_id():
     dummy_user_group = UserGroup(
         line_user_id=new_user._id,
         line_group_id=new_group._id,
-        _id=ObjectId('644c838186bbd9e20a91b783'),
+        _id=ObjectId("644c838186bbd9e20a91b783"),
     )
 
     # Act

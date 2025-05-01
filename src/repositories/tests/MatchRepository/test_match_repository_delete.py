@@ -1,9 +1,11 @@
+from typing import List
+
+from DomainModel.entities.Match import Match
+from repositories import match_repository
 from tests.dummies import (
     generate_dummy_match_list,
 )
-from repositories import match_repository
-from DomainModel.entities.Match import Match
-from typing import List
+
 
 def test_hit_with_line_group_id():
     # Arrange
@@ -17,7 +19,7 @@ def test_hit_with_line_group_id():
 
     # Act
     result = match_repository.delete(
-        query={'line_group_id': {'$in': [target_match.line_group_id]}},
+        query={"line_group_id": {"$in": [target_match.line_group_id]}},
     )
 
     # Assert
@@ -40,7 +42,7 @@ def test_hit_0_record():
 
     # Act
     result = match_repository.delete(
-        query={'line_group_id': {'$in': []}},
+        query={"line_group_id": {"$in": []}},
     )
 
     # Assert
