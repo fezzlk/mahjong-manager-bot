@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
@@ -98,7 +98,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       # 依存パッケージのキャッシュ管理
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
