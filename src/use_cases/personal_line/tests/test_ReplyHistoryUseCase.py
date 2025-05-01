@@ -17,6 +17,7 @@ from bson.objectid import ObjectId
 import pytest
 from typing import Dict
 import env_var
+from datetime import datetime
 
 dummy_user = User(
     line_user_name="test_user1",
@@ -183,7 +184,8 @@ def test_execute(mocker):
     mock_fig.assert_called_once()
     assert len(reply_service.images) == 1
 
-@ pytest.fixture(params=[
+
+@pytest.fixture(params=[
     ({'from': '20230101'}, '範囲指定: 2023年01月01日0時から'),
     ({'to': '20241231'}, '範囲指定: 2024年12月31日0時まで'),
     ({'from': '20230101', 'to': '20241231'}, '範囲指定: 2023年01月01日0時から2024年12月31日0時まで'),
@@ -206,15 +208,16 @@ def test_execute_with_range(mocker, case2):
         'savefig',
         return_value=None,
     )
-        
     user = user_repository.create(dummy_user)
     match = match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(dummy_hanchan)
-    
+
     dummy_user_match = UserMatch(
         user_id=user._id,
         match_id=match._id,
+        created_at=datetime(2023, 1, 1, 1, 1, 2),
+        _id=1,
     )
     user_match_repository.create(dummy_user_match)
 

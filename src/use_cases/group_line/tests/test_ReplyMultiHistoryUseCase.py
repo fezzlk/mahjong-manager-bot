@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 import env_var
 from typing import Dict
-import pytest 
+import pytest
 
 
 dummy_matches = [
@@ -27,7 +27,6 @@ dummy_matches = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 1)
-        
     ),
     Match(
         _id=2,
@@ -52,6 +51,18 @@ dummy_matches = [
         line_group_id="dummy",
         status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 4)
+    ),
+    Match(
+        _id=5,
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        status=2,
+        created_at=datetime(2010, 1, 1, 1, 1, 1),
+        sum_scores={
+            "U0123456789abcdefghijklmnopqrstu1": 10,
+            "U0123456789abcdefghijklmnopqrstu2": 20,
+            "U0123456789abcdefghijklmnopqrstu3": -20,
+            "U0123456789abcdefghijklmnopqrstu4": -10,
+        }
     ),
 ]
 
@@ -150,47 +161,62 @@ dummy_user_matches = [
     UserMatch(
         user_id=1,
         match_id=1,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=1,
     ),
     UserMatch(
         user_id=2,
         match_id=1,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=2,
     ),
     UserMatch(
         user_id=3,
         match_id=1,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=3,
     ),
     UserMatch(
         user_id=4,
         match_id=1,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=4,
     ),
     UserMatch(
         user_id=1,
         match_id=2,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=5,
     ),
     UserMatch(
         user_id=2,
         match_id=2,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=6,
     ),
     UserMatch(
         user_id=3,
         match_id=2,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=7,
     ),
     UserMatch(
         user_id=4,
         match_id=2,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=8,
     ),
     UserMatch(
         user_id=5,
         match_id=2,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
         _id=9,
+    ),
+    UserMatch(
+        user_id=1,
+        match_id=5,
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
+        _id=10,
     ),
 ]
 
@@ -203,7 +229,8 @@ dummy_event = Event(
     text='_history',
 )
 
-@ pytest.fixture(params=[
+
+@pytest.fixture(params=[
     '?from=x',
     '?to=x',
     '?from=20230101&to=x',
@@ -212,6 +239,7 @@ dummy_event = Event(
 ])
 def case1(request) -> Dict[str, str]:
     return request.param
+
 
 def test_execute_with_invalid_range_format(case1):
     # Arrange
@@ -238,7 +266,7 @@ def test_execute_with_invalid_range_format(case1):
     assert len(reply_service.texts) == 2
     assert reply_service.texts[0].text == '日付は以下のフォーマットで入力してください。'
     assert reply_service.texts[1].text == '[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD'
-     
+
 
 def test_execute(mocker):
     # Arrange
@@ -252,7 +280,6 @@ def test_execute(mocker):
         fig,
         'savefig',
     )
-        
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -272,13 +299,14 @@ def test_execute(mocker):
     assert len(reply_service.images) == 1
 
 
-@ pytest.fixture(params=[
+@pytest.fixture(params=[
     ('?from=20230101', '範囲指定: 2023年01月01日0時から'),
     ('?to=20241231', '範囲指定: 2024年12月31日0時まで'),
     ('?from=20230101&to=20241231', '範囲指定: 2023年01月01日0時から2024年12月31日0時まで'),
 ])
 def case2(request) -> Dict[str, str]:
     return request.param
+
 
 def test_execute_with_range(mocker, case2):
     # Arrange
@@ -292,14 +320,35 @@ def test_execute_with_range(mocker, case2):
         fig,
         'savefig',
     )
-        
+
+    dummy_user_matches_local = [
+        UserMatch(
+            user_id=1,
+            match_id=1,
+            created_at=datetime(2010, 1, 1, 1, 1, 2),
+            _id=1,
+        ),
+        UserMatch(
+            user_id=1,
+            match_id=2,
+            created_at=datetime(2010, 1, 1, 1, 1, 2),
+            _id=5,
+        ),
+        UserMatch(
+            user_id=1,
+            match_id=5,
+            created_at=datetime(2023, 1, 1, 1, 1, 2),
+            _id=10,
+        ),
+    ]
+
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(dummy_hanchan)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
-    for dummy_user_match in dummy_user_matches:
+    for dummy_user_match in dummy_user_matches_local:
         user_match_repository.create(dummy_user_match)
     dummy_event2 = Event(
         type='message',
@@ -338,7 +387,7 @@ def test_execute_fail_savefig(mocker):
         'savefig',
         side_effect=FileNotFoundError(),
     )
-        
+
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -376,7 +425,7 @@ def test_execute_no_match(mocker):
         fig,
         'savefig',
     )
-        
+
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -407,7 +456,7 @@ def test_execute_contain_unknown_user(mocker):
         fig,
         'savefig',
     )
-        
+
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -452,7 +501,7 @@ def test_execute_with_mention(mocker):
         fig,
         'savefig',
     )
-        
+
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
