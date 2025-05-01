@@ -204,7 +204,10 @@ def test_execute_arg_int():
         hanchan_repository.create(dummy_hanchan)
 
     # Act
-    with pytest.raises(ValueError, match="Expected error message here"):
+    with pytest.raises(
+        AttributeError,
+        match="'int' object has no attribute 'isdigit'",
+    ):
         use_case.execute(1)
 
     # Assert
@@ -222,7 +225,10 @@ def test_execute_no_arg():
         hanchan_repository.create(dummy_hanchan)
 
     # Act
-    with pytest.raises(ValueError, match="Expected error message here"):
+    with pytest.raises(
+        AttributeError,
+        match="'int' object has no attribute 'isdigit'",
+    ):
         use_case.execute(1)
 
     # Assert

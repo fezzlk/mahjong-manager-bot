@@ -31,8 +31,8 @@ dummy_event = Event(
 @pytest.fixture(
     params=[
         (""),
-        ("messeage"),
-        ("messeage 1 2"),
+        ("message"),
+        ("message 1 2"),
     ],
 )
 def text_case(request) -> int:

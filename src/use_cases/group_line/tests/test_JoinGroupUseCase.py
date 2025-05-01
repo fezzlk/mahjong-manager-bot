@@ -20,7 +20,10 @@ def test_fail_no_line_group_id():
     use_case = JoinGroupUseCase()
 
     # Act
-    with pytest.raises(ValueError, match="Expected error message here"):
+    with pytest.raises(
+        ValueError,
+        match="登録する line_group_id が未指定です。",
+    ):
         use_case.execute()
 
     # Assert

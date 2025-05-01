@@ -157,7 +157,10 @@ def test_fail_get_hanchans():
     use_case = ReplyHistoryUseCase()
 
     # Act
-    with pytest.raises(ValueError, match="expected error message"):
+    with pytest.raises(
+        ValueError,
+        match="半荘情報を取得できませんでした。",
+    ):
         use_case.execute()
 
     # Assert
