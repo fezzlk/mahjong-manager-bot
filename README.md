@@ -1,14 +1,18 @@
 # About
+
 麻雀対戦結果管理用 LINE Bot
 
 ## Demo
+
 (TBD)
 
 ## Try it!
+
 <a href="https://lin.ee/JzAiLbG"><img src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png" alt="友だち追加" height="36" border="0"></a>
 
 ## Features
-- 1半荘終了時の点数集計と結果算出
+
+- 1 半荘終了時の点数集計と結果算出
   - 飛びウマ対応
   - 端数切り捨て方式複数対応
   - チップ対応
@@ -23,4 +27,5 @@
   - ラッキー牌
 
 # For Developer
+
 Go to https://github.com/fezzlk/mahjong-manager-bot/wiki

@@ -1,8 +1,10 @@
-from typing import Optional
 from abc import ABCMeta, abstractmethod
-from DomainModel.entities.Match import Match
+from typing import List, Optional
+
 from bson.objectid import ObjectId
-from typing import List
+
+from DomainModel.entities.Match import Match
+
 
 class IMatchService(metaclass=ABCMeta):
 
@@ -18,7 +20,7 @@ class IMatchService(metaclass=ABCMeta):
     @abstractmethod
     def find_one_by_id(self, _id: ObjectId) -> Optional[Match]:
         pass
-    
+
     @abstractmethod
     def create_with_line_group_id(self, line_group_id: str) -> Match:
         pass
@@ -34,7 +36,7 @@ class IMatchService(metaclass=ABCMeta):
     @abstractmethod
     def find_all_by_ids_and_line_group_ids(self, ids: List[ObjectId], line_group_ids: List[str]) -> List[Match]:
         pass
-    
+
     @abstractmethod
     def find_latest_one(self, line_group_id: str) -> Optional[Match]:
         pass

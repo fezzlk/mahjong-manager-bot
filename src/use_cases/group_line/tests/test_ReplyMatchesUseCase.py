@@ -1,14 +1,15 @@
-from DomainModel.entities.Match import Match
-from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
+from datetime import datetime
+
 from ApplicationService import (
-    request_info_service,
     reply_service,
+    request_info_service,
 )
+from DomainModel.entities.Match import Match
 from line_models.Event import Event
 from repositories import (
     match_repository,
 )
-from datetime import datetime
+from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
 
 dummy_matches = [
     Match(
@@ -67,23 +68,23 @@ dummy_matches = [
         _id=3,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=0,
-        created_at=datetime(2010, 1, 1, 1, 1, 3)
+        created_at=datetime(2010, 1, 1, 1, 1, 3),
     ),
     Match(
         _id=4,
         line_group_id="dummy",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 4)
+        created_at=datetime(2010, 1, 1, 1, 1, 4),
     ),
 ]
 
 dummy_event = Event(
-    type='message',
-    source_type='group',
+    type="message",
+    source_type="group",
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
-    message_type='text',
-    text='_matches',
+    message_type="text",
+    text="_matches",
 )
 
 
@@ -99,8 +100,8 @@ def test_execute():
 
     # Assert
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == 'このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。'
-    assert reply_service.texts[1].text == '第1回 2010-01-01\n第2回 2010-01-01'
+    assert reply_service.texts[0].text == "このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。"
+    assert reply_service.texts[1].text == "第1回 2010-01-01\n第2回 2010-01-01"
 
 
 def test_execute_no_match():
@@ -113,5 +114,5 @@ def test_execute_no_match():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'まだ対戦結果がありません。'
+    assert reply_service.texts[0].text == "まだ対戦結果がありません。"
 

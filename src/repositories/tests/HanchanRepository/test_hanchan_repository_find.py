@@ -1,11 +1,13 @@
+from typing import List
+
+from bson.objectid import ObjectId
+
+from DomainModel.entities.Hanchan import Hanchan
+from repositories import hanchan_repository, match_repository
 from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from repositories import hanchan_repository, match_repository
-from DomainModel.entities.Hanchan import Hanchan
-from bson.objectid import ObjectId
-from typing import List
 
 
 def test_success_find_records():
@@ -20,10 +22,9 @@ def test_success_find_records():
         hanchan_repository.create(
             dummy_hanchan,
         )
-    target_hanchans:List[Hanchan] = []
+    target_hanchans: List[Hanchan] = []
     target_hanchans.append(dummy_hanchans[0])
     target_hanchans.append(dummy_hanchans[2])
-
 
     # Act
     result = hanchan_repository.find()
@@ -32,7 +33,7 @@ def test_success_find_records():
     assert len(result) == len(target_hanchans)
     for i in range(len(result)):
         assert isinstance(result[i], Hanchan)
-        assert type(result[0]._id) == ObjectId
+        assert type(result[0]._id) is ObjectId
         assert result[i].line_group_id == target_hanchans[i].line_group_id
         assert result[i].match_id == target_hanchans[i].match_id
         assert result[i].raw_scores == target_hanchans[i].raw_scores
@@ -57,15 +58,15 @@ def test_hit_1_record():
     # Act
     result = hanchan_repository.find(
         query={
-            'line_group_id': target_hanchan.line_group_id,
-            'status': target_hanchan.status,
+            "line_group_id": target_hanchan.line_group_id,
+            "status": target_hanchan.status,
         },
     )
 
     # Assert
     assert len(result) == 1
     assert isinstance(result[0], Hanchan)
-    assert type(result[0]._id) == ObjectId
+    assert type(result[0]._id) is ObjectId
     assert result[0].line_group_id == target_hanchan.line_group_id
     assert result[0].match_id == target_hanchan.match_id
     assert result[0].raw_scores == target_hanchan.raw_scores
@@ -89,7 +90,7 @@ def test_hit_0_record_with_not_exist_line_group_id():
     # Act
     result = hanchan_repository.find(
         query={
-            'line_group_id': 'dummy',
+            "line_group_id": "dummy",
         },
     )
 
@@ -114,8 +115,8 @@ def test_hit_0_record_with_not_exist_status():
     # Act
     result = hanchan_repository.find(
         query={
-            'line_group_id': target_hanchan.line_group_id,
-            'status': target_hanchan.status,
+            "line_group_id": target_hanchan.line_group_id,
+            "status": target_hanchan.status,
         },
     )
 

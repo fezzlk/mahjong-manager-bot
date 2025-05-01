@@ -1,6 +1,7 @@
 from typing import List
+
 from DomainModel.entities.Hanchan import Hanchan
-from repositories import session_scope, hanchan_repository
+from repositories import hanchan_repository, session_scope
 
 
 class GetHanchansForWebUseCase:

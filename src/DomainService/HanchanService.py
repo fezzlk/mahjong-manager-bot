@@ -1,11 +1,14 @@
-from repositories import hanchan_repository
-from DomainModel.entities.Hanchan import Hanchan
-from .interfaces.IHanchanService import IHanchanService
-from typing import Optional, List
+from typing import List, Optional
+
 from bson.objectid import ObjectId
 from pymongo import ASCENDING
 
-STATUS_LIST = ['disabled', 'active', 'archived']
+from DomainModel.entities.Hanchan import Hanchan
+from repositories import hanchan_repository
+
+from .interfaces.IHanchanService import IHanchanService
+
+STATUS_LIST = ["disabled", "active", "archived"]
 
 
 class HanchanService(IHanchanService):
@@ -17,12 +20,12 @@ class HanchanService(IHanchanService):
         raw_score: Optional[int],
     ) -> Hanchan:
         if line_user_id is None:
-            raise ValueError('fail to add_or_drop_raw_score: line_user_id is required')
+            raise ValueError("fail to add_or_drop_raw_score: line_user_id is required")
 
         target = self.find_one_by_id(hanchan_id)
 
         if target is None:
-            raise ValueError('fail to add_or_drop_raw_score: Not found hanchan')
+            raise ValueError("fail to add_or_drop_raw_score: Not found hanchan")
 
         raw_scores = target.raw_scores
 
@@ -32,8 +35,8 @@ class HanchanService(IHanchanService):
             raw_scores[line_user_id] = raw_score
 
         hanchan_repository.update(
-            {'_id': target._id},
-            {'raw_scores': raw_scores},
+            {"_id": target._id},
+            {"raw_scores": raw_scores},
         )
 
         target.raw_scores = raw_scores
@@ -41,7 +44,7 @@ class HanchanService(IHanchanService):
 
     def find_one_by_id(self, _id: ObjectId) -> Optional[Hanchan]:
         matches = hanchan_repository.find(
-            {'_id': _id}
+            {"_id": _id},
         )
         if len(matches) == 0:
             return None
@@ -56,33 +59,33 @@ class HanchanService(IHanchanService):
 
         print(f'create hanchan: group "{line_group_id}"')
         return new_match
-    
+
     def find_all_archived_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
         return hanchan_repository.find(
             {
-                'match_id': match_id,
-                'converted_scores': {'$ne': {}},
+                "match_id": match_id,
+                "converted_scores": {"$ne": {}},
             },
-            [('_id', ASCENDING)]
+            [("_id", ASCENDING)],
         )
 
     def find_all_archived_by_match_ids(self, match_ids: List[ObjectId]) -> List[Hanchan]:
         return hanchan_repository.find(
             {
-                'match_id': {'$in': match_ids},
-                'converted_scores': {'$ne': {}},
+                "match_id": {"$in": match_ids},
+                "converted_scores": {"$ne": {}},
             },
-            [('_id', ASCENDING)]
+            [("_id", ASCENDING)],
         )
 
     def update(self, target: Hanchan) -> None:
         hanchan_repository.update(
-            {'_id': target._id},
+            {"_id": target._id},
             target.__dict__,
         )
 
     def disable_by_match_id(self, match_id: ObjectId) -> None:
         hanchan_repository.update(
-            {'match_id': match_id},
-            {'status': 0},
+            {"match_id": match_id},
+            {"status": 0},
         )

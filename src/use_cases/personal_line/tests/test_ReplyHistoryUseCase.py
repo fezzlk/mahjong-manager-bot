@@ -1,22 +1,25 @@
-from use_cases.personal_line.ReplyHistoryUseCase import ReplyHistoryUseCase
+from datetime import datetime
+from typing import Dict
+
+import pytest
+from bson.objectid import ObjectId
+
+import env_var
 from ApplicationService import (
     reply_service,
     request_info_service,
 )
-from DomainModel.entities.User import User, UserMode
-from DomainModel.entities.Match import Match
 from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Match import Match
+from DomainModel.entities.User import User, UserMode
 from DomainModel.entities.UserMatch import UserMatch
 from repositories import (
-    user_repository,
+    hanchan_repository,
     match_repository,
     user_match_repository,
-    hanchan_repository,
+    user_repository,
 )
-from bson.objectid import ObjectId
-import pytest
-from typing import Dict
-import env_var
+from use_cases.personal_line.ReplyHistoryUseCase import ReplyHistoryUseCase
 
 dummy_user = User(
     line_user_name="test_user1",
@@ -28,7 +31,7 @@ dummy_user = User(
 dummy_match = Match(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     status=2,
-    _id=ObjectId('644c838186bbd9e20a91b783'),
+    _id=ObjectId("644c838186bbd9e20a91b783"),
 )
 
 dummy_hanchans = [
@@ -47,7 +50,7 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu4": -40,
         },
         status=2,
-        match_id=ObjectId('644c838186bbd9e20a91b783'),
+        match_id=ObjectId("644c838186bbd9e20a91b783"),
     ),
     Hanchan(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -64,7 +67,7 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu4": -40,
         },
         status=2,
-        match_id=ObjectId('644c838186bbd9e20a91b783'),
+        match_id=ObjectId("644c838186bbd9e20a91b783"),
     ),
 ]
 
@@ -73,7 +76,7 @@ def test_execute_no_user():
     # Arrange
     user_repository.create(dummy_user)
 
-    request_info_service.req_line_user_id = 'unknown'
+    request_info_service.req_line_user_id = "unknown"
     use_case = ReplyHistoryUseCase()
 
     # Act
@@ -81,18 +84,28 @@ def test_execute_no_user():
 
     # Assert
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == 'ユーザーが登録されていません。友達追加してください。'
-    assert reply_service.texts[1].text == '既に友達の場合は一度ブロックして、ブロック解除を行ってください。'
+    assert (
+        reply_service.texts[0].text
+        == "ユーザーが登録されていません。友達追加してください。"
+    )
+    assert (
+        reply_service.texts[1].text
+        == "既に友達の場合は一度ブロックして、ブロック解除を行ってください。"
+    )
 
-@ pytest.fixture(params=[
-    {'from': 'x'},
-    {'to': 'x'},
-    {'from': 'x', 'to': '20220101'},
-    {'from': '20220101', 'to': 'x'},
-    {'from': 'x', 'to': 'x'},
-])
+
+@pytest.fixture(
+    params=[
+        {"from": "x"},
+        {"to": "x"},
+        {"from": "x", "to": "20220101"},
+        {"from": "20220101", "to": "x"},
+        {"from": "x", "to": "x"},
+    ],
+)
 def case1(request) -> Dict[str, str]:
     return request.param
+
 
 def test_execute_invalid_range_format(case1):
     # Arrange
@@ -107,9 +120,12 @@ def test_execute_invalid_range_format(case1):
 
     # Assert
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == '日付は以下のフォーマットで入力してください。'
-    assert reply_service.texts[1].text == '[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD'
-            
+    assert reply_service.texts[0].text == "日付は以下のフォーマットで入力してください。"
+    assert (
+        reply_service.texts[1].text
+        == "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD"
+    )
+
 
 def test_execute_not_match():
     # Arrange
@@ -123,50 +139,54 @@ def test_execute_not_match():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '対局履歴がありません。'
+    assert reply_service.texts[0].text == "対局履歴がありません。"
 
 
 def test_fail_get_hanchans():
-    with pytest.raises(ValueError):
-        # Arrange
-        user = user_repository.create(dummy_user)
-        match_repository.create(dummy_match)
+    # Arrange
+    user = user_repository.create(dummy_user)
+    match_repository.create(dummy_match)
 
-        dummy_user_match = UserMatch(
-            user_id=user._id,
-            match_id=dummy_match._id,
-        )
-        user_match_repository.create(dummy_user_match)
+    dummy_user_match = UserMatch(
+        user_id=user._id,
+        match_id=dummy_match._id,
+    )
+    user_match_repository.create(dummy_user_match)
 
-        request_info_service.req_line_user_id = dummy_user.line_user_id
-        use_case = ReplyHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_user.line_user_id
+    use_case = ReplyHistoryUseCase()
 
-        # Act
+    # Act
+    with pytest.raises(
+        ValueError,
+        match="半荘情報を取得できませんでした。",
+    ):
         use_case.execute()
 
-        # Assert
+    # Assert
 
 
 def test_execute(mocker):
     # Arrange
     import matplotlib.pyplot as plt
+
     fig = plt.figure()
     mocker.patch.object(
         plt,
-        'figure',
+        "figure",
         return_value=fig,
     )
     mock_fig = mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
         return_value=None,
     )
-        
+
     user = user_repository.create(dummy_user)
     match = match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(dummy_hanchan)
-    
+
     dummy_user_match = UserMatch(
         user_id=user._id,
         match_id=match._id,
@@ -183,11 +203,17 @@ def test_execute(mocker):
     mock_fig.assert_called_once()
     assert len(reply_service.images) == 1
 
-@ pytest.fixture(params=[
-    ({'from': '20230101'}, '範囲指定: 2023年01月01日0時から'),
-    ({'to': '20241231'}, '範囲指定: 2024年12月31日0時まで'),
-    ({'from': '20230101', 'to': '20241231'}, '範囲指定: 2023年01月01日0時から2024年12月31日0時まで'),
-])
+
+@pytest.fixture(
+    params=[
+        ({"from": "20230101"}, "範囲指定: 2023年01月01日0時から"),
+        ({"to": "20241231"}, "範囲指定: 2024年12月31日0時まで"),
+        (
+            {"from": "20230101", "to": "20241231"},
+            "範囲指定: 2023年01月01日0時から2024年12月31日0時まで",
+        ),
+    ],
+)
 def case2(request) -> Dict[str, str]:
     return request.param
 
@@ -195,26 +221,28 @@ def case2(request) -> Dict[str, str]:
 def test_execute_with_range(mocker, case2):
     # Arrange
     import matplotlib.pyplot as plt
+
     fig = plt.figure()
     mocker.patch.object(
         plt,
-        'figure',
+        "figure",
         return_value=fig,
     )
     mock_fig = mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
         return_value=None,
     )
-        
     user = user_repository.create(dummy_user)
     match = match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(dummy_hanchan)
-    
+
     dummy_user_match = UserMatch(
         user_id=user._id,
         match_id=match._id,
+        created_at=datetime(2023, 1, 1, 1, 1, 2),
+        _id=1,
     )
     user_match_repository.create(dummy_user_match)
 
@@ -235,27 +263,28 @@ def test_execute_with_range(mocker, case2):
 def test_fail_file_upload(mocker):
     # Arrange
     import matplotlib.pyplot as plt
+
     fig = plt.figure()
     mock = mocker.patch.object(
         reply_service,
-        'push_a_message',
+        "push_a_message",
     )
     mocker.patch.object(
         plt,
-        'figure',
+        "figure",
         return_value=fig,
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
         side_effect=FileNotFoundError(),
     )
-        
+
     user = user_repository.create(dummy_user)
     match = match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(dummy_hanchan)
-    
+
     dummy_user_match = UserMatch(
         user_id=user._id,
         match_id=match._id,
@@ -271,8 +300,8 @@ def test_fail_file_upload(mocker):
     # Assert
     assert len(reply_service.images) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'システムエラーが発生しました。'
+    assert reply_service.texts[0].text == "システムエラーが発生しました。"
     mock.assert_called_once_with(
         to=env_var.SERVER_ADMIN_LINE_USER_ID,
-        message='対戦履歴の画像アップロードに失敗しました\n送信者: U0123456789abcdefghijklmnopqrstu1',
+        message="対戦履歴の画像アップロードに失敗しました\n送信者: U0123456789abcdefghijklmnopqrstu1",
     )

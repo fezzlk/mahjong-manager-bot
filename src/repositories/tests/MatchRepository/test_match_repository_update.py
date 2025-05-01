@@ -1,7 +1,6 @@
 from DomainModel.entities.Match import Match
 from repositories import match_repository
 
-
 dummy_matches = [
     Match(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -20,9 +19,9 @@ def test_hit_1_record():
 
     # Act
     result = match_repository.update(
-        query={'line_group_id': dummy_matches[0].line_group_id},
+        query={"line_group_id": dummy_matches[0].line_group_id},
         new_values={
-            'active_hanchan_id': dummy_matches[1].active_hanchan_id,
+            "active_hanchan_id": dummy_matches[1].active_hanchan_id,
         },
     )
 
@@ -39,8 +38,8 @@ def test_hit_0_record():
 
     # Act
     result = match_repository.update(
-        query={'line_group_id': 'dummy'},
-        new_values={'active_hanchan_id': dummy_matches[1].active_hanchan_id},
+        query={"line_group_id": "dummy"},
+        new_values={"active_hanchan_id": dummy_matches[1].active_hanchan_id},
     )
 
     # Assert

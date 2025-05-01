@@ -1,6 +1,6 @@
-
 from dataclasses import dataclass
 from datetime import datetime
+
 from bson.objectid import ObjectId
 
 
@@ -22,8 +22,8 @@ class WebUser:
         email: str = None,
         linked_line_user_id: str = None,
         is_approved_line_user: bool = False,
-        created_at: datetime = datetime.now(),
-        updated_at: datetime = datetime.now(),
+        created_at: datetime = None,
+        updated_at: datetime = None,
         _id: ObjectId = None,
     ):
         self._id = _id
@@ -32,5 +32,5 @@ class WebUser:
         self.email = email
         self.linked_line_user_id = linked_line_user_id
         self.is_approved_line_user = is_approved_line_user
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.created_at = created_at if created_at is not None else datetime.now()
+        self.updated_at = updated_at if updated_at is not None else datetime.now()

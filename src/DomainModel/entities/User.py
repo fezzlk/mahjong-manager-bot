@@ -1,12 +1,13 @@
-from enum import Enum
 from dataclasses import dataclass
-from bson.objectid import ObjectId
-from typing import Optional
 from datetime import datetime
+from enum import Enum
+from typing import Optional
+
+from bson.objectid import ObjectId
 
 
 class UserMode(Enum):
-    wait = 'wait'
+    wait = "wait"
 
 
 @dataclass()
@@ -32,8 +33,8 @@ class User:
         original_id: Optional[int] = None,
     ):
         if mode not in UserMode._member_names_:
-            raise ValueError(f'UserMode の値({mode})が不適切です。')
-   
+            raise ValueError(f"UserMode の値({mode})が不適切です。")
+
         self._id = _id
         self.line_user_name = line_user_name
         self.line_user_id = line_user_id

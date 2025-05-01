@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Dict, Tuple
-from DomainModel.entities.GroupSetting import GroupSetting
+from typing import Dict, List, Tuple
+
 from pymongo import ASCENDING
+
+from DomainModel.entities.GroupSetting import GroupSetting
 
 
 class IGroupSettingRepository(metaclass=ABCMeta):
@@ -24,7 +26,7 @@ class IGroupSettingRepository(metaclass=ABCMeta):
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[GroupSetting]:
         pass
 

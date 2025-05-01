@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
-from DomainModel.entities.UserGroup import UserGroup
 from typing import List
+
+from DomainModel.entities.UserGroup import UserGroup
+
 
 class IUserGroupService(metaclass=ABCMeta):
 

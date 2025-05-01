@@ -9,9 +9,9 @@ from repositories import (
 class UnfollowUseCase:
 
     def execute(self) -> None:
-        """unfollow event"""
+        """Unfollow event"""
         user_repository.delete(
             query={
-                'line_user_id': request_info_service.req_line_user_id,
-            }
+                "line_user_id": request_info_service.req_line_user_id,
+            },
         )

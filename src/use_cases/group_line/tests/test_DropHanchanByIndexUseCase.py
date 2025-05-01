@@ -1,27 +1,27 @@
-from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
-from ApplicationService import (
-    request_info_service,
-    reply_service,
-)
-from repositories import (
-    match_repository,
-    hanchan_repository,
-    group_repository,
-)
-from line_models.Event import Event
-from DomainModel.entities.Match import Match
-from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.Group import Group, GroupMode
 import pytest
 
+from ApplicationService import (
+    reply_service,
+    request_info_service,
+)
+from DomainModel.entities.Group import Group, GroupMode
+from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Match import Match
+from line_models.Event import Event
+from repositories import (
+    group_repository,
+    hanchan_repository,
+    match_repository,
+)
+from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 
 dummy_event = Event(
-    type='message',
-    source_type='group',
+    type="message",
+    source_type="group",
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
-    message_type='text',
-    text='dummy_text',
+    message_type="text",
+    text="dummy_text",
 )
 
 dummy_group = Group(
@@ -166,13 +166,13 @@ def test_execute():
         hanchan_repository.create(dummy_hanchan)
 
     # Act
-    use_case.execute('2')
+    use_case.execute("2")
 
     # Assert
-    hanchans = hanchan_repository.find({'_id': 2})
+    hanchans = hanchan_repository.find({"_id": 2})
     assert len(hanchans) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '現在の対戦の第2半荘の結果を削除しました。'
+    assert reply_service.texts[0].text == "現在の対戦の第2半荘の結果を削除しました。"
 
 
 def test_execute_ignore_other_hanchans():
@@ -185,48 +185,56 @@ def test_execute_ignore_other_hanchans():
         hanchan_repository.create(dummy_hanchan)
 
     # Act
-    use_case.execute('4')
+    use_case.execute("4")
 
     # Assert
-    hanchans = hanchan_repository.find({'_id': 7})
+    hanchans = hanchan_repository.find({"_id": 7})
     assert len(hanchans) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '現在の対戦の第4半荘の結果を削除しました。'
+    assert reply_service.texts[0].text == "現在の対戦の第4半荘の結果を削除しました。"
 
 
 def test_execute_arg_int():
-    with pytest.raises(BaseException):
-        # Arrange
-        use_case = DropHanchanByIndexUseCase()
-        request_info_service.set_req_info(event=dummy_event)
-        group_repository.create(dummy_group)
-        match_repository.create(dummy_matches[0])
-        for dummy_hanchan in dummy_hanchans:
-            hanchan_repository.create(dummy_hanchan)
+    # Arrange
+    use_case = DropHanchanByIndexUseCase()
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(dummy_group)
+    match_repository.create(dummy_matches[0])
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
 
-        # Act
+    # Act
+    with pytest.raises(
+        AttributeError,
+        match="'int' object has no attribute 'isdigit'",
+    ):
         use_case.execute(1)
-    
+
     # Assert
     records_in_db = hanchan_repository.find()
     assert len(records_in_db) == 6
+
 
 def test_execute_no_arg():
-    with pytest.raises(BaseException):
-        # Arrange
-        use_case = DropHanchanByIndexUseCase()
-        request_info_service.set_req_info(event=dummy_event)
-        group_repository.create(dummy_group)
-        match_repository.create(dummy_matches[0])
-        for dummy_hanchan in dummy_hanchans:
-            hanchan_repository.create(dummy_hanchan)
+    # Arrange
+    use_case = DropHanchanByIndexUseCase()
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(dummy_group)
+    match_repository.create(dummy_matches[0])
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
 
-        # Act
+    # Act
+    with pytest.raises(
+        AttributeError,
+        match="'int' object has no attribute 'isdigit'",
+    ):
         use_case.execute(1)
 
     # Assert
     records_in_db = hanchan_repository.find()
     assert len(records_in_db) == 6
+
 
 def test_execute_arg_no_digit():
     # Arrange
@@ -238,13 +246,13 @@ def test_execute_arg_no_digit():
         hanchan_repository.create(dummy_hanchan)
 
     # Act
-    use_case.execute('test')
-    
+    use_case.execute("test")
+
     # Assert
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 6
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '引数は整数で指定してください。'
+    assert reply_service.texts[0].text == "引数は整数で指定してください。"
 
 
 def test_execute_no_group():
@@ -256,13 +264,16 @@ def test_execute_no_group():
         hanchan_repository.create(dummy_hanchan)
 
     # Act
-    use_case.execute('1')
+    use_case.execute("1")
 
     # Assert
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 6
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'トークルームが登録されていません。招待し直してください。'
+    assert (
+        reply_service.texts[0].text
+        == "トークルームが登録されていません。招待し直してください。"
+    )
 
 
 def test_execute_no_match():
@@ -280,26 +291,26 @@ def test_execute_no_match():
         hanchan_repository.create(dummy_hanchan)
 
     # Act
-    use_case.execute('1')
+    use_case.execute("1")
 
     # Assert
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 6
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '現在進行中の対戦がありません。'
+    assert reply_service.texts[0].text == "現在進行中の対戦がありません。"
 
 
 def test_execute_fail_get_active_match():
-    with pytest.raises(BaseException):
-        # Arrange
-        use_case = DropHanchanByIndexUseCase()
-        request_info_service.set_req_info(event=dummy_event)
-        group_repository.create(dummy_group)
-        for dummy_hanchan in dummy_hanchans:
-            hanchan_repository.create(dummy_hanchan)
+    # Arrange
+    use_case = DropHanchanByIndexUseCase()
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(dummy_group)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
 
-        # Act
-        use_case.execute('1')
+    # Act
+    with pytest.raises(BaseException):
+        use_case.execute("1")
 
     # Assert
     hanchans = hanchan_repository.find()
@@ -307,8 +318,7 @@ def test_execute_fail_get_active_match():
     assert len(reply_service.texts) == 0
 
 
-
-@pytest.fixture(params=['0', '5'])
+@pytest.fixture(params=["0", "5"])
 def text_case1(request):
     return request.param
 
@@ -329,4 +339,7 @@ def test_execute_out_of_index(text_case1):
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 6
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == f'このトークルームには全4回までしか登録されていないため第{text_case1}回はありません。'
+    assert (
+        reply_service.texts[0].text
+        == f"このトークルームには全4回までしか登録されていないため第{text_case1}回はありません。"
+    )

@@ -1,6 +1,7 @@
-from DomainModel.entities.GroupSetting import GroupSetting
 from datetime import datetime
-from bson.objectid import ObjectId
+
+from DomainModel.entities.GroupSetting import GroupSetting
+
 
 def test_success():
     # Arrange
@@ -18,7 +19,7 @@ def test_success():
         updated_at=datetime(2023, 1, 2, 3, 4, 5),
         _id=1,
     )
-    
+
     # Assert
     assert setting._id == 1
     assert setting.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
@@ -38,7 +39,7 @@ def test_success_default():
     setting = GroupSetting(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
     )
-    
+
     # Assert
     assert setting._id is None
     assert setting.line_group_id == "G0123456789abcdefghijklmnopqrstu2"

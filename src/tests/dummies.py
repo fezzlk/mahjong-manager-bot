@@ -1,21 +1,21 @@
+from datetime import datetime
 from typing import Dict, List
-from DomainModel.entities.User import User, UserMode
+
+from bson.objectid import ObjectId
+
 from DomainModel.entities.Group import Group, GroupMode
 from DomainModel.entities.GroupSetting import GroupSetting
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
+from DomainModel.entities.User import User, UserMode
 from DomainModel.entities.WebUser import WebUser
-
-from line_models.Profile import Profile
 from line_models.Event import Event
-from bson.objectid import ObjectId
-from datetime import datetime
+from line_models.Profile import Profile
 
-
-'''
+"""
     list 内の既存のインスタンスは変更禁止、追加のみ可能
     使用側では find などの特殊な場合を除いて [:3] などを使い追加に影響しないようにする
-'''
+"""
 
 
 def generate_dummy_user_list() -> List[User]:
@@ -81,7 +81,7 @@ def generate_dummy_user_list() -> List[User]:
 
 
 def generate_dummy_web_user_list() -> List[WebUser]:
-    dummy_web_users = [
+    return [
         WebUser(
             user_code="code1",
             name="name1",
@@ -113,7 +113,6 @@ def generate_dummy_web_user_list() -> List[WebUser]:
             user_code="code4",
         ),
     ]
-    return dummy_web_users
 
 
 def generate_dummy_group_list() -> List[Group]:
@@ -121,7 +120,7 @@ def generate_dummy_group_list() -> List[Group]:
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu1",
             mode=GroupMode.wait.value,
-            active_match_id=ObjectId('644c838186bbd9e20a91b785'),
+            active_match_id=ObjectId("644c838186bbd9e20a91b785"),
         ),
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu2",
@@ -171,7 +170,7 @@ def generate_dummy_group_setting_list() -> List[GroupSetting]:
             line_group_id="G0123456789abcdefghijklmnopqrstu5",
         ),
     ]
-    
+
 
 def generate_dummy_match_list() -> List[Match]:
     groups = generate_dummy_group_list()
@@ -180,71 +179,68 @@ def generate_dummy_match_list() -> List[Match]:
         Match(
             line_group_id=groups[0].line_group_id,
             status=2,
-            _id=ObjectId('644c838186bbd9e20a91b783'),
+            _id=ObjectId("644c838186bbd9e20a91b783"),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
             status=0,
-            _id=ObjectId('644c838186bbd9e20a91b784'),
+            _id=ObjectId("644c838186bbd9e20a91b784"),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
             status=2,
-            active_hanchan_id=ObjectId('644c838186bbd9e20a91b784'),
-            _id=ObjectId('644c838186bbd9e20a91b785'),
+            active_hanchan_id=ObjectId("644c838186bbd9e20a91b784"),
+            _id=ObjectId("644c838186bbd9e20a91b785"),
         ),
     ]
 
 
 def generate_dummy_hanchan_list() -> List[Hanchan]:
     groups = generate_dummy_group_list()
-    users = generate_dummy_user_list()
 
     return [
         Hanchan(
             line_group_id=groups[0].line_group_id,
-            match_id=ObjectId('644c838186bbd9e20a91b785'),
+            match_id=ObjectId("644c838186bbd9e20a91b785"),
             status=2,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
-            match_id=ObjectId('644c838186bbd9e20a91b785'),
+            match_id=ObjectId("644c838186bbd9e20a91b785"),
             status=0,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
-            match_id=ObjectId('644c838186bbd9e20a91b785'),
+            match_id=ObjectId("644c838186bbd9e20a91b785"),
             status=2,
         ),
     ]
 
 
-
-
 def generate_dummy_follow_event() -> Event:
     return Event(
-        type='follow',
-        source_type='user',
+        type="follow",
+        source_type="user",
         user_id=generate_dummy_user_list()[0].line_user_id,
     )
 
 
 def generate_dummy_unfollow_event() -> Event:
     return Event(
-        type='unfollow',
-        source_type='user',
+        type="unfollow",
+        source_type="user",
         user_id=generate_dummy_user_list()[0].line_user_id,
     )
 
 
 def generate_dummy_join_event() -> Event:
     return Event(
-        type='join',
-        source_type='group',
+        type="join",
+        source_type="group",
         user_id=generate_dummy_user_list()[0].line_user_id,
         group_id=generate_dummy_group_list()[0].line_group_id,
     )
@@ -252,36 +248,36 @@ def generate_dummy_join_event() -> Event:
 
 def generate_dummy_text_message_event_from_user() -> Event:
     return Event(
-        type='message',
-        source_type='user',
+        type="message",
+        source_type="user",
         user_id=generate_dummy_user_list()[0].line_user_id,
-        message_type='text',
-        text='dummy_text',
+        message_type="text",
+        text="dummy_text",
     )
 
 
 def generate_dummy_text_message_event_from_group() -> Event:
     return Event(
-        type='message',
-        source_type='group',
+        type="message",
+        source_type="group",
         user_id=generate_dummy_user_list()[0].line_user_id,
         group_id=generate_dummy_group_list()[0].line_group_id,
-        message_type='text',
-        text='dummy_text',
+        message_type="text",
+        text="dummy_text",
     )
 
 
 def generate_dummy_profile() -> Profile:
     return Profile(
-        display_name='dummy_display_name',
-        user_id='dummy_user_id',
+        display_name="dummy_display_name",
+        user_id="dummy_user_id",
     )
 
 
 def generate_dummy_points() -> Dict[str, int]:
     return {
-        'dummy_user1': 10000,
-        'dummy_user2': 20000,
-        'dummy_user3': 30000,
-        'dummy_user4': 40000,
+        "dummy_user1": 10000,
+        "dummy_user2": 20000,
+        "dummy_user3": 30000,
+        "dummy_user4": 40000,
     }

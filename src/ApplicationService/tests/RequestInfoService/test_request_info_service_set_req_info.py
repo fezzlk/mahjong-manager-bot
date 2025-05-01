@@ -1,8 +1,8 @@
 from ApplicationService.RequestInfoService import RequestInfoService
+from line_models.Event import Event
 from tests.dummies import (
     generate_dummy_follow_event,
 )
-from line_models.Event import Event
 
 
 def test_follow_event():
@@ -21,11 +21,11 @@ def test_message_event_from_user():
     # Arrange
     request_info_service = RequestInfoService()
     message_event = Event(
-        type='message',
-        source_type='user',
-        user_id='U0123456789abcdefghijklmnopqrstu1',
-        message_type='text',
-        text='dummy_text',
+        type="message",
+        source_type="user",
+        user_id="U0123456789abcdefghijklmnopqrstu1",
+        message_type="text",
+        text="dummy_text",
     )
 
     # Act
@@ -35,7 +35,7 @@ def test_message_event_from_user():
     assert request_info_service.req_line_user_id == message_event.source.user_id
     assert request_info_service.req_line_group_id is None
     assert request_info_service.mention_line_ids == []
-    assert request_info_service.message == 'dummy_text'
+    assert request_info_service.message == "dummy_text"
     assert request_info_service.method is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
@@ -45,12 +45,12 @@ def test_postback_event_from_user():
     # Arrange
     request_info_service = RequestInfoService()
     message_event = Event(
-        type='postback',
-        source_type='user',
-        user_id='U0123456789abcdefghijklmnopqrstu1',
-        message_type='text',
-        text='dummy_text',
-        postback_data='dumm_postback',
+        type="postback",
+        source_type="user",
+        user_id="U0123456789abcdefghijklmnopqrstu1",
+        message_type="text",
+        text="dummy_text",
+        postback_data="dummy_postback",
     )
 
     # Act
@@ -60,7 +60,7 @@ def test_postback_event_from_user():
     assert request_info_service.req_line_user_id == message_event.source.user_id
     assert request_info_service.req_line_group_id is None
     assert request_info_service.mention_line_ids == []
-    assert request_info_service.message == 'dumm_postback'
+    assert request_info_service.message == "dummy_postback"
     assert request_info_service.method is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
@@ -69,15 +69,15 @@ def test_postback_event_from_user():
 def test_message_event_from_room(mocker):
     # Arrange
     from ApplicationService import reply_service
-    mock = mocker.patch.object(reply_service, 'push_a_message')
+    mock = mocker.patch.object(reply_service, "push_a_message")
     request_info_service = RequestInfoService()
     message_event = Event(
-        type='message',
-        source_type='room',
-        user_id='U0123456789abcdefghijklmnopqrstu1',
-        group_id='G0123456789abcdefghijklmnopqrstu1',
-        message_type='text',
-        text='dummy_text',
+        type="message",
+        source_type="room",
+        user_id="U0123456789abcdefghijklmnopqrstu1",
+        group_id="G0123456789abcdefghijklmnopqrstu1",
+        message_type="text",
+        text="dummy_text",
     )
     # Act
     request_info_service.set_req_info(message_event)
@@ -86,7 +86,7 @@ def test_message_event_from_room(mocker):
     assert request_info_service.req_line_user_id == message_event.source.user_id
     assert request_info_service.req_line_group_id == message_event.source.room_id
     assert request_info_service.mention_line_ids == []
-    assert request_info_service.message == 'dummy_text'
+    assert request_info_service.message == "dummy_text"
     assert request_info_service.method is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
@@ -97,12 +97,12 @@ def test_message_event_from_group():
     # Arrange
     request_info_service = RequestInfoService()
     message_event = Event(
-        type='message',
-        source_type='group',
-        user_id='U0123456789abcdefghijklmnopqrstu1',
-        group_id='G0123456789abcdefghijklmnopqrstu1',
-        message_type='text',
-        text='dummy_text',
+        type="message",
+        source_type="group",
+        user_id="U0123456789abcdefghijklmnopqrstu1",
+        group_id="G0123456789abcdefghijklmnopqrstu1",
+        message_type="text",
+        text="dummy_text",
     )
     # Act
     request_info_service.set_req_info(message_event)
@@ -111,7 +111,7 @@ def test_message_event_from_group():
     assert request_info_service.req_line_user_id == message_event.source.user_id
     assert request_info_service.req_line_group_id == message_event.source.group_id
     assert request_info_service.mention_line_ids == []
-    assert request_info_service.message == 'dummy_text'
+    assert request_info_service.message == "dummy_text"
     assert request_info_service.method is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
@@ -121,13 +121,13 @@ def test_postback_event_from_group():
     # Arrange
     request_info_service = RequestInfoService()
     message_event = Event(
-        type='postback',
-        source_type='group',
-        user_id='U0123456789abcdefghijklmnopqrstu1',
-        group_id='G0123456789abcdefghijklmnopqrstu1',
-        message_type='text',
-        text='dummy_text',
-        postback_data='dumm_postback',
+        type="postback",
+        source_type="group",
+        user_id="U0123456789abcdefghijklmnopqrstu1",
+        group_id="G0123456789abcdefghijklmnopqrstu1",
+        message_type="text",
+        text="dummy_text",
+        postback_data="dummy_postback",
     )
 
     # Act
@@ -136,7 +136,7 @@ def test_postback_event_from_group():
     assert request_info_service.req_line_user_id == message_event.source.user_id
     assert request_info_service.req_line_group_id == message_event.source.group_id
     assert request_info_service.mention_line_ids == []
-    assert request_info_service.message == 'dumm_postback'
+    assert request_info_service.message == "dummy_postback"
     assert request_info_service.method is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
@@ -160,7 +160,8 @@ def test_postback_event_from_group():
 #     # Assert
 #     assert request_info_service.req_line_user_id == message_event.source.user_id
 #     assert request_info_service.req_line_group_id == message_event.source.group_id
-#     assert request_info_service.mention_line_ids == ['U0123456789abcdefghijklmnopqrstu2', 'U0123456789abcdefghijklmnopqrstu3']
+#     assert request_info_service.mention_line_ids ==
+#     ['U0123456789abcdefghijklmnopqrstu2', 'U0123456789abcdefghijklmnopqrstu3']
 #     assert request_info_service.message == 'dummy_text'
 #     assert request_info_service.method is None
 #     assert request_info_service.params == {}

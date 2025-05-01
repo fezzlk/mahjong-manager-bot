@@ -1,3 +1,3 @@
 class Postback:
-    def __init__(self, data=''):
+    def __init__(self, data=""):
         self.data = data

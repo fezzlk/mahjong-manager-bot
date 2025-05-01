@@ -1,8 +1,8 @@
+from repositories import hanchan_repository, match_repository
 from tests.dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
-from repositories import hanchan_repository, match_repository
 
 
 def test_hit_with_line_group_id():
@@ -21,7 +21,7 @@ def test_hit_with_line_group_id():
 
     # Act
     result = hanchan_repository.delete(
-        query={'line_group_id': {'$in': [dummy_hanchans[2].line_group_id]}},
+        query={"line_group_id": {"$in": [dummy_hanchans[2].line_group_id]}},
     )
 
     # Assert
@@ -53,7 +53,7 @@ def test_hit_0_record():
 
     # Act
     result = hanchan_repository.delete(
-        query={'line_group_id': {'$in': []}},
+        query={"line_group_id": {"$in": []}},
     )
 
     # Assert

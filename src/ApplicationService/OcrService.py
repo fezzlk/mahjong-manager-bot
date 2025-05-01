@@ -22,7 +22,7 @@
 #                 service_account_info)
 #             self.client = vision.ImageAnnotatorClient(credentials=credentials)
 
-#     def isResultImage(self) -> bool:
+#     def is_result_image(self) -> bool:
 #         if self.result is None:
 #             print(
 #                 'the requested image is not loaded(required execute self.run()'

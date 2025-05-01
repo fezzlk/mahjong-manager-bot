@@ -1,24 +1,23 @@
-from tests.dummies import (
-    generate_dummy_user_list,
-    generate_dummy_web_user_list,
-    generate_dummy_group_list,
-    generate_dummy_hanchan_list,
-    generate_dummy_match_list,
-    generate_dummy_group_setting_list,
-)
 from repositories import (
+    group_repository,
     group_setting_repository,
+    hanchan_repository,
+    match_repository,
     user_repository,
     web_user_repository,
-    hanchan_repository,
-    group_repository,
-    match_repository,
+)
+from tests.dummies import (
+    generate_dummy_group_list,
+    generate_dummy_group_setting_list,
+    generate_dummy_hanchan_list,
+    generate_dummy_match_list,
+    generate_dummy_user_list,
+    generate_dummy_web_user_list,
 )
 
 
 class CreateDummyUseCase:
     def execute(self) -> None:
-        
         users = generate_dummy_user_list()[:10]
         web_users = generate_dummy_web_user_list()[:4]
         groups = generate_dummy_group_list()[:5]

@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from DomainModel.entities.Hanchan import Hanchan
-from typing import Optional, List
+from typing import List, Optional
+
 from bson.objectid import ObjectId
+
+from DomainModel.entities.Hanchan import Hanchan
 
 
 class IHanchanService(metaclass=ABCMeta):
@@ -26,7 +28,7 @@ class IHanchanService(metaclass=ABCMeta):
     @abstractmethod
     def find_all_archived_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
         pass
-    
+
     @abstractmethod
     def find_all_archived_by_match_ids(self, match_ids: List[ObjectId]) -> List[Hanchan]:
         pass

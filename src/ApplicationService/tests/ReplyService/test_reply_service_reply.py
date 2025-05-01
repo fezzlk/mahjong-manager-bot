@@ -1,28 +1,28 @@
+from linebot.models import (
+    TextSendMessage,
+)
+
 from ApplicationService.ReplyService import ReplyService
+from messaging_api_setting import line_bot_api
 from tests.dummies import (
     generate_dummy_follow_event,
     generate_dummy_text_message_event_from_group,
     generate_dummy_text_message_event_from_user,
 )
-from linebot.models import (
-    TextSendMessage,
-)
-from messaging_api_setting import line_bot_api
-from linebot.exceptions import LineBotApiError
 
 
 def test_reply_to_user(mocker):
     # Arrange
     reply_service = ReplyService()
     dummy_event = generate_dummy_text_message_event_from_user()
-    dummy_text = 'dummy_text'
+    dummy_text = "dummy_text"
     reply_service.texts = [
-        TextSendMessage(text=dummy_text)
+        TextSendMessage(text=dummy_text),
     ]
 
     mock = mocker.patch.object(
         line_bot_api,
-        'reply_message',
+        "reply_message",
         return_value=None,
     )
 
@@ -38,14 +38,14 @@ def test_reply_to_group(mocker):
     # Arrange
     reply_service = ReplyService()
     dummy_event = generate_dummy_follow_event()
-    dummy_text = 'dummy_text'
+    dummy_text = "dummy_text"
     reply_service.texts = [
-        TextSendMessage(text=dummy_text)
+        TextSendMessage(text=dummy_text),
     ]
 
     mock = mocker.patch.object(
         line_bot_api,
-        'reply_message',
+        "reply_message",
         return_value=None,
     )
 

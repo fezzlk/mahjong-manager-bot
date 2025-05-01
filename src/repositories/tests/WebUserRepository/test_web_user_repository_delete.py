@@ -1,6 +1,6 @@
-from tests.dummies import generate_dummy_web_user_list
-from repositories import web_user_repository
 from DomainModel.entities.WebUser import WebUser
+from repositories import web_user_repository
+from tests.dummies import generate_dummy_web_user_list
 
 
 def test_hit_1_record():
@@ -14,7 +14,7 @@ def test_hit_1_record():
 
     # Act
     result = web_user_repository.delete(
-        query={'user_code': dummy_web_users[2].user_code},
+        query={"user_code": dummy_web_users[2].user_code},
     )
 
     # Assert
@@ -42,7 +42,7 @@ def test_hit_0_record():
 
     # Act
     result = web_user_repository.delete(
-        query={'user_code': {'$in': user_codes}},
+        query={"user_code": {"$in": user_codes}},
     )
 
     # Assert

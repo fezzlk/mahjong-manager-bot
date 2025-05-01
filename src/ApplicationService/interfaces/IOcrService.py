@@ -3,9 +3,8 @@ from typing import Dict
 
 
 class IOcrService(metaclass=ABCMeta):
-
     @abstractmethod
-    def isResultImage(self) -> bool:
+    def is_result_image(self) -> bool:
         pass
 
     @abstractmethod

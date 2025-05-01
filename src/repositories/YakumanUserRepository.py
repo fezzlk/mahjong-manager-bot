@@ -1,9 +1,11 @@
-from typing import List, Dict, Tuple
 from datetime import datetime
+from typing import Dict, List, Tuple
+
 from pymongo import ASCENDING
-from mongo_client import yakuman_users_collection
+
 from DomainModel.entities.YakumanUser import YakumanUser
 from DomainModel.IRepositories.IYakumanUserRepository import IYakumanUserRepository
+from mongo_client import yakuman_users_collection
 
 
 class YakumanUserRepository(IYakumanUserRepository):
@@ -13,8 +15,8 @@ class YakumanUserRepository(IYakumanUserRepository):
         new_record: YakumanUser,
     ) -> YakumanUser:
         new_dict = new_record.__dict__.copy()
-        new_dict['created_at'] = datetime.now()
-        new_dict.pop('_id')
+        new_dict["created_at"] = datetime.now()
+        new_dict.pop("_id")
         result = yakuman_users_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
         return new_record
@@ -24,14 +26,14 @@ class YakumanUserRepository(IYakumanUserRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
-        new_values['updated_at'] = datetime.now()
-        result = yakuman_users_collection.update_many(query, {'$set': new_values})
+        new_values["updated_at"] = datetime.now()
+        result = yakuman_users_collection.update_many(query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[YakumanUser]:
         records = yakuman_users_collection\
             .find(filter=query)\

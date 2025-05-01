@@ -1,9 +1,8 @@
-from enum import Enum
 from dataclasses import dataclass
-from bson.objectid import ObjectId
-from typing import Optional, List
 from datetime import datetime
+from typing import List
 
+from bson.objectid import ObjectId
 
 
 @dataclass()

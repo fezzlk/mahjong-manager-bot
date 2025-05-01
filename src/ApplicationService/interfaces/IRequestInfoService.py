@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+
 from linebot.models.events import Event
 
 

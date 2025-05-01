@@ -1,20 +1,24 @@
+from datetime import datetime
+
+import matplotlib.pyplot as plt
+
+import env_var
+from ApplicationService import (
+    reply_service,
+    request_info_service,
+)
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
 from DomainModel.entities.User import User
-from use_cases.group_line.CreateMatchDetailGraphUseCase import CreateMatchDetailGraphUseCase
-from ApplicationService import (
-    request_info_service,
-    reply_service,
-)
 from line_models.Event import Event
 from repositories import (
-    user_repository,
-    match_repository,
     hanchan_repository,
+    match_repository,
+    user_repository,
 )
-import matplotlib.pyplot as plt
-from datetime import datetime
-import env_var
+from use_cases.group_line.CreateMatchDetailGraphUseCase import (
+    CreateMatchDetailGraphUseCase,
+)
 
 dummy_matches = [
     Match(
@@ -29,7 +33,7 @@ dummy_matches = [
             "U0123456789abcdefghijklmnopqrstu4": -400,
             "U0123456789abcdefghijklmnopqrstu5": -300,
             "dummy": -300,
-        }
+        },
     ),
     Match(
         _id=2,
@@ -43,19 +47,19 @@ dummy_matches = [
             "U0123456789abcdefghijklmnopqrstu4": -400,
             "U0123456789abcdefghijklmnopqrstu5": -300,
             "dummy": -300,
-        }
+        },
     ),
     Match(
         _id=3,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=0,
-        created_at=datetime(2010, 1, 1, 1, 1, 3)
+        created_at=datetime(2010, 1, 1, 1, 1, 3),
     ),
     Match(
         _id=4,
         line_group_id="dummy",
         status=2,
-        created_at=datetime(2010, 1, 1, 1, 1, 4)
+        created_at=datetime(2010, 1, 1, 1, 1, 4),
     ),
 ]
 
@@ -70,7 +74,7 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu2": 20,
             "U0123456789abcdefghijklmnopqrstu3": -20,
             "U0123456789abcdefghijklmnopqrstu4": -10,
-        }
+        },
     ),
     Hanchan(
         _id=2,
@@ -82,7 +86,7 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu2": 20,
             "U0123456789abcdefghijklmnopqrstu3": -20,
             "U0123456789abcdefghijklmnopqrstu4": -10,
-        }
+        },
     ),
     Hanchan(
         _id=3,
@@ -94,7 +98,7 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu2": 20,
             "U0123456789abcdefghijklmnopqrstu3": -20,
             "U0123456789abcdefghijklmnopqrstu5": -10,
-        }
+        },
     ),
     Hanchan(
         _id=4,
@@ -106,7 +110,7 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu2": 20,
             "U0123456789abcdefghijklmnopqrstu3": -20,
             "dummy": -10,
-        }
+        },
     ),
     Hanchan(
         _id=5,
@@ -118,7 +122,7 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu2": 20,
             "U0123456789abcdefghijklmnopqrstu3": -20,
             "U0123456789abcdefghijklmnopqrstu4": -10,
-        }
+        },
     ),
 ]
 
@@ -151,12 +155,12 @@ dummy_users = [
 ]
 
 dummy_event = Event(
-    type='message',
-    source_type='group',
+    type="message",
+    source_type="group",
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
-    message_type='text',
-    text='_graph',
+    message_type="text",
+    text="_graph",
 )
 
 
@@ -165,12 +169,12 @@ def test_execute(mocker):
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
     )
 
     for dummy_match in dummy_matches:
@@ -186,27 +190,27 @@ def test_execute(mocker):
     result = use_case.execute(1)
 
     # Assert
-    assert result == f'{env_var.SERVER_URL}uploads/match_detail/1.png'
+    assert result == f"{env_var.SERVER_URL}uploads/match_detail/1.png"
 
 
 def test_execute_fail_savefig(mocker):
     # Arrange
     mock = mocker.patch.object(
         reply_service,
-        'push_a_message',
+        "push_a_message",
     )
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
         side_effect=FileNotFoundError(),
     )
-        
+
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -222,10 +226,10 @@ def test_execute_fail_savefig(mocker):
     # Assert
     assert len(reply_service.images) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'システムエラーが発生しました。'
+    assert reply_service.texts[0].text == "システムエラーが発生しました。"
     mock.assert_called_once_with(
         to=env_var.SERVER_ADMIN_LINE_USER_ID,
-        message='対戦履歴の画像アップロードに失敗しました\n送信者: test_user1',
+        message="対戦履歴の画像アップロードに失敗しました\n送信者: test_user1",
     )
 
 
@@ -233,20 +237,20 @@ def test_execute_fail_savefig_without_sender(mocker):
     # Arrange
     mock = mocker.patch.object(
         reply_service,
-        'push_a_message',
+        "push_a_message",
     )
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
         side_effect=FileNotFoundError(),
     )
-    
+
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -260,8 +264,8 @@ def test_execute_fail_savefig_without_sender(mocker):
     # Assert
     assert len(reply_service.images) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'システムエラーが発生しました。'
+    assert reply_service.texts[0].text == "システムエラーが発生しました。"
     mock.assert_called_once_with(
         to=env_var.SERVER_ADMIN_LINE_USER_ID,
-        message='対戦履歴の画像アップロードに失敗しました\n送信者: U0123456789abcdefghijklmnopqrstu1',
+        message="対戦履歴の画像アップロードに失敗しました\n送信者: U0123456789abcdefghijklmnopqrstu1",
     )

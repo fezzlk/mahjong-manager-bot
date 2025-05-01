@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, Optional
+
 from bson.objectid import ObjectId
 
-MATCH_STATUS = ['DISABLE', 'ACTIVE', 'ARCHIVE']
+MATCH_STATUS = ["DISABLE", "ACTIVE", "ARCHIVE"]
 
 
 @dataclass()

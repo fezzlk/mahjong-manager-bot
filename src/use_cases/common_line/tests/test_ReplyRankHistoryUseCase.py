@@ -1,25 +1,26 @@
-from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
-from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.Match import Match
-from DomainModel.entities.User import User, UserMode
-from DomainModel.entities.UserHanchan import UserHanchan
-from DomainModel.entities.Group import Group, GroupMode
-from repositories import (
-    user_repository,
-    user_hanchan_repository,
-    hanchan_repository,
-    match_repository,
-    group_repository,
-)
+from typing import Dict
+
+import matplotlib.pyplot as plt
+import pytest
+
 import env_var
 from ApplicationService import (
     reply_service,
     request_info_service,
 )
-import matplotlib.pyplot as plt
-import pytest
-from typing import Dict
-
+from DomainModel.entities.Group import Group, GroupMode
+from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Match import Match
+from DomainModel.entities.User import User, UserMode
+from DomainModel.entities.UserHanchan import UserHanchan
+from repositories import (
+    group_repository,
+    hanchan_repository,
+    match_repository,
+    user_hanchan_repository,
+    user_repository,
+)
+from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
 
 dummy_users = [
     User(
@@ -164,11 +165,11 @@ dummy_user_hanchans = [
 
 
 @ pytest.fixture(params=[
-    {'from': 'x'},
-    {'to': 'x'},
-    {'from': 'x', 'to': '20220101'},
-    {'from': '20220101', 'to': 'x'},
-    {'from': 'x', 'to': 'x'},
+    {"from": "x"},
+    {"to": "x"},
+    {"from": "x", "to": "20220101"},
+    {"from": "20220101", "to": "x"},
+    {"from": "x", "to": "x"},
 ])
 def case1(request) -> Dict[str, str]:
     return request.param
@@ -184,21 +185,21 @@ def test_ng_invalid_range_format(case1):
 
     # Assert
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == '日付は以下のフォーマットで入力してください。'
-    assert reply_service.texts[1].text == '[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD'
-     
+    assert reply_service.texts[0].text == "日付は以下のフォーマットで入力してください。"
+    assert reply_service.texts[1].text == "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD"
+
 
 def test_success(mocker):
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
     )
     use_case = ReplyRankHistoryUseCase()
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -220,9 +221,9 @@ def test_success(mocker):
     reply_service.reset()
 
 @ pytest.fixture(params=[
-    ({'from': '20230101'}, '範囲指定: 2023年01月01日0時から'),
-    ({'to': '20241231'}, '範囲指定: 2024年12月31日0時まで'),
-    ({'from': '20230101', 'to': '20241231'}, '範囲指定: 2023年01月01日0時から2024年12月31日0時まで'),
+    ({"from": "20230101"}, "範囲指定: 2023年01月01日0時から"),
+    ({"to": "20241231"}, "範囲指定: 2024年12月31日0時まで"),
+    ({"from": "20230101", "to": "20241231"}, "範囲指定: 2023年01月01日0時から2024年12月31日0時まで"),
 ])
 def case2(request) -> Dict[str, str]:
     return request.param
@@ -232,12 +233,12 @@ def test_success_with_range(mocker, case2):
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
     )
     use_case = ReplyRankHistoryUseCase()
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
@@ -265,12 +266,12 @@ def test_success_no_user_hanchan(mocker):
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
     )
 
     use_case = ReplyRankHistoryUseCase()
@@ -294,17 +295,17 @@ def test_success_fail_savefig(mocker):
     # Arrange
     mock = mocker.patch.object(
         reply_service,
-        'push_a_message',
+        "push_a_message",
     )
     fig, ax = plt.subplots()
     mocker.patch.object(
         plt,
-        'subplots',
+        "subplots",
         return_value=(fig, ax),
     )
     mocker.patch.object(
         fig,
-        'savefig',
+        "savefig",
         side_effect=FileNotFoundError(),
     )
 
@@ -325,8 +326,8 @@ def test_success_fail_savefig(mocker):
     # Assert
     assert len(reply_service.images) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'システムエラーが発生しました。'
+    assert reply_service.texts[0].text == "システムエラーが発生しました。"
     mock.assert_called_once_with(
         to=env_var.SERVER_ADMIN_LINE_USER_ID,
-        message='順位履歴の画像アップロードに失敗しました\n送信者: test_user1',
+        message="順位履歴の画像アップロードに失敗しました\n送信者: test_user1",
     )

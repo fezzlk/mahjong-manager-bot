@@ -1,11 +1,11 @@
+from ApplicationService import (
+    reply_service,
+    request_info_service,
+)
 from tests.dummies import (
     generate_dummy_text_message_event_from_user,
 )
 from use_cases.personal_line.ReplyUserHelpUseCase import ReplyUserHelpUseCase
-from ApplicationService import (
-    request_info_service,
-    reply_service,
-)
 
 
 def test_execute():
@@ -16,7 +16,7 @@ def test_execute():
     use_case = ReplyUserHelpUseCase()
 
     # Act
-    use_case.execute([])
+    use_case.execute()
 
     # Assert
     assert len(reply_service.texts) == 1

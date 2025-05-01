@@ -18,8 +18,8 @@ def test_hit_1_record():
 
     # Act
     result = group_repository.update(
-        query={'line_group_id': before.line_group_id},
-        new_values={'line_group_id': after.line_group_id},
+        query={"line_group_id": before.line_group_id},
+        new_values={"line_group_id": after.line_group_id},
     )
 
     # Assert
@@ -36,7 +36,7 @@ def test_hit_0_record():
     # Act
     result = group_repository.update(
         query={},
-        new_values={'line_group_id': after.line_group_id},
+        new_values={"line_group_id": after.line_group_id},
     )
 
     # Assert
