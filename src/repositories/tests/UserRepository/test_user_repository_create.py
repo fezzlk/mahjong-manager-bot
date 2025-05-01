@@ -17,7 +17,7 @@ def test_success():
 
     # Assert
     assert isinstance(result, User)
-    assert type(result._id) == ObjectId
+    assert type(result._id) is ObjectId
     assert result.line_user_name == dummy_user.line_user_name
     assert result.line_user_id == dummy_user.line_user_id
     assert result.mode == dummy_user.mode
@@ -25,7 +25,7 @@ def test_success():
 
     record_on_db = user_repository.find()
     assert len(record_on_db) == 1
-    assert type(record_on_db[0]._id) == ObjectId
+    assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].line_user_name == dummy_user.line_user_name
     assert record_on_db[0].line_user_id == dummy_user.line_user_id
     assert record_on_db[0].mode == dummy_user.mode

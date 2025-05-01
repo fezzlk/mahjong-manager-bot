@@ -20,7 +20,7 @@ def test_success_find_records():
     assert len(result) == len(dummy_group_settings)
     for i in range(len(result)):
         assert isinstance(result[i], GroupSetting)
-        assert type(result[i]._id) == ObjectId
+        assert type(result[i]._id) is ObjectId
         assert result[i].line_group_id == dummy_group_settings[i].line_group_id
         assert result[i].ranking_prize == dummy_group_settings[i].ranking_prize
         assert result[i].tip_rate == dummy_group_settings[i].tip_rate
@@ -65,7 +65,7 @@ def test_hit_1_record():
     # Assert
     assert len(result) == 1
     assert isinstance(result[0], GroupSetting)
-    assert type(result[0]._id) == ObjectId
+    assert type(result[0]._id) is ObjectId
     assert result[0].line_group_id == target_group.line_group_id
     assert result[0].ranking_prize == target_group.ranking_prize
     assert result[0].tip_rate == target_group.tip_rate

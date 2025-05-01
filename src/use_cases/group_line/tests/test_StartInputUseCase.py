@@ -31,6 +31,7 @@ dummy_event = Event(
     text="_input",
 )
 
+
 def test_execute_no_group():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
@@ -42,7 +43,10 @@ def test_execute_no_group():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "トークルームが登録されていません。招待し直してください。"
+    assert (
+        reply_service.texts[0].text
+        == "トークルームが登録されていません。招待し直してください。"
+    )
 
 
 def test_execute_input_mode():
@@ -81,8 +85,13 @@ def test_execute_new_match():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "第1回戦お疲れ様です。各自点数を入力してください。\n（同点の場合は上家が高くなるように数点追加してください）"
-    groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
+    assert (
+        reply_service.texts[0].text
+        == "第1回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)"
+    )
+    groups = group_repository.find(
+        {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
+    )
     assert len(groups) == 1
     assert groups[0].active_match_id is not None
     matches = match_repository.find()
@@ -107,18 +116,25 @@ def test_execute_new_hanchan():
     ]
     for dummy_group in dummy_groups2:
         group_repository.create(dummy_group)
-    match_repository.create(Match(
-        _id=1,
-        line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    ))
+    match_repository.create(
+        Match(
+            _id=1,
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        ),
+    )
 
     # Act
     use_case.execute()
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "第1回戦お疲れ様です。各自点数を入力してください。\n（同点の場合は上家が高くなるように数点追加してください）"
-    groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
+    assert (
+        reply_service.texts[0].text
+        == "第1回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)"
+    )
+    groups = group_repository.find(
+        {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
+    )
     assert len(groups) == 1
     assert groups[0].active_match_id is not None
     matches = match_repository.find()
@@ -143,24 +159,33 @@ def test_execute_with_hanchan():
     ]
     for dummy_group in dummy_groups2:
         group_repository.create(dummy_group)
-    match_repository.create(Match(
-        _id=1,
-        line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        active_hanchan_id=1,
-    ))
-    hanchan_repository.create(Hanchan(
-        line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        match_id=1,
-        _id=1,
-    ))
+    match_repository.create(
+        Match(
+            _id=1,
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            active_hanchan_id=1,
+        ),
+    )
+    hanchan_repository.create(
+        Hanchan(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            match_id=1,
+            _id=1,
+        ),
+    )
 
     # Act
     use_case.execute()
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "第1回戦お疲れ様です。各自点数を入力してください。\n（同点の場合は上家が高くなるように数点追加してください）"
-    groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
+    assert (
+        reply_service.texts[0].text
+        == "第1回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)"
+    )
+    groups = group_repository.find(
+        {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
+    )
     assert len(groups) == 1
     assert groups[0].active_match_id is not None
     matches = match_repository.find()
@@ -168,4 +193,3 @@ def test_execute_with_hanchan():
     assert matches[0].active_hanchan_id is not None
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 1
-

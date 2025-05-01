@@ -14,7 +14,6 @@ def test_hit_with_line_group_id():
         match_repository.create(
             dummy_match,
         )
-    other_match = dummy_matches[2]
     target_match = dummy_matches[0]
 
     # Act
@@ -35,10 +34,9 @@ def test_hit_0_record():
         match_repository.create(
             dummy_match,
         )
-    target_matches:List[Match] = []
+    target_matches: List[Match] = []
     target_matches.append(dummy_matches[0])
     target_matches.append(dummy_matches[2])
-
 
     # Act
     result = match_repository.delete(

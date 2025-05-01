@@ -22,10 +22,9 @@ def test_success_find_records():
         hanchan_repository.create(
             dummy_hanchan,
         )
-    target_hanchans:List[Hanchan] = []
+    target_hanchans: List[Hanchan] = []
     target_hanchans.append(dummy_hanchans[0])
     target_hanchans.append(dummy_hanchans[2])
-
 
     # Act
     result = hanchan_repository.find()
@@ -34,7 +33,7 @@ def test_success_find_records():
     assert len(result) == len(target_hanchans)
     for i in range(len(result)):
         assert isinstance(result[i], Hanchan)
-        assert type(result[0]._id) == ObjectId
+        assert type(result[0]._id) is ObjectId
         assert result[i].line_group_id == target_hanchans[i].line_group_id
         assert result[i].match_id == target_hanchans[i].match_id
         assert result[i].raw_scores == target_hanchans[i].raw_scores
@@ -67,7 +66,7 @@ def test_hit_1_record():
     # Assert
     assert len(result) == 1
     assert isinstance(result[0], Hanchan)
-    assert type(result[0]._id) == ObjectId
+    assert type(result[0]._id) is ObjectId
     assert result[0].line_group_id == target_hanchan.line_group_id
     assert result[0].match_id == target_hanchan.match_id
     assert result[0].raw_scores == target_hanchan.raw_scores

@@ -14,17 +14,19 @@ class GraphService(IGraphService):
         upload_file_path: str,
     ) -> Tuple[str, str]:
         # グラフ描画
-        import matplotlib
+        import matplotlib as mpl
         import matplotlib.pyplot as plt
         from matplotlib.ticker import MaxNLocator
-        matplotlib.use("agg")
+
+        mpl.use("agg")
 
         fig, ax = plt.subplots()
         for line_id in line_id_name_dict:
             plt.plot(
                 range(len(plot_dict[line_id])),
                 plot_dict[line_id],
-                label=line_id_name_dict[line_id])
+                label=line_id_name_dict[line_id],
+            )
 
         plt.grid(which="major", axis="y")
         plt.legend()

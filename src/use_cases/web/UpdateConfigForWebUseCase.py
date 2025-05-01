@@ -5,7 +5,6 @@ from repositories import group_setting_repository, session_scope
 
 
 class UpdateConfigForWebUseCase:
-
     def execute(self) -> None:
         form = request.form
         updated = Config(
@@ -13,6 +12,6 @@ class UpdateConfigForWebUseCase:
             key=form["key"],
             value=form["value"],
             _id=int(form["_id"]),
-        ),
+        )
         with session_scope() as session:
             return group_setting_repository.update(session, updated)

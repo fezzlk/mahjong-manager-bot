@@ -11,7 +11,6 @@ from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
 
 
 class FinishInputTipUseCase:
-
     def execute(self) -> None:
         line_group_id = request_info_service.req_line_group_id
         group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
@@ -32,7 +31,7 @@ class FinishInputTipUseCase:
 
         if sum_tip_count != 0:
             reply_service.add_message(
-                f'チップ増減数の合計が{("+" if sum_tip_count > 0 else "") + str(sum_tip_count)}です。0になるようにしてください。）',
+                f"チップ増減数の合計が{('+' if sum_tip_count > 0 else '') + str(sum_tip_count)}です。0になるようにしてください。)",
             )
             return
 

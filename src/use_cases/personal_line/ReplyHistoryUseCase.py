@@ -17,7 +17,6 @@ from repositories import (
 
 
 class ReplyHistoryUseCase:
-
     def execute(self) -> None:
         req_line_id = request_info_service.req_line_user_id
 
@@ -38,15 +37,17 @@ class ReplyHistoryUseCase:
         to_dt, to_is_invalid = message_service.parse_date_from_text(to_str)
         if from_is_invalid or to_is_invalid:
             reply_service.add_message("日付は以下のフォーマットで入力してください。")
-            reply_service.add_message("[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD")
+            reply_service.add_message(
+                "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD",
+            )
             return
-        umList = user_match_service.find_all_by_user_id_list(
+        um_list = user_match_service.find_all_by_user_id_list(
             [users[0]._id],
             from_dt=from_dt,
             to_dt=to_dt,
         )
         matches = match_service.find_all_for_graph(
-            ids=[um.match_id for um in umList],
+            ids=[um.match_id for um in um_list],
         )
 
         if len(matches) == 0:
@@ -55,14 +56,17 @@ class ReplyHistoryUseCase:
             )
             return
         all_hanchans = hanchan_repository.find(
-            query={"$and": [
-                {"match_id": {"$in": [match._id for match in matches]}},
-                {"status": 2},
-            ]},
+            query={
+                "$and": [
+                    {"match_id": {"$in": [match._id for match in matches]}},
+                    {"status": 2},
+                ],
+            },
         )
 
         if len(all_hanchans) == 0:
-            raise ValueError("半荘情報を取得できませんでした。")
+            error_message = "半荘情報を取得できませんでした。"
+            raise ValueError(error_message)
 
         range_message = message_service.create_range_message(from_dt, to_dt)
         if range_message is not None:
@@ -76,13 +80,14 @@ class ReplyHistoryUseCase:
 
         for match in matches:
             score = 0
-            for hanchan in [hanchan for hanchan in all_hanchans if hanchan.match_id == match._id]:
+            for hanchan in [
+                hanchan for hanchan in all_hanchans if hanchan.match_id == match._id
+            ]:
                 if req_line_id in hanchan.converted_scores:
                     score += hanchan.converted_scores[req_line_id]
             total += score
-            strScore = ("+" + str(score)) if score > 0 else str(score)
-            message += match.created_at.strftime(
-                "%Y/%m/%d") + ": " + strScore + "\n"
+            str_score = ("+" + str(score)) if score > 0 else str(score)
+            message += match.created_at.strftime("%Y/%m/%d") + ": " + str_score + "\n"
 
             history[match.created_at] = total
 
@@ -92,14 +97,15 @@ class ReplyHistoryUseCase:
         )
 
         # 合計
-        strTotal = ("+" + str(total)) if total > 0 else str(total)
+        str_total = ("+" + str(total)) if total > 0 else str(total)
         reply_service.add_message(
-            "累計: " + strTotal,
+            "累計: " + str_total,
         )
 
         # グラフ描画
         # 初回値に0を追加、最後尾には指定された範囲の最終日または現在時点のスコアを追加
         from datetime import timedelta
+
         if to_dt is None:
             to_dt = datetime.now()
         history[to_dt] = total
@@ -116,16 +122,23 @@ class ReplyHistoryUseCase:
             x.append(k)
             y.append(v)
 
-        import matplotlib
+        import matplotlib as mpl
         import matplotlib.dates as mdates
         import matplotlib.pyplot as plt
-        matplotlib.use("agg")
+
+        mpl.use("agg")
 
         fig, ax = plt.subplots()
         plt.step(history.keys(), history.values(), where="mid")
 
         plt.grid(which="major", axis="y")
-        plt.xlim([start_date - timedelta(minutes=2), end_date + timedelta(seconds=(end_date - start_date).total_seconds() // 100)])
+        plt.xlim(
+            [
+                start_date - timedelta(minutes=2),
+                end_date
+                + timedelta(seconds=(end_date - start_date).total_seconds() // 100),
+            ],
+        )
         plt.xticks(rotation=30)
         # locator = mdates.DayLocator()
         # ax.xaxis.set_major_locator(locator)

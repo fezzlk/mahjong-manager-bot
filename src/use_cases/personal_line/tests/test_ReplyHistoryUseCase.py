@@ -84,16 +84,25 @@ def test_execute_no_user():
 
     # Assert
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "ユーザーが登録されていません。友達追加してください。"
-    assert reply_service.texts[1].text == "既に友達の場合は一度ブロックして、ブロック解除を行ってください。"
+    assert (
+        reply_service.texts[0].text
+        == "ユーザーが登録されていません。友達追加してください。"
+    )
+    assert (
+        reply_service.texts[1].text
+        == "既に友達の場合は一度ブロックして、ブロック解除を行ってください。"
+    )
 
-@pytest.fixture(params=[
-    {"from": "x"},
-    {"to": "x"},
-    {"from": "x", "to": "20220101"},
-    {"from": "20220101", "to": "x"},
-    {"from": "x", "to": "x"},
-])
+
+@pytest.fixture(
+    params=[
+        {"from": "x"},
+        {"to": "x"},
+        {"from": "x", "to": "20220101"},
+        {"from": "20220101", "to": "x"},
+        {"from": "x", "to": "x"},
+    ],
+)
 def case1(request) -> Dict[str, str]:
     return request.param
 
@@ -112,7 +121,10 @@ def test_execute_invalid_range_format(case1):
     # Assert
     assert len(reply_service.texts) == 2
     assert reply_service.texts[0].text == "日付は以下のフォーマットで入力してください。"
-    assert reply_service.texts[1].text == "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD"
+    assert (
+        reply_service.texts[1].text
+        == "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD"
+    )
 
 
 def test_execute_not_match():
@@ -131,29 +143,30 @@ def test_execute_not_match():
 
 
 def test_fail_get_hanchans():
-    with pytest.raises(ValueError):
-        # Arrange
-        user = user_repository.create(dummy_user)
-        match_repository.create(dummy_match)
+    # Arrange
+    user = user_repository.create(dummy_user)
+    match_repository.create(dummy_match)
 
-        dummy_user_match = UserMatch(
-            user_id=user._id,
-            match_id=dummy_match._id,
-        )
-        user_match_repository.create(dummy_user_match)
+    dummy_user_match = UserMatch(
+        user_id=user._id,
+        match_id=dummy_match._id,
+    )
+    user_match_repository.create(dummy_user_match)
 
-        request_info_service.req_line_user_id = dummy_user.line_user_id
-        use_case = ReplyHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_user.line_user_id
+    use_case = ReplyHistoryUseCase()
 
-        # Act
+    # Act
+    with pytest.raises(ValueError, match="expected error message"):
         use_case.execute()
 
-        # Assert
+    # Assert
 
 
 def test_execute(mocker):
     # Arrange
     import matplotlib.pyplot as plt
+
     fig = plt.figure()
     mocker.patch.object(
         plt,
@@ -188,11 +201,16 @@ def test_execute(mocker):
     assert len(reply_service.images) == 1
 
 
-@pytest.fixture(params=[
-    ({"from": "20230101"}, "範囲指定: 2023年01月01日0時から"),
-    ({"to": "20241231"}, "範囲指定: 2024年12月31日0時まで"),
-    ({"from": "20230101", "to": "20241231"}, "範囲指定: 2023年01月01日0時から2024年12月31日0時まで"),
-])
+@pytest.fixture(
+    params=[
+        ({"from": "20230101"}, "範囲指定: 2023年01月01日0時から"),
+        ({"to": "20241231"}, "範囲指定: 2024年12月31日0時まで"),
+        (
+            {"from": "20230101", "to": "20241231"},
+            "範囲指定: 2023年01月01日0時から2024年12月31日0時まで",
+        ),
+    ],
+)
 def case2(request) -> Dict[str, str]:
     return request.param
 
@@ -200,6 +218,7 @@ def case2(request) -> Dict[str, str]:
 def test_execute_with_range(mocker, case2):
     # Arrange
     import matplotlib.pyplot as plt
+
     fig = plt.figure()
     mocker.patch.object(
         plt,
@@ -241,6 +260,7 @@ def test_execute_with_range(mocker, case2):
 def test_fail_file_upload(mocker):
     # Arrange
     import matplotlib.pyplot as plt
+
     fig = plt.figure()
     mock = mocker.patch.object(
         reply_service,

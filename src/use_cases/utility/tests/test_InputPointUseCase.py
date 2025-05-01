@@ -22,8 +22,7 @@ def test_execute():
 def test_execute_with_mention():
     # Arrange
     use_case = InputPointUseCase()
-    request_info_service.mention_line_ids = [
-        "U0123456789abcdefghijklmnopqrstu1"]
+    request_info_service.mention_line_ids = ["U0123456789abcdefghijklmnopqrstu1"]
 
     # Act
     result = use_case.execute(text="@test_user1 1000")
@@ -33,7 +32,8 @@ def test_execute_with_mention():
     assert result[1] == 1000
 
 
-def test_execute_multi_mentions():
+def test_execute_multi_mentions() -> None:
+    """Test the execute method when multiple mentions are included in the input text."""
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.mention_line_ids = [
@@ -47,12 +47,16 @@ def test_execute_multi_mentions():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
-    assert reply_service.texts[0].text == "メンションは1回につき1人を指定するようにしてください。"
+    assert (
+        reply_service.texts[0].text
+        == "メンションは1回につき1人を指定するようにしてください。"
+    )
     assert result[0] is None
     assert result[1] is None
 
 
-def test_execute_with_comma():
+def test_execute_with_comma() -> None:
+    """Test the execute method when the input text includes a comma in the point value."""
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = "test_group_id"
@@ -66,7 +70,8 @@ def test_execute_with_comma():
     assert result[1] == 1000
 
 
-def test_execute_minus():
+def test_execute_minus() -> None:
+    """Test the execute method when the input text is a negative integer point."""
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = "test_group_id"
@@ -80,7 +85,8 @@ def test_execute_minus():
     assert result[1] == -1000
 
 
-def test_execute_drop():
+def test_execute_drop() -> None:
+    """Test the execute method when the input text is a drop symbol."""
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = "test_group_id"
@@ -94,13 +100,13 @@ def test_execute_drop():
     assert result[1] is None
 
 
-def test_execute_drop_with_mention():
+def test_execute_drop_with_mention() -> None:
+    """Test the execute method when the input text includes a mention and a drop symbol."""
     # Arrange
     use_case = InputPointUseCase()
     request_info_service.req_line_group_id = "test_group_id"
     request_info_service.req_line_user_id = "test_userid"
-    request_info_service.mention_line_ids = [
-        "U0123456789abcdefghijklmnopqrstu1"]
+    request_info_service.mention_line_ids = ["U0123456789abcdefghijklmnopqrstu1"]
 
     # Act
     result = use_case.execute(text="@test -")
@@ -110,7 +116,8 @@ def test_execute_drop_with_mention():
     assert result[1] is None
 
 
-def test_execute_not_int_point():
+def test_execute_not_int_point() -> None:
+    """Test the execute method when the input text is not an integer point."""
     # Arrange
     use_case = InputPointUseCase()
 
@@ -122,11 +129,14 @@ def test_execute_not_int_point():
     assert result[1] is None
 
 
-def test_execute_not_int_point_with_mention():
+def test_execute_not_int_point_with_mention() -> None:
+    """Test the execute method when the input text is not an integer point.
+
+    and includes a mention.
+    """
     # Arrange
     use_case = InputPointUseCase()
-    request_info_service.mention_line_ids = [
-        "U0123456789abcdefghijklmnopqrstu1"]
+    request_info_service.mention_line_ids = ["U0123456789abcdefghijklmnopqrstu1"]
 
     # Act
     result = use_case.execute(text="@test_user1 hoge")
@@ -134,4 +144,3 @@ def test_execute_not_int_point_with_mention():
     # Assert
     assert result[0] is None
     assert result[1] is None
-

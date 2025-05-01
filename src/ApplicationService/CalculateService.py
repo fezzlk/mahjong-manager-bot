@@ -15,7 +15,8 @@ class CalculateService(ICalculateService):
         tobashita_player_id: str = None,
     ) -> Dict[str, int]:
         sorted_points: list[tuple[str, int]] = sorted(
-            points.items(), key=lambda x: x[1], reverse=True)
+            points.items(), key=lambda x: x[1], reverse=True,
+        )
         sorted_prize = sorted(
             ranking_prize,
             reverse=True,
@@ -25,14 +26,14 @@ class CalculateService(ICalculateService):
             sorted_points,
             rounding_method=rounding_method,
         )
-        isTobi = not (tobashita_player_id is None or tobashita_player_id == "")
+        is_tobi = not (tobashita_player_id is None or tobashita_player_id == "")
 
         # 順位点、飛び賞加算
         for i, t in enumerate(sorted_points):
             # 順位点
             result[t[0]] += sorted_prize[i]
             # 飛び賞
-            if isTobi:
+            if is_tobi:
                 if t[0] in tobasare_players:
                     result[t[0]] -= tobi_prize
                 if t[0] == tobashita_player_id:
@@ -72,14 +73,15 @@ class CalculateService(ICalculateService):
             player = t[0]
             point = t[1]
             # 点数がマイナスの場合、飛ばされたプレイヤーリストに追加する
-            if (point < 0):
+            if point < 0:
                 tobasare_players.append(player)
 
             # 3万点切り上げ切り捨ての場合、一時的に30000点を引き、int の丸めを利用する
             # ex. 切り上げ: int(-10100/1000) -> -10000, 切り捨て: int(10100/1000) -> 10000
             # その他の場合、マイナス点の場合の丸め方をプラスの丸め方に合わせるため、一時的に100000足す
-            converted_score[player] = int(
-                (point + adjuster + padding) / 1000) - 30 - (adjuster // 1000)
+            converted_score[player] = (
+                int((point + adjuster + padding) / 1000) - 30 - (adjuster // 1000)
+            )
 
         # 1位(他プレイヤーの点数合計×(-1))
         converted_score[sorted_points[0][0]] = -1 * sum(converted_score.values())

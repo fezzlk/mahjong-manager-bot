@@ -16,14 +16,14 @@ from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase
 
 
 def test_fail_no_line_group_id():
-    with pytest.raises(ValueError):
-        # Arrange
-        use_case = JoinGroupUseCase()
+    # Arrange
+    use_case = JoinGroupUseCase()
 
-        # Act
+    # Act
+    with pytest.raises(ValueError, match="Expected error message here"):
         use_case.execute()
 
-        # Assert
+    # Assert
 
 
 def test_execute():
@@ -45,8 +45,16 @@ def test_execute():
     assert isinstance(reply_service.texts[0], TextSendMessage)
     assert isinstance(reply_service.texts[1], TextSendMessage)
     assert isinstance(reply_service.texts[2], TextSendMessage)
-    assert reply_service.texts[0].text == "麻雀の成績管理Botです。参加者は友達登録してください。"
-    assert reply_service.texts[1].text == "1半荘が終了したら下のメニューの「結果を入力」を押し、それぞれ素点を入力して下さい。"
-    assert reply_service.texts[2].text == "レートや点数計算方法は「設定」で変更可能です。"
+    assert (
+        reply_service.texts[0].text
+        == "麻雀の成績管理Botです。参加者は友達登録してください。"
+    )
+    assert (
+        reply_service.texts[1].text
+        == "1半荘が終了したら下のメニューの「結果を入力」を押し、それぞれ素点を入力して下さい。"
+    )
+    assert (
+        reply_service.texts[2].text == "レートや点数計算方法は「設定」で変更可能です。"
+    )
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateSendMessage)

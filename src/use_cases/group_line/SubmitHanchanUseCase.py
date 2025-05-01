@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from ApplicationService import (
     calculate_service,
@@ -27,10 +27,9 @@ from repositories import (
 
 
 class SubmitHanchanUseCase:
-
     def execute(
         self,
-        tobashita_player_id: str = None,
+        tobashita_player_id: Optional[str] = None,
     ) -> None:
         # 得点計算の準備および結果の格納
         line_group_id = request_info_service.req_line_group_id
@@ -80,10 +79,17 @@ class SubmitHanchanUseCase:
 
         # 飛び賞が発生した場合、飛び賞を受け取るプレイヤーを指定するメニューを返す
         if any(x < 0 for x in points.values()) and tobashita_player_id is None:
-            reply_service.add_tobi_menu([
-                {"_id": p_id, "name": user_service.get_name_by_line_user_id(p_id) or "友達未登録" }
-                for p_id in points.keys() if points[p_id] > 0
-            ])
+            reply_service.add_tobi_menu(
+                [
+                    {
+                        "_id": p_id,
+                        "name": user_service.get_name_by_line_user_id(p_id)
+                        or "友達未登録",
+                    }
+                    for p_id in points
+                    if points[p_id] > 0
+                ],
+            )
             return
 
         # config の取得
@@ -133,7 +139,9 @@ class SubmitHanchanUseCase:
             user_match_repository.create(user_match)
 
         # 半荘合計の更新
-        hanchans = hanchan_service.find_all_archived_by_match_id(active_hanchan.match_id)
+        hanchans = hanchan_service.find_all_archived_by_match_id(
+            active_hanchan.match_id,
+        )
 
         sum_scores: Dict[str, int] = {}
         for h in hanchans:
@@ -149,15 +157,18 @@ class SubmitHanchanUseCase:
 
         # UserHanchan の作成
         sorted_points: list[tuple[str, int]] = sorted(
-            active_hanchan.raw_scores.items(), key=lambda x: x[1], reverse=True)
+            active_hanchan.raw_scores.items(), key=lambda x: x[1], reverse=True,
+        )
         for i in range(len(sorted_points)):
             line_id, point = sorted_points[i]
-            user_hanchan_repository.create(UserHanchan(
-                line_user_id=line_id,
-                hanchan_id=active_hanchan._id,
-                point=point,
-                rank=i+1,
-            ))
+            user_hanchan_repository.create(
+                UserHanchan(
+                    line_user_id=line_id,
+                    hanchan_id=active_hanchan._id,
+                    point=point,
+                    rank=i + 1,
+                ),
+            )
 
         # 結果の表示
         reply_service.add_message("一半荘お疲れ様でした。結果を表示します。")

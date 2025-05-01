@@ -36,13 +36,13 @@ def test_success():
 
     # Assert
     assert isinstance(result, UserMatch)
-    assert type(result._id) == ObjectId
+    assert type(result._id) is ObjectId
     assert result.user_id == dummy_user_match.user_id
     assert result.match_id == dummy_user_match.match_id
 
     record_on_db = user_match_repository.find()
     assert len(record_on_db) == 1
-    assert type(record_on_db[0]._id) == ObjectId
+    assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].user_id == dummy_user_match.user_id
     assert record_on_db[0].match_id == dummy_user_match.match_id
 

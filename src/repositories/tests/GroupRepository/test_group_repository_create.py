@@ -17,14 +17,14 @@ def test_success():
 
     # Assert
     assert isinstance(result, Group)
-    assert type(result._id) == ObjectId
+    assert type(result._id) is ObjectId
     assert result.line_group_id == dummy_group.line_group_id
     assert result.mode == dummy_group.mode
 
     record_on_db = group_repository.find()
 
     assert len(record_on_db) == 1
-    assert type(record_on_db[0]._id) == ObjectId
+    assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].line_group_id == dummy_group.line_group_id
     assert record_on_db[0].mode == dummy_group.mode
 
@@ -50,7 +50,7 @@ def test_success_with_id():
     record_on_db = group_repository.find()
 
     assert len(record_on_db) == 1
-    assert type(record_on_db[0]._id) == ObjectId
+    assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].line_group_id == dummy_group.line_group_id
     assert record_on_db[0].mode == dummy_group.mode
 

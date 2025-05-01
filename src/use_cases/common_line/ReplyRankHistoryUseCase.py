@@ -1,6 +1,6 @@
 from itertools import groupby
 
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 import env_var
@@ -25,7 +25,9 @@ class ReplyRankHistoryUseCase:
         to_dt, to_is_invalid = message_service.parse_date_from_text(to_str)
         if from_is_invalid or to_is_invalid:
             reply_service.add_message("日付は以下のフォーマットで入力してください。")
-            reply_service.add_message("[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD")
+            reply_service.add_message(
+                "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD",
+            )
             return
         user_hanchans = user_hanchan_service.find_all_each_line_user_id(
             line_user_ids=[req_line_user_id],
@@ -37,7 +39,7 @@ class ReplyRankHistoryUseCase:
         if range_message is not None:
             reply_service.add_message(range_message)
 
-        matplotlib.use("agg")
+        mpl.use("agg")
 
         # 順位グラフ作成
         rank_info = [0, 0, 0, 0, 0]
@@ -45,20 +47,25 @@ class ReplyRankHistoryUseCase:
         if len(user_hanchans) != 0:
             sum_rank = 0
             sorted_user_hanchans: list[UserHanchan] = sorted(
-                user_hanchans, key=lambda x: x.rank, reverse=False)
+                user_hanchans,
+                key=lambda x: x.rank,
+                reverse=False,
+            )
             for key, group in groupby(sorted_user_hanchans, key=lambda uh: uh.rank):
                 count = len(list(group))
-                rank_info[key-1] = count/len(user_hanchans)
+                rank_info[key - 1] = count / len(user_hanchans)
                 sum_rank += count * key
             # 飛び率
-            rank_info[4] = sum([h.point < 0 for h in user_hanchans])/len(user_hanchans)
+            rank_info[4] = sum([h.point < 0 for h in user_hanchans]) / len(
+                user_hanchans,
+            )
             # 平均順位
-            ave_rank = sum_rank/len(user_hanchans)
+            ave_rank = sum_rank / len(user_hanchans)
 
         fig, ax = plt.subplots()
         ax.set_title(f"平均順位: {ave_rank:.4}", loc="right")
         bar_chart = plt.bar(
-            [f"{i+1}着" for i in range(4)] + ["飛び"],
+            [f"{i + 1}着" for i in range(4)] + ["飛び"],
             rank_info,
             color=["#EA4060", "#41C9B3", "#3392BB", "#F8BA00", "#2E3441"],
         )
@@ -69,7 +76,15 @@ class ReplyRankHistoryUseCase:
         try:
             fig.savefig(f"src/uploads{path}")
         except FileNotFoundError:
-            reply_service.create_and_reply_file_upload_error("順位履歴", user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
+            (
+                reply_service.create_and_reply_file_upload_error(
+                    "順位履歴",
+                    user_service.get_name_by_line_user_id(
+                        request_info_service.req_line_user_id,
+                    )
+                    or request_info_service.req_line_user_id,
+                ),
+            )
             return
         plt.clf()
         plt.close()
@@ -83,11 +98,7 @@ class ReplyRankHistoryUseCase:
 
         # グラフ描画
         fig, ax = plt.subplots()
-        plt.plot(
-            range(1, len(plot_data) + 1),
-            plot_data,
-            marker="o",
-            clip_on=False)
+        plt.plot(range(1, len(plot_data) + 1), plot_data, marker="o", clip_on=False)
         plt.grid(which="major", axis="y")
         plt.xticks(range(1, 11))
         plt.yticks(range(1, 5))
@@ -100,7 +111,13 @@ class ReplyRankHistoryUseCase:
         try:
             fig.savefig(f"src/uploads{path}")
         except FileNotFoundError:
-            reply_service.create_and_reply_file_upload_error("順位履歴", user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
+            reply_service.create_and_reply_file_upload_error(
+                "順位履歴",
+                user_service.get_name_by_line_user_id(
+                    request_info_service.req_line_user_id,
+                )
+                or request_info_service.req_line_user_id,
+            )
             return
 
         plt.clf()

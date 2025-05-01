@@ -52,7 +52,7 @@ class PageContents(Generic[T]):
         self,
         session: SessionMixin,
         request: Request,
-        DataClass: T = None,
+        data_class: T = None,
         page_title: str = "",
     ):
         self.session = dict(session)
@@ -70,5 +70,5 @@ class PageContents(Generic[T]):
         self.page_title = page_title
         self.request = request
         self.message = session.get("message", "")
-        if DataClass is not None:
-            self.data = DataClass(session)
+        if data_class is not None:
+            self.data = data_class(session)

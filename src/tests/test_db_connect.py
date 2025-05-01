@@ -7,8 +7,7 @@ def test_db_health_check():
     try:
         # to check database we will execute raw query
         res = mongo_client.db.command("dbstats")
-    except Exception as e:
-        print(str(e))
+    except Exception:
         is_database_working = False
 
     assert res["ok"] == 1

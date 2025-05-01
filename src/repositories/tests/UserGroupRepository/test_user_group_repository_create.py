@@ -36,13 +36,13 @@ def test_success():
 
     # Assert
     assert isinstance(result, UserGroup)
-    assert type(result._id) == ObjectId
+    assert type(result._id) is ObjectId
     assert result.line_user_id == dummy_user_group.line_user_id
     assert result.line_group_id == dummy_user_group.line_group_id
 
     record_on_db = user_group_repository.find()
     assert len(record_on_db) == 1
-    assert type(record_on_db[0]._id) == ObjectId
+    assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].line_user_id == dummy_user_group.line_user_id
     assert record_on_db[0].line_group_id == dummy_user_group.line_group_id
 

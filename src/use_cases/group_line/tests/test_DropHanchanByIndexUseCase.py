@@ -195,16 +195,16 @@ def test_execute_ignore_other_hanchans():
 
 
 def test_execute_arg_int():
-    with pytest.raises(BaseException):
-        # Arrange
-        use_case = DropHanchanByIndexUseCase()
-        request_info_service.set_req_info(event=dummy_event)
-        group_repository.create(dummy_group)
-        match_repository.create(dummy_matches[0])
-        for dummy_hanchan in dummy_hanchans:
-            hanchan_repository.create(dummy_hanchan)
+    # Arrange
+    use_case = DropHanchanByIndexUseCase()
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(dummy_group)
+    match_repository.create(dummy_matches[0])
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
 
-        # Act
+    # Act
+    with pytest.raises(ValueError, match="Expected error message here"):
         use_case.execute(1)
 
     # Assert
@@ -213,16 +213,16 @@ def test_execute_arg_int():
 
 
 def test_execute_no_arg():
-    with pytest.raises(BaseException):
-        # Arrange
-        use_case = DropHanchanByIndexUseCase()
-        request_info_service.set_req_info(event=dummy_event)
-        group_repository.create(dummy_group)
-        match_repository.create(dummy_matches[0])
-        for dummy_hanchan in dummy_hanchans:
-            hanchan_repository.create(dummy_hanchan)
+    # Arrange
+    use_case = DropHanchanByIndexUseCase()
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(dummy_group)
+    match_repository.create(dummy_matches[0])
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
 
-        # Act
+    # Act
+    with pytest.raises(ValueError, match="Expected error message here"):
         use_case.execute(1)
 
     # Assert
@@ -264,7 +264,10 @@ def test_execute_no_group():
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 6
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "トークルームが登録されていません。招待し直してください。"
+    assert (
+        reply_service.texts[0].text
+        == "トークルームが登録されていません。招待し直してください。"
+    )
 
 
 def test_execute_no_match():
@@ -292,15 +295,15 @@ def test_execute_no_match():
 
 
 def test_execute_fail_get_active_match():
-    with pytest.raises(BaseException):
-        # Arrange
-        use_case = DropHanchanByIndexUseCase()
-        request_info_service.set_req_info(event=dummy_event)
-        group_repository.create(dummy_group)
-        for dummy_hanchan in dummy_hanchans:
-            hanchan_repository.create(dummy_hanchan)
+    # Arrange
+    use_case = DropHanchanByIndexUseCase()
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(dummy_group)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
 
-        # Act
+    # Act
+    with pytest.raises(BaseException):
         use_case.execute("1")
 
     # Assert
@@ -330,4 +333,7 @@ def test_execute_out_of_index(text_case1):
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 6
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == f"このトークルームには全4回までしか登録されていないため第{text_case1}回はありません。"
+    assert (
+        reply_service.texts[0].text
+        == f"このトークルームには全4回までしか登録されていないため第{text_case1}回はありません。"
+    )

@@ -114,13 +114,15 @@ def test_execute():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
     assert reply_service.texts[0].text == "test_user1: 10"
-    matches = match_repository.find({
-        "_id": 3,
-    })
+    matches = match_repository.find(
+        {
+            "_id": 3,
+        },
+    )
     expected_tip_scores = {dummy_users[0].line_user_id: 10}
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k in expected_tip_scores:
-        assert matches[0].tip_scores[k] == expected_tip_scores[k]
+    for k, v in expected_tip_scores.items():
+        assert matches[0].tip_scores[k] == v
 
 
 def test_execute_not_int_point():
@@ -151,8 +153,7 @@ def test_execute_with_mention():
     use_case = AddTipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
-    request_info_service.mention_line_ids = [
-        "U0123456789abcdefghijklmnopqrstu1"]
+    request_info_service.mention_line_ids = ["U0123456789abcdefghijklmnopqrstu1"]
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     dummy_group.active_match_id = 3
@@ -167,13 +168,15 @@ def test_execute_with_mention():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
     assert reply_service.texts[0].text == "test_user1: 10"
-    matches = match_repository.find({
-        "_id": 3,
-    })
+    matches = match_repository.find(
+        {
+            "_id": 3,
+        },
+    )
     expected_tip_scores = {"U0123456789abcdefghijklmnopqrstu1": 10}
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k in expected_tip_scores:
-        assert matches[0].tip_scores[k] == expected_tip_scores[k]
+    for k, v in expected_tip_scores.items():
+        assert matches[0].tip_scores[k] == v
 
 
 def test_execute_multi_mentions():
@@ -198,10 +201,15 @@ def test_execute_multi_mentions():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
-    assert reply_service.texts[0].text == "メンションは1回につき1人を指定するようにしてください。"
-    matches = match_repository.find({
-        "_id": 3,
-    })
+    assert (
+        reply_service.texts[0].text
+        == "メンションは1回につき1人を指定するようにしてください。"
+    )
+    matches = match_repository.find(
+        {
+            "_id": 3,
+        },
+    )
     assert len(matches[0].tip_scores) == 0
 
 
@@ -225,13 +233,15 @@ def test_execute_not_registered_user():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
     assert reply_service.texts[0].text == "友達未登録: 10"
-    matches = match_repository.find({
-        "_id": 3,
-    })
+    matches = match_repository.find(
+        {
+            "_id": 3,
+        },
+    )
     expected_tip_scores = {"dummy_line_id": 10}
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k in expected_tip_scores:
-        assert matches[0].tip_scores[k] == expected_tip_scores[k]
+    for k, v in expected_tip_scores.items():
+        assert matches[0].tip_scores[k] == v
 
 
 dummy_matches2 = [
@@ -266,16 +276,18 @@ def test_execute_update():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
     assert reply_service.texts[0].text == "test_user1: -10\ntest_user2: -20"
-    matches = match_repository.find({
-        "_id": 1,
-    })
+    matches = match_repository.find(
+        {
+            "_id": 1,
+        },
+    )
     expected_tip_scores = {
         dummy_users[0].line_user_id: -10,
         dummy_users[1].line_user_id: -20,
     }
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k in expected_tip_scores:
-        assert matches[0].tip_scores[k] == expected_tip_scores[k]
+    for k, v in expected_tip_scores.items():
+        assert matches[0].tip_scores[k] == v
 
 
 def test_execute_delete():
@@ -297,15 +309,18 @@ def test_execute_delete():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
     assert reply_service.texts[0].text == "test_user2: -20"
-    matches = match_repository.find({
-        "_id": 1,
-    })
+    matches = match_repository.find(
+        {
+            "_id": 1,
+        },
+    )
     expected_tip_scores = {
         dummy_users[1].line_user_id: -20,
     }
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k in expected_tip_scores:
-        assert matches[0].tip_scores[k] == expected_tip_scores[k]
+    for k, v in expected_tip_scores.items():
+        assert matches[0].tip_scores[k] == v
+
 
 dummy_matches3 = [
     Match(
@@ -317,6 +332,7 @@ dummy_matches3 = [
         },
     ),
 ]
+
 
 def test_execute_delete_last_one():
     # Arrange
@@ -337,14 +353,15 @@ def test_execute_delete_last_one():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
     assert reply_service.texts[0].text == "チップの増減枚数を入力して下さい。"
-    matches = match_repository.find({
-        "_id": 1,
-    })
+    matches = match_repository.find(
+        {
+            "_id": 1,
+        },
+    )
     expected_tip_scores = {}
     assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k in expected_tip_scores:
-        assert matches[0].tip_scores[k] == expected_tip_scores[k]
-
+    for k, v in expected_tip_scores.items():
+        assert matches[0].tip_scores[k] == v
 
 
 def test_execute_no_active_match():
@@ -380,4 +397,7 @@ def test_execute_no_group():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].type == "text"
-    assert reply_service.texts[0].text == "グループが登録されていません。招待し直してください。"
+    assert (
+        reply_service.texts[0].text
+        == "グループが登録されていません。招待し直してください。"
+    )

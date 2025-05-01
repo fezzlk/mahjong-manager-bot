@@ -11,7 +11,7 @@ from tests.dummies import (
 dummy_match = Match(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     status=2,
-),
+)
 
 dummy_hanchans = [
     Hanchan(

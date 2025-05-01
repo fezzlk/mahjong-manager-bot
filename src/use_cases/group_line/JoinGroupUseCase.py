@@ -8,7 +8,6 @@ from DomainService import (
 
 
 class JoinGroupUseCase:
-
     def execute(self) -> None:
         line_group_id = request_info_service.req_line_group_id
         if line_group_id is None:

@@ -23,7 +23,6 @@ class JwtResponse:
 
 
 class ReplyTokenUseCase:
-
     def execute(self) -> None:
         line_user_id = request_info_service.req_line_user_id
         users = user_repository.find(
@@ -42,6 +41,7 @@ class ReplyTokenUseCase:
                 "line_user_id": line_user_id,
             },
             headers={"Content-Type": "application/json"},
+            timeout=10,
         )
 
         jwt_res = JwtResponse(response.json())

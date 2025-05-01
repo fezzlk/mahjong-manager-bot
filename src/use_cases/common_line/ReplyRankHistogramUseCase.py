@@ -19,7 +19,9 @@ class ReplyRankHistogramUseCase:
         to_dt, to_is_invalid = message_service.parse_date_from_text(to_str)
         if from_is_invalid or to_is_invalid:
             reply_service.add_message("日付は以下のフォーマットで入力してください。")
-            reply_service.add_message("[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD")
+            reply_service.add_message(
+                "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD",
+            )
             return
         user_hanchans = user_hanchan_service.find_all_each_line_user_id(
             line_user_ids=[req_line_user_id],
@@ -42,10 +44,11 @@ class ReplyRankHistogramUseCase:
         labels.append("飛び")
 
         # グラフ描画
-        import matplotlib
+        import matplotlib as mpl
         import matplotlib.dates as mdates
         import matplotlib.pyplot as plt
-        matplotlib.use("agg")
+
+        mpl.use("agg")
 
         fig, ax = plt.subplots()
         plt.hist(plot_data, label=labels)
@@ -63,7 +66,13 @@ class ReplyRankHistogramUseCase:
             reply_service.add_message(text="システムエラーが発生しました。")
             messages = [
                 "順位履歴の画像アップロードに失敗しました",
-                "送信者: " + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
+                "送信者: "
+                + (
+                    user_service.get_name_by_line_user_id(
+                        request_info_service.req_line_user_id,
+                    )
+                    or request_info_service.req_line_user_id
+                ),
             ]
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,

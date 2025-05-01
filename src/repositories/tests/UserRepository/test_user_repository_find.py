@@ -20,7 +20,7 @@ def test_success_find_records():
     assert len(result) == len(dummy_users)
     for i in range(len(result)):
         assert isinstance(result[i], User)
-        assert type(result[i]._id) == ObjectId
+        assert type(result[i]._id) is ObjectId
         assert result[i].line_user_name == dummy_users[i].line_user_name
         assert result[i].line_user_id == dummy_users[i].line_user_id
         assert result[i].mode == dummy_users[i].mode
@@ -55,7 +55,7 @@ def test_hit_1_record():
     # Assert
     assert len(result) == 1
     assert isinstance(result[0], User)
-    assert type(result[0]._id) == ObjectId
+    assert type(result[0]._id) is ObjectId
     assert result[0].line_user_name == target_user.line_user_name
     assert result[0].line_user_id == target_user.line_user_id
     assert result[0].mode == target_user.mode

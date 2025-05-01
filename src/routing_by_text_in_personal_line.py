@@ -38,8 +38,13 @@ class UCommands(Enum):
 
 
 def routing_by_text_in_personal_line():
-    if user_service.find_one_by_line_user_id(request_info_service.req_line_user_id) is None:
-        reply_service.add_message("ユーザーが登録されていません。友達追加してください。")
+    if (
+        user_service.find_one_by_line_user_id(request_info_service.req_line_user_id)
+        is None
+    ):
+        reply_service.add_message(
+            "ユーザーが登録されていません。友達追加してください。",
+        )
         return
 
     """routing by text for personal chat"""
@@ -92,7 +97,7 @@ def routing_by_method(method: str):
         reply_service.add_message("個人設定機能は開発中です。")
     # help
     elif method == UCommands.help.name:
-        ReplyUserHelpUseCase().execute(UCommands)
+        ReplyUserHelpUseCase().execute()
     # github
     elif method == UCommands.github.name:
         ReplyGitHubUrlUseCase().execute()

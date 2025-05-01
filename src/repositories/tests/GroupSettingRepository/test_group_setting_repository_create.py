@@ -27,7 +27,7 @@ def test_success():
     record_on_db = group_setting_repository.find()
 
     assert len(record_on_db) == 1
-    assert type(record_on_db[0]._id) == ObjectId
+    assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].line_group_id == dummy_group_setting.line_group_id
     assert record_on_db[0].ranking_prize == dummy_group_setting.ranking_prize
     assert record_on_db[0].tip_rate == dummy_group_setting.tip_rate

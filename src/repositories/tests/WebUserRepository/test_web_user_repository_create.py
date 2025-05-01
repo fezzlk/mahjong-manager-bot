@@ -19,7 +19,7 @@ def test_success():
 
     # Assert
     assert isinstance(result, WebUser)
-    assert type(result._id) == ObjectId
+    assert type(result._id) is ObjectId
     assert result.user_code == dummy_web_user.user_code
     assert result.name == dummy_web_user.name
     assert result.email == dummy_web_user.email

@@ -67,18 +67,21 @@ dummy_group_setting = GroupSetting(
     tip_rate=50,
 )
 
-dummy_match= Match(
-        line_group_id=dummy_group.line_group_id,
-        tip_scores={"U0123456789abcdefghijklmnopqrstu1": 3, "U0123456789abcdefghijklmnopqrstu2": -3},
-        sum_scores={
-            "U0123456789abcdefghijklmnopqrstu1": 100,
-            "U0123456789abcdefghijklmnopqrstu2": 20,
-            "U0123456789abcdefghijklmnopqrstu3": -40,
-            "U0123456789abcdefghijklmnopqrstu4": -40,
-            "U0123456789abcdefghijklmnopqrstu5": -40,
-        },
-        _id=1,
-    )
+dummy_match = Match(
+    line_group_id=dummy_group.line_group_id,
+    tip_scores={
+        "U0123456789abcdefghijklmnopqrstu1": 3,
+        "U0123456789abcdefghijklmnopqrstu2": -3,
+    },
+    sum_scores={
+        "U0123456789abcdefghijklmnopqrstu1": 100,
+        "U0123456789abcdefghijklmnopqrstu2": 20,
+        "U0123456789abcdefghijklmnopqrstu3": -40,
+        "U0123456789abcdefghijklmnopqrstu4": -40,
+        "U0123456789abcdefghijklmnopqrstu5": -40,
+    },
+    _id=1,
+)
 
 dummy_hanchans = [
     Hanchan(
@@ -164,6 +167,7 @@ dummy_event = Event(
     text="_tip_ok",
 )
 
+
 def test_fail_no_group():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
@@ -182,7 +186,10 @@ def test_fail_no_group():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "グループが登録されていません。招待し直してください。"
+    assert (
+        reply_service.texts[0].text
+        == "グループが登録されていません。招待し直してください。"
+    )
 
 
 def test_fail_no_match():
@@ -219,11 +226,16 @@ def test_fail_tip_sum_mismatch():
     group_setting_repository.create(dummy_group_setting)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
-    match_repository.create(Match(
-        line_group_id=dummy_group.line_group_id,
-        tip_scores={"U0123456789abcdefghijklmnopqrstu1": 4, "U0123456789abcdefghijklmnopqrstu2": -3},
-        _id=1,
-    ))
+    match_repository.create(
+        Match(
+            line_group_id=dummy_group.line_group_id,
+            tip_scores={
+                "U0123456789abcdefghijklmnopqrstu1": 4,
+                "U0123456789abcdefghijklmnopqrstu2": -3,
+            },
+            _id=1,
+        ),
+    )
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(dummy_hanchan)
 
@@ -232,11 +244,13 @@ def test_fail_tip_sum_mismatch():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "チップ増減数の合計が+1です。0になるようにしてください。）"
+    assert (
+        reply_service.texts[0].text
+        == "チップ増減数の合計が+1です。0になるようにしてください。)"
+    )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.tip_input.value
     assert groups[0].active_match_id == 1
-
 
 
 def test_success():
@@ -258,8 +272,11 @@ def test_success():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "【対戦結果】 \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n" + \
-        "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
+    assert (
+        reply_service.texts[0].text
+        == "【対戦結果】 \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n"
+        + "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
+    )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
     assert groups[0].active_match_id is None

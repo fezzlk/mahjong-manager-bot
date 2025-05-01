@@ -213,8 +213,8 @@ def test_success():
         dummy_users[3].line_user_id: -40,
     }
     hanchan = hanchan_repository.find()[0]
-    for k in expected_c_scores:
-        assert hanchan.converted_scores[k] == expected_c_scores[k]
+    for k, v in expected_c_scores.items():
+        assert hanchan.converted_scores[k] == v
     assert hanchan.status == 2
     um = user_match_repository.find(
         {"user_id": {"$in": [1, 2, 3, 4]}},
@@ -222,7 +222,10 @@ def test_success():
     assert len(um) == 4
     assert len(reply_service.texts) == 3
     assert len(reply_service.buttons) == 1
-    assert reply_service.texts[1].text == "test_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
+    assert (
+        reply_service.texts[1].text
+        == "test_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
+    )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
     matches = match_repository.find({"_id": 1})
@@ -284,8 +287,7 @@ def test_success_assert_sum_point_in_match():
     dm = deepcopy(dummy_match)
     hanchan_repository.create(dummy_archived_hanchan)
     hanchan_repository.create(dummy_disabled_hanchan)
-    hanchan_repository.create(
-        dummy_active_hanchan_with_other_user)
+    hanchan_repository.create(dummy_active_hanchan_with_other_user)
     dm.active_hanchan_id = dummy_active_hanchan_with_other_user._id
     match_repository.create(dm)
 
@@ -294,7 +296,10 @@ def test_success_assert_sum_point_in_match():
 
     # Assert
     hanchan_repository.find()
-    assert reply_service.texts[1].text == "test_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user5: -40 (-40)"
+    assert (
+        reply_service.texts[1].text
+        == "test_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user5: -40 (-40)"
+    )
     matches = match_repository.find({"_id": 1})
     assert matches[0].active_hanchan_id is None
     assert len(matches[0].sum_scores) == 5
@@ -315,8 +320,7 @@ def test_success_update_user_matches():
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     hanchan_repository.create(dummy_archived_hanchan)
-    hanchan_repository.create(
-        dummy_active_hanchan_with_other_user)
+    hanchan_repository.create(dummy_active_hanchan_with_other_user)
     dummy_match.active_hanchan_id = dummy_active_hanchan_with_other_user._id
     match_repository.create(dummy_match)
     for user_id in [1, 2, 3, 4]:
@@ -391,12 +395,14 @@ def test_success_does_not_have_4_points():
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
+    assert (
+        reply_service.texts[0].text
+        == "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
+    )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
     matches = match_repository.find({"_id": 1})
     assert matches[0].active_hanchan_id == dummy_active_hanchan_has_5_points._id
-
 
     reply_service.reset()
 
@@ -408,8 +414,7 @@ def test_success_does_invalid_sum_point():
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
-    hanchan_repository.create(
-        dummy_active_hanchan_has_invalid_sum_point)
+    hanchan_repository.create(dummy_active_hanchan_has_invalid_sum_point)
     dummy_match.active_hanchan_id = dummy_active_hanchan_has_invalid_sum_point._id
     match_repository.create(dummy_match)
 
@@ -424,11 +429,16 @@ def test_success_does_invalid_sum_point():
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "点数の合計が110000点です。合計100000点+αになるように修正してください。"
+    assert (
+        reply_service.texts[0].text
+        == "点数の合計が110000点です。合計100000点+αになるように修正してください。"
+    )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
     matches = match_repository.find({"_id": 1})
-    assert matches[0].active_hanchan_id == dummy_active_hanchan_has_invalid_sum_point._id
+    assert (
+        matches[0].active_hanchan_id == dummy_active_hanchan_has_invalid_sum_point._id
+    )
 
     reply_service.reset()
 
@@ -440,8 +450,7 @@ def test_success_has_tai():
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
-    hanchan_repository.create(
-        dummy_active_hanchan_has_tai)
+    hanchan_repository.create(dummy_active_hanchan_has_tai)
     dummy_match.active_hanchan_id = dummy_active_hanchan_has_tai._id
     match_repository.create(dummy_match)
 
@@ -456,7 +465,10 @@ def test_success_has_tai():
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。"
+    assert (
+        reply_service.texts[0].text
+        == "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。"
+    )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
     matches = match_repository.find({"_id": 1})
@@ -472,8 +484,7 @@ def test_success_reply_tobi_menu():
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
-    hanchan_repository.create(
-        dummy_active_hanchan_has_minus_point)
+    hanchan_repository.create(dummy_active_hanchan_has_minus_point)
     dummy_match.active_hanchan_id = dummy_active_hanchan_has_minus_point._id
     match_repository.create(dummy_match)
 
@@ -545,6 +556,9 @@ def test_fail_no_group():
     )
     assert len(um) == 0
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "グループが登録されていません。招待し直してください。"
+    assert (
+        reply_service.texts[0].text
+        == "グループが登録されていません。招待し直してください。"
+    )
 
     reply_service.reset()

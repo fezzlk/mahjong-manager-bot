@@ -11,14 +11,19 @@ from DomainService import (
 from .interfaces.IMessageService import IMessageService
 
 KANSUJI = ["一", "二", "三", "四", "五", "六", "七", "八", "九"]
-HAI = [k + "萬" for k in KANSUJI] + [k + "筒" for k in KANSUJI] + [k + "索" for k in KANSUJI] + ["白", "發", "中", "東", "南", "西", "北"]
+HAI = (
+    [k + "萬" for k in KANSUJI]
+    + [k + "筒" for k in KANSUJI]
+    + [k + "索" for k in KANSUJI]
+    + ["白", "發", "中", "東", "南", "西", "北"]
+)
 
 wait_messages = [
     "雑談してる暇があったら麻雀の勉強をしましょう。",
     "自己分析が大事です。",
     "今日は七対子を積極的に狙いましょう。",
     "まずは平和・断么九",
-    "今日は役満が出そうです！（誰がとは言いませんが）",
+    "今日は役満が出そうです！(誰がとは言いませんが)",
     "攻めて攻めて攻めまくりましょう！",
     "裏目ってもめげない姿勢！",
     "まもなく天和が訪れるでしょう。",
@@ -36,7 +41,6 @@ finish_hanchan_messages = [
 
 
 class MessageService(IMessageService):
-
     def get_random_hai(
         self,
         line_user_id: str,
@@ -65,13 +69,20 @@ class MessageService(IMessageService):
             show_score = ("+" if score > 0 else "") + str(score)
             price = sum_prices_with_tip.get(line_user_id, 0)
             tip_count = tip_scores.get(line_user_id, 0)
-            additional_tip_message = f'({("+" if tip_count > 0 else "") + str(tip_count)}枚)'
+            additional_tip_message = (
+                f"({('+' if tip_count > 0 else '') + str(tip_count)}枚)"
+            )
 
             show_prize_money_list.append(
-                f"{name}: {price!s}円 ({show_score}{additional_tip_message})")
+                f"{name}: {price!s}円 ({show_score}{additional_tip_message})",
+            )
         return "\n".join(show_prize_money_list)
 
-    def create_show_converted_scores(self, converted_scores: Dict[str, int], sum_scores: Dict[str, int] = None) -> str:
+    def create_show_converted_scores(
+        self,
+        converted_scores: Dict[str, int],
+        sum_scores: Dict[str, int] = None,
+    ) -> str:
         score_text_list = []
         for r in sorted(
             converted_scores.items(),
@@ -131,12 +142,8 @@ class MessageService(IMessageService):
     def create_range_message(self, from_dt: datetime, to_dt: datetime) -> str:
         range_message = ""
         if from_dt is not None:
-            range_message += f'{from_dt.strftime("%Y年%m月%d日")}0時から'
+            range_message += f"{from_dt.strftime('%Y年%m月%d日')}0時から"
         if to_dt is not None:
-            range_message += f'{to_dt.strftime("%Y年%m月%d日")}0時まで'
+            range_message += f"{to_dt.strftime('%Y年%m月%d日')}0時まで"
 
-        if range_message == "":
-            range_message = None
-        else:
-            range_message = "範囲指定: " + range_message
-        return range_message
+        return None if range_message == "" else "範囲指定: " + range_message

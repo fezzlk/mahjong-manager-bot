@@ -6,8 +6,8 @@ from repositories import session_scope, user_repository, web_user_repository
 
 class ViewApproveLinkLineUseCase:
     def execute(
-            self,
-            page_contents: PageContents,
+        self,
+        page_contents: PageContents,
     ) -> PageContents:
         page_contents.page_title = "LINEアカウント連携"
 

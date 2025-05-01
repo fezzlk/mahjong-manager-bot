@@ -81,7 +81,7 @@ def generate_dummy_user_list() -> List[User]:
 
 
 def generate_dummy_web_user_list() -> List[WebUser]:
-    dummy_web_users = [
+    return [
         WebUser(
             user_code="code1",
             name="name1",
@@ -113,7 +113,6 @@ def generate_dummy_web_user_list() -> List[WebUser]:
             user_code="code4",
         ),
     ]
-    return dummy_web_users
 
 
 def generate_dummy_group_list() -> List[Group]:
@@ -198,7 +197,6 @@ def generate_dummy_match_list() -> List[Match]:
 
 def generate_dummy_hanchan_list() -> List[Hanchan]:
     groups = generate_dummy_group_list()
-    users = generate_dummy_user_list()
 
     return [
         Hanchan(
@@ -221,8 +219,6 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
             status=2,
         ),
     ]
-
-
 
 
 def generate_dummy_follow_event() -> Event:

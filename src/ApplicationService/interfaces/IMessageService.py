@@ -6,7 +6,6 @@ from DomainModel.entities.Match import Match
 
 
 class IMessageService(metaclass=ABCMeta):
-
     @abstractmethod
     def get_random_hai(
         self,
@@ -27,13 +26,15 @@ class IMessageService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def create_show_converted_scores(self, converted_scores: Dict[str, int], sum_scores: Dict[str, int] = None) -> str:
+    def create_show_converted_scores(
+        self, converted_scores: Dict[str, int], sum_scores: Dict[str, int] = None,
+    ) -> str:
         pass
 
     @abstractmethod
-    def parse_date_from_text(date_str: str) -> Tuple[datetime, bool]:
+    def parse_date_from_text(self, date_str: str) -> Tuple[datetime, bool]:
         pass
 
     @abstractmethod
-    def create_range_message(from_dt: datetime, to_dt: datetime) -> str:
+    def create_range_message(self, from_dt: datetime, to_dt: datetime) -> str:
         pass

@@ -10,7 +10,6 @@ from DomainService import (
 
 
 class DropHanchanByIndexUseCase:
-
     def execute(self, str_index: str) -> None:
         if not str_index.isdigit():
             reply_service.add_message(
@@ -34,9 +33,13 @@ class DropHanchanByIndexUseCase:
 
         active_match = match_service.find_one_by_id(group.active_match_id)
         if active_match is None:
-            raise BaseException(f"DropHanchanByIndexUseCase: 対戦結果の取得失敗: match_id: {group.active_match_id}")
+            raise BaseException(
+                f"DropHanchanByIndexUseCase: 対戦結果の取得失敗: match_id: {group.active_match_id}",
+            )
 
-        archived_hanchans = hanchan_service.find_all_archived_by_match_id(match_id=active_match._id)
+        archived_hanchans = hanchan_service.find_all_archived_by_match_id(
+            match_id=active_match._id,
+        )
 
         if index < 1 or len(archived_hanchans) < index:
             reply_service.add_message(
@@ -44,7 +47,7 @@ class DropHanchanByIndexUseCase:
             )
             return
 
-        target_hanchan = archived_hanchans[index-1]
+        target_hanchan = archived_hanchans[index - 1]
         target_hanchan.status = 0
         hanchan_service.update(target_hanchan)
         reply_service.add_message(

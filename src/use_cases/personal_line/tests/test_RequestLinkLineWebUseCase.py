@@ -28,16 +28,18 @@ dummy_event = Event(
 )
 
 
-@pytest.fixture(params=[
-    (""),
-    ("messeage"),
-    ("messeage 1 2"),
-])
+@pytest.fixture(
+    params=[
+        (""),
+        ("messeage"),
+        ("messeage 1 2"),
+    ],
+)
 def text_case(request) -> int:
     return request.param
 
 
-def test_fail_mismatch_massage_format(mocker, text_case):
+def test_fail_mismatch_massage_format(text_case):
     # Arrange
     dummy_event = Event(
         type="message",
@@ -54,7 +56,10 @@ def test_fail_mismatch_massage_format(mocker, text_case):
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'Web アカウントと紐付けするには "アカウント連携 [メールアドレス]" と送ってください。'
+    assert (
+        reply_service.texts[0].text
+        == 'Web アカウントと紐付けするには "アカウント連携 [メールアドレス]" と送ってください。'
+    )
 
 
 def test_fail_no_web_user(mocker):
@@ -68,15 +73,17 @@ def test_fail_no_web_user(mocker):
     )
     request_info_service.set_req_info(event=dummy_event)
     use_case = RequestLinkLineWebUseCase()
-    web_user_repository.create(WebUser(
-        user_code="code1",
-        name="name1",
-        email="email1",
-        linked_line_user_id=None,
-        is_approved_line_user=False,
-        created_at=datetime(2022, 1, 1, 12, 0, 0),
-        updated_at=datetime(2022, 1, 1, 12, 0, 0),
-    ))
+    web_user_repository.create(
+        WebUser(
+            user_code="code1",
+            name="name1",
+            email="email1",
+            linked_line_user_id=None,
+            is_approved_line_user=False,
+            created_at=datetime(2022, 1, 1, 12, 0, 0),
+            updated_at=datetime(2022, 1, 1, 12, 0, 0),
+        ),
+    )
 
     mocker.patch(
         "use_cases.personal_line.RequestLinkLineWebUseCase.url_for",
@@ -86,9 +93,11 @@ def test_fail_no_web_user(mocker):
     use_case.execute()
 
     # Assert
-    print(reply_service.texts[0])
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "dummy@example.com は登録されていません。一度ブラウザでログインしてください。"
+    assert (
+        reply_service.texts[0].text
+        == "dummy@example.com は登録されていません。一度ブラウザでログインしてください。"
+    )
 
 
 def test_fail_have_linked_user(mocker):
@@ -102,15 +111,17 @@ def test_fail_have_linked_user(mocker):
     )
     request_info_service.set_req_info(event=dummy_event)
     use_case = RequestLinkLineWebUseCase()
-    web_user_repository.create(WebUser(
-        user_code="code1",
-        name="name1",
-        email="email1",
-        linked_line_user_id=None,
-        is_approved_line_user=True,
-        created_at=datetime(2022, 1, 1, 12, 0, 0),
-        updated_at=datetime(2022, 1, 1, 12, 0, 0),
-    ))
+    web_user_repository.create(
+        WebUser(
+            user_code="code1",
+            name="name1",
+            email="email1",
+            linked_line_user_id=None,
+            is_approved_line_user=True,
+            created_at=datetime(2022, 1, 1, 12, 0, 0),
+            updated_at=datetime(2022, 1, 1, 12, 0, 0),
+        ),
+    )
 
     mocker.patch(
         "use_cases.personal_line.RequestLinkLineWebUseCase.url_for",
@@ -120,9 +131,11 @@ def test_fail_have_linked_user(mocker):
     use_case.execute()
 
     # Assert
-    print(reply_service.texts[0])
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "email1 はすでに LINE アカウントと紐付けされています。"
+    assert (
+        reply_service.texts[0].text
+        == "email1 はすでに LINE アカウントと紐付けされています。"
+    )
 
 
 def test_fail_update_web_user(mocker):
@@ -136,15 +149,17 @@ def test_fail_update_web_user(mocker):
     )
     request_info_service.set_req_info(event=dummy_event)
     use_case = RequestLinkLineWebUseCase()
-    web_user_repository.create(WebUser(
-        user_code="code1",
-        name="name1",
-        email="email1",
-        linked_line_user_id=None,
-        is_approved_line_user=False,
-        created_at=datetime(2022, 1, 1, 12, 0, 0),
-        updated_at=datetime(2022, 1, 1, 12, 0, 0),
-    ))
+    web_user_repository.create(
+        WebUser(
+            user_code="code1",
+            name="name1",
+            email="email1",
+            linked_line_user_id=None,
+            is_approved_line_user=False,
+            created_at=datetime(2022, 1, 1, 12, 0, 0),
+            updated_at=datetime(2022, 1, 1, 12, 0, 0),
+        ),
+    )
     mocker.patch.object(
         web_user_repository,
         "update",
@@ -155,7 +170,6 @@ def test_fail_update_web_user(mocker):
     use_case.execute()
 
     # Assert
-    print(reply_service.texts[0])
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "アカウント連携リクエストに失敗しました。"
 
@@ -171,15 +185,17 @@ def test_success(mocker):
     )
     request_info_service.set_req_info(event=dummy_event)
     use_case = RequestLinkLineWebUseCase()
-    web_user_repository.create(WebUser(
-        user_code="code1",
-        name="name1",
-        email="email1",
-        linked_line_user_id=None,
-        is_approved_line_user=False,
-        created_at=datetime(2022, 1, 1, 12, 0, 0),
-        updated_at=datetime(2022, 1, 1, 12, 0, 0),
-    ))
+    web_user_repository.create(
+        WebUser(
+            user_code="code1",
+            name="name1",
+            email="email1",
+            linked_line_user_id=None,
+            is_approved_line_user=False,
+            created_at=datetime(2022, 1, 1, 12, 0, 0),
+            updated_at=datetime(2022, 1, 1, 12, 0, 0),
+        ),
+    )
 
     mocker.patch(
         "use_cases.personal_line.RequestLinkLineWebUseCase.url_for",
@@ -189,6 +205,8 @@ def test_success(mocker):
     use_case.execute()
 
     # Assert
-    print(reply_service.texts[0])
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "アカウント連携リクエストを送信しました。ブラウザでログインし、承認してください。"
+    assert (
+        reply_service.texts[0].text
+        == "アカウント連携リクエストを送信しました。ブラウザでログインし、承認してください。"
+    )

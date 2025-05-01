@@ -1,5 +1,5 @@
-"""LINE messaging API handler
-"""
+"""LINE messaging API handler"""
+
 import traceback
 
 from linebot.models import (
@@ -93,7 +93,7 @@ def handle_leave(event):
 @handler.add(MessageEvent, message=TextMessage)
 @handle_event_decorater
 def handle_text_message(event):
-    if event.source.type == "room" or event.source.type == "group":
+    if event.source.type in {"room", "group"}:
         routing_by_text_in_group_line()
     elif event.source.type == "user":
         routing_by_text_in_personal_line()
@@ -103,7 +103,7 @@ def handle_text_message(event):
 
 @handler.add(MessageEvent, message=ImageMessage)
 @handle_event_decorater
-def handle_image_message(event):
+def handle_image_message():
     # if event.source.type == 'room' or event.source.type == 'group':
     #     InputResultFromImageUseCase().execute(event)
     # else:
@@ -114,7 +114,7 @@ def handle_image_message(event):
 @handler.add(PostbackEvent)
 @handle_event_decorater
 def handle_postback(event):
-    if event.source.type == "room" or event.source.type == "group":
+    if event.source.type in {"room", "group"}:
         routing_by_text_in_group_line()
     elif event.source.type == "user":
         routing_by_text_in_personal_line()

@@ -20,7 +20,6 @@ from .interfaces.IReplyService import IReplyService
 
 
 class ReplyService(IReplyService):
-
     def __init__(self):
         self.texts: List[TextSendMessage] = []
         self.buttons: List[Union[TemplateSendMessage, ButtonsTemplate]] = []
@@ -97,223 +96,256 @@ class ReplyService(IReplyService):
         )
 
     def add_settings_menu(self, key: str = "") -> None:
-        if key == "" or key == "メニュー1":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="設定メニュー1",
-                template=ButtonsTemplate(
-                    title="設定",
-                    text="変更したい項目を選んでください。",
-                    actions=[
-                        PostbackAction(
-                            label="レート",
-                            display_text="レート",
-                            data="_setting レート",
-                        ),
-                        PostbackAction(
-                            label="順位点",
-                            display_text="順位点",
-                            data="_setting 順位点",
-                        ),
-                        PostbackAction(
-                            label="チップ",
-                            display_text="チップ",
-                            data="_setting チップ",
-                        ),
-                        PostbackAction(
-                            label="飛び賞、端数計算方法",
-                            display_text="飛び賞、端数計算方法",
-                            data="_setting メニュー2",
-                        ),
-                    ],
+        if key in {"", "メニュー1"}:
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="設定メニュー1",
+                    template=ButtonsTemplate(
+                        title="設定",
+                        text="変更したい項目を選んでください。",
+                        actions=[
+                            PostbackAction(
+                                label="レート",
+                                display_text="レート",
+                                data="_setting レート",
+                            ),
+                            PostbackAction(
+                                label="順位点",
+                                display_text="順位点",
+                                data="_setting 順位点",
+                            ),
+                            PostbackAction(
+                                label="チップ",
+                                display_text="チップ",
+                                data="_setting チップ",
+                            ),
+                            PostbackAction(
+                                label="飛び賞、端数計算方法",
+                                display_text="飛び賞、端数計算方法",
+                                data="_setting メニュー2",
+                            ),
+                        ],
+                    ),
                 ),
-            ))
+            )
         if key == "メニュー2":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="設定メニュー2",
-                template=ButtonsTemplate(
-                    title="設定",
-                    text="変更したい項目を選んでください。",
-                    actions=[
-                        PostbackAction(
-                            label="飛び賞",
-                            display_text="飛び賞",
-                            data="_setting 飛び賞",
-                        ),
-                        PostbackAction(
-                            label="端数計算方法",
-                            display_text="端数計算方法",
-                            data="_setting 端数計算方法",
-                        ),
-                        PostbackAction(
-                            label="レート、順位点、チップ",
-                            display_text="レート、順位点、チップ",
-                            data="_setting メニュー1",
-                        ),
-                    ],
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="設定メニュー2",
+                    template=ButtonsTemplate(
+                        title="設定",
+                        text="変更したい項目を選んでください。",
+                        actions=[
+                            PostbackAction(
+                                label="飛び賞",
+                                display_text="飛び賞",
+                                data="_setting 飛び賞",
+                            ),
+                            PostbackAction(
+                                label="端数計算方法",
+                                display_text="端数計算方法",
+                                data="_setting 端数計算方法",
+                            ),
+                            PostbackAction(
+                                label="レート、順位点、チップ",
+                                display_text="レート、順位点、チップ",
+                                data="_setting メニュー1",
+                            ),
+                        ],
+                    ),
                 ),
-            ))
+            )
         elif key == "レート":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="レート設定",
-                template=ButtonsTemplate(
-                    title="レート変更",
-                    text="レートを選んでください",
-                    actions=[
-                        PostbackAction(
-                            label=f"点{i}",
-                            display_text=f"点{i}",
-                            data=f"_update_config レート {i}",
-                        ) for i in range(1, 4)
-                    ] + [
-                        PostbackAction(
-                            label="点4~",
-                            display_text="点4~",
-                            data="_setting 高レート",
-                        ),
-                    ],
-                ),
-            ))
-        elif key == "高レート":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="高レート設定",
-                template=ButtonsTemplate(
-                    title="レート変更",
-                    text="レートを選んでください",
-                    actions=[
-                        PostbackAction(
-                            label=f"点{i}",
-                            display_text=f"点{i}",
-                            data=f"_update_config レート {i}",
-                        ) for i in [4, 5, 10]
-                    ] + [
-                        PostbackAction(
-                            label="点1~3",
-                            display_text="点1~3",
-                            data="_setting レート",
-                        ),
-                    ],
-                ),
-            ))
-        elif key == "順位点":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="順位点設定",
-                template=ButtonsTemplate(
-                    title="順位点変更",
-                    text="いくらにしますか？",
-                    actions=[
-                        PostbackAction(
-                            label="/".join(i),
-                            display_text="/".join(i),
-                            data=f"_update_config 順位点 {','.join(i)}",
-                        ) for i in [
-                            ["20", "10", "-10", "-20"],
-                            ["30", "10", "-10", "-30"],
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="レート設定",
+                    template=ButtonsTemplate(
+                        title="レート変更",
+                        text="レートを選んでください",
+                        actions=[
+                            PostbackAction(
+                                label=f"点{i}",
+                                display_text=f"点{i}",
+                                data=f"_update_config レート {i}",
+                            )
+                            for i in range(1, 4)
                         ]
-                    ],
+                        + [
+                            PostbackAction(
+                                label="点4~",
+                                display_text="点4~",
+                                data="_setting 高レート",
+                            ),
+                        ],
+                    ),
                 ),
-            ))
+            )
+        elif key == "高レート":
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="高レート設定",
+                    template=ButtonsTemplate(
+                        title="レート変更",
+                        text="レートを選んでください",
+                        actions=[
+                            PostbackAction(
+                                label=f"点{i}",
+                                display_text=f"点{i}",
+                                data=f"_update_config レート {i}",
+                            )
+                            for i in [4, 5, 10]
+                        ]
+                        + [
+                            PostbackAction(
+                                label="点1~3",
+                                display_text="点1~3",
+                                data="_setting レート",
+                            ),
+                        ],
+                    ),
+                ),
+            )
+        elif key == "順位点":
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="順位点設定",
+                    template=ButtonsTemplate(
+                        title="順位点変更",
+                        text="いくらにしますか？",
+                        actions=[
+                            PostbackAction(
+                                label="/".join(i),
+                                display_text="/".join(i),
+                                data=f"_update_config 順位点 {','.join(i)}",
+                            )
+                            for i in [
+                                ["20", "10", "-10", "-20"],
+                                ["30", "10", "-10", "-30"],
+                            ]
+                        ],
+                    ),
+                ),
+            )
         elif key == "飛び賞":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="飛び賞設定",
-                template=ButtonsTemplate(
-                    title="飛び賞変更",
-                    text="いくらにしますか？",
-                    actions=[
-                        PostbackAction(
-                            label=i,
-                            display_text=i,
-                            data=f"_update_config 飛び賞 {i}",
-                        ) for i in [0, 10, 20, 30]
-                    ],
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="飛び賞設定",
+                    template=ButtonsTemplate(
+                        title="飛び賞変更",
+                        text="いくらにしますか？",
+                        actions=[
+                            PostbackAction(
+                                label=i,
+                                display_text=i,
+                                data=f"_update_config 飛び賞 {i}",
+                            )
+                            for i in [0, 10, 20, 30]
+                        ],
+                    ),
                 ),
-            ))
+            )
 
         elif key == "端数計算方法":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="計算方法設定1",
-                template=ButtonsTemplate(
-                    title="端数計算方法変更",
-                    text="どれにしますか？",
-                    actions=[
-                        PostbackAction(
-                            label=ROUNDING_METHOD_LIST[i],
-                            display_text=ROUNDING_METHOD_LIST[i],
-                            data=f"_update_config 端数計算方法 {i}",
-                        )
-                        for i in range(3)
-                    ] + [
-                        PostbackAction(
-                            label="その他",
-                            display_text="その他",
-                            data="_setting 端数計算方法2",
-                        ),
-                    ],
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="計算方法設定1",
+                    template=ButtonsTemplate(
+                        title="端数計算方法変更",
+                        text="どれにしますか？",
+                        actions=[
+                            PostbackAction(
+                                label=ROUNDING_METHOD_LIST[i],
+                                display_text=ROUNDING_METHOD_LIST[i],
+                                data=f"_update_config 端数計算方法 {i}",
+                            )
+                            for i in range(3)
+                        ]
+                        + [
+                            PostbackAction(
+                                label="その他",
+                                display_text="その他",
+                                data="_setting 端数計算方法2",
+                            ),
+                        ],
+                    ),
                 ),
-            ))
+            )
 
         elif key == "端数計算方法2":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="計算方法設定2",
-                template=ButtonsTemplate(
-                    title="端数計算方法変更",
-                    text="どれにしますか？",
-                    actions=[
-                        PostbackAction(
-                            label=ROUNDING_METHOD_LIST[i],
-                            display_text=ROUNDING_METHOD_LIST[i],
-                            data=f"_update_config 端数計算方法 {i}",
-                        ) for i in range(3, 5)
-                    ] + [
-                        PostbackAction(
-                            label="その他",
-                            display_text="その他",
-                            data="_setting 端数計算方法",
-                        ),
-                    ],
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="計算方法設定2",
+                    template=ButtonsTemplate(
+                        title="端数計算方法変更",
+                        text="どれにしますか？",
+                        actions=[
+                            PostbackAction(
+                                label=ROUNDING_METHOD_LIST[i],
+                                display_text=ROUNDING_METHOD_LIST[i],
+                                data=f"_update_config 端数計算方法 {i}",
+                            )
+                            for i in range(3, 5)
+                        ]
+                        + [
+                            PostbackAction(
+                                label="その他",
+                                display_text="その他",
+                                data="_setting 端数計算方法",
+                            ),
+                        ],
+                    ),
                 ),
-            ))
+            )
         elif key == "チップ":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="チップ設定",
-                template=ButtonsTemplate(
-                    title="チップ",
-                    text="どれにしますか？",
-                    actions=[
-                        PostbackAction(
-                            label=f"1枚{i}円",
-                            display_text=f"1枚{i}円",
-                            data=f"_update_config チップ {i}",
-                        ) for i in [0, 10, 30]
-                    ] + [
-                        PostbackAction(
-                            label="1枚50円以上",
-                            display_text="1枚50円以上",
-                            data="_setting 高チップ",
-                        ),
-                    ],
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="チップ設定",
+                    template=ButtonsTemplate(
+                        title="チップ",
+                        text="どれにしますか？",
+                        actions=[
+                            PostbackAction(
+                                label=f"1枚{i}円",
+                                display_text=f"1枚{i}円",
+                                data=f"_update_config チップ {i}",
+                            )
+                            for i in [0, 10, 30]
+                        ]
+                        + [
+                            PostbackAction(
+                                label="1枚50円以上",
+                                display_text="1枚50円以上",
+                                data="_setting 高チップ",
+                            ),
+                        ],
+                    ),
                 ),
-            ))
+            )
         elif key == "高チップ":
-            self.buttons.append(TemplateSendMessage(
-                alt_text="高チップ設定",
-                template=ButtonsTemplate(
-                    title="チップ",
-                    text="どれにしますか？",
-                    actions=[
-                        PostbackAction(
-                            label=f"1枚{i}円",
-                            display_text=f"1枚{i}円",
-                            data=f"_update_config チップ {i}",
-                        ) for i in [50, 100, 500]
-                    ] + [
-                        PostbackAction(
-                            label="1枚30円以下",
-                            display_text="1枚30円以下",
-                            data="_setting チップ",
-                        ),
-                    ],
+            self.buttons.append(
+                TemplateSendMessage(
+                    alt_text="高チップ設定",
+                    template=ButtonsTemplate(
+                        title="チップ",
+                        text="どれにしますか？",
+                        actions=[
+                            PostbackAction(
+                                label=f"1枚{i}円",
+                                display_text=f"1枚{i}円",
+                                data=f"_update_config チップ {i}",
+                            )
+                            for i in [50, 100, 500]
+                        ]
+                        + [
+                            PostbackAction(
+                                label="1枚30円以下",
+                                display_text="1枚30円以下",
+                                data="_setting チップ",
+                            ),
+                        ],
+                    ),
                 ),
-            ))
+            )
 
     def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
         self.buttons.append(
@@ -327,8 +359,10 @@ class ReplyService(IReplyService):
                             label=player_id_and_name["name"],
                             display_text=player_id_and_name["name"],
                             data="_tobi " + player_id_and_name["_id"],
-                        ) for player_id_and_name in player_id_and_names
-                    ] + [
+                        )
+                        for player_id_and_name in player_id_and_names
+                    ]
+                    + [
                         PostbackAction(
                             label="誰も飛ばしていません",
                             display_text="勝手に飛びました",
@@ -365,7 +399,7 @@ class ReplyService(IReplyService):
     def reply(self, event: Event) -> None:
         contents = self.texts + self.buttons + self.images
 
-        if (len(contents) == 0):
+        if len(contents) == 0:
             return
         if hasattr(event, "reply_token"):
             try:

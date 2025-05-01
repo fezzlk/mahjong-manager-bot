@@ -10,7 +10,6 @@ from .interfaces.IUserService import IUserService
 
 
 class UserService(IUserService):
-
     def find_or_create_by_profile(
         self,
         profile: Profile,
@@ -41,6 +40,7 @@ class UserService(IUserService):
         line_user_id: str,
     ) -> str:
         """LINE Bot API から名前の取得を試みる
+
         -> 失敗したら DB から名前の取得を試みる
         -> 失敗したら None を返す
         """
@@ -84,7 +84,9 @@ class UserService(IUserService):
         mode: UserMode,
     ) -> None:
         if not isinstance(mode, UserMode):
-            raise ValueError(f"予期しないモード変更リクエストを受け取りました。'{mode}'")
+            raise ValueError(
+                f"予期しないモード変更リクエストを受け取りました。'{mode}'",
+            )
 
         user_repository.update(
             query={
@@ -94,7 +96,6 @@ class UserService(IUserService):
         )
 
         print(f"chmod: {line_user_id}: {mode.value}")
-
 
     def get_mode(self, line_user_id: str) -> UserMode:
         target = user_repository.find(query={"line_user_id": line_user_id})

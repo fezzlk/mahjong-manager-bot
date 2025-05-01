@@ -14,7 +14,7 @@ def test_success_find_records():
         match_repository.create(
             dummy_match,
         )
-    target_matches:List[Match] = []
+    target_matches: List[Match] = []
     target_matches.append(dummy_matches[0])
     target_matches.append(dummy_matches[2])
 
@@ -25,7 +25,7 @@ def test_success_find_records():
     assert len(result) == len(target_matches)
     for i in range(len(result)):
         assert isinstance(result[i], Match)
-        assert type(result[i]._id) == ObjectId
+        assert type(result[i]._id) is ObjectId
         assert result[i].line_group_id == target_matches[i].line_group_id
         assert result[i].status == target_matches[i].status
 
@@ -48,7 +48,7 @@ def test_hit_records():
         match_repository.create(
             dummy_match,
         )
-    target_matches:List[Match] = []
+    target_matches: List[Match] = []
     target_matches.append(dummy_matches[0])
     target_matches.append(dummy_matches[2])
 
@@ -63,7 +63,7 @@ def test_hit_records():
     assert len(result) == len(target_matches)
     for i in range(len(result)):
         assert isinstance(result[i], Match)
-        assert type(result[i]._id) == ObjectId
+        assert type(result[i]._id) is ObjectId
         assert result[i].line_group_id == target_matches[i].line_group_id
         assert result[i].status == target_matches[i].status
 
