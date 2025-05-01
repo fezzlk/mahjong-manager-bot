@@ -40,7 +40,7 @@
     "matplotlib",
     "Authlib",
     "certifi",
-    "autopep8",
+    "ruff",
     "pytest",
     "pylint",
   ],

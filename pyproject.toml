@@ -1,0 +1,13 @@
+[tool.ruff]
+line-length = 88        # 任意で変更
+target-version = "py38" # あなたのPythonバージョンに合わせて
+fix = true              # 自動修正を有効化
+
+[tool.ruff.format]
+quote-style = "double" # black風にしたいなら
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = []
