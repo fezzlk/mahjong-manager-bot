@@ -78,7 +78,7 @@ class RCommands(Enum):
 
 def routing_by_text_in_group_line():
     group_service.find_or_create(request_info_service.req_line_group_id)
-    
+
     """routing by text"""
     method = request_info_service.method
     if method is not None:

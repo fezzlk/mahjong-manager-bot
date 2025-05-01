@@ -30,7 +30,7 @@ class IMessageService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def parse_date_from_text(date_str: str) -> (datetime, bool):
+    def parse_date_from_text(date_str: str) -> tuple[datetime, bool]:
         pass
 
     @abstractmethod

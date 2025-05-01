@@ -3,6 +3,7 @@ from DomainModel.entities.Group import Group, GroupMode
 from repositories import group_repository
 from typing import Optional
 
+
 class GroupService(IGroupService):
 
     def find_or_create(self, line_group_id: str) -> Group:
@@ -10,7 +11,7 @@ class GroupService(IGroupService):
 
         if len(groups) > 0:
             return groups[0]
-    
+
         group = Group(
             line_group_id=line_group_id,
             mode=GroupMode.wait.value,

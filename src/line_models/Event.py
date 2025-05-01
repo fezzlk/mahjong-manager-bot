@@ -4,7 +4,7 @@ from .Postback import Postback
 
 
 class Event:
-    
+
     def __init__(
         self,
         type='message',

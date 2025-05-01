@@ -108,9 +108,9 @@ class ReplyHistoryUseCase:
         history[start_date - timedelta(minutes=2)] = 0
         history[start_date - timedelta(minutes=1)] = 0
         history = dict(sorted(history.items()))
-        
-        x =[]
-        y =[]
+
+        x = []
+        y = []
         for k, v in history.items():
             x.append(k)
             y.append(v)
@@ -124,7 +124,7 @@ class ReplyHistoryUseCase:
         plt.step(history.keys(), history.values(), where='mid')
 
         plt.grid(which='major', axis='y')
-        plt.xlim([start_date - timedelta(minutes=2), end_date + timedelta(seconds=(end_date-start_date).total_seconds() // 100)])
+        plt.xlim([start_date - timedelta(minutes=2), end_date + timedelta(seconds=(end_date - start_date).total_seconds() // 100)])
         plt.xticks(rotation=30)
         # locator = mdates.DayLocator()
         # ax.xaxis.set_major_locator(locator)

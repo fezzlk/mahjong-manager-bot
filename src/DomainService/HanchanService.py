@@ -56,7 +56,7 @@ class HanchanService(IHanchanService):
 
         print(f'create hanchan: group "{line_group_id}"')
         return new_match
-    
+
     def find_all_archived_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
         return hanchan_repository.find(
             {

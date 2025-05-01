@@ -12,7 +12,7 @@ def test_None():
 
     # Assert
     assert result[0] is None
-    assert result[1] == False
+    assert result[1] is False
 
 
 @pytest.fixture(params=[
@@ -30,6 +30,7 @@ def test_None():
 def case_invalid(request) -> str:
     return request.param
 
+
 def test_invalid_text(case_invalid):
     # Arrange
     message_service = MessageService()
@@ -39,22 +40,26 @@ def test_invalid_text(case_invalid):
 
     # Assert
     assert result[0] is None
-    assert result[1] == True
+    assert result[1] is True
+
 
 now = datetime.now()
+
+
 @pytest.fixture(params=[
-    ('20230101', datetime(2023,1,1)),
-    ('20991231', datetime(2099,12,31)),
-    ('0230101', datetime(23,1,1)),
-    ('000101', datetime(2000,1,1)),
-    ('00101', datetime(2000,1,1)),
-    ('0101', datetime(now.year,1,1)),
-    ('101', datetime(now.year,1,1)),
-    ('01', datetime(now.year,now.month,1)),
-    ('1', datetime(now.year,now.month,1)),
+    ('20230101', datetime(2023, 1, 1)),
+    ('20991231', datetime(2099, 12, 31)),
+    ('0230101', datetime(23, 1, 1)),
+    ('000101', datetime(2000, 1, 1)),
+    ('00101', datetime(2000, 1, 1)),
+    ('0101', datetime(now.year, 1, 1)),
+    ('101', datetime(now.year, 1, 1)),
+    ('01', datetime(now.year, now.month, 1)),
+    ('1', datetime(now.year, now.month, 1)),
 ])
 def case_valid(request) -> str:
     return request.param
+
 
 def test_success(case_valid):
     # Arrange
@@ -65,4 +70,4 @@ def test_success(case_valid):
 
     # Assert
     assert result[0] == case_valid[1]
-    assert result[1] == False
+    assert result[1] is False

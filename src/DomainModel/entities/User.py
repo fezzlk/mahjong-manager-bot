@@ -33,7 +33,7 @@ class User:
     ):
         if mode not in UserMode._member_names_:
             raise ValueError(f'UserMode の値({mode})が不適切です。')
-   
+
         self._id = _id
         self.line_user_name = line_user_name
         self.line_user_id = line_user_id

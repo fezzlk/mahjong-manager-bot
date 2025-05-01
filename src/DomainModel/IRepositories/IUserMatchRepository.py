@@ -25,7 +25,7 @@ class IUserMatchRepository(metaclass=ABCMeta):
         query: Dict[str, any] = {},
     ) -> int:
         pass
-    
+
     @abstractmethod
     def update(
         self,

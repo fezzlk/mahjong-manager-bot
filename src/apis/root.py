@@ -68,9 +68,11 @@ def create_dummy():
     CreateDummyUseCase().execute()
     return 'Done'
 
+
 @views_blueprint.route('/migrate', methods=['POST'])
 def migrate():
     return 'done'
+
 
 @views_blueprint.route('/test_personal_line', methods=['POST'])
 def test_personal_line():
@@ -88,5 +90,5 @@ def test_personal_line():
     )
     request_info_service.set_req_info(event)
     import routing_by_text_in_personal_line
-    routing_by_text_in_personal_line.routing_by_text_in_personal_line()    
+    routing_by_text_in_personal_line.routing_by_text_in_personal_line()
     return '\n\n'.join([content.text for content in reply_service.texts])

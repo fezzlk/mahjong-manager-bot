@@ -38,14 +38,14 @@ def authenticate(line_user_id: str) -> str:
     return create_access_token(identity=users[0].line_user_id)
 
 
-@ auth_blueprint.route('/google/login')
+@auth_blueprint.route('/google/login')
 def google_login():
     google = oauth.create_client('google')
     redirect_uri = url_for('auth_blueprint.google_authorize', _external=True)
     return google.authorize_redirect(redirect_uri)
 
 
-@ auth_blueprint.route('/google/authorize')
+@auth_blueprint.route('/google/authorize')
 def google_authorize():
     # 認証
     google = oauth.create_client('google')

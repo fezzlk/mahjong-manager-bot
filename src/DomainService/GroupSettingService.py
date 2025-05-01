@@ -10,7 +10,7 @@ class GroupSettingService(IGroupSettingService):
 
         if len(settings) > 0:
             return settings[0]
-    
+
         new_settings = GroupSetting(line_group_id=line_group_id)
         result = group_setting_repository.create(new_settings)
         print(f'create group setting: ID = {result._id}(line group id: {line_group_id})')

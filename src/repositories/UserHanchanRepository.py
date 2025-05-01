@@ -39,7 +39,7 @@ class UserHanchanRepository(IUserHanchanRepository):
     ) -> int:
         result = user_hanchans_collection.delete_many(filter=query)
         return result.deleted_count
-    
+
     def update(
         self,
         query: Dict[str, any],

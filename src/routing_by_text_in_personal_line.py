@@ -69,7 +69,6 @@ def routing_by_text_in_personal_line():
 
 def routing_by_method(method: str):
     """routing by method for personal chat"""
-    body = request_info_service.body
     # mode
     if method == UCommands.mode.name:
         ReplyUserModeUseCase().execute()

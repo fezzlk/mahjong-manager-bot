@@ -35,7 +35,7 @@ class IReplyService(metaclass=ABCMeta):
     @abstractmethod
     def add_start_menu(self) -> None:
         pass
-        
+
     @abstractmethod
     def add_confirm_finish_menu(self) -> None:
         pass

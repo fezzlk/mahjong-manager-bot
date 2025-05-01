@@ -19,7 +19,7 @@ class UserService(IUserService):
 
         if len(users) > 0:
             return users[0]
-        
+
         new_user = User(
             line_user_name=profile.display_name,
             line_user_id=profile.user_id,
@@ -74,7 +74,7 @@ class UserService(IUserService):
         if len(users) > 1:
             print(f'user_name:{line_user_name} is duplicated')
             return None
-        
+
         return users[0].line_user_id
 
     def chmod(
@@ -101,14 +101,13 @@ class UserService(IUserService):
 
         if len(target) == 0:
             return None
-        
-        return target[0].mode
 
+        return target[0].mode
 
     def find_one_by_line_user_id(self, line_user_id: str) -> User:
         target = user_repository.find(query={'line_user_id': line_user_id})
 
         if len(target) == 0:
             return None
-        
+
         return target[0]

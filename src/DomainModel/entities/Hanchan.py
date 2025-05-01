@@ -28,7 +28,7 @@ class Hanchan:
         match_id: int,
         status: int = 2,
         raw_scores: Dict[str, int] = {},
-        converted_scores: Dict[str, int] = {},        
+        converted_scores: Dict[str, int] = {},
         created_at: datetime = datetime.now(),
         updated_at: datetime = datetime.now(),
         _id: ObjectId = None,

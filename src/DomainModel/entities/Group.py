@@ -31,7 +31,7 @@ class Group:
     ):
         if mode not in GroupMode._member_names_:
             raise ValueError(f'GroupMode の値({mode})が不適切です。')
-   
+
         self._id = _id
         self.line_group_id = line_group_id
         self.mode = mode

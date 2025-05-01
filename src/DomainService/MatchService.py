@@ -39,7 +39,6 @@ class MatchService(IMatchService):
 
         return target
 
-
     def find_one_by_id(self, _id: ObjectId) -> Optional[Match]:
         matches = match_repository.find(
             {'_id': _id}
@@ -56,7 +55,7 @@ class MatchService(IMatchService):
 
         print(f'create match: group "{line_group_id}"')
         return new_match
-    
+
     def update(self, target: Match) -> None:
         match_repository.update(
             {'_id': target._id},
@@ -74,7 +73,7 @@ class MatchService(IMatchService):
         return match_repository.find(
             query={'_id': {'$in': ids}, 'line_group_id': {'$in': line_group_ids}},
         )
-    
+
     def find_latest_one(self, line_group_id: str) -> Optional[Match]:
         matches = match_repository.find(
             query={'line_group_id': line_group_id},
@@ -93,4 +92,3 @@ class MatchService(IMatchService):
             },
             sort=[('created_at', ASCENDING)]
         )
-    

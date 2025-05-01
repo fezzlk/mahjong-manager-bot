@@ -40,7 +40,7 @@ class GroupSetting:
         tip_rate: int = 0,
         tobi_prize: int = 10,
         num_of_players: int = 4,
-        rounding_method: int = 1,        
+        rounding_method: int = 1,
         created_at: datetime = datetime.now(),
         updated_at: datetime = datetime.now(),
         _id: ObjectId = None,

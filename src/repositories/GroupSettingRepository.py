@@ -31,7 +31,7 @@ class GroupSettingRepository(IGroupSettingRepository):
         new_values['updated_at'] = datetime.now()
         result = group_settings_collection.update_many(query, {'$set': new_values})
         return result.matched_count
-    
+
     def find(
         self,
         query: Dict[str, any] = {},

@@ -18,7 +18,6 @@ from repositories import (
 
 class CreateDummyUseCase:
     def execute(self) -> None:
-        
         users = generate_dummy_user_list()[:10]
         web_users = generate_dummy_web_user_list()[:4]
         groups = generate_dummy_group_list()[:5]

@@ -100,8 +100,8 @@ def handle_text_message(event):
         raise BaseException('this source type is not supported')
 
 
-@ handler.add(MessageEvent, message=ImageMessage)
-@ handle_event_decorater
+@handler.add(MessageEvent, message=ImageMessage)
+@handle_event_decorater
 def handle_image_message(event):
     # if event.source.type == 'room' or event.source.type == 'group':
     #     InputResultFromImageUseCase().execute(event)
@@ -110,8 +110,8 @@ def handle_image_message(event):
     return
 
 
-@ handler.add(PostbackEvent)
-@ handle_event_decorater
+@handler.add(PostbackEvent)
+@handle_event_decorater
 def handle_postback(event):
     if event.source.type == 'room' or event.source.type == 'group':
         routing_by_text_in_group_line()

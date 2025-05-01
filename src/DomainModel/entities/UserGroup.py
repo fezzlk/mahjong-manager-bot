@@ -14,7 +14,7 @@ class UserGroup:
     def __init__(
         self,
         line_user_id: int,
-        line_group_id: int,        
+        line_group_id: int,
         created_at: datetime = datetime.now(),
         updated_at: datetime = datetime.now(),
         _id: ObjectId = None,

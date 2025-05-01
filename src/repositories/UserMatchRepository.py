@@ -40,7 +40,7 @@ class UserMatchRepository(IUserMatchRepository):
     ) -> int:
         result = user_matches_collection.delete_many(filter=query)
         return result.deleted_count
-    
+
     def update(
         self,
         query: Dict[str, any],

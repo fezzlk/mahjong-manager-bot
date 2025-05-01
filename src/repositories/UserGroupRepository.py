@@ -40,7 +40,7 @@ class UserGroupRepository(IUserGroupRepository):
     ) -> int:
         result = user_groups_collection.delete_many(filter=query)
         return result.deleted_count
-    
+
     def update(
         self,
         query: Dict[str, any],
@@ -59,4 +59,3 @@ class UserGroupRepository(IUserGroupRepository):
             updated_at=record.get('updated_at'),
             _id=record.get("_id"),
         )
-

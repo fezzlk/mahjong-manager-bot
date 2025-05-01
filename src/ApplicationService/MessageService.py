@@ -70,7 +70,6 @@ class MessageService(IMessageService):
             show_prize_money_list.append(
                 f'{name}: {str(price)}円 ({show_score}{additional_tip_message})')
         return '\n'.join(show_prize_money_list)
-    
 
     def create_show_converted_scores(self, converted_scores: Dict[str, int], sum_scores: Dict[str, int] = None) -> str:
         score_text_list = []
@@ -94,7 +93,7 @@ class MessageService(IMessageService):
 
         return '\n'.join(score_text_list)
 
-    def parse_date_from_text(self, date_str: str) -> (datetime, bool):
+    def parse_date_from_text(self, date_str: str) -> tuple[datetime, bool]:
         # 戻り値の二つ目はis invalid。正常に変換できた場合はFalse、フォーマット不正がある場合はTrueを返す。
         result = None
 
@@ -125,17 +124,17 @@ class MessageService(IMessageService):
                     return (None, True)
                 result = datetime(year, month, day)
             except:
-                    return (None, True)
-                
+                return (None, True)
+
         return (result, False)
-    
+
     def create_range_message(self, from_dt: datetime, to_dt: datetime) -> str:
         range_message = ''
         if from_dt is not None:
             range_message += f'{from_dt.strftime("%Y年%m月%d日")}0時から'
         if to_dt is not None:
             range_message += f'{to_dt.strftime("%Y年%m月%d日")}0時まで'
-       
+
         if range_message == '':
             range_message = None
         else:
