@@ -88,7 +88,7 @@ def routing_by_method(method: str):
     # fortune
     elif method == UCommands.fortune.name:
         ReplyFortuneUseCase().execute()
-     # fortune_yaku
+    # fortune_yaku
     elif method == UCommands.fortune_yaku.name:
         ReplyFortuneYakuUseCase().execute()
     # history

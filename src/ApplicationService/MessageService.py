@@ -11,6 +11,13 @@ from typing import Dict
 
 KANSUJI = ['一', '二', '三', '四', '五', '六', '七', '八', '九']
 HAI = [k + '萬' for k in KANSUJI] + [k + '筒' for k in KANSUJI] + [k + '索' for k in KANSUJI] + ['白', '發', '中', '東', '南', '西', '北']
+han1 = ['リーチ', '一発', 'ツモ', '平和', '断么九', '飜牌', '一盃口', '嶺上開花', '槍槓', '海底', '河底']
+han2 = ['ダブルリーチ', '三色同順', '一気通貫', '対々和', '三暗刻', '三槓子', '全帯么', '混老頭', '小三元', '七対子']
+han3 = ['二盃口', '混一色', '純全帯么']
+han6 = ['清一色']
+yakuman = ['四暗刻', '大三元', '国士無双', '四喜和', '字一色', '九連宝燈', '緑一色', '清老頭', '四槓子', '天和', '地和']
+yaku_list = han1 + han2 + han3 + han6 + yakuman
+
 
 wait_messages = [
     '雑談してる暇があったら麻雀の勉強をしましょう。',
@@ -47,7 +54,21 @@ class MessageService(IMessageService):
         )
 
         return random.choice(HAI)
+    
+    def get_random_yaku(
+        self,
+        line_user_id: str,
+    ) -> str:
+        now = datetime.now()
+        random.seed(
+            int(now.year + now.month + now.day) +
+            int(re.sub("\\D", "", line_user_id))
+        )
+        
+        weights_list = [10] * len(han1) + [5] * len(han2) + [3] * len(han3) + [1.5] * len(han6) + [0.5] * len(yakuman)
 
+        return random.choices(yaku_list, weights=weights_list, k=1)[0]
+    
     def get_wait_massage(self) -> str:
         return random.choice(wait_messages)
 
@@ -70,7 +91,6 @@ class MessageService(IMessageService):
             show_prize_money_list.append(
                 f'{name}: {str(price)}円 ({show_score}{additional_tip_message})')
         return '\n'.join(show_prize_money_list)
-    
 
     def create_show_converted_scores(self, converted_scores: Dict[str, int], sum_scores: Dict[str, int] = None) -> str:
         score_text_list = []
@@ -124,8 +144,8 @@ class MessageService(IMessageService):
                 else:
                     return (None, True)
                 result = datetime(year, month, day)
-            except:
-                    return (None, True)
+            except Exception:
+                return (None, True)
                 
         return (result, False)
     
