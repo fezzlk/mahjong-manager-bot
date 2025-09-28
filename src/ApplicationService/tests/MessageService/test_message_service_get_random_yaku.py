@@ -11,5 +11,4 @@ def test_success():
     result = message_service.get_random_yaku(dummy_user.line_user_id)
 
     # Assert
-    print("yaku =", result)
     assert result in yaku_list

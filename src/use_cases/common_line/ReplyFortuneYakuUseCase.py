@@ -21,8 +21,4 @@ class ReplyFortuneYakuUseCase:
             return
         lucky_yaku = message_service.get_random_yaku(line_user_id)
         reply_service.add_message(
-            f'{user_name}さんの今日のラッキー牌は「{lucky_yaku}」です。')
-        
-        # 適当なコメントを返す
-        reply_service.add_message('text')
-
+            f'{user_name}さんの今日のラッキー役は「{lucky_yaku}」です。')
