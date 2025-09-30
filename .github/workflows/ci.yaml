@@ -10,9 +10,9 @@ jobs:
         python-version: ["3.8"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Cache pip
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff
+          pip install $(grep '^ruff==' requirements.dev.txt)
       - name: Run ruff
         run: ruff check .
 
@@ -86,10 +86,10 @@ jobs:
 
     steps:
       # 対象のブランチにチェックアウト
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       # Python の準備
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       # 依存パッケージのキャッシュ管理
