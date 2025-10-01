@@ -1,8 +1,7 @@
 from typing import List
-from repositories import (
-    group_repository, session_scope
-)
+
 from DomainModel.entities.Group import Group
+from repositories import group_repository, session_scope
 
 
 class GetGroupsForWebUseCase:

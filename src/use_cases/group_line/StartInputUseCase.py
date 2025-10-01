@@ -1,25 +1,28 @@
-from DomainService import (
-    group_service,
-    match_service,
-    hanchan_service,
-)
 from ApplicationService import (
-    request_info_service,
     reply_service,
+    request_info_service,
 )
 from DomainModel.entities.Group import GroupMode
+from DomainService import (
+    group_service,
+    hanchan_service,
+    match_service,
+)
 
 
 class StartInputUseCase:
-
     def execute(self) -> None:
-        group = group_service.find_one_by_line_group_id(request_info_service.req_line_group_id)
+        group = group_service.find_one_by_line_group_id(
+            request_info_service.req_line_group_id,
+        )
 
         if group is None:
-            reply_service.add_message('トークルームが登録されていません。招待し直してください。')
+            reply_service.add_message(
+                "トークルームが登録されていません。招待し直してください。",
+            )
             return
         if group.mode == GroupMode.input.value:
-            reply_service.add_message('すでに入力モードです。')
+            reply_service.add_message("すでに入力モードです。")
             return
 
         # group の active match を取得、なければ作成
@@ -31,7 +34,9 @@ class StartInputUseCase:
         # match の active hanchan を取得、なければ作成
         active_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
         if active_hanchan is None:
-            active_hanchan = hanchan_service.create_with_line_group_id_and_match_id(group.line_group_id, active_match._id)
+            active_hanchan = hanchan_service.create_with_line_group_id_and_match_id(
+                group.line_group_id, active_match._id,
+            )
             active_match.active_hanchan_id = active_hanchan._id
             match_service.update(active_match)
 
@@ -40,4 +45,5 @@ class StartInputUseCase:
 
         hanchans = hanchan_service.find_all_archived_by_match_id(active_match._id)
         reply_service.add_message(
-            f'第{len(hanchans) + 1}回戦お疲れ様です。各自点数を入力してください。\n（同点の場合は上家が高くなるように数点追加してください）')
+            f"第{len(hanchans) + 1}回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)",
+        )

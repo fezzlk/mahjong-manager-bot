@@ -1,7 +1,8 @@
-from tests.dummies import generate_dummy_web_user_list
-from repositories import web_user_repository
-from DomainModel.entities.WebUser import WebUser
 from bson.objectid import ObjectId
+
+from DomainModel.entities.WebUser import WebUser
+from repositories import web_user_repository
+from tests.dummies import generate_dummy_web_user_list
 
 
 def test_success_find_records():
@@ -19,12 +20,14 @@ def test_success_find_records():
     assert len(result) == len(dummy_web_users)
     for i in range(len(result)):
         assert isinstance(result[i], WebUser)
-        assert type(result[i]._id) == ObjectId
+        assert type(result[i]._id) is ObjectId
         assert result[i].user_code == dummy_web_users[i].user_code
         assert result[i].name == dummy_web_users[i].name
         assert result[i].email == dummy_web_users[i].email
         assert result[i].linked_line_user_id == dummy_web_users[i].linked_line_user_id
-        assert result[i].is_approved_line_user == dummy_web_users[i].is_approved_line_user
+        assert (
+            result[i].is_approved_line_user == dummy_web_users[i].is_approved_line_user
+        )
 
 
 def test_success_find_0_record():
@@ -49,13 +52,13 @@ def test_hit_1_record():
 
     # Act
     result = web_user_repository.find(
-        query={'user_code': target_web_user.user_code},
+        query={"user_code": target_web_user.user_code},
     )
 
     # Assert
     assert len(result) == 1
     assert isinstance(result[0], WebUser)
-    assert type(result[0]._id) == ObjectId
+    assert type(result[0]._id) is ObjectId
     assert result[0].user_code == dummy_web_users[0].user_code
     assert result[0].name == dummy_web_users[0].name
     assert result[0].email == dummy_web_users[0].email

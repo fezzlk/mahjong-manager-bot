@@ -1,29 +1,27 @@
 from ApplicationModels.PageContents import PageContents
-from repositories import (
-    web_user_repository, user_repository, session_scope
-)
-from DomainModel.entities.WebUser import WebUser
 from DomainModel.entities.User import User
+from DomainModel.entities.WebUser import WebUser
+from repositories import session_scope, user_repository, web_user_repository
 
 
-class ViewApproveLinkLineUseCase():
+class ViewApproveLinkLineUseCase:
     def execute(
-            self,
-            page_contents: PageContents
+        self,
+        page_contents: PageContents,
     ) -> PageContents:
-        page_contents.page_title = 'LINEアカウント連携'
+        page_contents.page_title = "LINEアカウント連携"
 
         with session_scope() as session:
             login_user: WebUser = web_user_repository.find_by_id(
                 session=session,
-                _id=page_contents.login_user._id
+                _id=page_contents.login_user._id,
             )
 
-            page_contents.line_user_name = ''
+            page_contents.line_user_name = ""
             if login_user is not None:
                 line_user: User = user_repository.find_one_by_line_user_id(
                     session=session,
-                    line_user_id=login_user.linked_line_user_id
+                    line_user_id=login_user.linked_line_user_id,
                 )
 
                 if line_user is not None:

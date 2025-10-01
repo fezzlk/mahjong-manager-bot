@@ -14,7 +14,7 @@
 #         )
 
 #         ocr_service.run(message_content.content)
-#         if ocr_service.isResultImage():
+#         if ocr_service.is_result_image():
 #             results = ocr_service.get_points()
 #             if results is None:
 #                 return

@@ -1,10 +1,10 @@
+from datetime import datetime
+
+from DomainModel.entities.UserHanchan import UserHanchan
 from DomainService import (
     user_hanchan_service,
 )
 from repositories import user_hanchan_repository
-from DomainModel.entities.UserHanchan import UserHanchan
-from datetime import datetime
-
 
 dummy_user_hanchan = UserHanchan(
         _id=1,
@@ -19,7 +19,7 @@ def test_ok_with_no_query(mocker):
     # Arrange
     mock_find = mocker.patch.object(
         user_hanchan_repository,
-        'find',
+        "find",
         return_value=[dummy_user_hanchan],
     )
 
@@ -33,14 +33,14 @@ def test_ok_with_no_query(mocker):
     assert result[0].hanchan_id == dummy_user_hanchan.hanchan_id
     assert result[0].point == dummy_user_hanchan.point
     assert result[0].rank == dummy_user_hanchan.rank
-    mock_find.assert_called_once_with(query={'$and': [{'line_user_id': {'$in': 'G0123456789abcdefghijklmnopqrstu1'}}]}, sort=[('hanchan_id', 1)])
+    mock_find.assert_called_once_with(query={"$and": [{"line_user_id": {"$in": "G0123456789abcdefghijklmnopqrstu1"}}]}, sort=[("hanchan_id", 1)])
 
 
 def test_ok_with_from_query(mocker):
     # Arrange
     mock_find = mocker.patch.object(
         user_hanchan_repository,
-        'find',
+        "find",
         return_value=[dummy_user_hanchan],
     )
 
@@ -54,14 +54,14 @@ def test_ok_with_from_query(mocker):
     assert result[0].hanchan_id == dummy_user_hanchan.hanchan_id
     assert result[0].point == dummy_user_hanchan.point
     assert result[0].rank == dummy_user_hanchan.rank
-    mock_find.assert_called_once_with(query={'$and': [{'line_user_id': {'$in': 'G0123456789abcdefghijklmnopqrstu1'}}, {'created_at': {'$gte': datetime(2022, 1, 2, 3, 4, 5)}}]}, sort=[('hanchan_id', 1)])
+    mock_find.assert_called_once_with(query={"$and": [{"line_user_id": {"$in": "G0123456789abcdefghijklmnopqrstu1"}}, {"created_at": {"$gte": datetime(2022, 1, 2, 3, 4, 5)}}]}, sort=[("hanchan_id", 1)])
 
 
 def test_ok_with_to_query(mocker):
     # Arrange
     mock_find = mocker.patch.object(
         user_hanchan_repository,
-        'find',
+        "find",
         return_value=[dummy_user_hanchan],
     )
 
@@ -75,14 +75,14 @@ def test_ok_with_to_query(mocker):
     assert result[0].hanchan_id == dummy_user_hanchan.hanchan_id
     assert result[0].point == dummy_user_hanchan.point
     assert result[0].rank == dummy_user_hanchan.rank
-    mock_find.assert_called_once_with(query={'$and': [{'line_user_id': {'$in': 'G0123456789abcdefghijklmnopqrstu1'}}, {'created_at': {'$lte': datetime(2022, 1, 2, 3, 4, 5)}}]}, sort=[('hanchan_id', 1)])
+    mock_find.assert_called_once_with(query={"$and": [{"line_user_id": {"$in": "G0123456789abcdefghijklmnopqrstu1"}}, {"created_at": {"$lte": datetime(2022, 1, 2, 3, 4, 5)}}]}, sort=[("hanchan_id", 1)])
 
 
 def test_ok_with_both_query(mocker):
     # Arrange
     mock_find = mocker.patch.object(
         user_hanchan_repository,
-        'find',
+        "find",
         return_value=[dummy_user_hanchan],
     )
 
@@ -96,4 +96,4 @@ def test_ok_with_both_query(mocker):
     assert result[0].hanchan_id == dummy_user_hanchan.hanchan_id
     assert result[0].point == dummy_user_hanchan.point
     assert result[0].rank == dummy_user_hanchan.rank
-    mock_find.assert_called_once_with(query={'$and': [{'line_user_id': {'$in': 'G0123456789abcdefghijklmnopqrstu1'}}, {'created_at': {'$gte': datetime(2022, 1, 2, 3, 4, 5)}}, {'created_at': {'$lte': datetime(2023, 1, 2, 3, 4, 5)}}]}, sort=[('hanchan_id', 1)])
+    mock_find.assert_called_once_with(query={"$and": [{"line_user_id": {"$in": "G0123456789abcdefghijklmnopqrstu1"}}, {"created_at": {"$gte": datetime(2022, 1, 2, 3, 4, 5)}}, {"created_at": {"$lte": datetime(2023, 1, 2, 3, 4, 5)}}]}, sort=[("hanchan_id", 1)])

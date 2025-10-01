@@ -1,19 +1,19 @@
-from DomainModel.entities.Group import Group, GroupMode
-from use_cases.group_line.ExitUseCase import ExitUseCase
-from ApplicationService import (
-    request_info_service,
-    reply_service,
-)
-from repositories import (
-    group_repository,
-    match_repository,
-    hanchan_repository,
-)
 from linebot.models import TextSendMessage
-from line_models.Event import Event
+
+from ApplicationService import (
+        reply_service,
+        request_info_service,
+)
+from DomainModel.entities.Group import Group, GroupMode
 from DomainModel.entities.Hanchan import Hanchan
 from DomainModel.entities.Match import Match
-from DomainModel.entities.Group import Group, GroupMode
+from line_models.Event import Event
+from repositories import (
+        group_repository,
+        hanchan_repository,
+        match_repository,
+)
+from use_cases.group_line.ExitUseCase import ExitUseCase
 
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -35,12 +35,12 @@ dummy_hanchan = Hanchan(
 )
 
 dummy_event = Event(
-    type='message',
-    source_type='group',
+    type="message",
+    source_type="group",
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
-    message_type='text',
-    text='_exit',
+    message_type="text",
+    text="_exit",
 )
 
 
@@ -54,7 +54,7 @@ def test_fail_no_group():
 
         # Assert
         assert len(reply_service.texts) == 1
-        assert reply_service.texts[0].text == 'グループが登録されていません。招待し直してください。'
+        assert reply_service.texts[0].text == "グループが登録されていません。招待し直してください。"
 
 
 def test_execute():
@@ -70,10 +70,10 @@ def test_execute():
     result = group_repository.find()
     assert len(result) == 1
     assert result[0].line_group_id == dummy_group.line_group_id
-    assert result[0].mode == 'wait'
+    assert result[0].mode == "wait"
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextSendMessage)
-    assert reply_service.texts[0].text == '始める時は「_start」と入力してください。'
+    assert reply_service.texts[0].text == "始める時は「_start」と入力してください。"
 
 
 def test_execute_with_active_hanchan():
@@ -93,11 +93,11 @@ def test_execute_with_active_hanchan():
     result = group_repository.find()
     assert len(result) == 1
     assert result[0].line_group_id == dummy_group.line_group_id
-    assert result[0].mode == 'wait'
+    assert result[0].mode == "wait"
     assert result[0].active_match_id == dummy_match._id
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextSendMessage)
-    assert reply_service.texts[0].text == '始める時は「_start」と入力してください。'
+    assert reply_service.texts[0].text == "始める時は「_start」と入力してください。"
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is None
@@ -121,11 +121,11 @@ def test_execute_without_active_hanchan():
     result = group_repository.find()
     assert len(result) == 1
     assert result[0].line_group_id == dummy_group.line_group_id
-    assert result[0].mode == 'wait'
+    assert result[0].mode == "wait"
     assert result[0].active_match_id == dummy_match._id
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextSendMessage)
-    assert reply_service.texts[0].text == '始める時は「_start」と入力してください。'
+    assert reply_service.texts[0].text == "始める時は「_start」と入力してください。"
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is None

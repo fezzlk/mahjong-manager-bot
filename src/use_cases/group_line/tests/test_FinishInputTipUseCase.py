@@ -1,22 +1,21 @@
-from DomainModel.entities.GroupSetting import GroupSetting
-from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
-from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.Match import Match
-from DomainModel.entities.User import User, UserMode
-from DomainModel.entities.Group import Group, GroupMode
-from line_models.Event import Event
-from repositories import (
-    user_repository,
-    hanchan_repository,
-    match_repository,
-    group_repository,
-    group_setting_repository,
-)
-
 from ApplicationService import (
     reply_service,
     request_info_service,
 )
+from DomainModel.entities.Group import Group, GroupMode
+from DomainModel.entities.GroupSetting import GroupSetting
+from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Match import Match
+from DomainModel.entities.User import User, UserMode
+from line_models.Event import Event
+from repositories import (
+    group_repository,
+    group_setting_repository,
+    hanchan_repository,
+    match_repository,
+    user_repository,
+)
+from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
 
 dummy_users = [
     User(
@@ -68,18 +67,21 @@ dummy_group_setting = GroupSetting(
     tip_rate=50,
 )
 
-dummy_match= Match(
-        line_group_id=dummy_group.line_group_id,
-        tip_scores={"U0123456789abcdefghijklmnopqrstu1": 3, "U0123456789abcdefghijklmnopqrstu2": -3},
-        sum_scores={
-            'U0123456789abcdefghijklmnopqrstu1': 100,
-            'U0123456789abcdefghijklmnopqrstu2': 20,
-            'U0123456789abcdefghijklmnopqrstu3': -40,
-            'U0123456789abcdefghijklmnopqrstu4': -40,
-            'U0123456789abcdefghijklmnopqrstu5': -40,
-        },
-        _id=1,
-    )
+dummy_match = Match(
+    line_group_id=dummy_group.line_group_id,
+    tip_scores={
+        "U0123456789abcdefghijklmnopqrstu1": 3,
+        "U0123456789abcdefghijklmnopqrstu2": -3,
+    },
+    sum_scores={
+        "U0123456789abcdefghijklmnopqrstu1": 100,
+        "U0123456789abcdefghijklmnopqrstu2": 20,
+        "U0123456789abcdefghijklmnopqrstu3": -40,
+        "U0123456789abcdefghijklmnopqrstu4": -40,
+        "U0123456789abcdefghijklmnopqrstu5": -40,
+    },
+    _id=1,
+)
 
 dummy_hanchans = [
     Hanchan(
@@ -157,18 +159,19 @@ dummy_hanchans = [
 ]
 
 dummy_event = Event(
-    type='message',
-    source_type='group',
+    type="message",
+    source_type="group",
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
-    message_type='text',
-    text='_tip_ok',
+    message_type="text",
+    text="_tip_ok",
 )
+
 
 def test_fail_no_group():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
-    
+
     use_case = FinishInputTipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_setting_repository.create(dummy_group_setting)
@@ -183,13 +186,16 @@ def test_fail_no_group():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'グループが登録されていません。招待し直してください。'
+    assert (
+        reply_service.texts[0].text
+        == "グループが登録されていません。招待し直してください。"
+    )
 
 
 def test_fail_no_match():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
-    
+
     use_case = FinishInputTipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
@@ -204,8 +210,8 @@ def test_fail_no_match():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == '計算対象の試合が見つかりません。'
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    assert reply_service.texts[0].text == "計算対象の試合が見つかりません。"
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.tip_input.value
     assert groups[0].active_match_id == 1
 
@@ -213,18 +219,23 @@ def test_fail_no_match():
 def test_fail_tip_sum_mismatch():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
-    
+
     use_case = FinishInputTipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
     group_setting_repository.create(dummy_group_setting)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
-    match_repository.create(Match(
-        line_group_id=dummy_group.line_group_id,
-        tip_scores={"U0123456789abcdefghijklmnopqrstu1": 4, "U0123456789abcdefghijklmnopqrstu2": -3},
-        _id=1,
-    ))
+    match_repository.create(
+        Match(
+            line_group_id=dummy_group.line_group_id,
+            tip_scores={
+                "U0123456789abcdefghijklmnopqrstu1": 4,
+                "U0123456789abcdefghijklmnopqrstu2": -3,
+            },
+            _id=1,
+        ),
+    )
     for dummy_hanchan in dummy_hanchans:
         hanchan_repository.create(dummy_hanchan)
 
@@ -233,17 +244,19 @@ def test_fail_tip_sum_mismatch():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == 'チップ増減数の合計が+1です。0になるようにしてください。）'
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    assert (
+        reply_service.texts[0].text
+        == "チップ増減数の合計が+1です。0になるようにしてください。)"
+    )
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.tip_input.value
     assert groups[0].active_match_id == 1
-
 
 
 def test_success():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
-    
+
     use_case = FinishInputTipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
@@ -259,8 +272,11 @@ def test_success():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "【対戦結果】 \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n" + \
-        "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
-    groups = group_repository.find({'line_group_id': dummy_group.line_group_id})
+    assert (
+        reply_service.texts[0].text
+        == "【対戦結果】 \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n"
+        + "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
+    )
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
     assert groups[0].active_match_id is None

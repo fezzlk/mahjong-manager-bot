@@ -1,8 +1,7 @@
 from typing import List
-from repositories import (
-    group_setting_repository, session_scope
-)
+
 from DomainModel.entities.GroupSetting import Config
+from repositories import group_setting_repository, session_scope
 
 
 class GetConfigsForWebUseCase:

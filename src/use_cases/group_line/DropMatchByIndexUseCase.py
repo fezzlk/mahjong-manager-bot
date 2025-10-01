@@ -1,10 +1,10 @@
-from DomainService import (
-    match_service,
-    hanchan_service,
-)
 from ApplicationService import (
-    request_info_service,
     reply_service,
+    request_info_service,
+)
+from DomainService import (
+    hanchan_service,
+    match_service,
 )
 
 
@@ -15,14 +15,14 @@ class DropMatchByIndexUseCase:
         archived_matches = match_service.find_all_archived_by_line_group_id(line_group_id=line_group_id)
         if not str_index.isdigit():
             reply_service.add_message(
-                '引数は整数で指定してください。'
+                "引数は整数で指定してください。",
             )
             return
 
         index = int(str_index)
         if index < 1 or len(archived_matches) < index:
             reply_service.add_message(
-                f'このトークルームには全{len(archived_matches)}回までしか登録されていないため第{index}回はありません。'
+                f"このトークルームには全{len(archived_matches)}回までしか登録されていないため第{index}回はありません。",
             )
             return
 
@@ -31,5 +31,5 @@ class DropMatchByIndexUseCase:
         target_match.status = 0
         match_service.update(target_match)
         reply_service.add_message(
-            f'第{index}回の対戦結果を削除しました。'
+            f"第{index}回の対戦結果を削除しました。",
         )

@@ -1,9 +1,11 @@
-from typing import List, Dict, Tuple
 from datetime import datetime
+from typing import Dict, List, Tuple
+
 from pymongo import ASCENDING
-from mongo_client import group_settings_collection
+
 from DomainModel.entities.GroupSetting import GroupSetting
 from DomainModel.IRepositories.IGroupSettingRepository import IGroupSettingRepository
+from mongo_client import group_settings_collection
 
 
 class GroupSettingRepository(IGroupSettingRepository):
@@ -12,12 +14,12 @@ class GroupSettingRepository(IGroupSettingRepository):
         self,
         new_record: GroupSetting,
     ) -> GroupSetting:
-        if len(self.find(query={'line_group_id': new_record.line_group_id})) != 0:
-            raise Exception(f'LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。')
+        if len(self.find(query={"line_group_id": new_record.line_group_id})) != 0:
+            raise Exception(f"LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。")
 
         new_dict = new_record.__dict__.copy()
         if new_record._id is None:
-            new_dict.pop('_id')
+            new_dict.pop("_id")
         result = group_settings_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
 
@@ -28,14 +30,14 @@ class GroupSettingRepository(IGroupSettingRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
-        new_values['updated_at'] = datetime.now()
-        result = group_settings_collection.update_many(query, {'$set': new_values})
+        new_values["updated_at"] = datetime.now()
+        result = group_settings_collection.update_many(query, {"$set": new_values})
         return result.matched_count
-    
+
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[GroupSetting]:
         records = group_settings_collection\
             .find(filter=query)\
@@ -59,6 +61,6 @@ class GroupSettingRepository(IGroupSettingRepository):
             tip_rate=record.get("tip_rate"),
             num_of_players=record.get("num_of_players"),
             rounding_method=record.get("rounding_method"),
-            created_at=record.get('created_at'),
-            updated_at=record.get('updated_at'),
+            created_at=record.get("created_at"),
+            updated_at=record.get("updated_at"),
         )

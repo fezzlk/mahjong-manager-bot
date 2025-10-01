@@ -1,7 +1,7 @@
-from tests.dummies import generate_dummy_user_list
 from DomainService import user_service
-from repositories import user_repository
 from messaging_api_setting import line_bot_api
+from repositories import user_repository
+from tests.dummies import generate_dummy_user_list
 
 
 def test_success_with_line_api(mocker):
@@ -13,8 +13,8 @@ def test_success_with_line_api(mocker):
         )
     mocker.patch.object(
         line_bot_api,
-        'get_profile',
-        return_value='username from line api',
+        "get_profile",
+        return_value="username from line api",
     )
 
     # Act
@@ -43,7 +43,7 @@ def test_success_return_id():
     # Arrange
 
     # Act
-    result = user_service.get_name_by_line_user_id('dummy_line_id')
+    result = user_service.get_name_by_line_user_id("dummy_line_id")
 
     # Assert
     assert result is None

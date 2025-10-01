@@ -1,8 +1,9 @@
 import pytest
-from tests.dummies import generate_dummy_group_list
+from bson.objectid import ObjectId
+
 from DomainModel.entities.Group import Group, GroupMode
 from repositories import group_repository
-from bson.objectid import ObjectId
+from tests.dummies import generate_dummy_group_list
 
 
 def test_success():
@@ -16,14 +17,14 @@ def test_success():
 
     # Assert
     assert isinstance(result, Group)
-    assert type(result._id) == ObjectId
+    assert type(result._id) is ObjectId
     assert result.line_group_id == dummy_group.line_group_id
     assert result.mode == dummy_group.mode
 
     record_on_db = group_repository.find()
 
     assert len(record_on_db) == 1
-    assert type(record_on_db[0]._id) == ObjectId
+    assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].line_group_id == dummy_group.line_group_id
     assert record_on_db[0].mode == dummy_group.mode
 
@@ -33,7 +34,7 @@ def test_success_with_id():
     dummy_group = Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
         mode=GroupMode.wait.value,
-        _id=ObjectId('644c838186bbd9e20a91b783'),
+        _id=ObjectId("644c838186bbd9e20a91b783"),
     )
     # Act
     result = group_repository.create(
@@ -49,7 +50,7 @@ def test_success_with_id():
     record_on_db = group_repository.find()
 
     assert len(record_on_db) == 1
-    assert type(record_on_db[0]._id) == ObjectId
+    assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].line_group_id == dummy_group.line_group_id
     assert record_on_db[0].mode == dummy_group.mode
 

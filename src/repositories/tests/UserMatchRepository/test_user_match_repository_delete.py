@@ -1,15 +1,16 @@
-from DomainModel.entities.User import User
+from typing import List
+
 from DomainModel.entities.Match import Match
+from DomainModel.entities.User import User
 from DomainModel.entities.UserMatch import UserMatch
 from repositories import (
-    user_repository,
     match_repository,
     user_match_repository,
+    user_repository,
 )
-from typing import List
 from tests.dummies import (
-    generate_dummy_user_list,
     generate_dummy_match_list,
+    generate_dummy_user_list,
 )
 
 dummy_users = generate_dummy_user_list()
@@ -22,11 +23,11 @@ def test_success():
     matches: List[Match] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_match in dummy_matches:
         matches.append(
-            match_repository.create(dummy_match)
+            match_repository.create(dummy_match),
         )
     dummy_user_matches = [
         UserMatch(
@@ -52,7 +53,7 @@ def test_success():
 
     # Assert
     assert result == 3
-    
+
     record_on_db = user_match_repository.find()
     assert len(record_on_db) == 0
 
@@ -63,11 +64,11 @@ def test_success_with_filter():
     matches: List[Match] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_match in dummy_matches:
         matches.append(
-            match_repository.create(dummy_match)
+            match_repository.create(dummy_match),
         )
     dummy_user_matches = [
         UserMatch(
@@ -92,13 +93,13 @@ def test_success_with_filter():
     # Act
     result = user_match_repository.delete(
         query={
-            'user_id': target.user_id,
+            "user_id": target.user_id,
         },
     )
 
     # Assert
     assert result == 2
-    
+
     record_on_db = user_match_repository.find()
     assert len(record_on_db) == 1
     assert record_on_db[0].user_id == dummy_user_matches[1].user_id

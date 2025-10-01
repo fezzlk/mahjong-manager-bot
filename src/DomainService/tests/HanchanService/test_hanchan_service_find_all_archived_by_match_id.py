@@ -1,9 +1,10 @@
+from pymongo import ASCENDING
+
+from DomainModel.entities.Hanchan import Hanchan
 from DomainService import (
     hanchan_service,
 )
 from repositories import hanchan_repository
-from DomainModel.entities.Hanchan import Hanchan
-from pymongo import ASCENDING
 
 dummy_hanchans = [
     Hanchan(
@@ -25,7 +26,7 @@ def test_ok_hit_hanchan(mocker):
     # Arrange
     mock_find = mocker.patch.object(
         hanchan_repository,
-        'find',
+        "find",
         return_value=dummy_hanchans,
     )
 
@@ -40,4 +41,4 @@ def test_ok_hit_hanchan(mocker):
         assert result[i].match_id == dummy_hanchans[i].match_id
         assert result[i].line_group_id == dummy_hanchans[i].line_group_id
         assert result[i].status == dummy_hanchans[i].status
-    mock_find.assert_called_once_with({'match_id': 1, 'converted_scores': {'$ne': {}}}, [('_id', ASCENDING)])
+    mock_find.assert_called_once_with({"match_id": 1, "converted_scores": {"$ne": {}}}, [("_id", ASCENDING)])

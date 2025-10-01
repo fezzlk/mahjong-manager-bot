@@ -1,17 +1,18 @@
+import pytest
+
+from DomainModel.entities.Match import Match
 from DomainService import (
     match_service,
 )
 from repositories import match_repository
-from DomainModel.entities.Match import Match
-import pytest
 
 dummy_matches1 = [
     Match(
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        tip_scores={}
-    )
+        tip_scores={},
+    ),
 ]
 
 
@@ -19,25 +20,25 @@ def test_ok_add_init(mocker):
     # Arrange
     mocker.patch.object(
         match_repository,
-        'find',
+        "find",
         return_value=dummy_matches1,
     )
     mock_update = mocker.patch.object(
         match_repository,
-        'update',
+        "update",
     )
 
     # Act
     result = match_service.add_or_drop_tip_score(
-        'G0123456789abcdefghijklmnopqrstu1',
-        'U0123456789abcdefghijklmnopqrstu1',
+        "G0123456789abcdefghijklmnopqrstu1",
+        "U0123456789abcdefghijklmnopqrstu1",
         10,
     )
 
     # Assert
     assert isinstance(result, Match)
     assert len(result.tip_scores) == 1
-    assert result.tip_scores['U0123456789abcdefghijklmnopqrstu1'] == 10
+    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
     mock_update.assert_called_once()
 
 
@@ -46,8 +47,8 @@ dummy_matches2 = [
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        tip_scores={'U0123456789abcdefghijklmnopqrstu2': 20}
-    )
+        tip_scores={"U0123456789abcdefghijklmnopqrstu2": 20},
+    ),
 ]
 
 
@@ -55,26 +56,26 @@ def test_ok_add_second(mocker):
     # Arrange
     mocker.patch.object(
         match_repository,
-        'find',
+        "find",
         return_value=dummy_matches2,
     )
     mock_update = mocker.patch.object(
         match_repository,
-        'update',
+        "update",
     )
 
     # Act
     result = match_service.add_or_drop_tip_score(
-        'G0123456789abcdefghijklmnopqrstu1',
-        'U0123456789abcdefghijklmnopqrstu1',
+        "G0123456789abcdefghijklmnopqrstu1",
+        "U0123456789abcdefghijklmnopqrstu1",
         10,
     )
 
     # Assert
     assert isinstance(result, Match)
     assert len(result.tip_scores) == 2
-    assert result.tip_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
-    assert result.tip_scores['U0123456789abcdefghijklmnopqrstu1'] == 10
+    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
+    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
     mock_update.assert_called_once()
 
 
@@ -84,10 +85,10 @@ dummy_matches3 = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         tip_scores={
-            'U0123456789abcdefghijklmnopqrstu2': 20,
-            'U0123456789abcdefghijklmnopqrstu1': 30,
-        }
-    )
+            "U0123456789abcdefghijklmnopqrstu2": 20,
+            "U0123456789abcdefghijklmnopqrstu1": 30,
+        },
+    ),
 ]
 
 
@@ -95,26 +96,26 @@ def test_ok_update(mocker):
     # Arrange
     mocker.patch.object(
         match_repository,
-        'find',
+        "find",
         return_value=dummy_matches3,
     )
     mock_update = mocker.patch.object(
         match_repository,
-        'update',
+        "update",
     )
 
     # Act
     result = match_service.add_or_drop_tip_score(
-        'G0123456789abcdefghijklmnopqrstu1',
-        'U0123456789abcdefghijklmnopqrstu1',
+        "G0123456789abcdefghijklmnopqrstu1",
+        "U0123456789abcdefghijklmnopqrstu1",
         10,
     )
 
     # Assert
     assert isinstance(result, Match)
     assert len(result.tip_scores) == 2
-    assert result.tip_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
-    assert result.tip_scores['U0123456789abcdefghijklmnopqrstu1'] == 10
+    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
+    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
     mock_update.assert_called_once()
 
 
@@ -124,10 +125,10 @@ dummy_matches3 = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         tip_scores={
-            'U0123456789abcdefghijklmnopqrstu2': 20,
-            'U0123456789abcdefghijklmnopqrstu1': 30,
-        }
-    )
+            "U0123456789abcdefghijklmnopqrstu2": 20,
+            "U0123456789abcdefghijklmnopqrstu1": 30,
+        },
+    ),
 ]
 
 
@@ -135,25 +136,25 @@ def test_ok_drop(mocker):
     # Arrange
     mocker.patch.object(
         match_repository,
-        'find',
+        "find",
         return_value=dummy_matches3,
     )
     mock_update = mocker.patch.object(
         match_repository,
-        'update',
+        "update",
     )
 
     # Act
     result = match_service.add_or_drop_tip_score(
-        'G0123456789abcdefghijklmnopqrstu1',
-        'U0123456789abcdefghijklmnopqrstu1',
+        "G0123456789abcdefghijklmnopqrstu1",
+        "U0123456789abcdefghijklmnopqrstu1",
         None,
     )
 
     # Assert
     assert isinstance(result, Match)
     assert len(result.tip_scores) == 1
-    assert result.tip_scores['U0123456789abcdefghijklmnopqrstu2'] == 20
+    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
     mock_update.assert_called_once()
 
 
@@ -163,9 +164,9 @@ dummy_matches4 = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         tip_scores={
-            'U0123456789abcdefghijklmnopqrstu1': 30,
-        }
-    )
+            "U0123456789abcdefghijklmnopqrstu1": 30,
+        },
+    ),
 ]
 
 
@@ -173,18 +174,18 @@ def test_ok_drop_all(mocker):
     # Arrange
     mocker.patch.object(
         match_repository,
-        'find',
+        "find",
         return_value=dummy_matches4,
     )
     mock_update = mocker.patch.object(
         match_repository,
-        'update',
+        "update",
     )
 
     # Act
     result = match_service.add_or_drop_tip_score(
         999,
-        'U0123456789abcdefghijklmnopqrstu1',
+        "U0123456789abcdefghijklmnopqrstu1",
         None,
     )
 
@@ -199,16 +200,16 @@ def test_ng_no_line_user_id(mocker):
         # Arrange
         mock_find = mocker.patch.object(
             match_repository,
-            'find',
+            "find",
         )
         mock_update = mocker.patch.object(
             match_repository,
-            'update',
+            "update",
         )
 
         # Act
         match_service.add_or_drop_tip_score(
-            'G0123456789abcdefghijklmnopqrstu1',
+            "G0123456789abcdefghijklmnopqrstu1",
             None,
             10,
         )
@@ -223,18 +224,18 @@ def test_ng_no_hanchan(mocker):
         # Arrange
         mocker.patch.object(
             match_repository,
-            'find',
+            "find",
             return_value=[],
         )
         mock_update = mocker.patch.object(
             match_repository,
-            'update',
+            "update",
         )
 
         # Act
         match_service.add_or_drop_tip_score(
-            'G0123456789abcdefghijklmnopqrstu1',
-            'U0123456789abcdefghijklmnopqrstu1',
+            "G0123456789abcdefghijklmnopqrstu1",
+            "U0123456789abcdefghijklmnopqrstu1",
             10,
         )
 

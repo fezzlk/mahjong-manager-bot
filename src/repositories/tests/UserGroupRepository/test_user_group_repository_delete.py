@@ -1,17 +1,17 @@
-from tests.dummies import (
-    generate_dummy_user_list,
-    generate_dummy_group_list,
-)
-from DomainModel.entities.User import User
-from DomainModel.entities.Group import Group
-from DomainModel.entities.UserGroup import UserGroup
-from repositories import (
-    user_repository,
-    group_repository,
-    user_group_repository,
-)
 from typing import List
 
+from DomainModel.entities.Group import Group
+from DomainModel.entities.User import User
+from DomainModel.entities.UserGroup import UserGroup
+from repositories import (
+    group_repository,
+    user_group_repository,
+    user_repository,
+)
+from tests.dummies import (
+    generate_dummy_group_list,
+    generate_dummy_user_list,
+)
 
 dummy_users = generate_dummy_user_list()
 dummy_groups = generate_dummy_group_list()
@@ -23,11 +23,11 @@ def test_success():
     groups: List[Group] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_group in dummy_groups:
         groups.append(
-            group_repository.create(dummy_group)
+            group_repository.create(dummy_group),
         )
     dummy_user_groups = [
         UserGroup(
@@ -53,7 +53,7 @@ def test_success():
 
     # Assert
     assert result == 3
-    
+
     record_on_db = user_group_repository.find()
     assert len(record_on_db) == 0
 
@@ -64,11 +64,11 @@ def test_success_with_filter():
     groups: List[Group] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_group in dummy_groups:
         groups.append(
-            group_repository.create(dummy_group)
+            group_repository.create(dummy_group),
         )
     dummy_user_groups = [
         UserGroup(
@@ -93,13 +93,13 @@ def test_success_with_filter():
     # Act
     result = user_group_repository.delete(
         query={
-            'line_user_id': target.line_user_id,
+            "line_user_id": target.line_user_id,
         },
     )
 
     # Assert
     assert result == 2
-    
+
     record_on_db = user_group_repository.find()
     assert len(record_on_db) == 1
     assert record_on_db[0].line_user_id == dummy_user_groups[1].line_user_id

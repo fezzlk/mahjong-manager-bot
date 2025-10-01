@@ -1,9 +1,11 @@
-from typing import List, Dict, Tuple
 from datetime import datetime
+from typing import Dict, List, Tuple
+
 from pymongo import ASCENDING
-from mongo_client import command_aliases_collection
+
 from DomainModel.entities.CommandAlias import CommandAlias
 from DomainModel.IRepositories.ICommandAliasRepository import ICommandAliasRepository
+from mongo_client import command_aliases_collection
 
 
 class CommandAliasRepository(ICommandAliasRepository):
@@ -14,7 +16,7 @@ class CommandAliasRepository(ICommandAliasRepository):
     ) -> CommandAlias:
         new_dict = new_record.__dict__.copy()
         if new_record._id is None:
-            new_dict.pop('_id')
+            new_dict.pop("_id")
         result = command_aliases_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
         return new_record
@@ -24,14 +26,14 @@ class CommandAliasRepository(ICommandAliasRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
-        new_values['updated_at'] = datetime.now()
-        result = command_aliases_collection.update_many(query, {'$set': new_values})
+        new_values["updated_at"] = datetime.now()
+        result = command_aliases_collection.update_many(query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
         query: Dict[str, any] = {},
-        sort: List[Tuple[str, any]] = [('_id', ASCENDING)],
+        sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[CommandAlias]:
         records = command_aliases_collection\
             .find(filter=query)\
@@ -52,7 +54,7 @@ class CommandAliasRepository(ICommandAliasRepository):
             alias=record.get("alias"),
             command=record.get("command"),
             mentionees=record.get("mentionees"),
-            created_at=record.get('created_at'),
-            updated_at=record.get('updated_at'),
-            _id=record.get('_id'),
+            created_at=record.get("created_at"),
+            updated_at=record.get("updated_at"),
+            _id=record.get("_id"),
         )

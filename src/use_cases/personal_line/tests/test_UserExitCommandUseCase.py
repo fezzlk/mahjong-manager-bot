@@ -1,12 +1,12 @@
-from use_cases.personal_line.UserExitCommandUseCase import (
-    UserExitCommandUseCase,
-)
-from DomainModel.entities.User import User, UserMode
 from ApplicationService import (
     reply_service,
 )
+from DomainModel.entities.User import User, UserMode
 from repositories import (
     user_repository,
+)
+from use_cases.personal_line.UserExitCommandUseCase import (
+    UserExitCommandUseCase,
 )
 
 dummy_user = User(

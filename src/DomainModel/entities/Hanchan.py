@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import Dict, Optional
-from bson.objectid import ObjectId
 from datetime import datetime
+from typing import Dict, Optional
 
-HANCHAN_STATUS = ['DISABLE', 'ACTIVE', 'ARCHIVE']
+from bson.objectid import ObjectId
+
+HANCHAN_STATUS = ["DISABLE", "ACTIVE", "ARCHIVE"]
 
 
 @dataclass()
@@ -28,7 +29,7 @@ class Hanchan:
         match_id: int,
         status: int = 2,
         raw_scores: Dict[str, int] = {},
-        converted_scores: Dict[str, int] = {},        
+        converted_scores: Dict[str, int] = {},
         created_at: datetime = datetime.now(),
         updated_at: datetime = datetime.now(),
         _id: ObjectId = None,

@@ -1,16 +1,18 @@
-from DomainModel.entities.User import User
+from typing import List
+
+from pymongo import DESCENDING
+
 from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.User import User
 from DomainModel.entities.UserHanchan import UserHanchan
 from repositories import (
-    user_repository,
     hanchan_repository,
     user_hanchan_repository,
+    user_repository,
 )
-from typing import List
-from pymongo import DESCENDING
 from tests.dummies import (
-    generate_dummy_user_list,
     generate_dummy_hanchan_list,
+    generate_dummy_user_list,
 )
 
 dummy_users = generate_dummy_user_list()
@@ -23,11 +25,11 @@ def test_success():
     hanchans: List[Hanchan] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_hanchan in dummy_hanchans:
         hanchans.append(
-            hanchan_repository.create(dummy_hanchan)
+            hanchan_repository.create(dummy_hanchan),
         )
     dummy_user_hanchans = [
         UserHanchan(
@@ -70,11 +72,11 @@ def test_success_with_filter():
     hanchans: List[Hanchan] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_hanchan in dummy_hanchans:
         hanchans.append(
-            hanchan_repository.create(dummy_hanchan)
+            hanchan_repository.create(dummy_hanchan),
         )
     dummy_user_hanchans = [
         UserHanchan(
@@ -105,8 +107,8 @@ def test_success_with_filter():
     # Act
     result = user_hanchan_repository.find(
         query={
-            'line_user_id': target.line_user_id,
-            'hanchan_id': target.hanchan_id,
+            "line_user_id": target.line_user_id,
+            "hanchan_id": target.hanchan_id,
         },
     )
 
@@ -121,11 +123,11 @@ def test_success_with_sort():
     hanchans: List[Hanchan] = []
     for dummy_user in dummy_users:
         users.append(
-            user_repository.create(dummy_user)
+            user_repository.create(dummy_user),
         )
     for dummy_hanchan in dummy_hanchans:
         hanchans.append(
-            hanchan_repository.create(dummy_hanchan)
+            hanchan_repository.create(dummy_hanchan),
         )
     dummy_user_hanchans = [
         UserHanchan(
@@ -155,11 +157,11 @@ def test_success_with_sort():
     # Act
     result = user_hanchan_repository.find(
         query={
-            'line_user_id': dummy_user_hanchans[0].line_user_id,
+            "line_user_id": dummy_user_hanchans[0].line_user_id,
         },
-        sort=[('hanchan_id', DESCENDING)]
+        sort=[("hanchan_id", DESCENDING)],
     )
-    
+
     # Assert
     expected = [
         UserHanchan(

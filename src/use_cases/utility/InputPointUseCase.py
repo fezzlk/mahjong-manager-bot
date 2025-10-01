@@ -1,22 +1,21 @@
+from typing import Optional, Tuple
+
 from ApplicationService import (
-    request_info_service,
     reply_service,
+    request_info_service,
 )
-from typing import Optional
 
 
 class InputPointUseCase:
+    """受け取ったメッセージから点数登録先ユーザと値の取得。"""
 
-    """
-    受け取ったメッセージから点数登録先ユーザと値の取得
-    """
-
-    def execute(self, text: str) -> tuple[str, Optional[int]]:
+    def execute(self, text: str) -> Tuple[str, Optional[int]]:
         mention_line_ids = request_info_service.mention_line_ids
 
         if len(mention_line_ids) > 1:
             reply_service.add_message(
-                'メンションは1回につき1人を指定するようにしてください。')
+                "メンションは1回につき1人を指定するようにしてください。",
+            )
             return (None, None)
         if len(mention_line_ids) == 1 and len(text[1:].split()) >= 2:
             # ユーザー名に空白がある場合を考慮し、最後の要素をポイントとして判断する
@@ -26,25 +25,25 @@ class InputPointUseCase:
             point = text
             target_line_user_id = request_info_service.req_line_user_id
 
-        point = point.replace(',', '')
+        point = point.replace(",", "")
 
         # '-' の場合は削除
-        if point == '-':
+        if point == "-":
             return (target_line_user_id, None)
-        
-        # 入力した点数のバリデート（hack: '-' を含む場合数値として判断できないため一旦エスケープ）
-        isMinus = False
-        if point[0] == '-':
+
+        # 入力した点数のバリデート(hack: '-' を含む場合数値として判断できないため一旦エスケープ)
+        is_minus = False
+        if point[0] == "-":
             point = point[1:]
-            isMinus = True
+            is_minus = True
 
         if not point.isdigit():
             reply_service.add_message(
-                '整数で入力してください。',
+                "整数で入力してください。",
             )
             return (None, None)
 
-        if isMinus:
-            point = '-' + point
+        if is_minus:
+            point = "-" + point
 
         return (target_line_user_id, int(point))

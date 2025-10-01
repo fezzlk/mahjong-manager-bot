@@ -1,6 +1,7 @@
-from DomainModel.entities.UserHanchan import UserHanchan
 from datetime import datetime
-from bson.objectid import ObjectId
+
+from DomainModel.entities.UserHanchan import UserHanchan
+
 
 def test_success():
     # Arrange
@@ -16,7 +17,7 @@ def test_success():
         created_at=datetime(2022, 1, 2, 3, 4, 5),
         updated_at=datetime(2023, 1, 2, 3, 4, 5),
     )
-    
+
     # Assert
     assert uh._id == 1
     assert uh.line_user_id == "U0123456789abcdefghijklmnopqrstu2"
@@ -38,7 +39,7 @@ def test_success_default():
         point=3,
         rank=4,
     )
-    
+
     # Assert
     assert uh._id is None
     assert uh.line_user_id == "U0123456789abcdefghijklmnopqrstu2"

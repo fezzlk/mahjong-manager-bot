@@ -1,9 +1,9 @@
+from ApplicationService import (
+    reply_service,
+    request_info_service,
+)
 from DomainService import (
     user_service,
-)
-from ApplicationService import (
-    request_info_service,
-    reply_service,
 )
 
 
@@ -14,7 +14,7 @@ class ReplyUserModeUseCase:
         mode = user_service.get_mode(line_user_id)
         if mode is None:
             reply_service.add_message(
-                'ユーザーを認識できませんでした。当アカウントを一度ブロックし、ブロック解除してください。'
+                "ユーザーを認識できませんでした。当アカウントを一度ブロックし、ブロック解除してください。",
             )
             return
         reply_service.add_message(mode)

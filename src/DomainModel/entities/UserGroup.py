@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from bson.objectid import ObjectId
 from datetime import datetime
+
+from bson.objectid import ObjectId
 
 
 @dataclass()
@@ -14,7 +15,7 @@ class UserGroup:
     def __init__(
         self,
         line_user_id: int,
-        line_group_id: int,        
+        line_group_id: int,
         created_at: datetime = datetime.now(),
         updated_at: datetime = datetime.now(),
         _id: ObjectId = None,

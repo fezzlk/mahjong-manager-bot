@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Dict
+from typing import Dict, List
+
 from DomainModel.entities.UserHanchan import UserHanchan
 
 
@@ -25,7 +26,7 @@ class IUserHanchanRepository(metaclass=ABCMeta):
         query: Dict[str, any] = {},
     ) -> int:
         pass
-    
+
     @abstractmethod
     def update(
         self,
