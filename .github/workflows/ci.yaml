@@ -108,7 +108,6 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements.dev.txt ]; then pip install -r requirements.dev.txt; fi
-          pip install pytest pytest-cov
       # テスト用 DB
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
