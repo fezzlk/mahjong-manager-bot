@@ -1,17 +1,40 @@
-version: "3.1"
+version: "3.9"
 
 services:
-  mongo:
-    image: mongo:5.0.16
-    restart: always
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: flask_app
     ports:
-      - 27017:27017
-
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - 8081:8081
+      - "5000:5000"
+      - "5678:5678"  
+    volumes:
+      - ./src:/app  # 開発時のホットリロード対応
+    env_file:
+      - .env
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongo
-      ME_CONFIG_MONGODB_PORT: 27017
+      - FLASK_APP=server.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG_ATTACH=1
+      - EXTERNAL_DATABASE_URL=mongodb://root:root@mongo:27017/
+    command: flask run --host=0.0.0.0 --port=5000
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:8.0
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
