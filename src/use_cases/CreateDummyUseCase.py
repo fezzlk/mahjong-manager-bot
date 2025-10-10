@@ -6,7 +6,16 @@ from repositories import (
     user_repository,
     web_user_repository,
 )
-from tests.dummies import (
+
+# testsフォルダをパスに追加
+import sys
+import os
+
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "tests"))
+)
+
+from dummies import (
     generate_dummy_group_list,
     generate_dummy_group_setting_list,
     generate_dummy_hanchan_list,
