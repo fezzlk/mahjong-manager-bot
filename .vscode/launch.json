@@ -2,20 +2,37 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach to Flask in Docker",
+      "name": "Attach to Flask (dev)",
       "type": "python",
       "request": "attach",
-      "connect": {
-        "host": "localhost",
-        "port": 5678
-      },
+      "connect": { "host": "localhost", "port": 5678 },
       "pathMappings": [
-        {
-          "localRoot": "${workspaceFolder}/src",
-          "remoteRoot": "/app"
-        }
+        { "localRoot": "${workspaceFolder}", "remoteRoot": "/app" }
       ],
       "justMyCode": false
+    },
+    {
+      "name": "Attach to Pytest (test container)",
+      "type": "python",
+      "request": "attach",
+      "connect": { "host": "localhost", "port": 5679 },
+      "pathMappings": [
+        { "localRoot": "${workspaceFolder}", "remoteRoot": "/app" }
+      ],
+      "justMyCode": false
+    },
+    {
+      "name": "Run Pytest in test container",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/tests",
+      "console": "integratedTerminal",
+      "args": ["-s", "--tb=short"],
+      "env": {
+        "DATABASE_URL": "mongodb://root:example@mongo:27017/test_db"
+      },
+      "cwd": "/app",
+      "pythonPath": "/usr/local/bin/python"
     }
   ]
 }
