@@ -1,5 +1,6 @@
-from ApplicationService.MessageService import MessageService, yaku_list
 from dummies import generate_dummy_user_list
+
+from ApplicationService.MessageService import MessageService, yaku_list
 
 
 def test_success():

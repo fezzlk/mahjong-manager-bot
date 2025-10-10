@@ -1,12 +1,13 @@
 from typing import List
 
-from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.Match import Match
-from repositories import hanchan_repository, match_repository
 from dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )
+
+from DomainModel.entities.Hanchan import Hanchan
+from DomainModel.entities.Match import Match
+from repositories import hanchan_repository, match_repository
 
 dummy_match = Match(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",

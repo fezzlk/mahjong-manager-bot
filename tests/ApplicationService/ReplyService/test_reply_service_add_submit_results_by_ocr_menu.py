@@ -1,5 +1,6 @@
-from ApplicationService.ReplyService import ReplyService
 from dummies import generate_dummy_points
+
+from ApplicationService.ReplyService import ReplyService
 
 
 def test_success():

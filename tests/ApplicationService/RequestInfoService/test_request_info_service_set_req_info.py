@@ -1,8 +1,9 @@
-from ApplicationService.RequestInfoService import RequestInfoService
-from line_models.Event import Event
 from dummies import (
     generate_dummy_follow_event,
 )
+
+from ApplicationService.RequestInfoService import RequestInfoService
+from line_models.Event import Event
 
 
 def test_follow_event():

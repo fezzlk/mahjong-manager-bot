@@ -1,5 +1,9 @@
 from typing import List
 
+from dummies import (
+    generate_dummy_hanchan_list,
+    generate_dummy_user_list,
+)
 from pymongo import DESCENDING
 
 from DomainModel.entities.Hanchan import Hanchan
@@ -9,10 +13,6 @@ from repositories import (
     hanchan_repository,
     user_hanchan_repository,
     user_repository,
-)
-from dummies import (
-    generate_dummy_hanchan_list,
-    generate_dummy_user_list,
 )
 
 dummy_users = generate_dummy_user_list()

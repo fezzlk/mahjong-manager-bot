@@ -1,10 +1,11 @@
 from typing import List
 
-from DomainModel.entities.Match import Match
-from repositories import match_repository
 from dummies import (
     generate_dummy_match_list,
 )
+
+from DomainModel.entities.Match import Match
+from repositories import match_repository
 
 
 def test_hit_with_line_group_id():

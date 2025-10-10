@@ -1,14 +1,14 @@
+from dummies import (
+    generate_dummy_follow_event,
+    generate_dummy_text_message_event_from_group,
+    generate_dummy_text_message_event_from_user,
+)
 from linebot.models import (
     TextSendMessage,
 )
 
 from ApplicationService.ReplyService import ReplyService
 from messaging_api_setting import line_bot_api
-from dummies import (
-    generate_dummy_follow_event,
-    generate_dummy_text_message_event_from_group,
-    generate_dummy_text_message_event_from_user,
-)
 
 
 def test_reply_to_user(mocker):

@@ -1,9 +1,10 @@
+from dummies import (
+    generate_dummy_text_message_event_from_user,
+)
+
 from ApplicationService import (
     reply_service,
     request_info_service,
-)
-from dummies import (
-    generate_dummy_text_message_event_from_user,
 )
 from use_cases.personal_line.ReplyUserHelpUseCase import ReplyUserHelpUseCase
 

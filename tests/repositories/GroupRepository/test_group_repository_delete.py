@@ -1,5 +1,6 @@
-from repositories import group_repository
 from dummies import generate_dummy_group_list
+
+from repositories import group_repository
 
 
 def test_hit_with_ids():

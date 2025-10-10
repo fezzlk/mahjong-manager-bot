@@ -1,3 +1,8 @@
+import os
+
+# testsフォルダをパスに追加
+import sys
+
 from repositories import (
     group_repository,
     group_setting_repository,
@@ -7,12 +12,8 @@ from repositories import (
     web_user_repository,
 )
 
-# testsフォルダをパスに追加
-import sys
-import os
-
 sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "tests"))
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "tests")),
 )
 
 from dummies import (

@@ -1,5 +1,9 @@
 from typing import List
 
+from dummies import (
+    generate_dummy_group_list,
+    generate_dummy_user_list,
+)
 from pymongo import DESCENDING
 
 from DomainModel.entities.Group import Group
@@ -9,10 +13,6 @@ from repositories import (
     group_repository,
     user_group_repository,
     user_repository,
-)
-from dummies import (
-    generate_dummy_group_list,
-    generate_dummy_user_list,
 )
 
 dummy_users = generate_dummy_user_list()

@@ -1,8 +1,9 @@
-from ApplicationService.RichMenuService import RichMenuService
-from messaging_api_setting import line_bot_api
 from dummies import (
     generate_dummy_user_list,
 )
+
+from ApplicationService.RichMenuService import RichMenuService
+from messaging_api_setting import line_bot_api
 
 
 def test_success(mocker):

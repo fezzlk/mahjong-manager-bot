@@ -1,9 +1,9 @@
 import pytest
 from bson.objectid import ObjectId
+from dummies import generate_dummy_user_list
 
 from DomainModel.entities.User import User, UserMode
 from repositories import user_repository
-from dummies import generate_dummy_user_list
 
 
 def test_success():

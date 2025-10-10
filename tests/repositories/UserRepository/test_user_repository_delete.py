@@ -1,6 +1,7 @@
+from dummies import generate_dummy_user_list
+
 from DomainModel.entities.User import User
 from repositories import user_repository
-from dummies import generate_dummy_user_list
 
 
 def test_hit_1_record():

@@ -1,5 +1,6 @@
-from ApplicationService.MessageService import HAI, MessageService
 from dummies import generate_dummy_user_list
+
+from ApplicationService.MessageService import HAI, MessageService
 
 
 def test_success():

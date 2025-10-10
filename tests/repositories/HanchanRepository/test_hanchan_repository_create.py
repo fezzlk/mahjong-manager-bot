@@ -1,10 +1,10 @@
 from bson.objectid import ObjectId
-
-from DomainModel.entities.Hanchan import Hanchan
-from repositories import hanchan_repository
 from dummies import (
     generate_dummy_hanchan_list,
 )
+
+from DomainModel.entities.Hanchan import Hanchan
+from repositories import hanchan_repository
 
 
 def test_success():

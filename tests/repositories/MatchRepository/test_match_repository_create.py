@@ -1,8 +1,8 @@
 from bson.objectid import ObjectId
+from dummies import generate_dummy_match_list
 
 from DomainModel.entities.Match import Match
 from repositories import match_repository
-from dummies import generate_dummy_match_list
 
 
 def test_success():

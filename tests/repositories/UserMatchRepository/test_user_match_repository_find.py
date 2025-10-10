@@ -1,5 +1,9 @@
 from typing import List
 
+from dummies import (
+    generate_dummy_match_list,
+    generate_dummy_user_list,
+)
 from pymongo import DESCENDING
 
 from DomainModel.entities.Match import Match
@@ -9,10 +13,6 @@ from repositories import (
     match_repository,
     user_match_repository,
     user_repository,
-)
-from dummies import (
-    generate_dummy_match_list,
-    generate_dummy_user_list,
 )
 
 dummy_users = generate_dummy_user_list()

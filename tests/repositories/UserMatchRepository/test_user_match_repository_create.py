@@ -1,15 +1,15 @@
 import pytest
 from bson.objectid import ObjectId
+from dummies import (
+    generate_dummy_match_list,
+    generate_dummy_user_list,
+)
 
 from DomainModel.entities.UserMatch import UserMatch
 from repositories import (
     match_repository,
     user_match_repository,
     user_repository,
-)
-from dummies import (
-    generate_dummy_match_list,
-    generate_dummy_user_list,
 )
 
 dummy_user = generate_dummy_user_list()[0]

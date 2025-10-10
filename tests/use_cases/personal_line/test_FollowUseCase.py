@@ -1,13 +1,14 @@
+from dummies import (
+    generate_dummy_profile,
+    generate_dummy_text_message_event_from_user,
+)
+
 from ApplicationService import (
     reply_service,
     request_info_service,
     rich_menu_service,
 )
 from messaging_api_setting import line_bot_api
-from dummies import (
-    generate_dummy_profile,
-    generate_dummy_text_message_event_from_user,
-)
 from use_cases.personal_line.FollowUseCase import FollowUseCase
 
 

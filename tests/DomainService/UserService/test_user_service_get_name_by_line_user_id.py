@@ -1,7 +1,8 @@
+from dummies import generate_dummy_user_list
+
 from DomainService import user_service
 from messaging_api_setting import line_bot_api
 from repositories import user_repository
-from dummies import generate_dummy_user_list
 
 
 def test_success_with_line_api(mocker):

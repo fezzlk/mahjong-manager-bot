@@ -1,7 +1,8 @@
-from ApplicationService import reply_service, request_info_service
 from dummies import (
     generate_dummy_join_event,
 )
+
+from ApplicationService import reply_service, request_info_service
 from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
 
 

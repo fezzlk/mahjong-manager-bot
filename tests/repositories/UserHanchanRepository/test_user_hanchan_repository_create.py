@@ -1,15 +1,15 @@
 import pytest
 from bson.objectid import ObjectId
+from dummies import (
+    generate_dummy_hanchan_list,
+    generate_dummy_user_list,
+)
 
 from DomainModel.entities.UserHanchan import UserHanchan
 from repositories import (
     hanchan_repository,
     user_hanchan_repository,
     user_repository,
-)
-from dummies import (
-    generate_dummy_hanchan_list,
-    generate_dummy_user_list,
 )
 
 dummy_user = generate_dummy_user_list()[0]

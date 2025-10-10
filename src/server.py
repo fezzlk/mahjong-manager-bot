@@ -1,5 +1,6 @@
 import os
 import sys
+
 from dotenv import load_dotenv
 
 # debugpyはpytest実行時にはimportしない
@@ -57,7 +58,6 @@ from apis.auth import auth_blueprint
 
 app.register_blueprint(auth_blueprint)
 
-import handle_event
 
 if __name__ == "__main__":
     app.run(threaded=True, use_reloader=True)

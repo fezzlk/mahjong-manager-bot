@@ -1,9 +1,9 @@
 import pytest
 from bson.objectid import ObjectId
+from dummies import generate_dummy_group_setting_list
 
 from DomainModel.entities.GroupSetting import GroupSetting
 from repositories import group_setting_repository
-from dummies import generate_dummy_group_setting_list
 
 
 def test_success():

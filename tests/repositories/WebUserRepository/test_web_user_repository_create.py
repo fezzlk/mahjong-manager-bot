@@ -2,10 +2,10 @@ from datetime import datetime
 
 import pytest
 from bson.objectid import ObjectId
+from dummies import generate_dummy_web_user_list
 
 from DomainModel.entities.WebUser import WebUser
 from repositories import web_user_repository
-from dummies import generate_dummy_web_user_list
 
 
 def test_success():
