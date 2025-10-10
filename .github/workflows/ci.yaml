@@ -118,7 +118,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
-          EXTERNAL_DATABASE_URL: mongodb://root:root@mongo:27017/?authSource=admin
+          EXTERNAL_DATABASE_URL: mongodb://localhost:27017/?authSource=admin
           DATABASE_NAME: test
           SERVER_URL: http://localhost:5000/
         run: |
