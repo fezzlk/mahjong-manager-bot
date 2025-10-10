@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 
 from DomainModel.entities.Hanchan import Hanchan
 from repositories import hanchan_repository, match_repository
-from tests.dummies import (
+from dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_match_list,
 )

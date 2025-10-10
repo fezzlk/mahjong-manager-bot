@@ -7,7 +7,7 @@ from repositories import (
     user_hanchan_repository,
     user_repository,
 )
-from tests.dummies import (
+from dummies import (
     generate_dummy_hanchan_list,
     generate_dummy_user_list,
 )

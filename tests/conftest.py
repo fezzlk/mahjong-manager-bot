@@ -2,10 +2,14 @@
 import sys
 import os
 
+# srcフォルダとtestsフォルダをPythonパスに追加
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
 from mongo_client import mongo_client
 
 from dotenv import load_dotenv
+
 load_dotenv()
 import env_var
 import pytest
@@ -17,7 +21,8 @@ from ApplicationService import (
     request_info_service,
 )
 
-@pytest.fixture(scope='function', autouse=True)
+
+@pytest.fixture(scope="function", autouse=True)
 def reset_services():
     mongo_client.drop_database(env_var.DATABASE_NAME)
     request_info_service.delete_req_info()

@@ -10,7 +10,7 @@ from repositories import (
     user_match_repository,
     user_repository,
 )
-from tests.dummies import (
+from dummies import (
     generate_dummy_match_list,
     generate_dummy_user_list,
 )

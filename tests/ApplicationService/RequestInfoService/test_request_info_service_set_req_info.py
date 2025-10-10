@@ -1,6 +1,6 @@
 from ApplicationService.RequestInfoService import RequestInfoService
 from line_models.Event import Event
-from tests.dummies import (
+from dummies import (
     generate_dummy_follow_event,
 )
 

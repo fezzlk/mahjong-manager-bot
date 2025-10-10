@@ -4,7 +4,7 @@ from linebot.models import (
 
 from ApplicationService.ReplyService import ReplyService
 from messaging_api_setting import line_bot_api
-from tests.dummies import (
+from dummies import (
     generate_dummy_follow_event,
     generate_dummy_text_message_event_from_group,
     generate_dummy_text_message_event_from_user,

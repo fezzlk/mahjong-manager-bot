@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 
 from DomainModel.entities.GroupSetting import GroupSetting
 from repositories import group_setting_repository
-from tests.dummies import generate_dummy_group_setting_list
+from dummies import generate_dummy_group_setting_list
 
 
 def test_success():

@@ -1,6 +1,6 @@
 from ApplicationService.RichMenuService import RichMenuService
 from messaging_api_setting import line_bot_api
-from tests.dummies import (
+from dummies import (
     generate_dummy_user_list,
 )
 

@@ -2,7 +2,7 @@ from ApplicationService import (
     request_info_service,
 )
 from repositories import UserRepository
-from tests.dummies import (
+from dummies import (
     generate_dummy_unfollow_event,
     generate_dummy_user_list,
 )

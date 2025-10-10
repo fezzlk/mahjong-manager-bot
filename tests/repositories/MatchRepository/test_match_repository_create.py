@@ -2,7 +2,7 @@ from bson.objectid import ObjectId
 
 from DomainModel.entities.Match import Match
 from repositories import match_repository
-from tests.dummies import generate_dummy_match_list
+from dummies import generate_dummy_match_list
 
 
 def test_success():

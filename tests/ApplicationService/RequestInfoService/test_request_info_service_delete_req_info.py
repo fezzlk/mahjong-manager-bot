@@ -1,5 +1,5 @@
 from ApplicationService.RequestInfoService import RequestInfoService
-from tests.dummies import (
+from dummies import (
     generate_dummy_follow_event,
     generate_dummy_text_message_event_from_group,
     generate_dummy_text_message_event_from_user,

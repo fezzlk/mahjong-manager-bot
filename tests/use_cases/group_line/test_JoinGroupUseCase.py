@@ -9,7 +9,7 @@ from ApplicationService import (
     request_info_service,
 )
 from repositories import group_repository
-from tests.dummies import (
+from dummies import (
     generate_dummy_join_event,
 )
 from use_cases.group_line.JoinGroupUseCase import JoinGroupUseCase

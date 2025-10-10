@@ -2,7 +2,7 @@ from typing import List
 
 from DomainModel.entities.Match import Match
 from repositories import match_repository
-from tests.dummies import (
+from dummies import (
     generate_dummy_match_list,
 )
 
