@@ -1,0 +1,14 @@
+{
+  "name": "Flask Dev",
+  "dockerComposeFile": "../docker-compose.yml", // ← 修正！
+  "service": "flask_test",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "settings": {
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": ["tests"],
+    "python.defaultInterpreterPath": "/usr/local/bin/python"
+  },
+  "extensions": ["ms-python.python", "ms-python.debugpy"],
+  "forwardPorts": [5000, 5678, 5679]
+}

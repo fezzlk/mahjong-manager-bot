@@ -1,27 +1,41 @@
 version: "3.9"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
+  flask_app:
+    build: .
     container_name: flask_app
+    command: flask run --host=0.0.0.0 --port=5000
+    volumes:
+      - .:/app
+    env_file: 
+      - .env
     ports:
       - "5000:5000"
-      - "5678:5678"  
-    volumes:
-      - ./src:/app  # 開発時のホットリロード対応
-    env_file:
-      - .env
+      - "5678:5678"   # debugpy用
     environment:
-      - FLASK_APP=server.py
+      - EXTERNAL_DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
+      - DATABASE_NAME=db
+      - FLASK_APP=src/server
       - FLASK_ENV=development
       - FLASK_DEBUG_ATTACH=1
-      - EXTERNAL_DATABASE_URL=mongodb://root:root@mongo:27017/
-    command: flask run --host=0.0.0.0 --port=5000
     depends_on:
       - mongo
-    restart: unless-stopped
+
+  flask_test:
+    build: .
+    container_name: flask_test
+    command: tail -f /dev/null
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    ports:
+      - "5679:5678"
+    environment:
+      - EXTERNAL_DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
+      - DATABASE_NAME=test_db
+    depends_on:
+      - mongo
 
   mongo:
     image: mongo:8.0
@@ -29,7 +43,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_INITDB_DATABASE: db
     restart: always
     ports:
       - "27017:27017"
