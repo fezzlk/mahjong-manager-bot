@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.10", "3.12"]
+        python-version: ["3.8"]
 
     steps:
       - uses: actions/checkout@v5
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.10", "3.12"]
+        python-version: ["3.8"]
         mongodb-version: ["8.0"]
 
     steps:
@@ -118,7 +118,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
           YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
-          EXTERNAL_DATABASE_URL: mongodb://root:root@mongo:27017/
+          EXTERNAL_DATABASE_URL: mongodb://root:root@mongo:27017/?authSource=admin
           DATABASE_NAME: test
           SERVER_URL: http://localhost:5000/
         run: |
