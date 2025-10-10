@@ -122,4 +122,4 @@ jobs:
           DATABASE_NAME: test
           SERVER_URL: http://localhost:5000/
         run: |
-          pytest --cov=src src/
+          pytest --cov=src tests/
