@@ -31,31 +31,30 @@ jobs:
       - name: Run ruff
         run: ruff check .
 
-  check_requirements:
-    needs: lint
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8"]
-    steps:
-      - uses: actions/checkout@v5
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Check requirements consistency
-        run: |
-          echo "Checking if requirements.txt matches installed packages..."
-          pip freeze | sort > current_freeze.txt
-          sort requirements.txt > sorted_requirements.txt
-          diff -u sorted_requirements.txt current_freeze.txt || (
-            echo "::error::requirements.txt is not in sync with installed packages. Run 'pip freeze > requirements.txt' locally."
-            exit 1
-          )
+check_requirements:
+  needs: lint
+  runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      python-version: ["3.8"]
+  steps:
+    - uses: actions/checkout@v5
+
+    - name: Check requirements.txt consistency using pip-compile
+      run: |
+        echo "Checking if requirements.txt is up-to-date with requirements.in..."
+        # Dockerで一時的にpiptoolsコンテナを起動してrequirements.txtを生成
+        docker-compose -f docker-compose.piptools.yml run --rm piptools
+
+        # 比較
+        diff -u requirements.txt requirements.txt || echo "" # dummy to avoid empty diff
+
+        # 差分がある場合は失敗させる
+        if ! git diff --exit-code requirements.txt; then
+          echo "::error::requirements.txt is not in sync with requirements.in."
+          echo "Please run 'docker-compose -f docker-compose.piptools.yml run --rm piptools' locally to regenerate it."
+          exit 1
+        fi
 
   # build:
   #   runs-on: ubuntu-latest
