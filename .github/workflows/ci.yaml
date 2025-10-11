@@ -31,30 +31,30 @@ jobs:
       - name: Run ruff
         run: ruff check .
 
-check_requirements:
-  needs: lint
-  runs-on: ubuntu-latest
-  strategy:
-    matrix:
-      python-version: ["3.8"]
-  steps:
-    - uses: actions/checkout@v5
+  check_requirements:
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+    steps:
+      - uses: actions/checkout@v5
 
-    - name: Check requirements.txt consistency using pip-compile
-      run: |
-        echo "Checking if requirements.txt is up-to-date with requirements.in..."
-        # Dockerで一時的にpiptoolsコンテナを起動してrequirements.txtを生成
-        docker-compose -f docker-compose.piptools.yml run --rm piptools
+      - name: Check requirements.txt consistency using pip-compile
+        run: |
+          echo "Checking if requirements.txt is up-to-date with requirements.in..."
+          # Dockerで一時的にpiptoolsコンテナを起動してrequirements.txtを生成
+          docker-compose -f docker-compose.piptools.yml run --rm piptools
 
-        # 比較
-        diff -u requirements.txt requirements.txt || echo "" # dummy to avoid empty diff
+          # 比較
+          diff -u requirements.txt requirements.txt || echo "" # dummy to avoid empty diff
 
-        # 差分がある場合は失敗させる
-        if ! git diff --exit-code requirements.txt; then
-          echo "::error::requirements.txt is not in sync with requirements.in."
-          echo "Please run 'docker-compose -f docker-compose.piptools.yml run --rm piptools' locally to regenerate it."
-          exit 1
-        fi
+          # 差分がある場合は失敗させる
+          if ! git diff --exit-code requirements.txt; then
+            echo "::error::requirements.txt is not in sync with requirements.in."
+            echo "Please run 'docker-compose -f docker-compose.piptools.yml run --rm piptools' locally to regenerate it."
+            exit 1
+          fi
 
   # build:
   #   runs-on: ubuntu-latest
