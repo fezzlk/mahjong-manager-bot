@@ -40,19 +40,24 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Check requirements.txt consistency using pip-compile
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pip-tools
+        run: python -m pip install --upgrade pip pip-tools
+
+      - name: Check requirements.txt consistency
         run: |
           echo "Checking if requirements.txt is up-to-date with requirements.in..."
-          # Dockerで一時的にpiptoolsコンテナを起動してrequirements.txtを生成
-          docker-compose -f docker-compose.piptools.yml run --rm piptools
+          # 一時的に新しい requirements.txt を生成
+          pip-compile --quiet requirements.in -o requirements_ci.txt
 
           # 比較
-          diff -u requirements.txt requirements.txt || echo "" # dummy to avoid empty diff
-
-          # 差分がある場合は失敗させる
-          if ! git diff --exit-code requirements.txt; then
+          if ! diff -u requirements.txt requirements_ci.txt; then
             echo "::error::requirements.txt is not in sync with requirements.in."
-            echo "Please run 'docker-compose -f docker-compose.piptools.yml run --rm piptools' locally to regenerate it."
+            echo "Please regenerate it locally using 'docker-compose -f docker-compose.piptools.yml run --rm piptools'."
             exit 1
           fi
 
