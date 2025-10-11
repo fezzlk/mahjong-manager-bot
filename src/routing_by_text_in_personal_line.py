@@ -7,6 +7,7 @@ from ApplicationService import (
 )
 from DomainService import user_service
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
+from use_cases.common_line.ReplyFortuneYakuUseCase import ReplyFortuneYakuUseCase
 from use_cases.common_line.ReplyGitHubUrlUseCase import ReplyGitHubUrlUseCase
 from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
 from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
@@ -89,6 +90,9 @@ def routing_by_method(method: str):
     # fortune
     elif method == UCommands.fortune.name:
         ReplyFortuneUseCase().execute()
+    # fortune_yaku
+    elif method == UCommands.fortune_yaku.name:
+        ReplyFortuneYakuUseCase().execute()
     # history
     elif method == UCommands.history.name:
         ReplyHistoryUseCase().execute()

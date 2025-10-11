@@ -1,0 +1,53 @@
+## パッケージを追加する際はこのファイルに追加し、以下のコマンドを実行する。 requirements.in と requirements.txt どちらもプッシュすること
+## $ docker-compose -f docker-compose.piptools.yml run --rm piptools
+
+# Webフレームワーク
+Flask==2.3.3
+gunicorn==20.0.4
+
+# LINE Messaging API
+line-bot-sdk==2.4.1
+
+# Google Cloud Vision API
+google-auth==1.25.0
+google-cloud-vision==2.1.0
+
+# JWT認証
+flask-jwt-extended==4.4.4
+
+# OAuth / 認証
+Authlib==1.2.0
+
+# フォーム関連
+WTForms==3.0.1
+
+# パスワードハッシュ
+flask_bcrypt==1.0.1
+
+# DB
+PyMongo==4.3.3
+
+# 画像処理
+Pillow==10.2.0
+
+# matplotlib / グラフ表示
+matplotlib==3.7.5
+japanize_matplotlib==1.1.3
+
+# 環境変数読み込み
+python-dotenv==0.19.0
+
+# SSL証明書
+certifi==2024.2.2
+
+## 開発用
+# テスト
+pytest==6.2.5
+pytest-cov==2.12.1
+pytest-mock==3.11.1
+
+# Lint
+ruff==0.11.8
+
+# デバッグ
+debugpy==1.8.0

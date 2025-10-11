@@ -1,0 +1,17 @@
+from dummies import generate_dummy_points
+
+from ApplicationService.ReplyService import ReplyService
+
+
+def test_success():
+    # Arrange
+    reply_service = ReplyService()
+    dummy_points = generate_dummy_points()
+
+    # Act
+    reply_service.add_submit_results_by_ocr_menu(
+        results=dummy_points,
+    )
+
+    # Assert
+    assert len(reply_service.buttons) == 1
