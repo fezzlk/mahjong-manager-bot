@@ -43,14 +43,14 @@ jobs:
       - name: Check requirements.txt consistency via Docker
         run: |
           echo "Generating requirements_ci.txt inside Docker..."
-          docker-compose -f docker-compose.piptools.yml run --rm piptools requirements_ci.txt
+          docker compose -f docker-compose.piptools.yml run --rm piptools requirements_ci.txt
 
           grep -v '^#' requirements.txt | sort > req_clean.txt
           grep -v '^#' requirements_ci.txt | sort > req_ci_clean.txt
 
           if ! diff -u req_clean.txt req_ci_clean.txt; then
             echo "::error::requirements.txt is not in sync with requirements.in."
-            echo "Please regenerate it locally using 'docker-compose -f docker-compose.piptools.yml run --rm piptools'."
+            echo "Please regenerate it locally using 'docker compose -f docker-compose.piptools.yml run --rm piptools'."
             exit 1
           fi
 

@@ -1,5 +1,5 @@
 # パッケージ追加時、requirements.in -> requirements.txt への反映に使用
-# $ docker-compose -f docker-compose.piptools.yml run --rm piptools
+# $ docker compose -f docker-compose.piptools.yml run --rm piptools
 
 services:
   piptools:
