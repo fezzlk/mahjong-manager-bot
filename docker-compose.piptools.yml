@@ -3,8 +3,8 @@
 
 services:
   piptools:
-    image: python:3.10-slim
+    image: python:3.10.11-slim
     volumes:
       - .:/app
     working_dir: /app
-    command: sh -c "pip install pip-tools && pip-compile requirements.in"
+    command: ./scripts/compile_requirements.sh
