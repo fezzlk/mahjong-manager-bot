@@ -34,12 +34,10 @@ if (
     and os.environ.get("WERKZEUG_RUN_MAIN") == "true"
 ):
     try:
-        print("🔍 Waiting for debugger attach on port 5678...")
         debugpy.listen(("0.0.0.0", 5678))
-        debugpy.wait_for_client()
-        print("✅ Debugger attached.")
+        print("🔍 Debugger can attach at port 5678...")
     except OSError:
-        print("⚠️ Debugger port already in use, skipping debugpy.listen()")
+        print("⚠️ Debugger port already in use")
 
 # ===== Flask 拡張 =====
 from jwt_setting import register_jwt
