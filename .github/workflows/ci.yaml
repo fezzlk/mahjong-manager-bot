@@ -46,6 +46,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Check Python version
         run: python --version
+      - name: Show pip version
+        run: pip --version
       - name: Install pip-tools
         run: python -m pip install --upgrade pip pip-tools
       - name: Check pip-compile version
