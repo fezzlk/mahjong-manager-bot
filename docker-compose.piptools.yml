@@ -3,7 +3,7 @@
 
 services:
   piptools:
-    image: python:3.8-slim
+    image: python:3.10-slim
     volumes:
       - .:/app
     working_dir: /app
