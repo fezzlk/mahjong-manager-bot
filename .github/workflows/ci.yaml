@@ -34,37 +34,23 @@ jobs:
   check_requirements:
     needs: lint
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10.11"]
     steps:
       - uses: actions/checkout@v5
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Check Python version
-        run: python --version
-      - name: Show pip version
-        run: pip --version
-      - name: Install pip-tools
-        run: python -m pip install --upgrade pip pip-tools
-      - name: Check pip-compile version
-        run: pip-compile --version
-      - name: Check requirements.txt consistency
-        run: |
-          echo "Checking if requirements.txt is up-to-date with requirements.in..."
-          # pip-compileで一時的にrequirements_ci.txtを生成
-          pip-compile --quiet requirements.in -o requirements_ci.txt
+      - name: Install Docker Compose
+        uses: docker/setup-buildx-action@v3
 
-          # コメント行を除去して依存部分だけを比較
+      - name: Check requirements.txt consistency via Docker
+        run: |
+          echo "Generating requirements_ci.txt inside Docker..."
+          docker compose -f docker-compose.piptools.yml run --rm piptools-ci
+
           grep -v '^#' requirements.txt | sort > req_clean.txt
           grep -v '^#' requirements_ci.txt | sort > req_ci_clean.txt
 
           if ! diff -u req_clean.txt req_ci_clean.txt; then
             echo "::error::requirements.txt is not in sync with requirements.in."
-            echo "Please regenerate it locally using 'docker-compose -f docker-compose.piptools.yml run --rm piptools'."
+            echo "Please regenerate it locally using 'docker compose -f docker-compose.piptools.yml run --rm piptools'."
             exit 1
           fi
 

@@ -83,7 +83,7 @@ grpcio-status==1.49.0rc1
     # via google-api-core
 gunicorn==20.0.4
     # via -r requirements.in
-idna==3.10
+idna==3.11
     # via
     #   requests
     #   yarl
