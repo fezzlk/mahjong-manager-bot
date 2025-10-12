@@ -43,7 +43,7 @@ jobs:
       - name: Check requirements.txt consistency via Docker
         run: |
           echo "Generating requirements_ci.txt inside Docker..."
-          docker compose -f docker-compose.piptools.yml run --rm piptools requirements_ci.txt
+          docker compose -f docker-compose.piptools.yml run --rm piptools-ci
 
           grep -v '^#' requirements.txt | sort > req_clean.txt
           grep -v '^#' requirements_ci.txt | sort > req_ci_clean.txt
