@@ -10,4 +10,4 @@ echo "pip version: $(pip --version)"
 echo "pip-compile version: $(pip-compile --version)"
 
 # 引数で出力ファイルを指定
-pip-compile requirements.in -o "$OUTPUT_FILE"
+pip-compile --upgrade requirements.in -o "$OUTPUT_FILE"
