@@ -40,23 +40,30 @@ jobs:
       - name: Install Docker Compose
         uses: docker/setup-buildx-action@v3
 
-      - name: Copy requirements.txt to requirements_ci.txt
+      - name: Backup current requirements.txt
         run: |
-          echo "Copying requirements.txt to requirements_ci.txt..."
-          cp requirements.txt requirements_ci.txt
+          echo "Backing up current requirements.txt to requirements_tmp.txt..."
+          cp requirements.txt requirements_tmp.txt
 
-      - name: Check requirements.txt consistency via Docker
+      - name: Generate new requirements.txt using Docker Compose
         run: |
-          echo "Generating requirements_ci.txt inside Docker..."
-          docker compose -f docker-compose.piptools.yml run --rm piptools-ci
+          echo "Generating new requirements.txt inside Docker..."
+          docker compose -f docker-compose.piptools.yml run --rm piptools
 
-          grep -v '^#' requirements.txt | sort > req_clean.txt
-          grep -v '^#' requirements_ci.txt | sort > req_ci_clean.txt
+      - name: Compare requirements.txt with backed-up version
+        run: |
+          echo "Checking if regenerated requirements.txt differs from the original..."
 
-          if ! diff -u req_clean.txt req_ci_clean.txt; then
+          # コメント行を除去して比較
+          grep -v '^#' requirements_tmp.txt | sort > req_old_clean.txt
+          grep -v '^#' requirements.txt | sort > req_new_clean.txt
+
+          if ! diff -u req_old_clean.txt req_new_clean.txt; then
             echo "::error::requirements.txt is not in sync with requirements.in."
-            echo "Please regenerate it locally using 'docker compose -f docker-compose.piptools.yml run --rm piptools'."
+            echo "Please regenerate it locally using 'docker-compose -f docker-compose.piptools.yml run --rm piptools'."
             exit 1
+          else
+            echo "✅ requirements.txt is up to date."
           fi
 
   # build:
