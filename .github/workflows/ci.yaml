@@ -80,7 +80,7 @@ jobs:
 
       - name: Build and start containers
         run: |
-          docker compose up -d --build
+          docker compose up -d --build -e ENV_FILE_PATH=".env.example"
 
       - name: Wait for Flask app to be ready
         run: |
