@@ -40,6 +40,11 @@ jobs:
       - name: Install Docker Compose
         uses: docker/setup-buildx-action@v3
 
+      - name: Copy requirements.txt to requirements_ci.txt
+        run: |
+          echo "Copying requirements.txt to requirements_ci.txt..."
+          cp requirements.txt requirements_ci.txt
+
       - name: Check requirements.txt consistency via Docker
         run: |
           echo "Generating requirements_ci.txt inside Docker..."
