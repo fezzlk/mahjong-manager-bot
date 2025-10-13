@@ -49,3 +49,5 @@ ruff==0.11.8
 
 # デバッグ
 debugpy==1.8.0
+
+pydantic
