@@ -67,6 +67,7 @@ jobs:
           fi
 
   build:
+    needs: check_requirements
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -80,7 +81,9 @@ jobs:
 
       - name: Build and start containers
         run: |
-          docker compose up -d --build -e ENV_FILE_PATH=".env.example"
+          docker compose up -d --build
+        env:
+          ENV_FILE_PATH: .env.example
 
       - name: Wait for Flask app to be ready
         run: |
