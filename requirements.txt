@@ -8,6 +8,8 @@ aiohttp==3.8.3
     # via line-bot-sdk
 aiosignal==1.4.0
     # via aiohttp
+annotated-types==0.7.0
+    # via pydantic
 async-timeout==4.0.3
     # via aiohttp
 attrs==25.4.0
@@ -151,6 +153,10 @@ pyasn1-modules==0.4.2
     # via google-auth
 pycparser==2.23
     # via cffi
+pydantic==2.12.0
+    # via -r requirements.in
+pydantic-core==2.41.1
+    # via pydantic
 pyjwt==2.10.1
     # via flask-jwt-extended
 pymongo==4.3.3
@@ -190,6 +196,11 @@ typing-extensions==4.15.0
     # via
     #   aiosignal
     #   grpcio
+    #   pydantic
+    #   pydantic-core
+    #   typing-inspection
+typing-inspection==0.4.2
+    # via pydantic
 urllib3==1.26.20
     # via requests
 werkzeug==3.1.3
