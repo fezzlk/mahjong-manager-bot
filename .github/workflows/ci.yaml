@@ -107,6 +107,8 @@ jobs:
       - name: Stop containers
         if: always()
         run: docker compose down
+        env:
+          ENV_FILE_PATH: .env.example
 
   test:
     needs: check_requirements
