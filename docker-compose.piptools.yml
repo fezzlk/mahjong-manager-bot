@@ -3,16 +3,9 @@
 
 services:
   piptools:
-    image: python:3.10.11-slim
+    image: python:3.11.14-slim
     volumes:
       - .:/app
     working_dir: /app
     command: ./scripts/compile_requirements.sh
-
-# ci 上での pip-compile 実行チェック用
-  piptools-ci:
-    image: python:3.10.11-slim
-    volumes:
-      - .:/app
-    working_dir: /app
-    command: ./scripts/compile_requirements.sh requirements_ci.txt
+    
