@@ -19,6 +19,7 @@ dummy_matches = [
     ),
 ]
 
+
 def test_ok(mocker):
     # Arrange
     mock_find = mocker.patch.object(
@@ -28,8 +29,16 @@ def test_ok(mocker):
     )
 
     # Act
-    result = match_service.find_all_archived_by_line_group_id(line_group_id="G0123456789abcdefghijklmnopqrstu1")
+    result = match_service.find_all_archived_by_line_group_id(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1"
+    )
 
     # Assert
     assert len(result) == 2
-    mock_find.assert_called_once_with(query={"line_group_id": "G0123456789abcdefghijklmnopqrstu1", "sum_prices_with_tip": {"$ne": {}}}, sort=[("created_at", ASCENDING)])
+    mock_find.assert_called_once_with(
+        query={
+            "line_group_id": "G0123456789abcdefghijklmnopqrstu1",
+            "sum_prices_with_chip": {"$ne": {}},
+        },
+        sort=[("created_at", ASCENDING)],
+    )

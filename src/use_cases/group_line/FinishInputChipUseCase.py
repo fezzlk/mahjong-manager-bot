@@ -10,7 +10,7 @@ from DomainService import (
 from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
 
 
-class FinishInputTipUseCase:
+class FinishInputChipUseCase:
     def execute(self) -> None:
         line_group_id = request_info_service.req_line_group_id
         group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
@@ -25,15 +25,15 @@ class FinishInputTipUseCase:
                 "計算対象の試合が見つかりません。",
             )
             return
-        sum_tip_count = 0
-        for tip in active_match.tip_scores.values():
-            sum_tip_count += tip
+        sum_chip_count = 0
+        for chip in active_match.chip_scores.values():
+            sum_chip_count += chip
 
-        if sum_tip_count != 0:
+        if sum_chip_count != 0:
             reply_service.add_message(
-                f"チップ増減数の合計が{('+' if sum_tip_count > 0 else '') + str(sum_tip_count)}です。0になるようにしてください。)",
+                f"チップ増減数の合計が{('+' if sum_chip_count > 0 else '') + str(sum_chip_count)}です。0になるようにしてください。)",
             )
             return
 
-        group_service.chmod(line_group_id, GroupMode.tip_ok)
+        group_service.chmod(line_group_id, GroupMode.chip_ok)
         FinishMatchUseCase().execute()

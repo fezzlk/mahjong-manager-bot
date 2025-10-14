@@ -26,7 +26,7 @@ class UpdateGroupSettingsUseCase:
                 return
             display_value = f"1着 {db_value[0]}/2着 {db_value[1]}/3着 {db_value[2]}/4着 {db_value[3]}"
         elif key == "チップ":
-            column = "tip_rate"
+            column = "chip_rate"
             db_value = int(value)
             if db_value not in [0, 10, 30, 50, 100, 500]:
                 reply_service.add_message(f"[{key}]を[{value}]に変更できません")

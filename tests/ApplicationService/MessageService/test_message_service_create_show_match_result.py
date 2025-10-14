@@ -14,14 +14,14 @@ dummy_match = Match(
         "U0123456789abcdefghijklmnopqrstu4": -40,
         "U0123456789abcdefghijklmnopqrstu5": -40,
     },
-    sum_prices_with_tip={
+    sum_prices_with_chip={
         "U0123456789abcdefghijklmnopqrstu1": 3100,
         "U0123456789abcdefghijklmnopqrstu2": 600,
         "U0123456789abcdefghijklmnopqrstu3": -1300,
         "U0123456789abcdefghijklmnopqrstu4": -1200,
         "U0123456789abcdefghijklmnopqrstu5": -1200,
     },
-    tip_scores={
+    chip_scores={
         "U0123456789abcdefghijklmnopqrstu1": 10,
         "U0123456789abcdefghijklmnopqrstu3": -10,
     },
@@ -42,7 +42,10 @@ def test_success_with_unknown_users(mocker):
     result = message_service.create_show_match_result(dummy_match)
 
     # Assert
-    assert result == "友達未登録: 3100円 (+100(+10枚))\n友達未登録: 600円 (+20(0枚))\n友達未登録: -1300円 (-40(-10枚))\n友達未登録: -1200円 (-40(0枚))\n友達未登録: -1200円 (-40(0枚))"
+    assert (
+        result
+        == "友達未登録: 3100円 (+100(+10枚))\n友達未登録: 600円 (+20(0枚))\n友達未登録: -1300円 (-40(-10枚))\n友達未登録: -1200円 (-40(0枚))\n友達未登録: -1200円 (-40(0枚))"
+    )
 
 
 def test_success(mocker):
@@ -70,4 +73,7 @@ def test_success(mocker):
     result = message_service.create_show_match_result(dummy_match)
 
     # Assert
-    assert result == "test_user1: 3100円 (+100(+10枚))\ntest_user2: 600円 (+20(0枚))\ntest_user3: -1300円 (-40(-10枚))\ntest_user4: -1200円 (-40(0枚))\ntest_user5: -1200円 (-40(0枚))"
+    assert (
+        result
+        == "test_user1: 3100円 (+100(+10枚))\ntest_user2: 600円 (+20(0枚))\ntest_user3: -1300円 (-40(-10枚))\ntest_user4: -1200円 (-40(0枚))\ntest_user5: -1200円 (-40(0枚))"
+    )

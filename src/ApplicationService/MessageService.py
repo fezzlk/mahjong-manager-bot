@@ -11,12 +11,52 @@ from DomainService import (
 from .interfaces.IMessageService import IMessageService
 
 KANSUJI = ["一", "二", "三", "四", "五", "六", "七", "八", "九"]
-HAI = [k + "萬" for k in KANSUJI] + [k + "筒" for k in KANSUJI] + [k + "索" for k in KANSUJI] + ["白", "發", "中", "東", "南", "西", "北"]
-han1 = ["リーチ", "一発", "ツモ", "平和", "断么九", "飜牌", "一盃口", "嶺上開花", "槍槓", "海底", "河底"]
-han2 = ["ダブルリーチ", "三色同順", "一気通貫", "対々和", "三暗刻", "三槓子", "全帯么", "混老頭", "小三元", "七対子"]
+HAI = (
+    [k + "萬" for k in KANSUJI]
+    + [k + "筒" for k in KANSUJI]
+    + [k + "索" for k in KANSUJI]
+    + ["白", "發", "中", "東", "南", "西", "北"]
+)
+han1 = [
+    "リーチ",
+    "一発",
+    "ツモ",
+    "平和",
+    "断么九",
+    "飜牌",
+    "一盃口",
+    "嶺上開花",
+    "槍槓",
+    "海底",
+    "河底",
+]
+han2 = [
+    "ダブルリーチ",
+    "三色同順",
+    "一気通貫",
+    "対々和",
+    "三暗刻",
+    "三槓子",
+    "全帯么",
+    "混老頭",
+    "小三元",
+    "七対子",
+]
 han3 = ["二盃口", "混一色", "純全帯么"]
 han6 = ["清一色"]
-yakuman = ["四暗刻", "大三元", "国士無双", "四喜和", "字一色", "九連宝燈", "緑一色", "清老頭", "四槓子", "天和", "地和"]
+yakuman = [
+    "四暗刻",
+    "大三元",
+    "国士無双",
+    "四喜和",
+    "字一色",
+    "九連宝燈",
+    "緑一色",
+    "清老頭",
+    "四槓子",
+    "天和",
+    "地和",
+]
 yaku_list = han1 + han2 + han3 + han6 + yakuman
 
 
@@ -60,11 +100,16 @@ class MessageService(IMessageService):
     ) -> str:
         now = datetime.now()
         random.seed(
-            int(now.year + now.month + now.day) +
-            int(re.sub("\\D", "", line_user_id)),
+            int(now.year + now.month + now.day) + int(re.sub("\\D", "", line_user_id)),
         )
 
-        weights_list = [10] * len(han1) + [5] * len(han2) + [3] * len(han3) + [1.5] * len(han6) + [0.5] * len(yakuman)
+        weights_list = (
+            [10] * len(han1)
+            + [5] * len(han2)
+            + [3] * len(han3)
+            + [1.5] * len(han6)
+            + [0.5] * len(yakuman)
+        )
 
         return random.choices(yaku_list, weights=weights_list, k=1)[0]
 
@@ -75,22 +120,22 @@ class MessageService(IMessageService):
         return random.choice(finish_hanchan_messages)
 
     def create_show_match_result(self, match: Match) -> str:
-        sum_prices_with_tip = match.sum_prices_with_tip
-        tip_scores = match.tip_scores
+        sum_prices_with_chip = match.sum_prices_with_chip
+        chip_scores = match.chip_scores
         sum_scores = match.sum_scores
 
         show_prize_money_list = []
         for line_user_id, score in sum_scores.items():
             name = user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"
             show_score = ("+" if score > 0 else "") + str(score)
-            price = sum_prices_with_tip.get(line_user_id, 0)
-            tip_count = tip_scores.get(line_user_id, 0)
-            additional_tip_message = (
-                f"({('+' if tip_count > 0 else '') + str(tip_count)}枚)"
+            price = sum_prices_with_chip.get(line_user_id, 0)
+            chip_count = chip_scores.get(line_user_id, 0)
+            additional_chip_message = (
+                f"({('+' if chip_count > 0 else '') + str(chip_count)}枚)"
             )
 
             show_prize_money_list.append(
-                f"{name}: {price!s}円 ({show_score}{additional_tip_message})",
+                f"{name}: {price!s}円 ({show_score}{additional_chip_message})",
             )
         return "\n".join(show_prize_money_list)
 

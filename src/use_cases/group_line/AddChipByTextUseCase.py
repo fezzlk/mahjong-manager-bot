@@ -10,8 +10,7 @@ from DomainService import (
 from use_cases.utility.InputPointUseCase import InputPointUseCase
 
 
-class AddTipByTextUseCase:
-
+class AddChipByTextUseCase:
     def execute(
         self,
         text: str,
@@ -34,21 +33,21 @@ class AddTipByTextUseCase:
                 "計算対象の試合が見つかりません。",
             )
             return
-        match = match_service.add_or_drop_tip_score(
+        match = match_service.add_or_drop_chip_score(
             match_id=active_match._id,
             line_user_id=target_line_user_id,
-            tip_score=point,
+            chip_score=point,
         )
 
-        tips = match.tip_scores
+        chips = match.chip_scores
 
-        if len(tips) == 0:
+        if len(chips) == 0:
             reply_service.add_message("チップの増減枚数を入力して下さい。")
             return
 
         res = [
-            f'{user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"}: {tip}'
-            for line_user_id, tip in tips.items()
+            f"{user_service.get_name_by_line_user_id(line_user_id) or '友達未登録'}: {chip}"
+            for line_user_id, chip in chips.items()
         ]
 
         reply_service.add_message("\n".join(res))

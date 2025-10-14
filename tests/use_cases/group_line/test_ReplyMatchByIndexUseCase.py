@@ -21,7 +21,7 @@ dummy_matches = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 1),
-                sum_prices_with_tip={
+        sum_prices_with_chip={
             "U0123456789abcdefghijklmnopqrstu1": 1000,
             "U0123456789abcdefghijklmnopqrstu2": 1800,
             "U0123456789abcdefghijklmnopqrstu3": -1800,
@@ -51,15 +51,15 @@ dummy_matches = [
             "U0123456789abcdefghijklmnopqrstu5": -300,
             "dummy": -300,
         },
-        tip_scores={
+        chip_scores={
             "U0123456789abcdefghijklmnopqrstu1": 10,
             "U0123456789abcdefghijklmnopqrstu4": -10,
         },
-        tip_prices={
+        chip_prices={
             "U0123456789abcdefghijklmnopqrstu1": 100,
             "U0123456789abcdefghijklmnopqrstu4": -100,
         },
-        sum_prices_with_tip={
+        sum_prices_with_chip={
             "U0123456789abcdefghijklmnopqrstu1": 1000,
             "U0123456789abcdefghijklmnopqrstu2": 1800,
             "U0123456789abcdefghijklmnopqrstu3": -1800,
@@ -162,8 +162,14 @@ def test_execute():
 
     # Assert
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "第2回\n2010年01月01日\ntest_user1: 1000円 (+30(+10枚))\ntest_user2: 1800円 (+60(0枚))\ntest_user3: -1800円 (-60(0枚))\ntest_user4: -400円 (-10(-10枚))\ntest_user5: -300円 (-10(0枚))\n友達未登録: -300円 (-10(0枚))"
-    assert reply_service.texts[1].text == "【半荘情報】\n\n第1回\ntest_user2: +60 (+60)\ntest_user1: +30 (+30)\ntest_user3: -30 (-30)\ntest_user4: -60 (-60)\n\n第2回\ntest_user4: +50 (-10)\ntest_user5: -10 (-10)\n友達未登録: -10 (-10)\ntest_user3: -30 (-60)"
+    assert (
+        reply_service.texts[0].text
+        == "第2回\n2010年01月01日\ntest_user1: 1000円 (+30(+10枚))\ntest_user2: 1800円 (+60(0枚))\ntest_user3: -1800円 (-60(0枚))\ntest_user4: -400円 (-10(-10枚))\ntest_user5: -300円 (-10(0枚))\n友達未登録: -300円 (-10(0枚))"
+    )
+    assert (
+        reply_service.texts[1].text
+        == "【半荘情報】\n\n第1回\ntest_user2: +60 (+60)\ntest_user1: +30 (+30)\ntest_user3: -30 (-30)\ntest_user4: -60 (-60)\n\n第2回\ntest_user4: +50 (-10)\ntest_user5: -10 (-10)\n友達未登録: -10 (-10)\ntest_user3: -30 (-60)"
+    )
     assert len(reply_service.images) == 1
 
 
@@ -199,5 +205,8 @@ def test_execute_out_of_index():
 
     # Assert
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "このトークルームには全2回までしか登録されていないため第3回はありません。"
+    assert (
+        reply_service.texts[0].text
+        == "このトークルームには全2回までしか登録されていないため第3回はありません。"
+    )
     assert len(reply_service.images) == 0

@@ -9,13 +9,14 @@ from mongo_client import group_settings_collection
 
 
 class GroupSettingRepository(IGroupSettingRepository):
-
     def create(
         self,
         new_record: GroupSetting,
     ) -> GroupSetting:
         if len(self.find(query={"line_group_id": new_record.line_group_id})) != 0:
-            raise Exception(f"LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。")
+            raise Exception(
+                f"LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。"
+            )
 
         new_dict = new_record.__dict__.copy()
         if new_record._id is None:
@@ -39,9 +40,7 @@ class GroupSettingRepository(IGroupSettingRepository):
         query: Dict[str, any] = {},
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[GroupSetting]:
-        records = group_settings_collection\
-            .find(filter=query)\
-            .sort(sort)
+        records = group_settings_collection.find(filter=query).sort(sort)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
@@ -58,7 +57,7 @@ class GroupSettingRepository(IGroupSettingRepository):
             rate=record.get("rate"),
             ranking_prize=record.get("ranking_prize"),
             tobi_prize=record.get("tobi_prize"),
-            tip_rate=record.get("tip_rate"),
+            chip_rate=record.get("chip_rate"),
             num_of_players=record.get("num_of_players"),
             rounding_method=record.get("rounding_method"),
             created_at=record.get("created_at"),

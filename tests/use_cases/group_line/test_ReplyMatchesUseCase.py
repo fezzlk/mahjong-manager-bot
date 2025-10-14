@@ -17,7 +17,7 @@ dummy_matches = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 1),
-        sum_prices_with_tip={
+        sum_prices_with_chip={
             "U0123456789abcdefghijklmnopqrstu1": 1000,
             "U0123456789abcdefghijklmnopqrstu2": 1800,
             "U0123456789abcdefghijklmnopqrstu3": -1800,
@@ -47,15 +47,15 @@ dummy_matches = [
             "U0123456789abcdefghijklmnopqrstu5": -300,
             "dummy": -300,
         },
-        tip_scores={
+        chip_scores={
             "U0123456789abcdefghijklmnopqrstu1": 10,
             "U0123456789abcdefghijklmnopqrstu4": -10,
         },
-        tip_prices={
+        chip_prices={
             "U0123456789abcdefghijklmnopqrstu1": 100,
             "U0123456789abcdefghijklmnopqrstu4": -100,
         },
-        sum_prices_with_tip={
+        sum_prices_with_chip={
             "U0123456789abcdefghijklmnopqrstu1": 1000,
             "U0123456789abcdefghijklmnopqrstu2": 1800,
             "U0123456789abcdefghijklmnopqrstu3": -1800,
@@ -100,7 +100,10 @@ def test_execute():
 
     # Assert
     assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。"
+    assert (
+        reply_service.texts[0].text
+        == "このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。"
+    )
     assert reply_service.texts[1].text == "第1回 2010-01-01\n第2回 2010-01-01"
 
 
@@ -115,4 +118,3 @@ def test_execute_no_match():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "まだ対戦結果がありません。"
-

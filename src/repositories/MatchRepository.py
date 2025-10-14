@@ -9,7 +9,6 @@ from mongo_client import matches_collection
 
 
 class MatchRepository(IMatchRepository):
-
     def create(
         self,
         new_record: Match,
@@ -37,9 +36,7 @@ class MatchRepository(IMatchRepository):
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[Match]:
         query["status"] = 2
-        records = matches_collection\
-            .find(filter=query)\
-            .sort(sort)
+        records = matches_collection.find(filter=query).sort(sort)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
@@ -55,12 +52,12 @@ class MatchRepository(IMatchRepository):
             status=record.get("status"),
             created_at=record.get("created_at"),
             updated_at=record.get("updated_at"),
-            tip_scores=record.get("tip_scores", {}),
-            tip_prices=record.get("tip_prices", {}),
+            chip_scores=record.get("chip_scores", {}),
+            chip_prices=record.get("chip_prices", {}),
             active_hanchan_id=record.get("active_hanchan_id"),
             sum_scores=record.get("sum_scores", {}),
             sum_prices=record.get("sum_prices", {}),
-            sum_prices_with_tip=record.get("sum_prices_with_tip", {}),
+            sum_prices_with_chip=record.get("sum_prices_with_chip", {}),
             _id=record.get("_id"),
             original_id=record.get("original_id"),
         )
