@@ -26,7 +26,7 @@ def test_hit_with_ids():
     for i in range(len(record_on_db)):
         assert record_on_db[i].line_group_id == other_groups[i].line_group_id
         assert record_on_db[i].ranking_prize == other_groups[i].ranking_prize
-        assert record_on_db[i].tip_rate == other_groups[i].tip_rate
+        assert record_on_db[i].chip_rate == other_groups[i].chip_rate
         assert record_on_db[i].tobi_prize == other_groups[i].tobi_prize
         assert record_on_db[i].num_of_players == other_groups[i].num_of_players
         assert record_on_db[i].rounding_method == other_groups[i].rounding_method
@@ -54,7 +54,9 @@ def test_hit_0_record():
     for i in range(len(record_on_db)):
         assert record_on_db[i].line_group_id == dummy_group_settings[i].line_group_id
         assert record_on_db[i].ranking_prize == dummy_group_settings[i].ranking_prize
-        assert record_on_db[i].tip_rate == dummy_group_settings[i].tip_rate
+        assert record_on_db[i].chip_rate == dummy_group_settings[i].chip_rate
         assert record_on_db[i].tobi_prize == dummy_group_settings[i].tobi_prize
         assert record_on_db[i].num_of_players == dummy_group_settings[i].num_of_players
-        assert record_on_db[i].rounding_method == dummy_group_settings[i].rounding_method
+        assert (
+            record_on_db[i].rounding_method == dummy_group_settings[i].rounding_method
+        )

@@ -5,7 +5,7 @@ before = GroupSetting(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     rate=3,
     ranking_prize=[20, 10, -10, -20],
-    tip_rate=0,
+    chip_rate=0,
     tobi_prize=10,
     num_of_players=4,
     rounding_method=0,
@@ -15,7 +15,7 @@ after = GroupSetting(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     rate=4,
     ranking_prize=[20, 10, -10, -20],
-    tip_rate=0,
+    chip_rate=0,
     tobi_prize=10,
     num_of_players=4,
     rounding_method=0,
@@ -38,7 +38,7 @@ def test_hit_1_record():
     assert len(record_on_db) == 1
     assert record_on_db[0].line_group_id == after.line_group_id
     assert record_on_db[0].ranking_prize == after.ranking_prize
-    assert record_on_db[0].tip_rate == after.tip_rate
+    assert record_on_db[0].chip_rate == after.chip_rate
     assert record_on_db[0].tobi_prize == after.tobi_prize
     assert record_on_db[0].num_of_players == after.num_of_players
     assert record_on_db[0].rounding_method == after.rounding_method

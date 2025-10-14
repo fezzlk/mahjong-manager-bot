@@ -12,32 +12,33 @@ STATUS_LIST = ["disabled", "active", "archived"]
 
 
 class MatchService(IMatchService):
-
-    def add_or_drop_tip_score(
+    def add_or_drop_chip_score(
         self,
         match_id: ObjectId,
         line_user_id: str,
-        tip_score: Optional[int],
+        chip_score: Optional[int],
     ) -> Match:
         if line_user_id is None:
-            raise ValueError("fail to add_or_drop_tip_score: line_user_id is required")
+            raise ValueError("fail to add_or_drop_chip_score: line_user_id is required")
 
-        matches = match_repository.find({
-            "_id": match_id,
-        })
+        matches = match_repository.find(
+            {
+                "_id": match_id,
+            }
+        )
 
         if len(matches) == 0:
             raise ValueError("Not found match")
 
         target = matches[0]
-        tip_scores = target.tip_scores
+        chip_scores = target.chip_scores
 
-        if tip_score is None:
-            tip_scores.pop(line_user_id, None)
+        if chip_score is None:
+            chip_scores.pop(line_user_id, None)
         else:
-            tip_scores[line_user_id] = tip_score
+            chip_scores[line_user_id] = chip_score
 
-        target.tip_scores = tip_scores
+        target.chip_scores = chip_scores
         self.update(target)
 
         return target
@@ -72,7 +73,9 @@ class MatchService(IMatchService):
             sort=[("created_at", ASCENDING)],
         )
 
-    def find_all_by_ids_and_line_group_ids(self, ids: List[ObjectId], line_group_ids: List[str]) -> List[Match]:
+    def find_all_by_ids_and_line_group_ids(
+        self, ids: List[ObjectId], line_group_ids: List[str]
+    ) -> List[Match]:
         return match_repository.find(
             query={"_id": {"$in": ids}, "line_group_id": {"$in": line_group_ids}},
         )
@@ -91,7 +94,7 @@ class MatchService(IMatchService):
         return match_repository.find(
             query={
                 "line_group_id": line_group_id,
-                "sum_prices_with_tip": {"$ne": {}},
+                "sum_prices_with_chip": {"$ne": {}},
             },
             sort=[("created_at", ASCENDING)],
         )

@@ -61,7 +61,7 @@
 # #         'hanchan_ids',
 # #         'created_at',
 # #         'status',
-# #         'tip_scores',
+# #         'chip_scores',
 # #         'users']
 # #     input_keys = ['line_group_id', 'hanchan_ids', 'status']
 # #     return render_template(

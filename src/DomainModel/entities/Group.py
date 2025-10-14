@@ -8,8 +8,8 @@ from bson.objectid import ObjectId
 class GroupMode(Enum):
     wait = "wait"
     input = "input"
-    tip_input = "tip_input"
-    tip_ok = "tip_ok"
+    chip_input = "chip_input"
+    chip_ok = "chip_ok"
 
 
 @dataclass()

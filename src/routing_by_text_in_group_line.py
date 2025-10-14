@@ -16,13 +16,13 @@ from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCas
 
 # from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
 from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
-from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
+from use_cases.group_line.AddChipByTextUseCase import AddChipByTextUseCase
 
 # from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
 # from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
 from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
 from use_cases.group_line.ExitUseCase import ExitUseCase
-from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
+from use_cases.group_line.FinishInputChipUseCase import FinishInputChipUseCase
 from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
 from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
 from use_cases.group_line.ReplyFinishConfirmUseCase import ReplyFinishConfirmUseCase
@@ -69,7 +69,7 @@ class RCommands(Enum):
     sum_matches = "sum_matches"
     my_results = "my_results"
     history = "history"
-    tip_ok = "tip_ok"
+    chip_ok = "chip_ok"
     badai = "badai"
     entry = "entry"
     rank = "rank"
@@ -98,9 +98,9 @@ def routing_by_text_in_group_line():
     if current_mode == GroupMode.input.value:
         AddPointByTextUseCase().execute(request_info_service.message)
         return
-    """tip input mode"""
-    if current_mode == GroupMode.tip_input.value:
-        AddTipByTextUseCase().execute(request_info_service.message)
+    """chip input mode"""
+    if current_mode == GroupMode.chip_input.value:
+        AddChipByTextUseCase().execute(request_info_service.message)
         return
 
     """wait mode"""
@@ -169,14 +169,15 @@ def routing_for_group_by_method(method):
         key = body.split(" ")[0]
         value = body.split(" ")[1]
         UpdateGroupSettingsUseCase().execute(
-            key, value,
+            key,
+            value,
         )
     # history
     elif method == RCommands.history.name:
         ReplyMultiHistoryUseCase().execute()
-    # tip_ok
-    elif method == RCommands.tip_ok.name:
-        FinishInputTipUseCase().execute()
+    # chip_ok
+    elif method == RCommands.chip_ok.name:
+        FinishInputChipUseCase().execute()
     # badai
     elif method == RCommands.badai.name:
         ReplyApplyBadaiUseCase().execute(body)
@@ -206,6 +207,7 @@ def routing_for_group_by_method(method):
     #     #         ]
     #     #     args.remove('to')
     #     ReplySumMatchesByIdsUseCase().execute(args)
+
 
 # def parse_int_list(args):
 #     args = body.split(' ')

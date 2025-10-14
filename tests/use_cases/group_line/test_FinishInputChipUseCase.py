@@ -15,7 +15,7 @@ from repositories import (
     match_repository,
     user_repository,
 )
-from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
+from use_cases.group_line.FinishInputChipUseCase import FinishInputChipUseCase
 
 dummy_users = [
     User(
@@ -57,19 +57,19 @@ dummy_users = [
 
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    mode=GroupMode.tip_input.value,
+    mode=GroupMode.chip_input.value,
     active_match_id=1,
     _id=1,
 )
 
 dummy_group_setting = GroupSetting(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    tip_rate=50,
+    chip_rate=50,
 )
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
-    tip_scores={
+    chip_scores={
         "U0123456789abcdefghijklmnopqrstu1": 3,
         "U0123456789abcdefghijklmnopqrstu2": -3,
     },
@@ -164,7 +164,7 @@ dummy_event = Event(
     user_id="U0123456789abcdefghijklmnopqrstu1",
     group_id="G0123456789abcdefghijklmnopqrstu1",
     message_type="text",
-    text="_tip_ok",
+    text="_chip_ok",
 )
 
 
@@ -172,7 +172,7 @@ def test_fail_no_group():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
 
-    use_case = FinishInputTipUseCase()
+    use_case = FinishInputChipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_setting_repository.create(dummy_group_setting)
     for dummy_user in dummy_users:
@@ -196,7 +196,7 @@ def test_fail_no_match():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
 
-    use_case = FinishInputTipUseCase()
+    use_case = FinishInputChipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
     group_setting_repository.create(dummy_group_setting)
@@ -212,15 +212,15 @@ def test_fail_no_match():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "計算対象の試合が見つかりません。"
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
-    assert groups[0].mode == GroupMode.tip_input.value
+    assert groups[0].mode == GroupMode.chip_input.value
     assert groups[0].active_match_id == 1
 
 
-def test_fail_tip_sum_mismatch():
+def test_fail_chip_sum_mismatch():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
 
-    use_case = FinishInputTipUseCase()
+    use_case = FinishInputChipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
     group_setting_repository.create(dummy_group_setting)
@@ -229,7 +229,7 @@ def test_fail_tip_sum_mismatch():
     match_repository.create(
         Match(
             line_group_id=dummy_group.line_group_id,
-            tip_scores={
+            chip_scores={
                 "U0123456789abcdefghijklmnopqrstu1": 4,
                 "U0123456789abcdefghijklmnopqrstu2": -3,
             },
@@ -249,7 +249,7 @@ def test_fail_tip_sum_mismatch():
         == "チップ増減数の合計が+1です。0になるようにしてください。)"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
-    assert groups[0].mode == GroupMode.wait.tip_input.value
+    assert groups[0].mode == GroupMode.wait.chip_input.value
     assert groups[0].active_match_id == 1
 
 
@@ -257,7 +257,7 @@ def test_success():
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
 
-    use_case = FinishInputTipUseCase()
+    use_case = FinishInputChipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
     group_setting_repository.create(dummy_group_setting)

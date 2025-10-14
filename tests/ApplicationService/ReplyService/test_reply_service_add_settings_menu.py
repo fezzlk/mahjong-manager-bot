@@ -45,7 +45,7 @@ def test_success_key_high_rate():
     assert len(reply_service.buttons) == 1
 
 
-def test_success_key_tip():
+def test_success_key_chip():
     # Arrange
     reply_service = ReplyService()
 
@@ -56,7 +56,7 @@ def test_success_key_tip():
     assert len(reply_service.buttons) == 1
 
 
-def test_success_key_high_high_tip():
+def test_success_key_high_high_chip():
     # Arrange
     reply_service = ReplyService()
 
