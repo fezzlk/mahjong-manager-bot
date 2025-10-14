@@ -8,13 +8,15 @@ from flask import (
     session,
     url_for,
 )
-from linebot import WebhookHandler, exceptions
+from linebot import exceptions
 
 import env_var
 from ApplicationModels.PageContents import PageContents
 from use_cases.CreateDummyUseCase import CreateDummyUseCase
 
-handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)
+# handle_eventからhandlerをインポート（イベントハンドラーが登録された状態）
+from handle_event import handler
+
 views_blueprint = Blueprint("views_blueprint", __name__, url_prefix="/")
 
 
@@ -75,12 +77,12 @@ def migrate():
 
 @views_blueprint.route("/test_personal_line", methods=["POST"])
 def test_personal_line():
-
     from ApplicationService import (
         reply_service,
         request_info_service,
     )
     from line_models import Event
+
     user_id = request.form.get("user_id")
     text = request.form.get("text")
     event = Event(
@@ -89,5 +91,6 @@ def test_personal_line():
     )
     request_info_service.set_req_info(event)
     import routing_by_text_in_personal_line
+
     routing_by_text_in_personal_line.routing_by_text_in_personal_line()
     return "\n\n".join([content.text for content in reply_service.texts])

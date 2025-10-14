@@ -26,7 +26,7 @@ dummy_matches = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 1),
-                sum_prices_with_tip={
+        sum_prices_with_chip={
             "U0123456789abcdefghijklmnopqrstu1": 1000,
             "U0123456789abcdefghijklmnopqrstu2": 1800,
             "U0123456789abcdefghijklmnopqrstu3": -1800,
@@ -40,7 +40,7 @@ dummy_matches = [
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 2),
-        sum_prices_with_tip={
+        sum_prices_with_chip={
             "U0123456789abcdefghijklmnopqrstu1": 1000,
             "U0123456789abcdefghijklmnopqrstu2": 1800,
             "U0123456789abcdefghijklmnopqrstu3": -1800,

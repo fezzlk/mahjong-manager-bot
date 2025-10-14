@@ -10,7 +10,7 @@ from repositories import (
     match_repository,
     user_repository,
 )
-from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
+from use_cases.group_line.AddChipByTextUseCase import AddChipByTextUseCase
 
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
@@ -97,7 +97,7 @@ dummy_matches = [
 
 def test_execute():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches:
@@ -119,15 +119,15 @@ def test_execute():
             "_id": 3,
         },
     )
-    expected_tip_scores = {dummy_users[0].line_user_id: 10}
-    assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k, v in expected_tip_scores.items():
-        assert matches[0].tip_scores[k] == v
+    expected_chip_scores = {dummy_users[0].line_user_id: 10}
+    assert len(matches[0].chip_scores) == len(expected_chip_scores)
+    for k, v in expected_chip_scores.items():
+        assert matches[0].chip_scores[k] == v
 
 
 def test_execute_not_int_point():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches:
@@ -145,12 +145,12 @@ def test_execute_not_int_point():
     assert reply_service.texts[0].type == "text"
     assert reply_service.texts[0].text == "整数で入力してください。"
     matches = match_repository.find()
-    assert len(matches[0].tip_scores) == 0
+    assert len(matches[0].chip_scores) == 0
 
 
 def test_execute_with_mention():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     request_info_service.mention_line_ids = ["U0123456789abcdefghijklmnopqrstu1"]
@@ -173,15 +173,15 @@ def test_execute_with_mention():
             "_id": 3,
         },
     )
-    expected_tip_scores = {"U0123456789abcdefghijklmnopqrstu1": 10}
-    assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k, v in expected_tip_scores.items():
-        assert matches[0].tip_scores[k] == v
+    expected_chip_scores = {"U0123456789abcdefghijklmnopqrstu1": 10}
+    assert len(matches[0].chip_scores) == len(expected_chip_scores)
+    for k, v in expected_chip_scores.items():
+        assert matches[0].chip_scores[k] == v
 
 
 def test_execute_multi_mentions():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     request_info_service.mention_line_ids = [
@@ -210,12 +210,12 @@ def test_execute_multi_mentions():
             "_id": 3,
         },
     )
-    assert len(matches[0].tip_scores) == 0
+    assert len(matches[0].chip_scores) == 0
 
 
 def test_execute_not_registered_user():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     request_info_service.mention_line_ids = ["dummy_line_id"]
@@ -238,10 +238,10 @@ def test_execute_not_registered_user():
             "_id": 3,
         },
     )
-    expected_tip_scores = {"dummy_line_id": 10}
-    assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k, v in expected_tip_scores.items():
-        assert matches[0].tip_scores[k] == v
+    expected_chip_scores = {"dummy_line_id": 10}
+    assert len(matches[0].chip_scores) == len(expected_chip_scores)
+    for k, v in expected_chip_scores.items():
+        assert matches[0].chip_scores[k] == v
 
 
 dummy_matches2 = [
@@ -249,7 +249,7 @@ dummy_matches2 = [
         line_group_id=dummy_group.line_group_id,
         status=2,
         _id=1,
-        tip_scores={
+        chip_scores={
             dummy_users[0].line_user_id: 20,
             dummy_users[1].line_user_id: -20,
         },
@@ -259,7 +259,7 @@ dummy_matches2 = [
 
 def test_execute_update():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches2:
@@ -281,18 +281,18 @@ def test_execute_update():
             "_id": 1,
         },
     )
-    expected_tip_scores = {
+    expected_chip_scores = {
         dummy_users[0].line_user_id: -10,
         dummy_users[1].line_user_id: -20,
     }
-    assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k, v in expected_tip_scores.items():
-        assert matches[0].tip_scores[k] == v
+    assert len(matches[0].chip_scores) == len(expected_chip_scores)
+    for k, v in expected_chip_scores.items():
+        assert matches[0].chip_scores[k] == v
 
 
 def test_execute_delete():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches2:
@@ -314,12 +314,12 @@ def test_execute_delete():
             "_id": 1,
         },
     )
-    expected_tip_scores = {
+    expected_chip_scores = {
         dummy_users[1].line_user_id: -20,
     }
-    assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k, v in expected_tip_scores.items():
-        assert matches[0].tip_scores[k] == v
+    assert len(matches[0].chip_scores) == len(expected_chip_scores)
+    for k, v in expected_chip_scores.items():
+        assert matches[0].chip_scores[k] == v
 
 
 dummy_matches3 = [
@@ -327,7 +327,7 @@ dummy_matches3 = [
         line_group_id=dummy_group.line_group_id,
         status=2,
         _id=1,
-        tip_scores={
+        chip_scores={
             dummy_users[0].line_user_id: 20,
         },
     ),
@@ -336,7 +336,7 @@ dummy_matches3 = [
 
 def test_execute_delete_last_one():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches3:
@@ -358,15 +358,15 @@ def test_execute_delete_last_one():
             "_id": 1,
         },
     )
-    expected_tip_scores = {}
-    assert len(matches[0].tip_scores) == len(expected_tip_scores)
-    for k, v in expected_tip_scores.items():
-        assert matches[0].tip_scores[k] == v
+    expected_chip_scores = {}
+    assert len(matches[0].chip_scores) == len(expected_chip_scores)
+    for k, v in expected_chip_scores.items():
+        assert matches[0].chip_scores[k] == v
 
 
 def test_execute_no_active_match():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches3:
@@ -387,7 +387,7 @@ def test_execute_no_active_match():
 
 def test_execute_no_group():
     # Arrange
-    use_case = AddTipByTextUseCase()
+    use_case = AddChipByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
 

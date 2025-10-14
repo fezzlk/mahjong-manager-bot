@@ -49,10 +49,10 @@ def routing_by_text_in_personal_line():
         return
 
     """routing by text for personal chat"""
-    method = request_info_service.method
-    if method is not None:
-        if method in [c.name for c in UCommands]:
-            routing_by_method(method)
+    command = request_info_service.command
+    if command is not None:
+        if command in [c.name for c in UCommands]:
+            routing_by_command(command)
             return
         reply_service.add_message(
             "使い方がわからない場合はメニューの中の「使い方」を押してください。",
@@ -71,49 +71,49 @@ def routing_by_text_in_personal_line():
     )
 
 
-def routing_by_method(method: str):
-    """Routing by method for personal chat"""
+def routing_by_command(command: str):
+    """Routing by command for personal chat"""
     # mode
-    if method == UCommands.mode.name:
+    if command == UCommands.mode.name:
         ReplyUserModeUseCase().execute()
     # exit
-    elif method == UCommands.exit.name:
+    elif command == UCommands.exit.name:
         UserExitCommandUseCase().execute(
             request_info_service.req_line_user_id,
         )
     # payment
-    elif method == UCommands.payment.name:
+    elif command == UCommands.payment.name:
         reply_service.add_message("支払い機能は開発中です。")
     # analysis
-    elif method == UCommands.analysis.name:
+    elif command == UCommands.analysis.name:
         reply_service.add_message("分析機能は開発中です。")
     # fortune
-    elif method == UCommands.fortune.name:
+    elif command == UCommands.fortune.name:
         ReplyFortuneUseCase().execute()
     # fortune_yaku
-    elif method == UCommands.fortune_yaku.name:
+    elif command == UCommands.fortune_yaku.name:
         ReplyFortuneYakuUseCase().execute()
     # history
-    elif method == UCommands.history.name:
+    elif command == UCommands.history.name:
         ReplyHistoryUseCase().execute()
     # setting
-    elif method == UCommands.setting.name:
+    elif command == UCommands.setting.name:
         reply_service.add_message("個人設定機能は開発中です。")
     # help
-    elif method == UCommands.help.name:
+    elif command == UCommands.help.name:
         ReplyUserHelpUseCase().execute()
     # github
-    elif method == UCommands.github.name:
+    elif command == UCommands.github.name:
         ReplyGitHubUrlUseCase().execute()
     # token
-    elif method == UCommands.token.name:
+    elif command == UCommands.token.name:
         ReplyTokenUseCase().execute()
     # url
-    elif method == UCommands.url.name:
+    elif command == UCommands.url.name:
         ReplyUrlUseCase().execute()
     # rank
-    elif method == UCommands.rank.name:
+    elif command == UCommands.rank.name:
         ReplyRankHistoryUseCase().execute()
     # rank detail
-    elif method == UCommands.rank_detail.name:
+    elif command == UCommands.rank_detail.name:
         ReplyRankHistogramUseCase().execute()

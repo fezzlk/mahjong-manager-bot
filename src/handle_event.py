@@ -16,12 +16,16 @@ from linebot.models import (
 # from use_cases.group_line.InputResultFromImageUseCase import (
 #     InputResultFromImageUseCase)
 import env_var
-from apis.root import handler
+from linebot import WebhookHandler
+
 from ApplicationService import (
     reply_service,
     request_info_service,
 )
 from messaging_api_setting import line_bot_api
+
+# ハンドラーを作成
+handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)
 from routing_by_text_in_group_line import routing_by_text_in_group_line
 from routing_by_text_in_personal_line import routing_by_text_in_personal_line
 from use_cases.group_line.GroupQuitUseCase import GroupQuitUseCase
