@@ -13,7 +13,7 @@ class RequestInfoService:
     req_line_group_id: str
     mention_line_ids: List[str]
     message: str
-    method: str
+    command: str
     body: str
     params: Dict[str, str]
     is_mention_all: bool
@@ -24,7 +24,7 @@ class RequestInfoService:
         self.req_line_group_id = None
         self.mention_line_ids = []
         self.message = None
-        self.method = None
+        self.command = None
         self.params = {}
         self.body = None
         self.is_mention_all = False
@@ -94,10 +94,10 @@ class RequestInfoService:
             self.mention_line_ids = command_alias[0].mentionees
 
         if (self.message[0] == "_") & (len(self.message) > 1):
-            method_and_params = self.message.split()[0]
-            self.body = self.message[len(method_and_params) + 1 :]
-            self.method = method_and_params.split("?")[0][1:]
-            param_list = method_and_params[len(self.method) + 2 :].split("&")
+            command_and_params = self.message.split()[0]
+            self.body = self.message[len(command_and_params) + 1 :]
+            self.command = command_and_params.split("?")[0][1:]
+            param_list = command_and_params[len(self.command) + 2 :].split("&")
             for p in param_list:
                 k_v = p.split("=")
                 if len(k_v) >= 2:
@@ -113,7 +113,7 @@ class RequestInfoService:
         self.req_line_group_id = None
         self.mention_line_ids = []
         self.message = None
-        self.method = None
+        self.command = None
         self.params = {}
         self.body = None
         self.is_mention_all = False

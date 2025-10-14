@@ -81,10 +81,10 @@ def routing_by_text_in_group_line():
     group_service.find_or_create(request_info_service.req_line_group_id)
 
     """routing by text"""
-    method = request_info_service.method
-    if method is not None:
-        if method in [c.name for c in RCommands]:
-            routing_for_group_by_method(method)
+    command = request_info_service.command
+    if command is not None:
+        if command in [c.name for c in RCommands]:
+            routing_for_group_by_command(command)
             return
         reply_service.add_message(
             "使い方がわからない場合は「_help」と入力してください。",
@@ -111,61 +111,61 @@ def routing_by_text_in_group_line():
     #     AddHanchanByPointsTextUseCase().execute(text)
 
 
-def routing_for_group_by_method(method):
-    """Routing by method"""
+def routing_for_group_by_command(command):
+    """Routing by command"""
     body = request_info_service.body
     # input
-    if method == RCommands.input.name:
+    if command == RCommands.input.name:
         StartInputUseCase().execute()
     # start menu
-    elif method == RCommands.start.name:
+    elif command == RCommands.start.name:
         ReplyStartMenuUseCase().execute()
     # mode
-    elif method == RCommands.mode.name:
+    elif command == RCommands.mode.name:
         ReplyGroupModeUseCase().execute()
     # exit
-    elif method == RCommands.exit.name:
+    elif command == RCommands.exit.name:
         ExitUseCase().execute()
     # help
-    elif method == RCommands.help.name:
+    elif command == RCommands.help.name:
         ReplyGroupHelpUseCase().execute(RCommands)
     # setting
-    elif method == RCommands.setting.name:
+    elif command == RCommands.setting.name:
         ReplyGroupSettingsMenuUseCase().execute(body)
     # match detail by index
-    elif method == RCommands.match.name:
+    elif command == RCommands.match.name:
         ReplyMatchByIndexUseCase().execute(body)
     # drop
-    elif method == RCommands.drop.name:
+    elif command == RCommands.drop.name:
         DropHanchanByIndexUseCase().execute(body)
     # drop match
-    # elif method == RCommands.drop_m.name:
+    # elif command == RCommands.drop_m.name:
     #     DisableMatchUseCase().execute()
     # finish
-    elif method == RCommands.finish.name:
+    elif command == RCommands.finish.name:
         FinishMatchUseCase().execute()
     # finish_confirm
-    elif method == RCommands.finish_confirm.name:
+    elif command == RCommands.finish_confirm.name:
         ReplyFinishConfirmUseCase().execute()
     # fortune
-    elif method == RCommands.fortune.name:
+    elif command == RCommands.fortune.name:
         ReplyFortuneUseCase().execute()
     # others menu
-    elif method == RCommands.others.name:
+    elif command == RCommands.others.name:
         ReplyOthersMenuUseCase().execute()
     # active_match
-    elif method == RCommands.active_match.name:
+    elif command == RCommands.active_match.name:
         ReplyHanchansOfActiveMatchUseCase().execute()
     # matches
-    elif method == RCommands.matches.name:
+    elif command == RCommands.matches.name:
         ReplyMatchesUseCase().execute()
     # tobi
-    elif method == RCommands.tobi.name:
+    elif command == RCommands.tobi.name:
         SubmitHanchanUseCase().execute(
             tobashita_player_id=body,
         )
     # update config
-    elif method == RCommands.update_config.name:
+    elif command == RCommands.update_config.name:
         key = body.split(" ")[0]
         value = body.split(" ")[1]
         UpdateGroupSettingsUseCase().execute(
@@ -173,28 +173,28 @@ def routing_for_group_by_method(method):
             value,
         )
     # history
-    elif method == RCommands.history.name:
+    elif command == RCommands.history.name:
         ReplyMultiHistoryUseCase().execute()
     # chip_ok
-    elif method == RCommands.chip_ok.name:
+    elif command == RCommands.chip_ok.name:
         FinishInputChipUseCase().execute()
     # badai
-    elif method == RCommands.badai.name:
+    elif command == RCommands.badai.name:
         ReplyApplyBadaiUseCase().execute(body)
     # rank
-    elif method == RCommands.rank.name:
+    elif command == RCommands.rank.name:
         ReplyRankHistoryUseCase().execute()
     # rank detail
-    elif method == RCommands.rank_detail.name:
+    elif command == RCommands.rank_detail.name:
         ReplyRankHistogramUseCase().execute()
-    elif method == RCommands.ranking.name:
+    elif command == RCommands.ranking.name:
         ReplyRankingTableUseCase().execute()
 
     # # entry
-    # elif method == RCommands.entry.name:
+    # elif command == RCommands.entry.name:
     #     LinkUserToGroupUseCase().execute()
     # sum_matches
-    # elif method == RCommands.sum_matches.name:
+    # elif command == RCommands.sum_matches.name:
     #     args = body.split(' ')
     #     # while 'to' in args:
     #     #     index = args.index('to')

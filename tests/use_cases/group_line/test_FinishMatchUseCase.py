@@ -227,10 +227,10 @@ def test_success():
     assert matches[0].status == 2
     assert len(matches[0].chip_prices) == 5
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] == 0
-    assert matches[0].chipp_prices["U0123456789abcdefghijklmnopqrstu2"] == 0
-    assert matches[0].chipp_prices["U0123456789abcdefghijklmnopqrstu3"] == 0
+    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] == 0
+    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu3"] == 0
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu4"] == 0
-    assert matches[0].chipp_prices["U0123456789abcdefghijklmnopqrstu5"] == 0
+    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu5"] == 0
     assert len(matches[0].sum_scores) == 5
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] == 100
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] == 20

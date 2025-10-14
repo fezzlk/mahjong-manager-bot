@@ -37,7 +37,7 @@ def test_message_event_from_user():
     assert request_info_service.req_line_group_id is None
     assert request_info_service.mention_line_ids == []
     assert request_info_service.message == "dummy_text"
-    assert request_info_service.method is None
+    assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
 
@@ -62,7 +62,7 @@ def test_postback_event_from_user():
     assert request_info_service.req_line_group_id is None
     assert request_info_service.mention_line_ids == []
     assert request_info_service.message == "dummy_postback"
-    assert request_info_service.method is None
+    assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
 
@@ -70,6 +70,7 @@ def test_postback_event_from_user():
 def test_message_event_from_room(mocker):
     # Arrange
     from ApplicationService import reply_service
+
     mock = mocker.patch.object(reply_service, "push_a_message")
     request_info_service = RequestInfoService()
     message_event = Event(
@@ -88,7 +89,7 @@ def test_message_event_from_room(mocker):
     assert request_info_service.req_line_group_id == message_event.source.room_id
     assert request_info_service.mention_line_ids == []
     assert request_info_service.message == "dummy_text"
-    assert request_info_service.method is None
+    assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
     mock.assert_called_once()
@@ -113,7 +114,7 @@ def test_message_event_from_group():
     assert request_info_service.req_line_group_id == message_event.source.group_id
     assert request_info_service.mention_line_ids == []
     assert request_info_service.message == "dummy_text"
-    assert request_info_service.method is None
+    assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
 
@@ -138,7 +139,7 @@ def test_postback_event_from_group():
     assert request_info_service.req_line_group_id == message_event.source.group_id
     assert request_info_service.mention_line_ids == []
     assert request_info_service.message == "dummy_postback"
-    assert request_info_service.method is None
+    assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
 
@@ -164,6 +165,6 @@ def test_postback_event_from_group():
 #     assert request_info_service.mention_line_ids ==
 #     ['U0123456789abcdefghijklmnopqrstu2', 'U0123456789abcdefghijklmnopqrstu3']
 #     assert request_info_service.message == 'dummy_text'
-#     assert request_info_service.method is None
+#     assert request_info_service.command is None
 #     assert request_info_service.params == {}
 #     assert request_info_service.body is None
