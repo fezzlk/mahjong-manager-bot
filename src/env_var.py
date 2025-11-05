@@ -16,6 +16,7 @@ JWT_AUTH_PATH = os.getenv("JWT_AUTH_PATH", "auth")
 FONT_FILE_PATH = os.getenv("FONT_FILE_PATH", "/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+YOUR_BOT_LINE_ID = os.getenv("YOUR_BOT_LINE_ID")
 
 tmp_server_url = os.getenv("SERVER_URL")
 if tmp_server_url is None:

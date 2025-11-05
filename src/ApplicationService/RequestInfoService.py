@@ -95,13 +95,13 @@ class RequestInfoService:
 
         if (self.message[0] == "_") & (len(self.message) > 1):
             method_and_params = self.message.split()[0]
-            self.body = self.message[len(method_and_params) + 1 :]
+            self.body = self.message[len(method_and_params) + 1:]
             self.method = method_and_params.split("?")[0][1:]
-            param_list = method_and_params[len(self.method) + 2 :].split("&")
+            param_list = method_and_params[len(self.method) + 2:].split("&")
             for p in param_list:
                 k_v = p.split("=")
                 if len(k_v) >= 2:
-                    self.params[k_v[0]] = p[len(k_v[0]) + 1 :]
+                    self.params[k_v[0]] = p[len(k_v[0]) + 1:]
 
     """
     メッセージ送信元情報の削除
