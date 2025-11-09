@@ -10,6 +10,7 @@ from DomainModel.entities.Group import GroupMode
 from DomainService import (
     group_service,
 )
+import env_var
 from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
 from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
 from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
@@ -104,6 +105,10 @@ def routing_by_text_in_group_line():
         return
 
     """wait mode"""
+    if env_var.YOUR_BOT_LINE_ID in request_info_service.mention_line_ids:
+        ReplyStartMenuUseCase().execute()
+        return
+    
     """if text is result, add result"""
 
     # resultRows = [r for r in text.split('\n') if ':' in r]

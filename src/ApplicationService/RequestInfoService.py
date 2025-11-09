@@ -101,7 +101,7 @@ class RequestInfoService:
             for p in param_list:
                 k_v = p.split("=")
                 if len(k_v) >= 2:
-                    self.params[k_v[0]] = p[len(k_v[0]) + 1 :]
+                    self.params[k_v[0]] = p[len(k_v[0]) + 1:]
 
     """
     メッセージ送信元情報の削除
