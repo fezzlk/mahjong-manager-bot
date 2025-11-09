@@ -21,7 +21,7 @@ def test_success_follow():
     assert request_info_service.req_line_group_id is None
     assert request_info_service.mention_line_ids == []
     assert request_info_service.message is None
-    assert request_info_service.method is None
+    assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
 
@@ -40,7 +40,7 @@ def test_success_message_from_user():
     assert request_info_service.req_line_group_id is None
     assert request_info_service.mention_line_ids == []
     assert request_info_service.message is None
-    assert request_info_service.method is None
+    assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
 
@@ -59,6 +59,6 @@ def test_success_message_from_group():
     assert request_info_service.req_line_group_id is None
     assert request_info_service.mention_line_ids == []
     assert request_info_service.message is None
-    assert request_info_service.method is None
+    assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None

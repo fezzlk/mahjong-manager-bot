@@ -11,7 +11,7 @@ dummy_matches1 = [
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        tip_scores={},
+        chip_scores={},
     ),
 ]
 
@@ -29,7 +29,7 @@ def test_ok_add_init(mocker):
     )
 
     # Act
-    result = match_service.add_or_drop_tip_score(
+    result = match_service.add_or_drop_chip_score(
         "G0123456789abcdefghijklmnopqrstu1",
         "U0123456789abcdefghijklmnopqrstu1",
         10,
@@ -37,8 +37,8 @@ def test_ok_add_init(mocker):
 
     # Assert
     assert isinstance(result, Match)
-    assert len(result.tip_scores) == 1
-    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
+    assert len(result.chip_scores) == 1
+    assert result.chip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
     mock_update.assert_called_once()
 
 
@@ -47,7 +47,7 @@ dummy_matches2 = [
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        tip_scores={"U0123456789abcdefghijklmnopqrstu2": 20},
+        chip_scores={"U0123456789abcdefghijklmnopqrstu2": 20},
     ),
 ]
 
@@ -65,7 +65,7 @@ def test_ok_add_second(mocker):
     )
 
     # Act
-    result = match_service.add_or_drop_tip_score(
+    result = match_service.add_or_drop_chip_score(
         "G0123456789abcdefghijklmnopqrstu1",
         "U0123456789abcdefghijklmnopqrstu1",
         10,
@@ -73,9 +73,9 @@ def test_ok_add_second(mocker):
 
     # Assert
     assert isinstance(result, Match)
-    assert len(result.tip_scores) == 2
-    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
-    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
+    assert len(result.chip_scores) == 2
+    assert result.chip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
+    assert result.chip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
     mock_update.assert_called_once()
 
 
@@ -84,7 +84,7 @@ dummy_matches3 = [
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        tip_scores={
+        chip_scores={
             "U0123456789abcdefghijklmnopqrstu2": 20,
             "U0123456789abcdefghijklmnopqrstu1": 30,
         },
@@ -105,7 +105,7 @@ def test_ok_update(mocker):
     )
 
     # Act
-    result = match_service.add_or_drop_tip_score(
+    result = match_service.add_or_drop_chip_score(
         "G0123456789abcdefghijklmnopqrstu1",
         "U0123456789abcdefghijklmnopqrstu1",
         10,
@@ -113,9 +113,9 @@ def test_ok_update(mocker):
 
     # Assert
     assert isinstance(result, Match)
-    assert len(result.tip_scores) == 2
-    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
-    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
+    assert len(result.chip_scores) == 2
+    assert result.chip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
+    assert result.chip_scores["U0123456789abcdefghijklmnopqrstu1"] == 10
     mock_update.assert_called_once()
 
 
@@ -124,7 +124,7 @@ dummy_matches3 = [
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        tip_scores={
+        chip_scores={
             "U0123456789abcdefghijklmnopqrstu2": 20,
             "U0123456789abcdefghijklmnopqrstu1": 30,
         },
@@ -145,7 +145,7 @@ def test_ok_drop(mocker):
     )
 
     # Act
-    result = match_service.add_or_drop_tip_score(
+    result = match_service.add_or_drop_chip_score(
         "G0123456789abcdefghijklmnopqrstu1",
         "U0123456789abcdefghijklmnopqrstu1",
         None,
@@ -153,8 +153,8 @@ def test_ok_drop(mocker):
 
     # Assert
     assert isinstance(result, Match)
-    assert len(result.tip_scores) == 1
-    assert result.tip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
+    assert len(result.chip_scores) == 1
+    assert result.chip_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
     mock_update.assert_called_once()
 
 
@@ -163,7 +163,7 @@ dummy_matches4 = [
         _id=999,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         status=2,
-        tip_scores={
+        chip_scores={
             "U0123456789abcdefghijklmnopqrstu1": 30,
         },
     ),
@@ -183,7 +183,7 @@ def test_ok_drop_all(mocker):
     )
 
     # Act
-    result = match_service.add_or_drop_tip_score(
+    result = match_service.add_or_drop_chip_score(
         999,
         "U0123456789abcdefghijklmnopqrstu1",
         None,
@@ -191,7 +191,7 @@ def test_ok_drop_all(mocker):
 
     # Assert
     assert isinstance(result, Match)
-    assert len(result.tip_scores) == 0
+    assert len(result.chip_scores) == 0
     mock_update.assert_called_once()
 
 
@@ -208,7 +208,7 @@ def test_ng_no_line_user_id(mocker):
         )
 
         # Act
-        match_service.add_or_drop_tip_score(
+        match_service.add_or_drop_chip_score(
             "G0123456789abcdefghijklmnopqrstu1",
             None,
             10,
@@ -233,7 +233,7 @@ def test_ng_no_hanchan(mocker):
         )
 
         # Act
-        match_service.add_or_drop_tip_score(
+        match_service.add_or_drop_chip_score(
             "G0123456789abcdefghijklmnopqrstu1",
             "U0123456789abcdefghijklmnopqrstu1",
             10,

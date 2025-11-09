@@ -7,13 +7,12 @@ from DomainModel.entities.Match import Match
 
 
 class IMatchService(metaclass=ABCMeta):
-
     @abstractmethod
-    def add_or_drop_tip_score(
+    def add_or_drop_chip_score(
         self,
         line_group_id: str,
         line_user_id: str,
-        tip_score: Optional[int],
+        chip_score: Optional[int],
     ) -> Match:
         pass
 
@@ -34,7 +33,9 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def find_all_by_ids_and_line_group_ids(self, ids: List[ObjectId], line_group_ids: List[str]) -> List[Match]:
+    def find_all_by_ids_and_line_group_ids(
+        self, ids: List[ObjectId], line_group_ids: List[str]
+    ) -> List[Match]:
         pass
 
     @abstractmethod
