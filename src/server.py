@@ -1,5 +1,6 @@
 import os
 import sys
+import requests
 
 from dotenv import load_dotenv
 
@@ -18,11 +19,23 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 # ===== 環境変数ロード =====
 load_dotenv()
-
+import env_var
 # ===== Flask アプリ初期化 =====
 app = Flask(__name__)
 app.secret_key = "random secret"
 logger = logging.create_logger(app)
+
+
+# ===== LINE BotID取得 =====
+def get_bot_info():
+    url = 'https://api.line.me/v2/bot/info'
+    headers = {
+        'Authorization': f'Bearer {env_var.YOUR_CHANNEL_ACCESS_TOKEN}'
+    }
+    response = requests.get(url, headers=headers)
+    print(response.json().get("userId"))
+    return response.json()
+
 
 # ===== debugpy (ホットリロード対応) =====
 # WERKZEUG_RUN_MAIN はリロード用サブプロセス判定用
@@ -58,4 +71,11 @@ app.register_blueprint(auth_blueprint)
 
 
 if __name__ == "__main__":
+    # 起動時にLINE BOTIDを取得する
+    info = get_bot_info()
+    bot_id = info.get("userId")
+    os.environ["YOUR_BOT_LINE_ID"] = bot_id
+    
     app.run(threaded=True, use_reloader=True)
+    
+
