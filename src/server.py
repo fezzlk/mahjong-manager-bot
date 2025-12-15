@@ -3,6 +3,7 @@ import sys
 import requests
 
 from dotenv import load_dotenv
+import env_var
 
 # debugpyはpytest実行時にはimportしない
 debugpy = None
@@ -16,10 +17,9 @@ from flask_bcrypt import Bcrypt
 
 # ===== パス設定 =====
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
 # ===== 環境変数ロード =====
 load_dotenv()
-import env_var
+# ===== Flask アプリ初期化 =====
 # ===== Flask アプリ初期化 =====
 app = Flask(__name__)
 app.secret_key = "random secret"
@@ -33,7 +33,6 @@ def get_bot_info():
         'Authorization': f'Bearer {env_var.YOUR_CHANNEL_ACCESS_TOKEN}'
     }
     response = requests.get(url, headers=headers)
-    print(response.json().get("userId"))
     return response.json()
 
 
