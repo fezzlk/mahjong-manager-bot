@@ -1,8 +1,13 @@
 import os
 import sys
 import requests
-
 from dotenv import load_dotenv
+from flask import Flask
+from flask_bcrypt import Bcrypt
+from jwt_setting import register_jwt
+from oauth_client import oauth
+from apis.root import views_blueprint
+from apis.auth import auth_blueprint
 import env_var
 
 # debugpyはpytest実行時にはimportしない
@@ -12,21 +17,28 @@ if not any("pytest" in arg for arg in sys.argv):
         import debugpy
     except ImportError:
         debugpy = None
-from flask import Flask, logging
-from flask_bcrypt import Bcrypt
 
-# ===== パス設定 =====
+# パス設定
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-# ===== 環境変数ロード =====
+
+# 環境変数ロード
 load_dotenv()
-# ===== Flask アプリ初期化 =====
-# ===== Flask アプリ初期化 =====
+
+# Flask アプリ初期化
 app = Flask(__name__)
 app.secret_key = "random secret"
-logger = logging.create_logger(app)
+logger = app.logger
 
+# Flask拡張
+jwt = register_jwt(app)
+bcrypt = Bcrypt(app)
+oauth.init_app(app)
 
-# ===== LINE BotID取得 =====
+# Blueprint登録
+app.register_blueprint(views_blueprint)
+app.register_blueprint(auth_blueprint)
+
+# LINE BotID取得
 def get_bot_info():
     url = 'https://api.line.me/v2/bot/info'
     headers = {
@@ -35,10 +47,7 @@ def get_bot_info():
     response = requests.get(url, headers=headers)
     return response.json()
 
-
-# ===== debugpy (ホットリロード対応) =====
-# WERKZEUG_RUN_MAIN はリロード用サブプロセス判定用
-# pytest実行時はdebugpyを使用しない
+# debugpy (ホットリロード対応)
 if (
     debugpy is not None
     and not any("pytest" in arg for arg in sys.argv)
@@ -51,30 +60,12 @@ if (
     except OSError:
         print("⚠️ Debugger port already in use")
 
-# ===== Flask 拡張 =====
-from jwt_setting import register_jwt
-
-jwt = register_jwt(app)
-bcrypt = Bcrypt(app)
-from oauth_client import oauth
-
-oauth.init_app(app)
-
-# ===== Blueprint登録 =====
-from apis.root import views_blueprint
-
-app.register_blueprint(views_blueprint)
-from apis.auth import auth_blueprint
-
-app.register_blueprint(auth_blueprint)
-
-
 if __name__ == "__main__":
-    # 起動時にLINE BOTIDを取得する
     info = get_bot_info()
     bot_id = info.get("userId")
     os.environ["YOUR_BOT_LINE_ID"] = bot_id
+
+    # 環境変数の値を出力
+    print(f'YOUR_BOT_LINE_ID (env): {os.environ.get("YOUR_BOT_LINE_ID")}')
     
     app.run(threaded=True, use_reloader=True)
-    
-
