@@ -38,6 +38,7 @@ oauth.init_app(app)
 app.register_blueprint(views_blueprint)
 app.register_blueprint(auth_blueprint)
 
+
 # LINE BotID取得
 def get_bot_info():
     url = 'https://api.line.me/v2/bot/info'
@@ -46,6 +47,7 @@ def get_bot_info():
     }
     response = requests.get(url, headers=headers)
     return response.json()
+
 
 # debugpy (ホットリロード対応)
 if (
@@ -64,8 +66,5 @@ if __name__ == "__main__":
     info = get_bot_info()
     bot_id = info.get("userId")
     os.environ["YOUR_BOT_LINE_ID"] = bot_id
-
-    # 環境変数の値を出力
-    print(f'YOUR_BOT_LINE_ID (env): {os.environ.get("YOUR_BOT_LINE_ID")}')
     
     app.run(threaded=True, use_reloader=True)
