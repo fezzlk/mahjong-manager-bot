@@ -1,7 +1,6 @@
 from authlib.integrations.flask_client import OAuth
 
 import env_var
-
 oauth = OAuth()
 oauth.register(
     name="google",

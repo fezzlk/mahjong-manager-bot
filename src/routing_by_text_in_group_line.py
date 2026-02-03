@@ -1,48 +1,48 @@
 from enum import Enum
 
-from ApplicationService import (
+from application_service import (
     reply_service,
     request_info_service,
 )
 
-# from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
-from DomainModel.entities.Group import GroupMode
-from DomainService import (
+# from use_cases.group_line.link_user_to_group_use_case import LinkUserToGroupUseCase
+from domain_model.entities.group import GroupMode
+from domain_service import (
     group_service,
 )
-from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
-from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
-from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
+from use_cases.common_line.reply_fortune_use_case import ReplyFortuneUseCase
+from use_cases.common_line.reply_rank_histogram_use_case import ReplyRankHistogramUseCase
+from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
 
-# from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
-from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
-from use_cases.group_line.AddChipByTextUseCase import AddChipByTextUseCase
+# from use_cases.group_line.add_hanchan_by_points_text_use_case import AddHanchanByPointsTextUseCase
+from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
+from use_cases.group_line.add_chip_by_text_use_case import AddChipByTextUseCase
 
-# from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
+# from use_cases.group_line.reply_sum_matches_by_ids_use_case import ReplySumMatchesByIdsUseCase
 # from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
-from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
-from use_cases.group_line.ExitUseCase import ExitUseCase
-from use_cases.group_line.FinishInputChipUseCase import FinishInputChipUseCase
-from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
-from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
-from use_cases.group_line.ReplyFinishConfirmUseCase import ReplyFinishConfirmUseCase
-from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
-from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
-from use_cases.group_line.ReplyGroupSettingsMenuUseCase import (
+from use_cases.group_line.drop_hanchan_by_index_use_case import DropHanchanByIndexUseCase
+from use_cases.group_line.exit_use_case import ExitUseCase
+from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
+from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
+from use_cases.group_line.reply_apply_badai_use_case import ReplyApplyBadaiUseCase
+from use_cases.group_line.reply_finish_confirm_use_case import ReplyFinishConfirmUseCase
+from use_cases.group_line.reply_group_help_use_case import ReplyGroupHelpUseCase
+from use_cases.group_line.reply_group_mode_use_case import ReplyGroupModeUseCase
+from use_cases.group_line.reply_group_settings_menu_use_case import (
     ReplyGroupSettingsMenuUseCase,
 )
-from use_cases.group_line.ReplyHanchansOfActiveMatchUseCase import (
+from use_cases.group_line.reply_hanchans_of_active_match_use_case import (
     ReplyHanchansOfActiveMatchUseCase,
 )
-from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
-from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
-from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
-from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
-from use_cases.group_line.ReplyRankingTableUseCase import ReplyRankingTableUseCase
-from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
-from use_cases.group_line.StartInputUseCase import StartInputUseCase
-from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
-from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
+from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndexUseCase
+from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
+from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
+from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
+from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
+from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
+from use_cases.group_line.start_input_use_case import StartInputUseCase
+from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
+from use_cases.group_line.update_group_settings_use_case import UpdateGroupSettingsUseCase
 
 
 class RCommands(Enum):

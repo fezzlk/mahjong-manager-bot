@@ -6,7 +6,7 @@ from repositories import (
     user_repository,
     web_user_repository,
 )
-from use_cases.CreateDummyUseCase import CreateDummyUseCase
+from use_cases.create_dummy_use_case import CreateDummyUseCase
 
 
 def test_create_dummy_use_case():

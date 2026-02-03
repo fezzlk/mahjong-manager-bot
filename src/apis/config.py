@@ -8,10 +8,10 @@ from flask import (
     url_for,
 )
 
-from use_cases.web.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
-from use_cases.web.GetConfigForWebUseCase import GetConfigForWebUseCase
-from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
-from use_cases.web.UpdateConfigForWebUseCase import UpdateConfigForWebUseCase
+from use_cases.web.delete_configs_for_web_use_case import DeleteConfigsForWebUseCase
+from use_cases.web.get_config_for_web_use_case import GetConfigForWebUseCase
+from use_cases.web.get_configs_for_web_use_case import GetConfigsForWebUseCase
+from use_cases.web.update_config_for_web_use_case import UpdateConfigForWebUseCase
 
 config_blueprint = Blueprint(
     "config_blueprint",

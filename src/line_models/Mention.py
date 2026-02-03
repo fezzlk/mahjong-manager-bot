@@ -1,4 +1,4 @@
-from .Mentionee import Mentionee
+from .mentionee import Mentionee
 
 
 class Mention:

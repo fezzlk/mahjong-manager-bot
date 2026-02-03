@@ -1,13 +1,13 @@
-from .CommandAliasRepository import CommandAliasRepository
-from .GroupRepository import GroupRepository
-from .GroupSettingRepository import GroupSettingRepository
-from .HanchanRepository import HanchanRepository
-from .MatchRepository import MatchRepository
-from .UserGroupRepository import UserGroupRepository
-from .UserHanchanRepository import UserHanchanRepository
-from .UserMatchRepository import UserMatchRepository
-from .UserRepository import UserRepository
-from .WebUserRepository import WebUserRepository
+from .command_alias_repository import CommandAliasRepository
+from .group_repository import GroupRepository
+from .group_setting_repository import GroupSettingRepository
+from .hanchan_repository import HanchanRepository
+from .match_repository import MatchRepository
+from .user_group_repository import UserGroupRepository
+from .user_hanchan_repository import UserHanchanRepository
+from .user_match_repository import UserMatchRepository
+from .user_repository import UserRepository
+from .web_user_repository import WebUserRepository
 
 command_alias_repository = CommandAliasRepository()
 group_setting_repository = GroupSettingRepository()

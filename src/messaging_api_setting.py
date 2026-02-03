@@ -1,7 +1,6 @@
 from linebot import LineBotApi
 
 import env_var
-
 line_bot_api: LineBotApi = None
 
 if env_var.YOUR_CHANNEL_ACCESS_TOKEN is not None:

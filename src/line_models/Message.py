@@ -1,4 +1,4 @@
-from .Mention import Mention
+from .mention import Mention
 
 
 class Message:

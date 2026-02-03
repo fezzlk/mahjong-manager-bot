@@ -1,0 +1,11 @@
+from typing import List
+
+from domain_model.entities.hanchan import Hanchan
+from repositories import hanchan_repository, session_scope
+
+
+class GetHanchansForWebUseCase:
+
+    def execute(self) -> List[Hanchan]:
+        with session_scope() as session:
+            return hanchan_repository.find(session=session)

@@ -12,8 +12,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token
 from linebot import WebhookHandler
 
-import env_var
-from oauth_client import oauth
+import env_varfrom oauth_client import oauth
 from repositories import user_repository, web_user_repository
 
 handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)

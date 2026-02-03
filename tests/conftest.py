@@ -27,7 +27,7 @@ else:
 from mongo_client import mongo_client  # src/mongo_client.py
 import env_var
 import server
-from ApplicationService import reply_service, request_info_service
+from application_service import reply_service, request_info_service
 
 
 # ================================

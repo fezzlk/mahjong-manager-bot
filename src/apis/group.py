@@ -8,10 +8,10 @@ from flask import (
     url_for,
 )
 
-from use_cases.web.DeleteGroupsForWebUseCase import DeleteGroupsForWebUseCase
-from use_cases.web.GetGroupForWebUseCase import GetGroupForWebUseCase
-from use_cases.web.GetGroupsForWebUseCase import GetGroupsForWebUseCase
-from use_cases.web.UpdateGroupForWebUseCase import UpdateGroupForWebUseCase
+from use_cases.web.delete_groups_for_web_use_case import DeleteGroupsForWebUseCase
+from use_cases.web.get_group_for_web_use_case import GetGroupForWebUseCase
+from use_cases.web.get_groups_for_web_use_case import GetGroupsForWebUseCase
+from use_cases.web.update_group_for_web_use_case import UpdateGroupForWebUseCase
 
 group_blueprint = Blueprint(
     "group_blueprint",

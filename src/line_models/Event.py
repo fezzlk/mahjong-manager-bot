@@ -1,6 +1,6 @@
-from .Message import Message
-from .Postback import Postback
-from .Source import Source
+from .message import Message
+from .postback import Postback
+from .source import Source
 
 
 class Event:

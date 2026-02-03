@@ -10,9 +10,8 @@ from flask import (
 )
 from linebot import exceptions
 
-import env_var
-from ApplicationModels.PageContents import PageContents
-from use_cases.CreateDummyUseCase import CreateDummyUseCase
+import env_varfrom application_models.page_contents import PageContents
+from use_cases.create_dummy_use_case import CreateDummyUseCase
 
 # handle_eventからhandlerをインポート（イベントハンドラーが登録された状態）
 from handle_event import handler
@@ -77,7 +76,7 @@ def migrate():
 
 @views_blueprint.route("/test_personal_line", methods=["POST"])
 def test_personal_line():
-    from ApplicationService import (
+    from application_service import (
         reply_service,
         request_info_service,
     )
@@ -91,6 +90,5 @@ def test_personal_line():
     )
     request_info_service.set_req_info(event)
     import routing_by_text_in_personal_line
-
     routing_by_text_in_personal_line.routing_by_text_in_personal_line()
     return "\n\n".join([content.text for content in reply_service.texts])
