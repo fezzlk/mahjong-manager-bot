@@ -159,6 +159,12 @@ def case1(request) -> Tuple[int, str, str, Dict[str, str]]:
 
 
 def test_execute(case1):
+    # 目的: test_execute の挙動を検証する。
+    # 入力: case1
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].type が "text" である / reply_service.texts[0].text が case1[2] である / len(hanchans[0].raw_scores) が len(expected_raw_scores) である / hanchans[0].raw_scores[k] が v である
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchans[case1[0]]); hanchan_repository.create(dummy_hanchans[5]); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find({"_id": dummy_hanchans[case1[0]]._id})
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -196,6 +202,12 @@ def case2(request) -> str:
 
 
 def test_execute_not_int_point(case2):
+    # 目的: test_execute_not_int_point の挙動を検証する。
+    # 入力: case2
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].type が "text" である / reply_service.texts[0].text が "整数で入力してください。" である / len(hanchans[0].raw_scores) が len(expected_raw_scores) である / hanchans[0].raw_scores[k] が v である
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchans[1]); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find()
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -222,6 +234,12 @@ def test_execute_not_int_point(case2):
 
 
 def test_execute_with_mention():
+    # 目的: test_execute_with_mention の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].type が "text" である / reply_service.texts[0].text が "test_user1: 1000" である / len(hanchans[0].raw_scores) が len(expected_raw_scores) である / hanchans[0].raw_scores[k] が v である
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchans[0]); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find()
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -249,6 +267,12 @@ def test_execute_with_mention():
 
 
 def test_execute_multi_mentions():
+    # 目的: test_execute_multi_mentions の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].type が "text" である / ( / hanchans[0].raw_scores の件数が 0 件
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchans[0]); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find()
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -279,6 +303,12 @@ def test_execute_multi_mentions():
 
 
 def test_execute_not_registered_user():
+    # 目的: test_execute_not_registered_user の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].type が "text" である / reply_service.texts[0].text が "友達未登録: 1000" である / len(hanchans[0].raw_scores) が len(expected_raw_scores) である / hanchans[0].raw_scores[k] が v である
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchans[0]); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find()
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -306,6 +336,12 @@ def test_execute_not_registered_user():
 
 
 def test_execute_fourth_input():
+    # 目的: test_execute_fourth_input の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].type が "text" である / ( / reply_service.texts[1].type が "text" である / ( / len(hanchans[0].raw_scores) が len(expected_raw_scores) である / hanchans[0].raw_scores[k] が v である
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchans[3]); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find()
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -345,6 +381,12 @@ def test_execute_fourth_input():
 
 
 def test_execute_fifth_input():
+    # 目的: test_execute_fifth_input の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].type が "text" である / ( / reply_service.texts[1].type が "text" である / ( / len(hanchans[0].raw_scores) が len(expected_raw_scores) である / hanchans[0].raw_scores[k] が v である
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchans[4]); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find()
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -385,6 +427,12 @@ def test_execute_fifth_input():
 
 
 def test_execute_delete():
+    # 目的: test_execute_delete の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].type が "text" である / reply_service.texts[0].text が "test_user3: 10000\ntest_user4: 10000" である / len(hanchans[0].raw_scores) が len(expected_raw_scores) である / hanchans[0].raw_scores[k] が v である
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchans[3]); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find()
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -414,6 +462,12 @@ def test_execute_delete():
 
 
 def test_execute_delete_last_one():
+    # 目的: test_execute_delete_last_one の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].type が "text" である / reply_service.texts[0].text が "点数を入力してください。" である / len(hanchans[0].raw_scores) が len(expected_raw_scores) である / hanchans[0].raw_scores[k] が v である
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchan); match_repository.create(dummy_match); group_repository.create(dummy_group); user_repository.create(dummy_user); hanchans = hanchan_repository.find()
     # Arrange
     use_case = AddPointByTextUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id

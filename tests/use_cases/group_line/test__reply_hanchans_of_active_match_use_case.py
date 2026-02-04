@@ -160,6 +160,12 @@ dummy_active_hanchan = Hanchan(
 
 
 def test_success_single_hanchan(mocker):
+    # 目的: test_success_single_hanchan の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].text が "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。" である / reply_service.texts[1].text が "第1回\ntest_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)" である / reply_service.images の件数が 1 件
+    # reply_service: images, texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchans[0]); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -193,6 +199,12 @@ def test_success_single_hanchan(mocker):
     reply_service.reset()
 
 def test_success_contain_unknown_user(mocker):
+    # 目的: test_success_contain_unknown_user の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].text が "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。" である / reply_service.texts[1].text が "第1回\n友達未登録: +50 (+50)\n友達未登録: +10 (+10)\n友達未登録: -20 (-20)\n友達未登録: -40 (-40)" である / reply_service.images の件数が 1 件
+    # reply_service: images, texts
+    # DB操作: group_repository.create(dummy_group); # user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchans[0]); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -227,6 +239,12 @@ def test_success_contain_unknown_user(mocker):
 
 
 def test_success_multi_hanchan(mocker):
+    # 目的: test_success_multi_hanchan の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].text が "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。" である / reply_service.texts[1].text が "第1回\ntest_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)\n\n第2回\ntest_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user4: -40 (-80)\n\n第3回\ntest_user1: +50 (+150)\ntest_user2: +10 (+30)\ntest_user3: -20 (-60)\ntest_user4: -40 (-120)" である / reply_service.images の件数が 1 件
+    # reply_service: images, texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -262,6 +280,12 @@ def test_success_multi_hanchan(mocker):
     reply_service.reset()
 
 def test_success_fail_savefig(mocker):
+    # 目的: test_success_fail_savefig の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "システムエラーが発生しました。" である
+    # reply_service: images, texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match)
     # Arrange
     mock = mocker.patch.object(
         reply_service,
@@ -306,6 +330,12 @@ def test_success_fail_savefig(mocker):
 
 
 def test_success_no_group():
+    # 目的: test_success_no_group の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "トークルームが登録されていません。招待し直してください。" である
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchans[0]); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match)
     # Arrange
     use_case = ReplyHanchansOfActiveMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -326,6 +356,12 @@ def test_success_no_group():
 
 
 def test_success_no_match():
+    # 目的: test_success_no_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "現在進行中の対戦がありません。" である
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user); group_repository.create(no_match_group); hanchan_repository.create(dummy_archived_hanchans[0]); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match)
     # Arrange
     use_case = ReplyHanchansOfActiveMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -352,6 +388,12 @@ def test_success_no_match():
 
 
 def test_success_no_hanchans():
+    # 目的: test_success_no_hanchans の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "現在の対戦で登録済みの半荘がありません。" である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match)
     # Arrange
     use_case = ReplyHanchansOfActiveMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id

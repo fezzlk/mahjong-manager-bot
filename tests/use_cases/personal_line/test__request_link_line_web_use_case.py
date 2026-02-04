@@ -40,6 +40,12 @@ def text_case(request) -> int:
 
 
 def test_fail_mismatch_massage_format(text_case):
+    # 目的: test_fail_mismatch_massage_format の挙動を検証する。
+    # 入力: text_case
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / (
+    # reply_service: texts
+    # DB操作: なし
     # Arrange
     dummy_event = Event(
         type="message",
@@ -63,6 +69,12 @@ def test_fail_mismatch_massage_format(text_case):
 
 
 def test_fail_no_web_user(mocker):
+    # 目的: test_fail_no_web_user の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / (
+    # reply_service: texts
+    # DB操作: web_user_repository.create(
     # Arrange
     dummy_event = Event(
         type="message",
@@ -101,6 +113,12 @@ def test_fail_no_web_user(mocker):
 
 
 def test_fail_have_linked_user(mocker):
+    # 目的: test_fail_have_linked_user の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / (
+    # reply_service: texts
+    # DB操作: web_user_repository.create(
     # Arrange
     dummy_event = Event(
         type="message",
@@ -139,6 +157,12 @@ def test_fail_have_linked_user(mocker):
 
 
 def test_fail_update_web_user(mocker):
+    # 目的: test_fail_update_web_user の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "アカウント連携リクエストに失敗しました。" である
+    # reply_service: texts
+    # DB操作: web_user_repository.create(
     # Arrange
     dummy_event = Event(
         type="message",
@@ -175,6 +199,12 @@ def test_fail_update_web_user(mocker):
 
 
 def test_success(mocker):
+    # 目的: test_success の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / (
+    # reply_service: texts
+    # DB操作: web_user_repository.create(
     # Arrange
     dummy_event = Event(
         type="message",

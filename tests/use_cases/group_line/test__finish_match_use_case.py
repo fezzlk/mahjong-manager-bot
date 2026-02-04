@@ -158,6 +158,12 @@ dummy_hanchans = [
 
 
 def test_success_with_default_settings():
+    # 目的: test_success_with_default_settings の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.value である / matches[0].status が 2 である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id}); matches = match_repository.find({"_id": 1})
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -185,6 +191,12 @@ def test_success_with_default_settings():
 
 
 def test_success():
+    # 目的: test_success の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.value である / groups[0].active_match_id is None / matches[0].status が 2 である / matches[0].chip_prices の件数が 5 件 / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] が 0 である / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] が 0 である / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu3"] が 0 である / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu4"] が 0 である / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu5"] が 0 である / matches[0].sum_scores の件数が 5 件 / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] が 100 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] が 20 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu3"] が -40 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu4"] が -40 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu5"] が -40 である / matches[0].sum_prices の件数が 5 件 / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu1"] が 5000 である / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu2"] が 1000 である / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu3"] が -2000 である / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu4"] が -2000 である / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu5"] が -2000 である / matches[0].sum_prices_with_chip の件数が 5 件 / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu1"] が 5000 である / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu2"] が 1000 である / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu3"] が -2000 である / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu4"] が -2000 である / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu5"] が -2000 である
+    # reply_service: texts
+    # DB操作: group_repository.create(; group_setting_repository.create(; user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id}); matches = match_repository.find({"_id": 1})
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -252,6 +264,12 @@ def test_success():
 
 
 def test_success_with_chip_init():
+    # 目的: test_success_with_chip_init の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.chip_input.value である / groups[0].active_match_id が 1 である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); group_setting_repository.create(; user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -284,6 +302,12 @@ def test_success_with_chip_init():
 
 
 def test_success_with_chip():
+    # 目的: test_success_with_chip の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.value である / groups[0].active_match_id is None / matches[0].status が 2 である / matches[0].chip_prices の件数が 5 件 / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] が 150 である / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] が -150 である / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu3"] が 0 である / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu4"] が 0 である / matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu5"] が 0 である / matches[0].sum_scores の件数が 5 件 / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] が 100 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] が 20 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu3"] が -40 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu4"] が -40 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu5"] が -40 である / matches[0].sum_prices の件数が 5 件 / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu1"] が 0 である / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu2"] が 0 である / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu3"] が 0 である / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu4"] が 0 である / matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu5"] が 0 である / matches[0].sum_prices_with_chip の件数が 5 件 / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu1"] が 150 である / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu2"] が -150 である / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu3"] が 0 である / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu4"] が 0 である / matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu5"] が 0 である
+    # reply_service: texts
+    # DB操作: group_repository.create(; group_setting_repository.create(dummy_group_setting); user_repository.create(dummy_user); match_repository.create(; hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id}); matches = match_repository.find()
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -364,6 +388,12 @@ def test_success_with_chip():
 
 
 def test_success_without_active_match():
+    # 目的: test_success_without_active_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "計算対象の試合が見つかりません。" である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan)
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -384,6 +414,12 @@ def test_success_without_active_match():
 
 
 def test_success_without_hanchan():
+    # 目的: test_success_without_hanchan の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "まだ対戦結果がありません。" である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan)
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -404,6 +440,12 @@ def test_success_without_hanchan():
 
 
 def test_ng_no_group():
+    # 目的: test_ng_no_group の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / (
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan)
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id

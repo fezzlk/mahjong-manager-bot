@@ -30,6 +30,12 @@ dummy_setting = GroupSetting(
 
 
 def test_execute_rate():
+    # 目的: test_execute_rate の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "[レート]を[点3]に変更しました。" である / settings[0].line_group_id が "G0123456789abcdefghijklmnopqrstu1" である / settings[0].rate が 3 である / settings[0].ranking_prize が [20, 10, -10, -20] である / settings[0].chip_rate が 0 である / settings[0].tobi_prize が 10 である / settings[0].num_of_players が 4 である / settings[0].rounding_method が 0 である
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_setting); settings = group_setting_repository.find()
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()
@@ -52,6 +58,12 @@ def test_execute_rate():
 
 
 def test_execute_ranking_prize():
+    # 目的: test_execute_ranking_prize の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / settings[0].line_group_id が "G0123456789abcdefghijklmnopqrstu1" である / settings[0].rate が 0 である / settings[0].ranking_prize が [30, 10, -10, -30] である / settings[0].chip_rate が 0 である / settings[0].tobi_prize が 10 である / settings[0].num_of_players が 4 である / settings[0].rounding_method が 0 である
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_setting); settings = group_setting_repository.find()
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()
@@ -77,6 +89,12 @@ def test_execute_ranking_prize():
 
 
 def test_execute_chip_rate():
+    # 目的: test_execute_chip_rate の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "[チップ]を[1枚100円]に変更しました。" である / settings[0].line_group_id が "G0123456789abcdefghijklmnopqrstu1" である / settings[0].rate が 0 である / settings[0].ranking_prize が [20, 10, -10, -20] である / settings[0].chip_rate が 100 である / settings[0].tobi_prize が 10 である / settings[0].num_of_players が 4 である / settings[0].rounding_method が 0 である
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_setting); settings = group_setting_repository.find()
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()
@@ -99,6 +117,12 @@ def test_execute_chip_rate():
 
 
 def test_execute_tobi_prize():
+    # 目的: test_execute_tobi_prize の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "[飛び賞]を[0]に変更しました。" である / settings[0].line_group_id が "G0123456789abcdefghijklmnopqrstu1" である / settings[0].rate が 0 である / settings[0].ranking_prize が [20, 10, -10, -20] である / settings[0].chip_rate が 0 である / settings[0].tobi_prize が 0 である / settings[0].num_of_players が 4 である / settings[0].rounding_method が 0 である
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_setting); settings = group_setting_repository.find()
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()
@@ -121,6 +145,12 @@ def test_execute_tobi_prize():
 
 
 def test_execute_num_of_players():
+    # 目的: test_execute_num_of_players の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "[人数]を[3人]に変更しました。" である / settings[0].line_group_id が "G0123456789abcdefghijklmnopqrstu1" である / settings[0].rate が 0 である / settings[0].ranking_prize が [20, 10, -10, -20] である / settings[0].chip_rate が 0 である / settings[0].tobi_prize が 10 である / settings[0].num_of_players が 3 である / settings[0].rounding_method が 0 である
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_setting); settings = group_setting_repository.find()
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()
@@ -143,6 +173,12 @@ def test_execute_num_of_players():
 
 
 def test_execute_rounding_method():
+    # 目的: test_execute_rounding_method の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "[端数計算方法]を[五捨六入]に変更しました。" である / settings[0].line_group_id が "G0123456789abcdefghijklmnopqrstu1" である / settings[0].rate が 0 である / settings[0].ranking_prize が [20, 10, -10, -20] である / settings[0].chip_rate が 0 である / settings[0].tobi_prize が 10 である / settings[0].num_of_players が 4 である / settings[0].rounding_method が 1 である
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_setting); settings = group_setting_repository.find()
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()
@@ -165,6 +201,12 @@ def test_execute_rounding_method():
 
 
 def test_execute_invalid_key():
+    # 目的: test_execute_invalid_key の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / settings[0].line_group_id が "G0123456789abcdefghijklmnopqrstu1" である / settings[0].rate が 0 である / settings[0].ranking_prize が [20, 10, -10, -20] である / settings[0].chip_rate が 0 である / settings[0].tobi_prize が 10 である / settings[0].num_of_players が 4 である / settings[0].rounding_method が 0 である
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_setting); settings = group_setting_repository.find()
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()
@@ -205,6 +247,12 @@ def text_case1(request):
 
 
 def test_execute_invalid_value(text_case1):
+    # 目的: test_execute_invalid_value の挙動を検証する。
+    # 入力: text_case1
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が text_case1[2] である / settings[0].line_group_id が "G0123456789abcdefghijklmnopqrstu1" である / settings[0].rate が 0 である / settings[0].ranking_prize が [20, 10, -10, -20] である / settings[0].chip_rate が 0 である / settings[0].tobi_prize が 10 である / settings[0].num_of_players が 4 である / settings[0].rounding_method が 0 である
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_setting); settings = group_setting_repository.find()
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = UpdateGroupSettingsUseCase()

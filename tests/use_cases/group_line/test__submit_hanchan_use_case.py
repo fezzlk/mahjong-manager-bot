@@ -192,6 +192,12 @@ dummy_active_hanchan_has_minus_point = Hanchan(
 
 
 def test_success():
+    # 目的: test_success の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchan.converted_scores[k] が v である / hanchan.status が 2 である / um の件数が 4 件 / reply_service.texts の件数が 3 件 / reply_service.buttons の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.value である / matches[0].active_hanchan_id is None / matches[0].sum_scores の件数が 4 件 / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] が 50 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] が 10 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu3"] が -20 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu4"] が -40 である / uhs[i].line_user_id が expected_uhs[i].line_user_id である / uhs[i].hanchan_id が expected_uhs[i].hanchan_id である / uhs[i].point が expected_uhs[i].point である / uhs[i].rank が expected_uhs[i].rank である / uhs[i].yakuman_count が expected_uhs[i].yakuman_count である
+    # reply_service: buttons, texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match); hanchan = hanchan_repository.find()[0]; um = user_match_repository.find(; groups = group_repository.find({"line_group_id": dummy_group.line_group_id}); matches = match_repository.find({"_id": 1}); uhs = user_hanchan_repository.find(sort=[("rank", ASCENDING)])
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -278,6 +284,12 @@ def test_success():
 
 
 def test_success_assert_sum_point_in_match():
+    # 目的: test_success_assert_sum_point_in_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: ( / matches[0].active_hanchan_id is None / matches[0].sum_scores の件数が 5 件 / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] が 100 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] が 20 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu3"] が -40 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu4"] が -40 である / matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu5"] が -40 である
+    # reply_service: なし
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan_with_other_user); match_repository.create(dm); hanchan_repository.find(); matches = match_repository.find({"_id": 1})
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -313,6 +325,12 @@ def test_success_assert_sum_point_in_match():
 
 
 def test_success_update_user_matches():
+    # 目的: test_success_update_user_matches の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: um の件数が 5 件
+    # reply_service: なし
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); hanchan_repository.create(dummy_active_hanchan_with_other_user); match_repository.create(dummy_match); user_match_repository.create(um); um = user_match_repository.find(
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -340,6 +358,12 @@ def test_success_update_user_matches():
 
 
 def test_success_not_active_hanchan(mocker):
+    # 目的: test_success_not_active_hanchan の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: mock.call_count が 0 である / um の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "計算対象の半荘が見つかりません。" である / groups[0].mode が GroupMode.input.value である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); hanchan_repository.create(dummy_disabled_hanchan); match_repository.create(dummy_match); um = user_match_repository.find(; groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -374,6 +398,12 @@ def test_success_not_active_hanchan(mocker):
 
 
 def test_success_does_not_have_4_points():
+    # 目的: test_success_does_not_have_4_points の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchan.converted_scores の件数が 0 件 / um の件数が 0 件 / reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.input.value である / matches[0].active_hanchan_id が dummy_active_hanchan_has_5_points._id である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_active_hanchan_has_5_points); match_repository.create(dummy_match); hanchan = hanchan_repository.find()[0]; um = user_match_repository.find(; groups = group_repository.find({"line_group_id": dummy_group.line_group_id}); matches = match_repository.find({"_id": 1})
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -408,6 +438,12 @@ def test_success_does_not_have_4_points():
 
 
 def test_success_does_invalid_sum_point():
+    # 目的: test_success_does_invalid_sum_point の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchan.converted_scores の件数が 0 件 / um の件数が 0 件 / reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.input.value である / (
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_active_hanchan_has_invalid_sum_point); match_repository.create(dummy_match); hanchan = hanchan_repository.find()[0]; um = user_match_repository.find(; groups = group_repository.find({"line_group_id": dummy_group.line_group_id}); matches = match_repository.find({"_id": 1})
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -444,6 +480,12 @@ def test_success_does_invalid_sum_point():
 
 
 def test_success_has_tai():
+    # 目的: test_success_has_tai の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchan.converted_scores の件数が 0 件 / um の件数が 0 件 / reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.input.value である / matches[0].active_hanchan_id が dummy_active_hanchan_has_tai._id である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_active_hanchan_has_tai); match_repository.create(dummy_match); hanchan = hanchan_repository.find()[0]; um = user_match_repository.find(; groups = group_repository.find({"line_group_id": dummy_group.line_group_id}); matches = match_repository.find({"_id": 1})
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -478,6 +520,12 @@ def test_success_has_tai():
 
 
 def test_success_reply_tobi_menu():
+    # 目的: test_success_reply_tobi_menu の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.buttons の件数が 1 件 / hanchan.converted_scores の件数が 0 件 / um の件数が 0 件 / groups[0].mode が GroupMode.input.value である / matches[0].active_hanchan_id が dummy_active_hanchan_has_minus_point._id である
+    # reply_service: buttons
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_active_hanchan_has_minus_point); match_repository.create(dummy_match); hanchan = hanchan_repository.find()[0]; um = user_match_repository.find(; groups = group_repository.find({"line_group_id": dummy_group.line_group_id}); matches = match_repository.find({"_id": 1})
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -508,6 +556,12 @@ def test_success_reply_tobi_menu():
 
 
 def test_fail_no_active_match():
+    # 目的: test_fail_no_active_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchan.converted_scores の件数が 0 件 / um の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "計算対象の試合が見つかりません。" である / groups[0].mode が GroupMode.input.value である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match); hanchan = hanchan_repository.find()[0]; um = user_match_repository.find(; groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -537,6 +591,12 @@ def test_fail_no_active_match():
 
 
 def test_fail_no_group():
+    # 目的: test_fail_no_group の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchan.converted_scores の件数が 0 件 / um の件数が 0 件 / reply_service.texts の件数が 1 件 / (
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match); hanchan = hanchan_repository.find()[0]; um = user_match_repository.find(
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id

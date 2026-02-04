@@ -111,6 +111,12 @@ dummy_event = Event(
 
 
 def test_execute():
+    # 目的: test_execute の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].text が "直前の対戦の最終会計を表示します。" である / (
+    # reply_service: texts
+    # DB操作: match_repository.create(dummy_match); user_repository.create(dummy_user)
     # Arrange
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
@@ -132,6 +138,12 @@ def test_execute():
 
 
 def test_execute_with_fraction():
+    # 目的: test_execute_with_fraction の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].text が "直前の対戦の最終会計を表示します。" である / (
+    # reply_service: texts
+    # DB操作: match_repository.create(dummy_match); user_repository.create(dummy_user)
     # Arrange
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
@@ -153,6 +165,12 @@ def test_execute_with_fraction():
 
 
 def test_execute_invalid_badai():
+    # 目的: test_execute_invalid_badai の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "場代は自然数で入力してください。" である
+    # reply_service: texts
+    # DB操作: なし
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyApplyBadaiUseCase()
@@ -166,6 +184,12 @@ def test_execute_invalid_badai():
 
 
 def test_execute_no_match():
+    # 目的: test_execute_no_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "まだ対戦結果がありません。" である
+    # reply_service: texts
+    # DB操作: なし
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyApplyBadaiUseCase()
@@ -179,6 +203,12 @@ def test_execute_no_match():
 
 
 def test_execute_with_progress_match():
+    # 目的: test_execute_with_progress_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / (
+    # reply_service: texts
+    # DB操作: match_repository.create(progress_match); user_repository.create(dummy_user)
     # Arrange
     progress_match = Match(
         _id=2,
@@ -229,6 +259,12 @@ def test_execute_with_progress_match():
 
 
 def test_execute_with_progress_match2():
+    # 目的: test_execute_with_progress_match2 の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / (
+    # reply_service: texts
+    # DB操作: match_repository.create(progress_match); user_repository.create(dummy_user)
     # Arrange
     progress_match = Match(
         _id=2,

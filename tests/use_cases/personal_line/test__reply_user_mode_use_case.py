@@ -24,6 +24,12 @@ dummy_event = Event(
 
 
 def test_execute():
+    # 目的: test_execute の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "wait" である
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user)
     # Arrange
     user_repository.create(dummy_user)
     request_info_service.set_req_info(event=dummy_event)
@@ -39,6 +45,12 @@ def test_execute():
 
 
 def test_execute_no_user():
+    # 目的: test_execute_no_user の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "ユーザーを認識できませんでした。当アカウントを一度ブロックし、ブロック解除してください。" である
+    # reply_service: texts
+    # DB操作: なし
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyUserModeUseCase()

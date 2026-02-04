@@ -165,6 +165,12 @@ dummy_event = Event(
 
 
 def test_execute(mocker):
+    # 目的: test_execute の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: result が f"{env_var.SERVER_URL}uploads/match_detail/1.png" である
+    # reply_service: なし
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -194,6 +200,12 @@ def test_execute(mocker):
 
 
 def test_execute_fail_savefig(mocker):
+    # 目的: test_execute_fail_savefig の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "システムエラーが発生しました。" である
+    # reply_service: images, texts
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user)
     # Arrange
     mock = mocker.patch.object(
         reply_service,
@@ -234,6 +246,12 @@ def test_execute_fail_savefig(mocker):
 
 
 def test_execute_fail_savefig_without_sender(mocker):
+    # 目的: test_execute_fail_savefig_without_sender の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "システムエラーが発生しました。" である
+    # reply_service: images, texts
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan)
     # Arrange
     mock = mocker.patch.object(
         reply_service,

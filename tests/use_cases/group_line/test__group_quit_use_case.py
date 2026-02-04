@@ -20,6 +20,12 @@ dummy_event = Event(
 )
 
 def test_fail_no_line_group_id():
+    # 目的: test_fail_no_line_group_id の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: groups の件数が 0 件
+    # reply_service: なし
+    # DB操作: group_repository.create(dummy_group); groups = group_repository.find()
         # Arrange
         use_case = GroupQuitUseCase()
         group_repository.create(dummy_group)

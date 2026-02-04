@@ -36,6 +36,12 @@ dummy_event = Event(
 
 
 def test_execute():
+    # 目的: test_execute の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / reply_service.buttons の件数が 1 件 / reply_service.buttons[0] が TemplateSendMessage 型
+    # reply_service: buttons, texts
+    # DB操作: group_setting_repository.create(dummy_group_settings)
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyGroupSettingsMenuUseCase()
@@ -55,6 +61,12 @@ def test_execute():
 
 
 def test_execute_no_settings():
+    # 目的: test_execute_no_settings の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / reply_service.buttons の件数が 1 件 / reply_service.buttons[0] が TemplateSendMessage 型
+    # reply_service: buttons, texts
+    # DB操作: なし
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyGroupSettingsMenuUseCase()
@@ -89,6 +101,12 @@ def case1(request) -> Tuple[int]:
 
 
 def test_execute_(case1):
+    # 目的: test_execute_ の挙動を検証する。
+    # 入力: case1
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 0 件 / reply_service.buttons の件数が 1 件 / reply_service.buttons[0] が TemplateSendMessage 型
+    # reply_service: buttons, texts
+    # DB操作: なし
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyGroupSettingsMenuUseCase()

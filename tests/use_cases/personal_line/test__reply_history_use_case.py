@@ -73,6 +73,12 @@ dummy_hanchans = [
 
 
 def test_execute_no_user():
+    # 目的: test_execute_no_user の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / ( / (
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user)
     # Arrange
     user_repository.create(dummy_user)
 
@@ -108,6 +114,12 @@ def case1(request) -> Dict[str, str]:
 
 
 def test_execute_invalid_range_format(case1):
+    # 目的: test_execute_invalid_range_format の挙動を検証する。
+    # 入力: case1
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].text が "日付は以下のフォーマットで入力してください。" である / (
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user)
     # Arrange
     user_repository.create(dummy_user)
 
@@ -128,6 +140,12 @@ def test_execute_invalid_range_format(case1):
 
 
 def test_execute_not_match():
+    # 目的: test_execute_not_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "対局履歴がありません。" である
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user)
     # Arrange
     user_repository.create(dummy_user)
 
@@ -143,6 +161,12 @@ def test_execute_not_match():
 
 
 def test_fail_get_hanchans():
+    # 目的: test_fail_get_hanchans の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: 明示的なassertなし（期待される挙動を説明）
+    # reply_service: なし
+    # DB操作: user = user_repository.create(dummy_user); match_repository.create(dummy_match); user_match_repository.create(dummy_user_match)
     # Arrange
     user = user_repository.create(dummy_user)
     match_repository.create(dummy_match)
@@ -167,6 +191,12 @@ def test_fail_get_hanchans():
 
 
 def test_execute(mocker):
+    # 目的: test_execute の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 1 件
+    # reply_service: images
+    # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
     import matplotlib.pyplot as plt
 
@@ -219,6 +249,12 @@ def case2(request) -> Dict[str, str]:
 
 
 def test_execute_with_range(mocker, case2):
+    # 目的: test_execute_with_range の挙動を検証する。
+    # 入力: mocker, case2
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 1 件 / reply_service.texts の件数が 3 件 / reply_service.texts[0].text が case2[1] である
+    # reply_service: images, texts
+    # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
     import matplotlib.pyplot as plt
 
@@ -261,6 +297,12 @@ def test_execute_with_range(mocker, case2):
 
 
 def test_fail_file_upload(mocker):
+    # 目的: test_fail_file_upload の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "システムエラーが発生しました。" である
+    # reply_service: images, texts
+    # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
     import matplotlib.pyplot as plt
 

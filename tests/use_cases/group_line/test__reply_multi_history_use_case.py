@@ -243,6 +243,12 @@ def case1(request) -> Dict[str, str]:
 
 
 def test_execute_with_invalid_range_format(case1):
+    # 目的: test_execute_with_invalid_range_format の挙動を検証する。
+    # 入力: case1
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 0 件 / reply_service.texts の件数が 2 件 / reply_service.texts[0].text が "日付は以下のフォーマットで入力してください。" である / reply_service.texts[1].text が "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD" である
+    # reply_service: images, texts
+    # DB操作: user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -270,6 +276,12 @@ def test_execute_with_invalid_range_format(case1):
 
 
 def test_execute(mocker):
+    # 目的: test_execute の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 1 件
+    # reply_service: images
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -310,6 +322,12 @@ def case2(request) -> Dict[str, str]:
 
 
 def test_execute_with_range(mocker, case2):
+    # 目的: test_execute_with_range の挙動を検証する。
+    # 入力: mocker, case2
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 1 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が case2[1] である
+    # reply_service: images, texts
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -372,6 +390,12 @@ def test_execute_with_range(mocker, case2):
 
 
 def test_execute_fail_savefig(mocker):
+    # 目的: test_execute_fail_savefig の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "システムエラーが発生しました。" である
+    # reply_service: images, texts
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
     mock = mocker.patch.object(
         reply_service,
@@ -415,6 +439,12 @@ def test_execute_fail_savefig(mocker):
 
 
 def test_execute_no_match(mocker):
+    # 目的: test_execute_no_match の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "対局履歴がありません。" である
+    # reply_service: texts
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -446,6 +476,12 @@ def test_execute_no_match(mocker):
 
 
 def test_execute_contain_unknown_user(mocker):
+    # 目的: test_execute_contain_unknown_user の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 1 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "友達登録されていないユーザは表示されません。" である
+    # reply_service: images, texts
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -491,6 +527,12 @@ def test_execute_contain_unknown_user(mocker):
 
 
 def test_execute_with_mention(mocker):
+    # 目的: test_execute_with_mention の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 1 件
+    # reply_service: images
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(

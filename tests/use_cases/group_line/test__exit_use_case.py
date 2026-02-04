@@ -45,6 +45,12 @@ dummy_event = Event(
 
 
 def test_fail_no_group():
+    # 目的: test_fail_no_group の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "グループが登録されていません。招待し直してください。" である
+    # reply_service: texts
+    # DB操作: なし
         # Arrange
         use_case = ExitUseCase()
         request_info_service.set_req_info(event=dummy_event)
@@ -58,6 +64,12 @@ def test_fail_no_group():
 
 
 def test_execute():
+    # 目的: test_execute の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: result の件数が 1 件 / result[0].line_group_id が dummy_group.line_group_id である / result[0].mode が "wait" である / reply_service.texts の件数が 1 件 / reply_service.texts[0] が TextSendMessage 型 / reply_service.texts[0].text が "始める時は「_start」と入力してください。" である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); result = group_repository.find()
     # Arrange
     use_case = ExitUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -77,6 +89,12 @@ def test_execute():
 
 
 def test_execute_with_active_hanchan():
+    # 目的: test_execute_with_active_hanchan の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: result の件数が 1 件 / result[0].line_group_id が dummy_group.line_group_id である / result[0].mode が "wait" である / result[0].active_match_id が dummy_match._id である / reply_service.texts の件数が 1 件 / reply_service.texts[0] が TextSendMessage 型 / reply_service.texts[0].text が "始める時は「_start」と入力してください。" である / matches の件数が 1 件 / matches[0].active_hanchan_id is None / matches[0].status が dummy_match.status である / hanchans の件数が 0 件
+    # reply_service: texts
+    # DB操作: hanchan_repository.create(dummy_hanchan); match_repository.create(dummy_match); group_repository.create(dummy_group); result = group_repository.find(); matches = match_repository.find(); hanchans = hanchan_repository.find()
     # Arrange
     use_case = ExitUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -107,6 +125,12 @@ def test_execute_with_active_hanchan():
 
 
 def test_execute_without_active_hanchan():
+    # 目的: test_execute_without_active_hanchan の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: result の件数が 1 件 / result[0].line_group_id が dummy_group.line_group_id である / result[0].mode が "wait" である / result[0].active_match_id が dummy_match._id である / reply_service.texts の件数が 1 件 / reply_service.texts[0] が TextSendMessage 型 / reply_service.texts[0].text が "始める時は「_start」と入力してください。" である / matches の件数が 1 件 / matches[0].active_hanchan_id is None / matches[0].status が dummy_match.status である / hanchans の件数が 0 件
+    # reply_service: texts
+    # DB操作: match_repository.create(dummy_match); group_repository.create(dummy_group); result = group_repository.find(); matches = match_repository.find(); hanchans = hanchan_repository.find()
     # Arrange
     use_case = ExitUseCase()
     request_info_service.set_req_info(event=dummy_event)

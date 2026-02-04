@@ -157,6 +157,12 @@ dummy_hanchans = [
 
 
 def test_execute():
+    # 目的: test_execute の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchans の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "現在の対戦の第2半荘の結果を削除しました。" である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); match_repository.create(dummy_matches[0]); hanchan_repository.create(dummy_hanchan); hanchans = hanchan_repository.find({"_id": 2})
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -176,6 +182,12 @@ def test_execute():
 
 
 def test_execute_ignore_other_hanchans():
+    # 目的: test_execute_ignore_other_hanchans の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchans の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "現在の対戦の第4半荘の結果を削除しました。" である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); match_repository.create(dummy_matches[0]); hanchan_repository.create(dummy_hanchan); hanchans = hanchan_repository.find({"_id": 7})
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -195,6 +207,12 @@ def test_execute_ignore_other_hanchans():
 
 
 def test_execute_arg_int():
+    # 目的: test_execute_arg_int の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: records_in_db の件数が 6 件
+    # reply_service: なし
+    # DB操作: group_repository.create(dummy_group); match_repository.create(dummy_matches[0]); hanchan_repository.create(dummy_hanchan); records_in_db = hanchan_repository.find()
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -216,6 +234,12 @@ def test_execute_arg_int():
 
 
 def test_execute_no_arg():
+    # 目的: test_execute_no_arg の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: records_in_db の件数が 6 件
+    # reply_service: なし
+    # DB操作: group_repository.create(dummy_group); match_repository.create(dummy_matches[0]); hanchan_repository.create(dummy_hanchan); records_in_db = hanchan_repository.find()
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -237,6 +261,12 @@ def test_execute_no_arg():
 
 
 def test_execute_arg_no_digit():
+    # 目的: test_execute_arg_no_digit の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchans の件数が 6 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "引数は整数で指定してください。" である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); match_repository.create(dummy_matches[0]); hanchan_repository.create(dummy_hanchan); hanchans = hanchan_repository.find()
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -256,6 +286,12 @@ def test_execute_arg_no_digit():
 
 
 def test_execute_no_group():
+    # 目的: test_execute_no_group の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchans の件数が 6 件 / reply_service.texts の件数が 1 件 / (
+    # reply_service: texts
+    # DB操作: match_repository.create(dummy_matches[0]); hanchan_repository.create(dummy_hanchan); hanchans = hanchan_repository.find()
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -277,6 +313,12 @@ def test_execute_no_group():
 
 
 def test_execute_no_match():
+    # 目的: test_execute_no_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchans の件数が 6 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "現在進行中の対戦がありません。" である
+    # reply_service: texts
+    # DB操作: group_repository.create(no_match_group); match_repository.create(dummy_matches[0]); hanchan_repository.create(dummy_hanchan); hanchans = hanchan_repository.find()
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -301,6 +343,12 @@ def test_execute_no_match():
 
 
 def test_execute_fail_get_active_match():
+    # 目的: test_execute_fail_get_active_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchans の件数が 6 件 / reply_service.texts の件数が 0 件
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); hanchan_repository.create(dummy_hanchan); hanchans = hanchan_repository.find()
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)
@@ -324,6 +372,12 @@ def text_case1(request):
 
 
 def test_execute_out_of_index(text_case1):
+    # 目的: test_execute_out_of_index の挙動を検証する。
+    # 入力: text_case1
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: hanchans の件数が 6 件 / reply_service.texts の件数が 1 件 / (
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); match_repository.create(dummy_matches[0]); hanchan_repository.create(dummy_hanchan); hanchans = hanchan_repository.find()
     # Arrange
     use_case = DropHanchanByIndexUseCase()
     request_info_service.set_req_info(event=dummy_event)

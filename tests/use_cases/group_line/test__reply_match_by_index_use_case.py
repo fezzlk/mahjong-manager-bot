@@ -147,6 +147,12 @@ dummy_event = Event(
 
 
 def test_execute():
+    # 目的: test_execute の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / ( / ( / reply_service.images の件数が 1 件
+    # reply_service: images, texts
+    # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user)
     # Arrange
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
@@ -174,6 +180,12 @@ def test_execute():
 
 
 def test_execute_invalid_arg():
+    # 目的: test_execute_invalid_arg の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "引数は整数で指定してください。" である / reply_service.images の件数が 0 件
+    # reply_service: images, texts
+    # DB操作: match_repository.create(dummy_match); user_repository.create(dummy_user)
     # Arrange
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
@@ -192,6 +204,12 @@ def test_execute_invalid_arg():
 
 
 def test_execute_out_of_index():
+    # 目的: test_execute_out_of_index の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / reply_service.images の件数が 0 件
+    # reply_service: images, texts
+    # DB操作: match_repository.create(dummy_match); user_repository.create(dummy_user)
     # Arrange
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)

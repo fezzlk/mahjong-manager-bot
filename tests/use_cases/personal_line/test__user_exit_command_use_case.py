@@ -18,6 +18,12 @@ dummy_user = User(
 
 
 def test_execute():
+    # 目的: test_execute の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: user.mode が UserMode.wait.value である / reply_service.texts の件数が 1 件
+    # reply_service: texts
+    # DB操作: user_repository.create(dummy_user); user = user_repository.find()[0]
     # Arrange
     user_repository.create(dummy_user)
 
