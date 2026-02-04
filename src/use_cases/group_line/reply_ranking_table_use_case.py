@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import Dict, List
 
 from PIL import Image, ImageDraw, ImageFont
-
-import env_varfrom application_service import (
+import env_var
+from application_service import (
     message_service,
     reply_service,
     request_info_service,
@@ -89,7 +89,8 @@ class ReplyRankingTableUseCase:
         for line_id in active_user_line_ids:
             profile = line_bot_api.get_profile(line_id)
 
-            import certifi            import urllib3
+            import certifi
+            import urllib3
             request_methods = urllib3.PoolManager(
                 cert_reqs="CERT_REQUIRED", ca_certs=certifi.where(),
             )

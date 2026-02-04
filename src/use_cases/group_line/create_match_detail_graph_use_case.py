@@ -1,8 +1,8 @@
 from typing import Dict
 
 from bson.objectid import ObjectId
-
-import env_varfrom application_service import (
+import env_var
+from application_service import (
     graph_service,
     reply_service,
     request_info_service,

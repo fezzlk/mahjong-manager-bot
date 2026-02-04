@@ -1,4 +1,6 @@
-import randomimport refrom datetime import datetime
+import random
+import re
+from datetime import datetime
 from typing import Dict, Tuple
 
 from domain_model.entities.match import Match

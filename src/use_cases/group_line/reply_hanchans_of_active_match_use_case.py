@@ -1,6 +1,6 @@
 from typing import Dict
-
-import env_varfrom application_service import (
+import env_var
+from application_service import (
     graph_service,
     message_service,
     reply_service,

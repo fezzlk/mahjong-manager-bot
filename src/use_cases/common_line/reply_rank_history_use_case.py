@@ -1,7 +1,8 @@
 from itertools import groupby
-
-import matplotlib as mplimport matplotlib.pyplot as plt
-import env_varfrom application_service import (
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import env_var
+from application_service import (
     message_service,
     reply_service,
     request_info_service,

@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-
 import env_var
 mongo_client = MongoClient(env_var.DATABASE_URL)
 db_name = env_var.DATABASE_NAME

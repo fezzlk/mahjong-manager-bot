@@ -8,8 +8,8 @@ from flask import (
     url_for,
 )
 from linebot import WebhookHandler
-
-import env_varfrom application_models.page_contents import PageContents
+import env_var
+from application_models.page_contents import PageContents
 from middlewares import login_required
 from use_cases.web.approve_link_line_user_use_case import ApproveLinkLineUserUseCase
 from use_cases.web.deny_link_line_user_use_case import DenyLinkLineUserUseCase

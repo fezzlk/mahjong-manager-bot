@@ -1,11 +1,13 @@
-import osimport sys
+import os
+import sys
 from dotenv import load_dotenv
 
 # debugpyはpytest実行時にはimportしない
 debugpy = None
 if not any("pytest" in arg for arg in sys.argv):
     try:
-        import debugpy    except ImportError:
+        import debugpy
+    except ImportError:
         debugpy = None
 from flask import Flask, logging
 from flask_bcrypt import Bcrypt

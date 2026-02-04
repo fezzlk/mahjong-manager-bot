@@ -9,7 +9,8 @@ from domain_service import (
     match_service,
     user_match_service,
 )
-import env_varfrom messaging_api_setting import line_bot_api
+import env_var
+from messaging_api_setting import line_bot_api
 
 # flake8: noqa
 import japanize_matplotlib
@@ -98,7 +99,9 @@ class ReplyMultiHistoryUseCase:
             history_dict[line_id][to_dt] = score
 
         # グラフ描画
-        import matplotlib        import matplotlib.pyplot as plt        import matplotlib.dates as mdates
+        import matplotlib
+        import matplotlib.pyplot as plt
+        import matplotlib.dates as mdates
         matplotlib.use("agg")
 
         fig, ax = plt.subplots()

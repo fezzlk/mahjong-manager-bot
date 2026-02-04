@@ -1,5 +1,4 @@
 from linebot import LineBotApi
-
 import env_var
 line_bot_api: LineBotApi = None
 

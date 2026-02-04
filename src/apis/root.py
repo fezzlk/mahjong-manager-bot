@@ -9,8 +9,8 @@ from flask import (
     url_for,
 )
 from linebot import exceptions
-
-import env_varfrom application_models.page_contents import PageContents
+import env_var
+from application_models.page_contents import PageContents
 from use_cases.create_dummy_use_case import CreateDummyUseCase
 
 # handle_eventからhandlerをインポート（イベントハンドラーが登録された状態）

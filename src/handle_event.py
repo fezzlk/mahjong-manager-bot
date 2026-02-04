@@ -14,7 +14,8 @@ from linebot.models import (
 
 # from use_cases.group_line.input_result_from_image_use_case import (
 #     InputResultFromImageUseCase)
-import env_varfrom linebot import WebhookHandler
+import env_var
+from linebot import WebhookHandler
 
 from application_service import (
     reply_service,

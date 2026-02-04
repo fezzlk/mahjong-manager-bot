@@ -1,6 +1,6 @@
 from datetime import datetime
-
-import env_varfrom application_service import (
+import env_var
+from application_service import (
     message_service,
     reply_service,
     request_info_service,
@@ -121,7 +121,9 @@ class ReplyHistoryUseCase:
             x.append(k)
             y.append(v)
 
-        import matplotlib as mpl        import matplotlib.dates as mdates        import matplotlib.pyplot as plt
+        import matplotlib as mpl
+        import matplotlib.dates as mdates
+        import matplotlib.pyplot as plt
         mpl.use("agg")
 
         fig, ax = plt.subplots()
