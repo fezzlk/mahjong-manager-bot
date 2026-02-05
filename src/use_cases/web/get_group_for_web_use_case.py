@@ -1,15 +1,13 @@
-# from repositories import (
-#     group_repository, session_scope
-# )
-# from domain_model.entities.group import Group
+from typing import Optional
+
+from domain_model.entities.group import Group
+from repositories import group_repository
+
+from .web_utils import to_object_id
 
 
-# class GetGroupForWebUseCase:
+class GetGroupForWebUseCase:
 
-#     def execute(self, id) -> Group:
-#         with session_scope() as session:
-#             records = group_repository.find(session, [_id])
-#             if len(records) > 0:
-#                 return records[0]
-#             else:
-#                 None
+    def execute(self, _id) -> Optional[Group]:
+        records = group_repository.find({"_id": to_object_id(_id)})
+        return records[0] if len(records) > 0 else None

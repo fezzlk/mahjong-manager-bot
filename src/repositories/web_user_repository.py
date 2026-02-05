@@ -50,6 +50,37 @@ class WebUserRepository(IWebUserRepository):
         result = web_users_collection.delete_many(filter=query)
         return result.deleted_count
 
+    def find_by_id(self, _id) -> WebUser:
+        records = self.find(query={"_id": _id})
+        return records[0] if len(records) > 0 else None
+
+    def update_linked_line_user_id(
+        self,
+        _id,
+        line_user_id: str,
+    ) -> int:
+        return self.update(
+            query={"_id": _id},
+            new_values={"linked_line_user_id": line_user_id},
+        )
+
+    def reset_line(self, _id) -> int:
+        return self.update(
+            query={"_id": _id},
+            new_values={
+                "linked_line_user_id": "",
+                "is_approved_line_user": False,
+            },
+        )
+
+    def approve_line(self, _id) -> int:
+        return self.update(
+            query={"_id": _id},
+            new_values={
+                "is_approved_line_user": True,
+            },
+        )
+
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> WebUser:
         return WebUser(
             _id=record.get("_id"),

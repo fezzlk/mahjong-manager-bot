@@ -1,17 +1,17 @@
 from flask import request
 
-from domain_model.entities.match import Match
-from repositories import match_repository, session_scope
+from repositories import match_repository
+
+from .web_utils import to_object_id, without_id
 
 
 class UpdateMatchForWebUseCase:
 
     def execute(self) -> None:
         form = request.form
-        updated = Match(
-            line_group_id=form["line_group_id"],
-            status=int(form["status"]),
-            _id=int(form["_id"]),
-        )
-        with session_scope() as session:
-            return match_repository.update(session, updated)
+        updated = {
+            "_id": to_object_id(form.get("_id")),
+            "line_group_id": form.get("line_group_id"),
+            "status": int(form.get("status")) if form.get("status") is not None else None,
+        }
+        match_repository.update({"_id": updated["_id"]}, without_id(updated))

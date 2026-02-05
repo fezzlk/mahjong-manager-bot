@@ -1,13 +1,13 @@
-# from domain_model.entities.match import Match
-# from repositories import session_scope, match_repository
+from typing import Optional
+
+from domain_model.entities.match import Match
+from repositories import match_repository
+
+from .web_utils import to_object_id
 
 
-# class GetMatchForWebUseCase:
+class GetMatchForWebUseCase:
 
-#     def execute(self, id) -> Match:
-#         with session_scope() as session:
-#             records = match_repository.find(session, [_id])
-#             if len(records) > 0:
-#                 return records[0]
-#             else:
-#                 None
+    def execute(self, _id) -> Optional[Match]:
+        records = match_repository.find({"_id": to_object_id(_id)})
+        return records[0] if len(records) > 0 else None

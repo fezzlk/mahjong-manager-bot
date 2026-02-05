@@ -42,6 +42,10 @@ class UserRepository(IUserRepository):
             .sort(sort)
         return [self._mapping_record_to_domain(record) for record in records]
 
+    def find_one_by_line_user_id(self, line_user_id: str) -> User:
+        records = self.find(query={"line_user_id": line_user_id})
+        return records[0] if len(records) > 0 else None
+
     def delete(
         self,
         query: Dict[str, any] = {},

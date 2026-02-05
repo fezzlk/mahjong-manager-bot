@@ -3,7 +3,7 @@ from werkzeug.exceptions import BadRequest
 from application_models.page_contents import PageContents
 from application_models.register_web_user_form import RegisterWebUserForm
 from domain_model.entities.web_user import WebUser
-from repositories import session_scope, web_user_repository
+from repositories import web_user_repository
 
 
 class RegisterWebUserUseCase:
@@ -21,10 +21,8 @@ class RegisterWebUserUseCase:
             name=form.name.data,
         )
 
-        with session_scope() as session:
-            web_user_repository.create(
-                session=session,
-                new_web_user=new_web_user,
-            )
+        web_user_repository.create(
+            new_record=new_web_user,
+        )
 
-        return
+        return None

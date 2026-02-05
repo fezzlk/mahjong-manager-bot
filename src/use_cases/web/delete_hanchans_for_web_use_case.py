@@ -1,17 +1,11 @@
 from typing import List
 
-from domain_service import (
-    match_service,
-)
-from repositories import hanchan_repository, session_scope
+from repositories import hanchan_repository
+
+from .web_utils import normalize_ids
 
 
 class DeleteHanchansForWebUseCase:
 
     def execute(self, ids: List[int]) -> None:
-        with session_scope() as session:
-            deleted_hanchans = hanchan_repository.delete_by_ids(session, ids)
-            for deleted_hanchan in deleted_hanchans:
-                match_service.remove_hanchan_id(
-                    deleted_hanchan.match_id, deleted_hanchan._id,
-                )
+        hanchan_repository.delete({"_id": {"$in": normalize_ids(ids)}})
