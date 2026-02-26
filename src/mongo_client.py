@@ -1,8 +1,21 @@
 from pymongo import MongoClient
 import env_var
+
+# Firestore with MongoDB compatibility requires:
+# - loadBalanced=true
+# - tls=true
+# - retryWrites=false
+required_uri_params = ["loadBalanced=true", "tls=true", "retryWrites=false"]
+missing_params = [p for p in required_uri_params if p not in env_var.DATABASE_URL]
+if missing_params:
+    raise RuntimeError(
+        "EXTERNAL_DATABASE_URL is missing required params for Firestore MongoDB compatibility: "
+        + ", ".join(missing_params)
+    )
+
 mongo_client = MongoClient(env_var.DATABASE_URL)
 db_name = env_var.DATABASE_NAME
-# ローカルから MongoDB Atlas に接続する場合は以下を使用
+# 別の MongoDB サービスに接続する場合は以下を使用
 # import certifi
 # mongo_client = MongoClient(env_var.DATABASE_URL, tlsCAFile=certifi.where())
 

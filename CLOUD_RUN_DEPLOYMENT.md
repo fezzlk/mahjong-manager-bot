@@ -38,13 +38,21 @@ gcloud auth configure-docker
 
 ## 2. データベース設定
 
-### 2.1 MongoDB Atlas の設定
+### 2.1 Firestore with MongoDB compatibility の設定
 
-1. [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)でアカウントを作成
-2. クラスターを作成
-3. データベースユーザーを作成
-4. ネットワークアクセスを設定（Cloud Run の IP アドレスを許可）
-5. 接続文字列を取得
+1. Firestore で MongoDB compatibility を有効化（Enterprise edition）
+2. データベースを作成（Database ID を確認）
+3. MongoDB 互換の接続エンドポイント（UID / Location）を確認
+4. 必要に応じて SCRAM ユーザーを作成
+5. 接続文字列を取得  
+   例:
+   ```
+   mongodb://<UID>.<LOCATION>.firestore.goog:443/<DATABASE_ID>?loadBalanced=true&tls=true&retryWrites=false
+   ```
+   SCRAM 認証を使う場合:
+   ```
+   mongodb://<USERNAME>:<PASSWORD>@<UID>.<LOCATION>.firestore.goog:443/<DATABASE_ID>?loadBalanced=true&authMechanism=SCRAM-SHA-256&tls=true&retryWrites=false
+   ```
 
 ### 2.2 環境変数の設定
 
@@ -144,8 +152,8 @@ curl https://your-service-url.run.app/
 
 1. **データベース接続エラー**
 
-   - MongoDB Atlas のネットワークアクセス設定を確認
-   - 接続文字列の形式を確認
+   - Firestore with MongoDB compatibility の接続文字列を確認（`loadBalanced=true&tls=true&retryWrites=false` が必須）
+   - SCRAM 認証を使う場合はユーザー/パスワードを確認
 
 2. **LINE Bot の応答エラー**
 
@@ -208,7 +216,7 @@ jobs:
    - VPC コネクタの使用を検討
 
 3. **データベースセキュリティ**
-   - MongoDB Atlas の IP ホワイトリスト設定
+   - Firestore with MongoDB compatibility の接続設定を確認（ネットワーク設定や認証）
    - データベースユーザーの権限最小化
 
 ## 9. コスト最適化

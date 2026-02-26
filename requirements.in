@@ -38,6 +38,9 @@ flask_bcrypt==1.0.1
 # DB
 PyMongo==4.3.3
 dnspython==2.6.1
+SQLAlchemy==2.0.41
+alembic==1.14.1
+psycopg2-binary==2.9.10
 
 # 画像処理
 Pillow==10.2.0

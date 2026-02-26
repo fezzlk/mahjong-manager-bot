@@ -18,3 +18,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 ENV FLASK_APP=src/server
+
+# Cloud Run expects the container to listen on $PORT (default 8080).
+EXPOSE 8080
+
+# Use $PORT if provided; fall back to 8080 for local runs.
+CMD ["sh","-c","gunicorn src.server:app --bind 0.0.0.0:${PORT:-8080} --log-file=-"]
