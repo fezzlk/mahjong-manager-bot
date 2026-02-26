@@ -126,6 +126,10 @@
 
 ## 12. 実行コマンド例
 ```bash
+# 0) 接続確認
+POSTGRES_DATABASE_URL='postgresql://<user>:<pass>@<host>:5432/<db>' \
+python3 scripts/migration/check_postgres_connection.py
+
 # 1) スキーマ適用
 POSTGRES_DATABASE_URL='postgresql://<user>:<pass>@<host>:5432/<db>' \
 alembic upgrade head
