@@ -54,12 +54,12 @@ def google_authorize():
 
     # ユーザ検索
     email = user_info["email"]
-    web_user = web_user_repository.find(
+    web_users = web_user_repository.find(
         {"email": email},
     )
 
     # ヒットしない場合は新規登録画面
-    if web_user is None:
+    if len(web_users) == 0:
         session["login_email"] = email
         session["login_name"] = user_info["name"]
         return redirect(
@@ -67,6 +67,7 @@ def google_authorize():
         )
 
     # ヒットした場合はログイン
+    web_user = web_users[0]
     session["login_picture"] = user_info["picture"]
     session["access_token"] = token["access_token"]
     session["id_token"] = token["id_token"]

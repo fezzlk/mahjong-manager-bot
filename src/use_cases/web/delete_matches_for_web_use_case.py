@@ -2,10 +2,10 @@ from typing import List
 
 from repositories import match_repository
 
-from .web_utils import normalize_ids
+from .web_utils import delete_by_ids
 
 
 class DeleteMatchesForWebUseCase:
 
     def execute(self, target_ids: List[int]) -> None:
-        match_repository.delete({"_id": {"$in": normalize_ids(target_ids)}})
+        delete_by_ids(match_repository, target_ids)
