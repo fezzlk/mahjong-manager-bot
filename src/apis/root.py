@@ -11,7 +11,6 @@ from flask import (
 from linebot import exceptions
 import env_var
 from application_models.page_contents import PageContents
-from use_cases.create_dummy_use_case import CreateDummyUseCase
 
 # handle_eventからhandlerをインポート（イベントハンドラーが登録された状態）
 from handle_event import handler
@@ -65,6 +64,9 @@ def logout():
 
 @views_blueprint.route("/create_dummy", methods=["POST"])
 def create_dummy():
+    # Avoid importing test-only dummy dependencies at app startup.
+    from use_cases.create_dummy_use_case import CreateDummyUseCase
+
     CreateDummyUseCase().execute()
     return "Done"
 
