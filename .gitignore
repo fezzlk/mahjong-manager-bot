@@ -131,3 +131,6 @@ dmypy.json
 .pyre/
 
 /docker
+
+# Private local rules
+MCP_PRIVATE_RULES.md
