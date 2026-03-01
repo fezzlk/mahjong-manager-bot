@@ -12,7 +12,7 @@ def test_execute_deletes_users_by_ids():
     # DB操作: u1 = user_repository.create(User(line_user_id="U1", line_user_name="A")); u2 = user_repository.create(User(line_user_id="U2", line_user_name="B")); remaining = user_repository.find()
     # Arrange
     u1 = user_repository.create(User(line_user_id="U1", line_user_name="A"))
-    u2 = user_repository.create(User(line_user_id="U2", line_user_name="B"))
+    user_repository.create(User(line_user_id="U2", line_user_name="B"))
     use_case = DeleteUsersForWebUseCase()
 
     # Act
