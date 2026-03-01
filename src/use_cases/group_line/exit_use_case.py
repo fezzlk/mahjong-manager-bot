@@ -41,5 +41,5 @@ class ExitUseCase:
         if active_hanchan is None:
             return
 
-        active_hanchan.status = 0
+        active_hanchan.is_deleted = True
         hanchan_service.update(active_hanchan)

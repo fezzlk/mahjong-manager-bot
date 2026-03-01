@@ -3,8 +3,6 @@
 import logging
 from functools import lru_cache
 
-from linebot.models.responses import Profile
-
 from domain_model.entities.user import User, UserMode
 from messaging_api_setting import line_bot_api
 from repositories import user_repository
@@ -24,7 +22,7 @@ def _cached_get_profile_name(line_user_id: str) -> str:
 class UserService(IUserService):
     def find_or_create_by_profile(
         self,
-        profile: Profile,
+        profile,
     ) -> User:
         new_user = User(
             line_user_name=profile.display_name,

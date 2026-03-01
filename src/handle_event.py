@@ -2,21 +2,19 @@
 
 import logging
 import traceback
-from linebot.models import (
+from linebot.v3.webhook import WebhookHandler
+from linebot.v3.webhooks import (
     FollowEvent,
-    ImageMessage,
+    ImageMessageContent,
     JoinEvent,
     LeaveEvent,
     MessageEvent,
     PostbackEvent,
-    TextMessage,
+    TextMessageContent,
     UnfollowEvent,
 )
 
-# from use_cases.group_line.input_result_from_image_use_case import (
-#     InputResultFromImageUseCase)
 import env_var
-from linebot import WebhookHandler
 
 from application_service import (
     reply_service,
@@ -84,7 +82,7 @@ def handle_leave(event):
     GroupQuitUseCase().execute()
 
 
-@handler.add(MessageEvent, message=TextMessage)
+@handler.add(MessageEvent, message=TextMessageContent)
 @handle_event_decorater
 def handle_text_message(event):
     if event.source.type in {"room", "group"}:
@@ -95,13 +93,9 @@ def handle_text_message(event):
         raise ValueError("this source type is not supported")
 
 
-@handler.add(MessageEvent, message=ImageMessage)
+@handler.add(MessageEvent, message=ImageMessageContent)
 @handle_event_decorater
 def handle_image_message(event):
-    # if event.source.type == 'room' or event.source.type == 'group':
-    #     InputResultFromImageUseCase().execute(event)
-    # else:
-    # raise BaseException('this source type is not supported')
     return
 
 

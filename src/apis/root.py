@@ -10,7 +10,7 @@ from flask import (
     session,
     url_for,
 )
-from linebot import exceptions
+from linebot.v3.exceptions import InvalidSignatureError
 import env_var
 from application_models.page_contents import PageContents
 
@@ -42,7 +42,7 @@ def callback():
     body = request.get_data(as_text=True)
     try:
         handler.handle(body, signature)
-    except exceptions.InvalidSignatureError:
+    except InvalidSignatureError:
         abort(400)
     return "OK"
 

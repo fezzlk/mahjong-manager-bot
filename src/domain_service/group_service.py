@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, Union
 
 from domain_model.entities.group import Group, GroupMode
 from repositories import group_repository
@@ -36,7 +36,7 @@ class GroupService(IGroupService):
         if result > 0:
             logger.info("chmod: %s: %s", line_group_id, mode.value)
 
-    def get_mode(self, line_group_id: str) -> GroupMode:
+    def get_mode(self, line_group_id: str) -> Optional[str]:
         groups = group_repository.find({"line_group_id": line_group_id})
 
         if len(groups) == 0:

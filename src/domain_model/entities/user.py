@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Optional
@@ -10,36 +10,21 @@ class UserMode(Enum):
     wait = "wait"
 
 
-@dataclass()
+@dataclass
 class User:
-    _id: ObjectId
-    line_user_name: str
     line_user_id: str
-    mode: str
-    jantama_name: str
-    original_id: Optional[int]
-    created_at: datetime
-    updated_at: datetime
+    line_user_name: str = None
+    mode: str = UserMode.wait.value
+    jantama_name: str = None
+    original_id: Optional[int] = None
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
+    _id: ObjectId = field(default=None)
 
-    def __init__(
-        self,
-        line_user_id: str,
-        line_user_name: str = None,
-        mode: str = UserMode.wait.value,
-        jantama_name: str = None,
-        created_at: datetime = None,
-        updated_at: datetime = None,
-        _id: ObjectId = None,
-        original_id: Optional[int] = None,
-    ):
-        if mode not in UserMode._member_names_:
-            raise ValueError(f"UserMode の値({mode})が不適切です。")
-
-        self._id = _id
-        self.line_user_name = line_user_name
-        self.line_user_id = line_user_id
-        self.mode = mode
-        self.jantama_name = jantama_name
-        self.original_id = original_id
-        self.created_at = created_at if created_at is not None else datetime.now()
-        self.updated_at = updated_at if updated_at is not None else datetime.now()
+    def __post_init__(self):
+        if self.mode not in UserMode._member_names_:
+            raise ValueError(f"UserMode の値({self.mode})が不適切です。")
+        if self.created_at is None:
+            self.created_at = datetime.now()
+        if self.updated_at is None:
+            self.updated_at = datetime.now()

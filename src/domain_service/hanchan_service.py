@@ -11,9 +11,6 @@ from .interfaces.i_hanchan_service import IHanchanService
 
 logger = logging.getLogger(__name__)
 
-STATUS_LIST = ["disabled", "active", "archived"]
-
-
 class HanchanService(IHanchanService):
 
     def add_or_drop_raw_score(
@@ -90,5 +87,5 @@ class HanchanService(IHanchanService):
     def disable_by_match_id(self, match_id: ObjectId) -> None:
         hanchan_repository.update(
             {"match_id": match_id},
-            {"status": 0},
+            {"is_deleted": True},
         )

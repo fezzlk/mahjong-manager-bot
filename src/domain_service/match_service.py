@@ -11,9 +11,6 @@ from .interfaces.i_match_service import IMatchService
 
 logger = logging.getLogger(__name__)
 
-STATUS_LIST = ["disabled", "active", "archived"]
-
-
 class MatchService(IMatchService):
     def add_or_drop_chip_score(
         self,

@@ -27,7 +27,6 @@ web_users_collection = mongo_client[db_name].web_users
 hanchans_collection = mongo_client[db_name].hanchans
 matches_collection = mongo_client[db_name].matches
 user_matches_collection = mongo_client[db_name].user_matches
-hanchan_matches_collection = mongo_client[db_name].hanchan_matches
 user_hanchans_collection = mongo_client[db_name].user_hanchans
 yakuman_users_collection = mongo_client[db_name].yakuman_users
 

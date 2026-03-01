@@ -1,7 +1,7 @@
 import threading
 from typing import Dict, List
 
-from linebot.models.events import Event
+from linebot.v3.webhooks import Event
 
 
 class RequestInfoService:

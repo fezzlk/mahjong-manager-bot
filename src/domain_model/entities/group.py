@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
@@ -12,30 +12,19 @@ class GroupMode(Enum):
     chip_ok = "chip_ok"
 
 
-@dataclass()
+@dataclass
 class Group:
-    _id: ObjectId
     line_group_id: str
-    mode: str
-    active_match_id: ObjectId
-    created_at: datetime
-    updated_at: datetime
+    mode: str = GroupMode.wait.value
+    active_match_id: ObjectId = field(default=None)
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
+    _id: ObjectId = field(default=None)
 
-    def __init__(
-        self,
-        line_group_id: str,
-        mode: str = GroupMode.wait.value,
-        active_match_id: ObjectId = None,
-        created_at: datetime = None,
-        updated_at: datetime = None,
-        _id: ObjectId = None,
-    ):
-        if mode not in GroupMode._member_names_:
-            raise ValueError(f"GroupMode の値({mode})が不適切です。")
-
-        self._id = _id
-        self.line_group_id = line_group_id
-        self.mode = mode
-        self.active_match_id = active_match_id
-        self.created_at = created_at if created_at is not None else datetime.now()
-        self.updated_at = updated_at if updated_at is not None else datetime.now()
+    def __post_init__(self):
+        if self.mode not in GroupMode._member_names_:
+            raise ValueError(f"GroupMode の値({self.mode})が不適切です。")
+        if self.created_at is None:
+            self.created_at = datetime.now()
+        if self.updated_at is None:
+            self.updated_at = datetime.now()

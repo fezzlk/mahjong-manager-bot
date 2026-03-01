@@ -55,12 +55,7 @@ class ReplyHistoryUseCase:
             )
             return
         all_hanchans = hanchan_repository.find(
-            query={
-                "$and": [
-                    {"match_id": {"$in": [match._id for match in matches]}},
-                    {"status": 2},
-                ],
-            },
+            query={"match_id": {"$in": [match._id for match in matches]}},
         )
 
         if len(all_hanchans) == 0:

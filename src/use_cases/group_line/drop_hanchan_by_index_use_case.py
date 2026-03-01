@@ -33,7 +33,7 @@ class DropHanchanByIndexUseCase:
 
         active_match = match_service.find_one_by_id(group.active_match_id)
         if active_match is None:
-            raise BaseException(
+            raise RuntimeError(
                 f"DropHanchanByIndexUseCase: 対戦結果の取得失敗: match_id: {group.active_match_id}",
             )
 
@@ -48,7 +48,7 @@ class DropHanchanByIndexUseCase:
             return
 
         target_hanchan = archived_hanchans[index - 1]
-        target_hanchan.status = 0
+        target_hanchan.is_deleted = True
         hanchan_service.update(target_hanchan)
         reply_service.add_message(
             f"現在の対戦の第{index}半荘の結果を削除しました。",

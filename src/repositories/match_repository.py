@@ -25,7 +25,7 @@ class MatchRepository(IMatchRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
-        filter_query = {**query, "status": 2}
+        filter_query = {**query, "is_deleted": {"$ne": True}}
         new_values["updated_at"] = datetime.now()
         result = matches_collection.update_one(filter_query, {"$set": new_values})
         return result.matched_count
@@ -36,7 +36,7 @@ class MatchRepository(IMatchRepository):
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
         limit: int = 0,
     ) -> List[Match]:
-        filter_query = {**(query or {}), "status": 2}
+        filter_query = {**(query or {}), "is_deleted": {"$ne": True}}
         records = matches_collection.find(filter=filter_query).sort(sort).limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
 
@@ -52,15 +52,15 @@ class MatchRepository(IMatchRepository):
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Match:
         return Match(
             line_group_id=record.get("line_group_id"),
-            status=record.get("status"),
+            is_deleted=record.get("is_deleted", False),
             created_at=record.get("created_at"),
             updated_at=record.get("updated_at"),
-            chip_scores=record.get("chip_scores", {}),
-            chip_prices=record.get("chip_prices", {}),
+            chip_scores=record.get("chip_scores"),
+            chip_prices=record.get("chip_prices"),
             active_hanchan_id=record.get("active_hanchan_id"),
-            sum_scores=record.get("sum_scores", {}),
-            sum_prices=record.get("sum_prices", {}),
-            sum_prices_with_chip=record.get("sum_prices_with_chip", {}),
+            sum_scores=record.get("sum_scores"),
+            sum_prices=record.get("sum_prices"),
+            sum_prices_with_chip=record.get("sum_prices_with_chip"),
             _id=record.get("_id"),
             original_id=record.get("original_id"),
         )
