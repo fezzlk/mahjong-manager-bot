@@ -7,11 +7,14 @@
 aiohttp==3.8.3
     # via line-bot-sdk
 aiosignal==1.3.1
-    # via aiohttp
+    # via
+    #   -r requirements.in
+    #   aiohttp
 async-timeout==4.0.3
     # via aiohttp
 attrs==25.3.0
     # via
+    #   -r requirements.in
     #   aiohttp
     #   pytest
 authlib==1.2.0
@@ -19,7 +22,9 @@ authlib==1.2.0
 bcrypt==5.0.0
     # via flask-bcrypt
 blinker==1.8.2
-    # via flask
+    # via
+    #   -r requirements.in
+    #   flask
 cachetools==4.2.4
     # via google-auth
 certifi==2024.2.2
@@ -27,25 +32,35 @@ certifi==2024.2.2
     #   -r requirements.in
     #   requests
 cffi==1.17.1
-    # via cryptography
+    # via
+    #   -r requirements.in
+    #   cryptography
 charset-normalizer==2.1.1
     # via
     #   aiohttp
     #   requests
 click==8.1.8
-    # via flask
+    # via
+    #   -r requirements.in
+    #   flask
 contourpy==1.1.1
-    # via matplotlib
+    # via
+    #   -r requirements.in
+    #   matplotlib
 coverage==7.6.1
-    # via pytest-cov
-cryptography==46.0.2
+    # via
+    #   -r requirements.in
+    #   pytest-cov
+cryptography==46.0.0
     # via authlib
 cycler==0.12.1
     # via matplotlib
 debugpy==1.8.0
     # via -r requirements.in
 dnspython==2.6.1
-    # via pymongo
+    # via
+    #   -r requirements.in
+    #   pymongo
 flask==2.3.3
     # via
     #   -r requirements.in
@@ -56,9 +71,12 @@ flask-bcrypt==1.0.1
 flask-jwt-extended==4.6.0
     # via -r requirements.in
 fonttools==4.57.0
-    # via matplotlib
+    # via
+    #   -r requirements.in
+    #   matplotlib
 frozenlist==1.5.0
     # via
+    #   -r requirements.in
     #   aiohttp
     #   aiosignal
 future==1.0.0
@@ -71,23 +89,26 @@ google-auth==1.25.0
     #   google-api-core
 google-cloud-vision==3.0.0
     # via -r requirements.in
-googleapis-common-protos==1.70.0
+googleapis-common-protos==1.72.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.48.2
+grpcio==1.51.1
     # via
+    #   -r requirements.in
     #   google-api-core
     #   grpcio-status
 grpcio-status==1.48.2
-    # via google-api-core
+    # via
+    #   -r requirements.in
+    #   google-api-core
 gunicorn==23.0.0
     # via -r requirements.in
 idna==3.11
     # via
     #   requests
     #   yarl
-iniconfig==2.1.0
+iniconfig==2.3.0
     # via pytest
 itsdangerous==2.2.0
     # via flask
@@ -96,11 +117,14 @@ japanize-matplotlib==1.1.3
 jinja2==3.1.6
     # via flask
 kiwisolver==1.4.7
-    # via matplotlib
+    # via
+    #   -r requirements.in
+    #   matplotlib
 line-bot-sdk==2.4.1
     # via -r requirements.in
 markupsafe==2.1.5
     # via
+    #   -r requirements.in
     #   jinja2
     #   werkzeug
     #   wtforms
@@ -113,13 +137,15 @@ matplotlib-fontja==1.1.0
     # via -r requirements.in
 multidict==6.1.0
     # via
+    #   -r requirements.in
     #   aiohttp
     #   yarl
 numpy==1.24.4
     # via
+    #   -r requirements.in
     #   contourpy
     #   matplotlib
-packaging==25.0
+packaging==26.0
     # via
     #   gunicorn
     #   matplotlib
@@ -129,10 +155,14 @@ pillow==10.2.0
     #   -r requirements.in
     #   matplotlib
 pluggy==1.5.0
-    # via pytest
+    # via
+    #   -r requirements.in
+    #   pytest
 propcache==0.2.0
-    # via yarl
-proto-plus==1.26.1
+    # via
+    #   -r requirements.in
+    #   yarl
+proto-plus==1.27.1
     # via google-cloud-vision
 protobuf==3.20.3
     # via
@@ -143,20 +173,24 @@ protobuf==3.20.3
     #   proto-plus
 py==1.11.0
     # via pytest
-pyasn1==0.6.1
+pyasn1==0.6.2
     # via
     #   pyasn1-modules
     #   rsa
 pyasn1-modules==0.4.2
     # via google-auth
-pycparser==2.23
+pycparser==3.0
     # via cffi
 pyjwt==2.9.0
-    # via flask-jwt-extended
+    # via
+    #   -r requirements.in
+    #   flask-jwt-extended
 pymongo==4.3.3
     # via -r requirements.in
 pyparsing==3.1.4
-    # via matplotlib
+    # via
+    #   -r requirements.in
+    #   matplotlib
 pytest==6.2.5
     # via
     #   -r requirements.in
@@ -187,19 +221,20 @@ toml==0.10.2
     #   pytest
     #   pytest-cov
 typing-extensions==4.13.2
-    # via
-    #   aiosignal
-    #   grpcio
+    # via -r requirements.in
 urllib3==1.26.20
     # via requests
 werkzeug==2.3.7
     # via
+    #   -r requirements.in
     #   flask
     #   flask-jwt-extended
 wtforms==3.0.1
     # via -r requirements.in
 yarl==1.15.2
-    # via aiohttp
+    # via
+    #   -r requirements.in
+    #   aiohttp
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
