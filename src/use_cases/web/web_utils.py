@@ -21,11 +21,11 @@ def normalize_ids(values: Iterable[Union[str, ObjectId, int]]) -> List[Union[Obj
     return [to_object_id(v) for v in values]
 
 
-def delete_by_ids(repository: Any, ids: Iterable[Union[str, ObjectId, int]]) -> None:
+def delete_by_ids(repository: Any, ids: Iterable[Union[str, ObjectId, int]]) -> None:  # noqa: ANN401
     repository.delete({"_id": {"$in": normalize_ids(ids)}})
 
 
-def find_one_by_id(repository: Any, _id: Union[str, ObjectId, int, None]) -> Optional[Any]:
+def find_one_by_id(repository: Any, _id: Union[str, ObjectId, int, None]) -> Optional[Any]:  # noqa: ANN401
     records = repository.find({"_id": to_object_id(_id)})
     return first_or_none(records)
 
