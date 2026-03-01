@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from application_service import reply_service, request_info_service
@@ -54,14 +53,15 @@ def test_execute_returns_image_url():
     assert f"/match_detail/{match._id!s}.png" in image_url
 
 
-def test_execute_handles_file_write_error():
+def test_execute_handles_file_write_error(mocker):
     # 目的: test_execute_handles_file_write_error の挙動を検証する。
-    # 入力: なし
+    # 入力: mocker
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
     # 想定出力: image_url is None / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "システムエラーが発生しました。" である
     # reply_service: texts
     # DB操作: user_repository.create(user); match_repository.create(match); hanchan_repository.create(hanchan)
     # Arrange
+    mocker.patch.object(reply_service, "push_a_message")  # LINE API呼び出しを回避
     request_info_service.set_req_info(event=dummy_event)
     use_case = CreateMatchDetailGraphUseCase()
 
@@ -81,14 +81,14 @@ def test_execute_handles_file_write_error():
     uploads_dir = Path("src/uploads/match_detail")
     backup_dir = Path("src/uploads/_match_detail_backup")
     if uploads_dir.exists():
-        os.rename(uploads_dir, backup_dir)
+        uploads_dir.rename(backup_dir)
 
     try:
         # Act
         image_url = use_case.execute(match._id)
     finally:
         if backup_dir.exists():
-            os.rename(backup_dir, uploads_dir)
+            backup_dir.rename(uploads_dir)
 
     # Assert
     assert image_url is None

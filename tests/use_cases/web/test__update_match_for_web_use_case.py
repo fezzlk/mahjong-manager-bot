@@ -1,8 +1,9 @@
 from domain_model.entities.match import Match
+from mongo_client import matches_collection
 from repositories import match_repository
 from use_cases.web.update_match_for_web_use_case import UpdateMatchForWebUseCase
 
-from ._web_test_utils import create_app, request_context
+from _web_test_utils import create_app, request_context
 
 
 def test_execute_updates_match_fields():
@@ -27,10 +28,10 @@ def test_execute_updates_match_fields():
     with request_context(app, form_data=form):
         use_case.execute()
 
-    # Assert
-    updated = match_repository.find({"_id": created._id})[0]
-    assert updated.line_group_id == "G2"
-    assert updated.status == 1
+    # Assert: status=1 に変更後は find()(status=2フィルタあり)で取得不可のため直接確認
+    updated_doc = matches_collection.find_one({"_id": created._id})
+    assert updated_doc["line_group_id"] == "G2"
+    assert updated_doc["status"] == 1
 
 
 def test_execute_with_missing_status_keeps_existing():

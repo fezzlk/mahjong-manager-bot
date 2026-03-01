@@ -14,4 +14,5 @@ class UpdateMatchForWebUseCase:
             "line_group_id": form.get("line_group_id"),
             "status": int(form.get("status")) if form.get("status") is not None else None,
         }
-        match_repository.update({"_id": updated["_id"]}, without_id(updated))
+        new_values = {k: v for k, v in without_id(updated).items() if v is not None}
+        match_repository.update({"_id": updated["_id"]}, new_values)

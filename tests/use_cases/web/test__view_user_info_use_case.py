@@ -5,7 +5,7 @@ from domain_model.entities.web_user import WebUser
 from repositories import web_user_repository
 from use_cases.web.view_user_info_use_case import ViewUserInfoUseCase
 
-from ._web_test_utils import create_app, request_context
+from _web_test_utils import create_app, request_context
 
 
 def test_execute_sets_profile_without_line_link():

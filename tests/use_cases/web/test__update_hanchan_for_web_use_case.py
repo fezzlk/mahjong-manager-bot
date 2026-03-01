@@ -2,7 +2,7 @@ from domain_model.entities.hanchan import Hanchan
 from repositories import hanchan_repository
 from use_cases.web.update_hanchan_for_web_use_case import UpdateHanchanForWebUseCase
 
-from ._web_test_utils import create_app, request_context
+from _web_test_utils import create_app, request_context
 
 
 def test_execute_updates_hanchan_fields():
@@ -23,7 +23,7 @@ def test_execute_updates_hanchan_fields():
         "raw_scores": "{'U1': 25000}",
         "converted_scores": "{'U1': 10}",
         "match_id": str(created.match_id),
-        "status": "1",
+        "status": "2",
     }
 
     # Act

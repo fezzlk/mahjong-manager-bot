@@ -4,7 +4,7 @@ from application_models.page_contents import PageContents
 from repositories import web_user_repository
 from use_cases.web.register_web_user_use_case import RegisterWebUserUseCase
 
-from ._web_test_utils import create_app, request_context
+from _web_test_utils import create_app, request_context
 
 
 def test_execute_creates_web_user():

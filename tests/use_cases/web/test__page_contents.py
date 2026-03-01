@@ -2,7 +2,7 @@ from application_models.page_contents import PageContents
 from domain_model.entities.web_user import WebUser
 from repositories import web_user_repository
 
-from ._web_test_utils import create_app, request_context
+from _web_test_utils import create_app, request_context
 
 
 def test_init_sets_login_user_from_session_id():

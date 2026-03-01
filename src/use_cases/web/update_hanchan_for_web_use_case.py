@@ -17,4 +17,5 @@ class UpdateHanchanForWebUseCase:
             "match_id": to_object_id(form.get("match_id")),
             "status": int(form.get("status")) if form.get("status") is not None else None,
         }
-        hanchan_repository.update({"_id": updated["_id"]}, without_id(updated))
+        new_values = {k: v for k, v in without_id(updated).items() if v is not None}
+        hanchan_repository.update({"_id": updated["_id"]}, new_values)

@@ -2,7 +2,7 @@ from domain_model.entities.group_setting import GroupSetting
 from repositories import group_setting_repository
 from use_cases.web.update_config_for_web_use_case import UpdateConfigForWebUseCase
 
-from ._web_test_utils import create_app, request_context
+from _web_test_utils import create_app, request_context
 
 
 def test_execute_updates_group_setting_fields():

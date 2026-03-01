@@ -4,6 +4,7 @@ from application_service import reply_service, request_info_service
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.match import Match
 from line_models.event import Event
+from mongo_client import hanchans_collection, matches_collection
 from repositories import hanchan_repository, match_repository
 from use_cases.group_line.drop_match_by_index_use_case import DropMatchByIndexUseCase
 
@@ -70,8 +71,8 @@ def test_execute_drop_archived_match_by_index():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "第1回の対戦結果を削除しました。"
 
-    updated_match = match_repository.find({"_id": match._id})[0]
-    assert updated_match.status == 0
+    updated_match_doc = matches_collection.find_one({"_id": match._id})
+    assert updated_match_doc["status"] == 0
 
-    updated_hanchans = hanchan_repository.find({"match_id": match._id})
-    assert all(h.status == 0 for h in updated_hanchans)
+    updated_hanchan_docs = list(hanchans_collection.find({"match_id": match._id}))
+    assert all(h["status"] == 0 for h in updated_hanchan_docs)

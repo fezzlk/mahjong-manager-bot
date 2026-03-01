@@ -12,7 +12,7 @@ def test_execute_deletes_matches_by_ids():
     # DB操作: m1 = match_repository.create(Match(line_group_id="G1")); m2 = match_repository.create(Match(line_group_id="G2")); remaining = match_repository.find()
     # Arrange
     m1 = match_repository.create(Match(line_group_id="G1"))
-    m2 = match_repository.create(Match(line_group_id="G2"))
+    match_repository.create(Match(line_group_id="G2"))
     use_case = DeleteMatchesForWebUseCase()
 
     # Act

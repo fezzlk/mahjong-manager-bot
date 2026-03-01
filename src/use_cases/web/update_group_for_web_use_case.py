@@ -16,4 +16,5 @@ class UpdateGroupForWebUseCase:
             "mode": parse_enum_value(form.get("mode"), GroupMode),
             "active_match_id": to_object_id(form.get("active_match_id")),
         }
-        group_repository.update({"_id": updated["_id"]}, without_id(updated))
+        new_values = {k: v for k, v in without_id(updated).items() if v is not None}
+        group_repository.update({"_id": updated["_id"]}, new_values)

@@ -12,7 +12,7 @@ def test_execute_deletes_groups_by_ids():
     # DB操作: g1 = group_repository.create(Group(line_group_id="G1")); g2 = group_repository.create(Group(line_group_id="G2")); remaining = group_repository.find()
     # Arrange
     g1 = group_repository.create(Group(line_group_id="G1"))
-    g2 = group_repository.create(Group(line_group_id="G2"))
+    group_repository.create(Group(line_group_id="G2"))
     use_case = DeleteGroupsForWebUseCase()
 
     # Act
