@@ -11,8 +11,11 @@ from pymongo.errors import PyMongoError
 # ================================
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SRC_DIR = os.path.join(BASE_DIR, "src")
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
+if TESTS_DIR not in sys.path:
+    sys.path.insert(0, TESTS_DIR)
 
 # ================================
 # 🌱 .env 読み込み
