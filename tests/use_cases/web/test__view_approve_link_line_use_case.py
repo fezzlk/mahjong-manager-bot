@@ -13,7 +13,7 @@ def test_execute_sets_line_user_name():
     # reply_service: なし
     # DB操作: line_user = user_repository.create(User(line_user_id="U1", line_user_name="Alice")); web_user = web_user_repository.create(WebUser(user_code="c", linked_line_user_id="U1"))
     # Arrange
-    line_user = user_repository.create(User(line_user_id="U1", line_user_name="Alice"))
+    user_repository.create(User(line_user_id="U1", line_user_name="Alice"))
     web_user = web_user_repository.create(WebUser(user_code="c", linked_line_user_id="U1"))
     page_contents = PageContents(session={}, request=None)
     page_contents.login_user = web_user
