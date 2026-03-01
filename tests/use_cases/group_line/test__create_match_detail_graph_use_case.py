@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from application_service import reply_service, request_info_service
@@ -81,14 +80,14 @@ def test_execute_handles_file_write_error():
     uploads_dir = Path("src/uploads/match_detail")
     backup_dir = Path("src/uploads/_match_detail_backup")
     if uploads_dir.exists():
-        os.rename(uploads_dir, backup_dir)
+        uploads_dir.rename(backup_dir)
 
     try:
         # Act
         image_url = use_case.execute(match._id)
     finally:
         if backup_dir.exists():
-            os.rename(backup_dir, uploads_dir)
+            backup_dir.rename(uploads_dir)
 
     # Assert
     assert image_url is None
