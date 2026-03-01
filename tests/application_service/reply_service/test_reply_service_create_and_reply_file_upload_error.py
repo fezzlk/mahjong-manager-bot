@@ -1,7 +1,4 @@
-from linebot.v3.messaging import (
-    PushMessageRequest,
-    TextMessage,
-)
+from linebot.v3.messaging import TextMessage
 
 import env_var
 from application_service.reply_service import ReplyService
@@ -27,9 +24,8 @@ def test_success(mocker):
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "システムエラーが発生しました。"
-    mock_line_bot_api.assert_called_once_with(
-        PushMessageRequest(
-            to=env_var.SERVER_ADMIN_LINE_USER_ID,
-            messages=[TextMessage(text="テストの画像アップロードに失敗しました\n送信者: dummy")],
-        )
-    )
+    mock_line_bot_api.assert_called_once()
+    call_arg = mock_line_bot_api.call_args[0][0]
+    assert call_arg.to == env_var.SERVER_ADMIN_LINE_USER_ID
+    assert len(call_arg.messages) == 1
+    assert call_arg.messages[0].text == "テストの画像アップロードに失敗しました\n送信者: dummy"
