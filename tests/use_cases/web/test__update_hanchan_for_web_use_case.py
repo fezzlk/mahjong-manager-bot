@@ -23,7 +23,7 @@ def test_execute_updates_hanchan_fields():
         "raw_scores": "{'U1': 25000}",
         "converted_scores": "{'U1': 10}",
         "match_id": str(created.match_id),
-        "status": "1",
+        "status": "2",
     }
 
     # Act
