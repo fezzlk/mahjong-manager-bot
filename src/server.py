@@ -19,8 +19,10 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 load_dotenv()
 
 # ===== Flask アプリ初期化 =====
+import env_var
+
 app = Flask(__name__)
-app.secret_key = "random secret"
+app.secret_key = env_var.FLASK_SECRET_KEY
 logger = logging.create_logger(app)
 
 # ===== debugpy (ホットリロード対応) =====
@@ -33,7 +35,7 @@ if (
     and os.environ.get("WERKZEUG_RUN_MAIN") == "true"
 ):
     try:
-        debugpy.listen(("0.0.0.0", 5678))
+        debugpy.listen(("127.0.0.1", 5678))
         print("🔍 Debugger can attach at port 5678...")
     except OSError:
         print("⚠️ Debugger port already in use")

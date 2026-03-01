@@ -27,4 +27,4 @@ hanchan_matches_collection = mongo_client[db_name].hanchan_matches
 user_hanchans_collection = mongo_client[db_name].user_hanchans
 yakuman_users_collection = mongo_client[db_name].yakuman_users
 
-print(f"Connected DB server:{env_var.DATABASE_URL}")
+print("Connected to DB server.")

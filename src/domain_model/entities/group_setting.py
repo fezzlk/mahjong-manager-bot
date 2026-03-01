@@ -37,22 +37,22 @@ class GroupSetting:
         self,
         line_group_id: str,
         rate: int = 0,
-        ranking_prize: List[int] = [20, 10, -10, -20],
+        ranking_prize: List[int] = None,
         chip_rate: int = 0,
         tobi_prize: int = 10,
         num_of_players: int = 4,
         rounding_method: int = 1,
-        created_at: datetime = datetime.now(),
-        updated_at: datetime = datetime.now(),
+        created_at: datetime = None,
+        updated_at: datetime = None,
         _id: ObjectId = None,
     ):
         self._id = _id
         self.line_group_id = line_group_id
         self.rate = rate
-        self.ranking_prize = ranking_prize
+        self.ranking_prize = ranking_prize if ranking_prize is not None else [20, 10, -10, -20]
         self.chip_rate = chip_rate
         self.tobi_prize = tobi_prize
         self.num_of_players = num_of_players
         self.rounding_method = rounding_method
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.created_at = created_at if created_at is not None else datetime.now()
+        self.updated_at = updated_at if updated_at is not None else datetime.now()

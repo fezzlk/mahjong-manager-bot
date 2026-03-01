@@ -33,7 +33,7 @@ class InputPointUseCase:
 
         # 入力した点数のバリデート(hack: '-' を含む場合数値として判断できないため一旦エスケープ)
         is_minus = False
-        if point[0] == "-":
+        if point.startswith("-"):
             point = point[1:]
             is_minus = True
 

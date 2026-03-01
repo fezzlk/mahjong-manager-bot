@@ -27,8 +27,8 @@ class User:
         line_user_name: str = None,
         mode: str = UserMode.wait.value,
         jantama_name: str = None,
-        created_at: datetime = datetime.now(),
-        updated_at: datetime = datetime.now(),
+        created_at: datetime = None,
+        updated_at: datetime = None,
         _id: ObjectId = None,
         original_id: Optional[int] = None,
     ):
@@ -41,5 +41,5 @@ class User:
         self.mode = mode
         self.jantama_name = jantama_name
         self.original_id = original_id
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.created_at = created_at if created_at is not None else datetime.now()
+        self.updated_at = updated_at if updated_at is not None else datetime.now()

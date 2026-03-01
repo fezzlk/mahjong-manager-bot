@@ -35,19 +35,19 @@ class WebUserRepository(IWebUserRepository):
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[WebUser]:
         records = web_users_collection\
-            .find(filter=query)\
+            .find(filter=dict(query) if query is not None else {})\
             .sort(sort)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
-        result = web_users_collection.delete_many(filter=query)
+        result = web_users_collection.delete_many(filter=query or {})
         return result.deleted_count
 
     def find_by_id(self, _id) -> WebUser:

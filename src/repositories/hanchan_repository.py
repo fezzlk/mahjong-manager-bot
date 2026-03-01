@@ -26,27 +26,27 @@ class HanchanRepository(IHanchanRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
+        filter_query = {**query, "status": 2}
         new_values["updated_at"] = datetime.now()
-        query["status"] = 2
-        result = hanchans_collection.update_many(query, {"$set": new_values})
+        result = hanchans_collection.update_many(filter_query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[Hanchan]:
-        query["status"] = 2
+        filter_query = {**(query or {}), "status": 2}
         records = hanchans_collection\
-            .find(filter=query)\
+            .find(filter=filter_query)\
             .sort(sort)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
-        result = hanchans_collection.delete_many(filter=query)
+        result = hanchans_collection.delete_many(filter=query or {})
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Hanchan:

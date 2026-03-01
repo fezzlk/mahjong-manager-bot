@@ -28,6 +28,7 @@ class UCommands(Enum):
     payment = "payment"
     analysis = "analysis"
     fortune = "fortune"
+    fortune_yaku = "fortune_yaku"
     history = "history"
     help = "help"
     setting = "setting"
@@ -62,7 +63,8 @@ def routing_by_text_in_personal_line():
     """routing by text on each mode"""
     """wait mode"""
 
-    if request_info_service.message.split()[0] == "アカウント連携":
+    parts = request_info_service.message.split()
+    if parts and parts[0] == "アカウント連携":
         RequestLinkLineWebUseCase().execute()
         return
 

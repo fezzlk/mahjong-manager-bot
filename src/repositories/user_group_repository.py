@@ -28,19 +28,19 @@ class UserGroupRepository(IUserGroupRepository):
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[UserGroup]:
         records = user_groups_collection\
-            .find(filter=query)\
+            .find(filter=dict(query) if query is not None else {})\
             .sort(sort)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
-        result = user_groups_collection.delete_many(filter=query)
+        result = user_groups_collection.delete_many(filter=query or {})
         return result.deleted_count
 
     def update(

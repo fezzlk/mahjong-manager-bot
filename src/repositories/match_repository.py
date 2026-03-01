@@ -25,25 +25,25 @@ class MatchRepository(IMatchRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
-        query["status"] = 2
+        filter_query = {**query, "status": 2}
         new_values["updated_at"] = datetime.now()
-        result = matches_collection.update_many(query, {"$set": new_values})
+        result = matches_collection.update_many(filter_query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[Match]:
-        query["status"] = 2
-        records = matches_collection.find(filter=query).sort(sort)
+        filter_query = {**(query or {}), "status": 2}
+        records = matches_collection.find(filter=filter_query).sort(sort)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
-        result = matches_collection.delete_many(filter=query)
+        result = matches_collection.delete_many(filter=query or {})
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Match:

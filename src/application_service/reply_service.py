@@ -1,6 +1,5 @@
 import json
-from ctypes import Union
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from linebot.exceptions import LineBotApiError
 from linebot.models import (
@@ -408,11 +407,7 @@ class ReplyService(IReplyService):
                 )
             except LineBotApiError as err:
                 print("リプライに失敗しました。")
-                # contents の内容が原因でリプライが失敗した時のためのハンドリング
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    [TextSendMessage(text="システムエラーが発生しました。")],
-                )
+                # reply_token は一度使用済みのため push_message でエラー通知する
                 self.push_a_message(
                     to=env_var.SERVER_ADMIN_LINE_USER_ID,
                     message=str(err),

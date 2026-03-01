@@ -93,6 +93,6 @@ class FinishMatchUseCase:
             + message_service.create_show_match_result(match=active_match),
         )
 
-        reply_service.add_image(
-            CreateMatchDetailGraphUseCase().execute(active_match._id)
-        )
+        image_url = CreateMatchDetailGraphUseCase().execute(active_match._id)
+        if image_url is not None:
+            reply_service.add_image(image_url)

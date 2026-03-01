@@ -3,6 +3,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+_flask_secret_key = os.getenv("FLASK_SECRET_KEY")
+if not _flask_secret_key:
+    raise RuntimeError('env var "FLASK_SECRET_KEY" is not set.')
+FLASK_SECRET_KEY: str = _flask_secret_key
+
+_jwt_secret_key = os.getenv("JWT_SECRET_KEY")
+if not _jwt_secret_key:
+    raise RuntimeError('env var "JWT_SECRET_KEY" is not set.')
+JWT_SECRET_KEY: str = _jwt_secret_key
+
 FLASK_APP = os.getenv("FLASK_APP")
 FLASK_ENV = os.getenv("FLASK_ENV")
 YOUR_CHANNEL_ACCESS_TOKEN = os.getenv("YOUR_CHANNEL_ACCESS_TOKEN")

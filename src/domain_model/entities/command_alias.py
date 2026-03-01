@@ -22,9 +22,9 @@ class CommandAlias:
         line_group_id: str = None,
         alias: str = None,
         command: str = None,
-        mentionees: List[str] = [],
-        created_at: datetime = datetime.now(),
-        updated_at: datetime = datetime.now(),
+        mentionees: List[str] = None,
+        created_at: datetime = None,
+        updated_at: datetime = None,
         _id: ObjectId = None,
     ):
         self._id = _id
@@ -32,6 +32,6 @@ class CommandAlias:
         self.line_group_id = line_group_id
         self.alias = alias
         self.command = command
-        self.mentionees = mentionees
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.mentionees = mentionees if mentionees is not None else []
+        self.created_at = created_at if created_at is not None else datetime.now()
+        self.updated_at = updated_at if updated_at is not None else datetime.now()

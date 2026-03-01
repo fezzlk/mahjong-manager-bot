@@ -28,19 +28,19 @@ class Hanchan:
         line_group_id: str,
         match_id: int,
         status: int = 2,
-        raw_scores: Dict[str, int] = {},
-        converted_scores: Dict[str, int] = {},
-        created_at: datetime = datetime.now(),
-        updated_at: datetime = datetime.now(),
+        raw_scores: Dict[str, int] = None,
+        converted_scores: Dict[str, int] = None,
+        created_at: datetime = None,
+        updated_at: datetime = None,
         _id: ObjectId = None,
         original_id: Optional[int] = None,
     ):
         self._id = _id
         self.line_group_id = line_group_id
-        self.raw_scores = raw_scores
-        self.converted_scores = converted_scores
+        self.raw_scores = raw_scores if raw_scores is not None else {}
+        self.converted_scores = converted_scores if converted_scores is not None else {}
         self.match_id = match_id
         self.status = status
         self.original_id = original_id
-        self.created_at = created_at
-        self.updated_at = updated_at
+        self.created_at = created_at if created_at is not None else datetime.now()
+        self.updated_at = updated_at if updated_at is not None else datetime.now()

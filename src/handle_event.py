@@ -106,7 +106,7 @@ def handle_text_message(event):
 
 @handler.add(MessageEvent, message=ImageMessage)
 @handle_event_decorater
-def handle_image_message():
+def handle_image_message(event):
     # if event.source.type == 'room' or event.source.type == 'group':
     #     InputResultFromImageUseCase().execute(event)
     # else:

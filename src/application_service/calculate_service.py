@@ -1,7 +1,5 @@
 from typing import Dict, List, Tuple
 
-from domain_model.entities.group_setting import ROUNDING_METHOD_LIST
-
 from .interfaces.i_calculate_service import ICalculateService
 
 
@@ -11,7 +9,7 @@ class CalculateService(ICalculateService):
         points: Dict[str, int],
         ranking_prize: List[int],
         tobi_prize: int = 0,
-        rounding_method: str = None,
+        rounding_method: int = None,
         tobashita_player_id: str = None,
     ) -> Dict[str, int]:
         sorted_points: list[tuple[str, int]] = sorted(
@@ -44,27 +42,28 @@ class CalculateService(ICalculateService):
     def convert_raw_score(
         self,
         sorted_points: List[Tuple[str, int]],
-        rounding_method: str = None,
+        rounding_method: int = None,
     ) -> Tuple[Dict[str, int], List[str]]:
         converted_score = {}
         tobasare_players = []
 
         # 計算方法に合わせて点数調整用の adjuster(丸めの境界値の調整) と padding(端数調整) を設定
+        # rounding_method は ROUNDING_METHOD_LIST のインデックス(int)
         padding = 0
         adjuster = 100000
-        # 五捨六入
-        if rounding_method == ROUNDING_METHOD_LIST[1]:
+        # 五捨六入 (index=1)
+        if rounding_method == 1:
             padding = 400
-        # 四捨五入
-        elif rounding_method == ROUNDING_METHOD_LIST[2]:
+        # 四捨五入 (index=2)
+        elif rounding_method == 2:
             padding = 500
-        # 切り捨て
-        elif rounding_method == ROUNDING_METHOD_LIST[3]:
+        # 切り捨て (index=3)
+        elif rounding_method == 3:
             padding = 0
-        # 切り上げ
-        elif rounding_method == ROUNDING_METHOD_LIST[4]:
+        # 切り上げ (index=4)
+        elif rounding_method == 4:
             padding = 999
-        # 3万点以下切り上げ/以上切り捨て
+        # 3万点以下切り上げ/以上切り捨て (index=0 or デフォルト)
         else:
             adjuster = -30000
 

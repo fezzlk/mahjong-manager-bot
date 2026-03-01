@@ -37,17 +37,17 @@ class GroupSettingRepository(IGroupSettingRepository):
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
     ) -> List[GroupSetting]:
-        records = group_settings_collection.find(filter=query).sort(sort)
+        records = group_settings_collection.find(filter=dict(query) if query is not None else {}).sort(sort)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
-        result = group_settings_collection.delete_many(filter=query)
+        result = group_settings_collection.delete_many(filter=query or {})
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> GroupSetting:
