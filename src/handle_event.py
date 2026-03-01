@@ -1,5 +1,6 @@
 """LINE messaging API handler"""
 
+import logging
 import traceback
 from linebot.models import (
     FollowEvent,
@@ -32,12 +33,13 @@ from use_cases.group_line.join_group_use_case import JoinGroupUseCase
 from use_cases.personal_line.follow_use_case import FollowUseCase
 from use_cases.personal_line.unfollow_use_case import UnfollowUseCase
 
+logger = logging.getLogger(__name__)
+
 
 def handle_event_decorater(function):
     def handle_event(*args, **kwargs):
         event = args[0]
-        print("receipt an event:")
-        print(event)
+        logger.info("receipt an event: %s", event)
 
         try:
             request_info_service.set_req_info(event)

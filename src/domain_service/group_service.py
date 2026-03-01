@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from domain_model.entities.group import Group, GroupMode
@@ -5,22 +6,17 @@ from repositories import group_repository
 
 from .interfaces.i_group_service import IGroupService
 
+logger = logging.getLogger(__name__)
+
 
 class GroupService(IGroupService):
 
     def find_or_create(self, line_group_id: str) -> Group:
-        groups = group_repository.find({"line_group_id": line_group_id})
-
-        if len(groups) > 0:
-            return groups[0]
-
         group = Group(
             line_group_id=line_group_id,
             mode=GroupMode.wait.value,
         )
-        result = group_repository.create(group)
-        print(f"create group: ID = {result._id}(line group id: {line_group_id})")
-        return result
+        return group_repository.find_or_create(group)
 
     def chmod(
         self,
@@ -38,7 +34,7 @@ class GroupService(IGroupService):
             {"mode": mode.value},
         )
         if result > 0:
-            print(f"chmod: {line_group_id}: {mode.value}")
+            logger.info("chmod: %s: %s", line_group_id, mode.value)
 
     def get_mode(self, line_group_id: str) -> GroupMode:
         groups = group_repository.find({"line_group_id": line_group_id})
@@ -59,7 +55,7 @@ class GroupService(IGroupService):
     def update(self, target: Group) -> None:
         group_repository.update(
             {"_id": target._id},
-            target.__dict__,
+            {k: v for k, v in target.__dict__.items() if k != "_id"},
         )
 
     def delete_by_line_group_id(self, line_group_id: str) -> None:

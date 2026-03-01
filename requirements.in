@@ -21,6 +21,9 @@ google-cloud-vision==3.0.0
 grpcio==1.51.1
 grpcio-status==1.48.2
 
+# Google Cloud Storage (画像の永続化)
+google-cloud-storage==2.14.0
+
 # JWT認証
 flask-jwt-extended==4.6.0
 PyJWT==2.9.0

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-from pymongo import ASCENDING
+from pymongo import ASCENDING, ReturnDocument
 
 from domain_model.entities.group_setting import GroupSetting
 from domain_model.i_repositories.i_group_setting_repository import IGroupSettingRepository
@@ -26,28 +26,45 @@ class GroupSettingRepository(IGroupSettingRepository):
 
         return new_record
 
+    def find_or_create(self, new_record: GroupSetting) -> GroupSetting:
+        """TOCTOU レースフリーな upsert による find-or-create"""
+        new_dict = {k: v for k, v in new_record.__dict__.items() if k != "_id"}
+        result = group_settings_collection.find_one_and_update(
+            filter={"line_group_id": new_record.line_group_id},
+            update={"$setOnInsert": new_dict},
+            upsert=True,
+            return_document=ReturnDocument.AFTER,
+        )
+        return self._mapping_record_to_domain(result)
+
     def update(
         self,
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
         new_values["updated_at"] = datetime.now()
-        result = group_settings_collection.update_many(query, {"$set": new_values})
+        result = group_settings_collection.update_one(query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
         query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
+        limit: int = 0,
     ) -> List[GroupSetting]:
-        records = group_settings_collection.find(filter=dict(query) if query is not None else {}).sort(sort)
+        records = group_settings_collection\
+            .find(filter=dict(query) if query is not None else {})\
+            .sort(sort)\
+            .limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
         query: Dict[str, any] = None,
     ) -> int:
-        result = group_settings_collection.delete_many(filter=query or {})
+        if not query:
+            raise ValueError("delete() requires a non-empty query to prevent accidental full-collection deletion")
+        result = group_settings_collection.delete_many(filter=query)
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> GroupSetting:

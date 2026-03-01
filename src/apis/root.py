@@ -20,6 +20,13 @@ from handle_event import handler
 views_blueprint = Blueprint("views_blueprint", __name__, url_prefix="/")
 
 
+@views_blueprint.route("/health")
+def health():
+    """Cloud Run ヘルスチェックエンドポイント"""
+    from flask import jsonify
+    return jsonify({"status": "ok"}), 200
+
+
 @views_blueprint.route("/")
 def index():
     page_contents = PageContents(session, request)

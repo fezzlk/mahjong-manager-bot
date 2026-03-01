@@ -1,4 +1,6 @@
 import json
+import logging
+import threading
 from typing import Dict, List, Union
 
 from linebot.exceptions import LineBotApiError
@@ -16,12 +18,45 @@ from messaging_api_setting import line_bot_api
 
 from .interfaces.i_reply_service import IReplyService
 
+logger = logging.getLogger(__name__)
+
 
 class ReplyService(IReplyService):
     def __init__(self):
-        self.texts: List[TextSendMessage] = []
-        self.buttons: List[Union[TemplateSendMessage, ButtonsTemplate]] = []
-        self.images: List[ImageSendMessage] = []
+        self._local = threading.local()
+
+    def _state(self):
+        local = self._local
+        if not hasattr(local, "initialized"):
+            local.texts = []
+            local.buttons = []
+            local.images = []
+            local.initialized = True
+        return local
+
+    @property
+    def texts(self) -> List[TextSendMessage]:
+        return self._state().texts
+
+    @texts.setter
+    def texts(self, value: List[TextSendMessage]):
+        self._state().texts = value
+
+    @property
+    def buttons(self) -> List[Union[TemplateSendMessage, ButtonsTemplate]]:
+        return self._state().buttons
+
+    @buttons.setter
+    def buttons(self, value: List[Union[TemplateSendMessage, ButtonsTemplate]]):
+        self._state().buttons = value
+
+    @property
+    def images(self) -> List[ImageSendMessage]:
+        return self._state().images
+
+    @images.setter
+    def images(self, value: List[ImageSendMessage]):
+        self._state().images = value
 
     def add_message(
         self,
@@ -406,7 +441,7 @@ class ReplyService(IReplyService):
                     contents,
                 )
             except LineBotApiError as err:
-                print("リプライに失敗しました。")
+                logger.warning("リプライに失敗しました: %s", err)
                 # reply_token は一度使用済みのため push_message でエラー通知する
                 self.push_a_message(
                     to=env_var.SERVER_ADMIN_LINE_USER_ID,

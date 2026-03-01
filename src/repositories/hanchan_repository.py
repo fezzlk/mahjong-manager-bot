@@ -35,18 +35,22 @@ class HanchanRepository(IHanchanRepository):
         self,
         query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
+        limit: int = 0,
     ) -> List[Hanchan]:
         filter_query = {**(query or {}), "status": 2}
         records = hanchans_collection\
             .find(filter=filter_query)\
-            .sort(sort)
+            .sort(sort)\
+            .limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
         query: Dict[str, any] = None,
     ) -> int:
-        result = hanchans_collection.delete_many(filter=query or {})
+        if not query:
+            raise ValueError("delete() requires a non-empty query to prevent accidental full-collection deletion")
+        result = hanchans_collection.delete_many(filter=query)
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Hanchan:

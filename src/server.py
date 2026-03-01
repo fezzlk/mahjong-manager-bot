@@ -1,3 +1,5 @@
+import logging
+import logging.config
 import os
 import sys
 from dotenv import load_dotenv
@@ -9,7 +11,7 @@ if not any("pytest" in arg for arg in sys.argv):
         import debugpy
     except ImportError:
         debugpy = None
-from flask import Flask, logging
+from flask import Flask
 from flask_bcrypt import Bcrypt
 
 # ===== パス設定 =====
@@ -23,7 +25,13 @@ import env_var
 
 app = Flask(__name__)
 app.secret_key = env_var.FLASK_SECRET_KEY
-logger = logging.create_logger(app)
+
+# ===== ロギング設定 =====
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 # ===== debugpy (ホットリロード対応) =====
 # WERKZEUG_RUN_MAIN はリロード用サブプロセス判定用
@@ -36,9 +44,9 @@ if (
 ):
     try:
         debugpy.listen(("127.0.0.1", 5678))
-        print("🔍 Debugger can attach at port 5678...")
+        logger.info("Debugger can attach at port 5678...")
     except OSError:
-        print("⚠️ Debugger port already in use")
+        logger.warning("Debugger port already in use")
 
 # ===== Flask 拡張 =====
 from jwt_setting import register_jwt

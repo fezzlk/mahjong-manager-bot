@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-from pymongo import ASCENDING
+from pymongo import ASCENDING, ReturnDocument
 
 from domain_model.entities.group import Group
 from domain_model.i_repositories.i_group_repository import IGroupRepository
@@ -24,30 +24,45 @@ class GroupRepository(IGroupRepository):
         new_record._id = result.inserted_id
         return new_record
 
+    def find_or_create(self, new_record: Group) -> Group:
+        """TOCTOU レースフリーな upsert による find-or-create"""
+        new_dict = {k: v for k, v in new_record.__dict__.items() if k != "_id"}
+        result = groups_collection.find_one_and_update(
+            filter={"line_group_id": new_record.line_group_id},
+            update={"$setOnInsert": new_dict},
+            upsert=True,
+            return_document=ReturnDocument.AFTER,
+        )
+        return self._mapping_record_to_domain(result)
+
     def update(
         self,
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
         new_values["updated_at"] = datetime.now()
-        result = groups_collection.update_many(query, {"$set": new_values})
+        result = groups_collection.update_one(query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
         query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
+        limit: int = 0,
     ) -> List[Group]:
         records = groups_collection\
             .find(filter=dict(query) if query is not None else {})\
-            .sort(sort)
+            .sort(sort)\
+            .limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
         query: Dict[str, any] = None,
     ) -> int:
-        result = groups_collection.delete_many(filter=query or {})
+        if not query:
+            raise ValueError("delete() requires a non-empty query to prevent accidental full-collection deletion")
+        result = groups_collection.delete_many(filter=query)
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Group:

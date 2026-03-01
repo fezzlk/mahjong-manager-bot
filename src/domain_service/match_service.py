@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional
 
 from bson.objectid import ObjectId
@@ -7,6 +8,8 @@ from domain_model.entities.match import Match
 from repositories import match_repository
 
 from .interfaces.i_match_service import IMatchService
+
+logger = logging.getLogger(__name__)
 
 STATUS_LIST = ["disabled", "active", "archived"]
 
@@ -57,13 +60,13 @@ class MatchService(IMatchService):
         )
         match_repository.create(new_match)
 
-        print(f'create match: group "{line_group_id}"')
+        logger.info('create match: group "%s"', line_group_id)
         return new_match
 
     def update(self, target: Match) -> None:
         match_repository.update(
             {"_id": target._id},
-            target.__dict__,
+            {k: v for k, v in target.__dict__.items() if k != "_id"},
         )
 
     def find_all_for_graph(self, ids: List[ObjectId]) -> List[Match]:
