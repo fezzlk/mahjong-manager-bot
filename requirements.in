@@ -58,3 +58,4 @@ typing-extensions==4.13.2
 # SSL証明書
 certifi==2024.2.2
 
+ruff==0.15.4

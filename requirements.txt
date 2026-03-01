@@ -191,3 +191,5 @@ wtforms==3.0.1
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+ruff==0.15.4
+    # via -r requirements.in
