@@ -12,7 +12,7 @@ def test_execute_deletes_configs_by_ids():
     # DB操作: c1 = group_setting_repository.create(GroupSetting(line_group_id="G1")); c2 = group_setting_repository.create(GroupSetting(line_group_id="G2")); remaining = group_setting_repository.find()
     # Arrange
     c1 = group_setting_repository.create(GroupSetting(line_group_id="G1"))
-    c2 = group_setting_repository.create(GroupSetting(line_group_id="G2"))
+    group_setting_repository.create(GroupSetting(line_group_id="G2"))
     use_case = DeleteConfigsForWebUseCase()
 
     # Act
