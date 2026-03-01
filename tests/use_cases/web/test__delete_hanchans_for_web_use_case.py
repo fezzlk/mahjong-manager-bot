@@ -12,7 +12,7 @@ def test_execute_deletes_hanchans_by_ids():
     # DB操作: h1 = hanchan_repository.create(Hanchan(line_group_id="G1", match_id=1)); h2 = hanchan_repository.create(Hanchan(line_group_id="G2", match_id=2)); remaining = hanchan_repository.find()
     # Arrange
     h1 = hanchan_repository.create(Hanchan(line_group_id="G1", match_id=1))
-    h2 = hanchan_repository.create(Hanchan(line_group_id="G2", match_id=2))
+    hanchan_repository.create(Hanchan(line_group_id="G2", match_id=2))
     use_case = DeleteHanchansForWebUseCase()
 
     # Act
