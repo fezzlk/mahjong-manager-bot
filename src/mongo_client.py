@@ -5,13 +5,15 @@ import env_var
 # - loadBalanced=true
 # - tls=true
 # - retryWrites=false
-required_uri_params = ["loadBalanced=true", "tls=true", "retryWrites=false"]
-missing_params = [p for p in required_uri_params if p not in env_var.DATABASE_URL]
-if missing_params:
-    raise RuntimeError(
-        "EXTERNAL_DATABASE_URL is missing required params for Firestore MongoDB compatibility: "
-        + ", ".join(missing_params)
-    )
+# (ローカル・CI環境では Firestore エンドポイントを使わないためスキップ)
+if "firestore.goog" in env_var.DATABASE_URL:
+    required_uri_params = ["loadBalanced=true", "tls=true", "retryWrites=false"]
+    missing_params = [p for p in required_uri_params if p not in env_var.DATABASE_URL]
+    if missing_params:
+        raise RuntimeError(
+            "EXTERNAL_DATABASE_URL is missing required params for Firestore MongoDB compatibility: "
+            + ", ".join(missing_params)
+        )
 
 mongo_client = MongoClient(env_var.DATABASE_URL)
 db_name = env_var.DATABASE_NAME
