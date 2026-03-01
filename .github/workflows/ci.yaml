@@ -155,5 +155,7 @@ jobs:
           DATABASE_URL: mongodb://localhost:27017/?authSource=admin
           DATABASE_NAME: test
           SERVER_URL: http://localhost:5000/
+          FLASK_SECRET_KEY: ci-test-secret
+          JWT_SECRET_KEY: ci-test-jwt-secret
         run: |
           pytest --cov=src tests/

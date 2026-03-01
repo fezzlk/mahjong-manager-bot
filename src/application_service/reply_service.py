@@ -3,7 +3,7 @@ import logging
 import threading
 from typing import Dict, List
 
-from linebot.v3.exceptions import ApiException
+from linebot.v3.messaging.exceptions import ApiException
 from linebot.v3.messaging import (
     ButtonsTemplate,
     ImageMessage,
