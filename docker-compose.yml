@@ -13,7 +13,7 @@ services:
       - "5000:5000"
       - "5678:5678"   # debugpy用
     environment:
-      - EXTERNAL_DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
+      - DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
       - DATABASE_NAME=db
       - FLASK_APP=src/server
       - FLASK_ENV=development
@@ -32,7 +32,7 @@ services:
     ports:
       - "5679:5678"
     environment:
-      - EXTERNAL_DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
+      - DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
       - DATABASE_NAME=test_db
     depends_on:
       - mongo

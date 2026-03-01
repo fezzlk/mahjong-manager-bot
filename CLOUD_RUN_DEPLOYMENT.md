@@ -60,7 +60,7 @@ gcloud auth configure-docker
 
 ```bash
 # 重要な環境変数
-EXTERNAL_DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/?retryWrites=true&w=majority
+DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/?retryWrites=true&w=majority
 YOUR_CHANNEL_ACCESS_TOKEN=your_line_channel_access_token
 YOUR_CHANNEL_SECRET=your_line_channel_secret
 SERVER_URL=https://your-cloud-run-url.run.app
@@ -119,7 +119,7 @@ gcloud run services update mahjong-manager-bot \
     PORT=8080,\
     YOUR_CHANNEL_ACCESS_TOKEN=your_token,\
     YOUR_CHANNEL_SECRET=your_secret,\
-    EXTERNAL_DATABASE_URL=your_mongodb_url,\
+    DATABASE_URL=your_mongodb_url,\
     DATABASE_NAME=your_db_name,\
     SERVER_URL=https://your-service-url.run.app
 ```
