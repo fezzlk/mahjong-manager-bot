@@ -35,7 +35,7 @@ def test_hit_with_line_group_id():
         assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores
         assert record_on_db[i].converted_scores == other_hanchans[i].converted_scores
         assert record_on_db[i].match_id == other_hanchans[i].match_id
-        assert record_on_db[i].status == other_hanchans[i].status
+        assert record_on_db[i].is_deleted == other_hanchans[i].is_deleted
 
 
 def test_hit_0_record():
@@ -67,4 +67,4 @@ def test_hit_0_record():
         assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores
         assert record_on_db[i].converted_scores == other_hanchans[i].converted_scores
         assert record_on_db[i].match_id == other_hanchans[i].match_id
-        assert record_on_db[i].status == other_hanchans[i].status
+        assert record_on_db[i].is_deleted == other_hanchans[i].is_deleted

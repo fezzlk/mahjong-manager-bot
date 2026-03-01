@@ -38,7 +38,7 @@ def test_success_find_records():
         assert result[i].match_id == target_hanchans[i].match_id
         assert result[i].raw_scores == target_hanchans[i].raw_scores
         assert result[i].converted_scores == target_hanchans[i].converted_scores
-        assert result[i].status == target_hanchans[i].status
+        assert result[i].is_deleted == target_hanchans[i].is_deleted
 
 
 def test_hit_1_record():
@@ -59,7 +59,7 @@ def test_hit_1_record():
     result = hanchan_repository.find(
         query={
             "line_group_id": target_hanchan.line_group_id,
-            "status": target_hanchan.status,
+            "is_deleted": target_hanchan.is_deleted,
         },
     )
 
@@ -71,7 +71,7 @@ def test_hit_1_record():
     assert result[0].match_id == target_hanchan.match_id
     assert result[0].raw_scores == target_hanchan.raw_scores
     assert result[0].converted_scores == target_hanchan.converted_scores
-    assert result[0].status == target_hanchan.status
+    assert result[0].is_deleted == target_hanchan.is_deleted
 
 
 def test_hit_0_record_with_not_exist_line_group_id():
@@ -116,7 +116,7 @@ def test_hit_0_record_with_not_exist_status():
     result = hanchan_repository.find(
         query={
             "line_group_id": target_hanchan.line_group_id,
-            "status": target_hanchan.status,
+            "is_deleted": target_hanchan.is_deleted,
         },
     )
 

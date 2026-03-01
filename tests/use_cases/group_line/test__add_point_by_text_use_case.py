@@ -69,7 +69,6 @@ dummy_hanchans = [
         raw_scores={},
         converted_scores={},
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(  # 更新
@@ -77,7 +76,6 @@ dummy_hanchans = [
         raw_scores={dummy_users[0].line_user_id: 2000},
         converted_scores={},
         match_id=1,
-        status=2,
         _id=2,
     ),
     Hanchan(  # 別ユーザー新規追加
@@ -85,7 +83,6 @@ dummy_hanchans = [
         raw_scores={dummy_users[1].line_user_id: 2000},
         converted_scores={},
         match_id=1,
-        status=2,
         _id=2,
     ),
     Hanchan(
@@ -97,7 +94,6 @@ dummy_hanchans = [
         },
         converted_scores={},
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(
@@ -110,7 +106,6 @@ dummy_hanchans = [
         },
         converted_scores={},
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(
@@ -123,7 +118,6 @@ dummy_hanchans = [
         },
         converted_scores={},
         match_id=1,
-        status=2,
         _id=0,
     ),
 ]
@@ -131,7 +125,6 @@ dummy_hanchans = [
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
-    status=2,
     _id=1,
 )
 
@@ -479,7 +472,6 @@ def test_execute_delete_last_one():
         },
         converted_scores={},
         match_id=1,
-        status=2,
         _id=1,
     )
     hanchan_repository.create(dummy_hanchan)

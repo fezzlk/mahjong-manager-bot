@@ -23,14 +23,12 @@ dummy_group = Group(
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
-    status=2,
     _id=1,
 )
 
 dummy_hanchan = Hanchan(
     line_group_id=dummy_group.line_group_id,
     match_id=1,
-    status=2,
     _id=1,
 )
 
@@ -119,7 +117,7 @@ def test_execute_with_active_hanchan():
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is None
-    assert matches[0].status == dummy_match.status
+    assert matches[0].is_deleted == dummy_match.is_deleted
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 0
 
@@ -153,6 +151,6 @@ def test_execute_without_active_hanchan():
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is None
-    assert matches[0].status == dummy_match.status
+    assert matches[0].is_deleted == dummy_match.is_deleted
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 0

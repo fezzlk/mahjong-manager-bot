@@ -8,7 +8,6 @@ dummy_hanchans = [
     Hanchan(
         match_id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
     ),
 ]
 

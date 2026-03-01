@@ -52,7 +52,6 @@ def test_execute_drop_archived_match_by_index():
     match = Match(
         line_group_id=dummy_event.source.group_id,
         sum_prices_with_chip={"U1": 10},
-        status=2,
     )
     match_repository.create(match)
 
@@ -60,7 +59,6 @@ def test_execute_drop_archived_match_by_index():
         line_group_id=dummy_event.source.group_id,
         match_id=match._id,
         converted_scores={"U1": 10},
-        status=2,
     )
     hanchan_repository.create(hanchan)
 
@@ -72,7 +70,7 @@ def test_execute_drop_archived_match_by_index():
     assert reply_service.texts[0].text == "第1回の対戦結果を削除しました。"
 
     updated_match_doc = matches_collection.find_one({"_id": match._id})
-    assert updated_match_doc["status"] == 0
+    assert updated_match_doc["is_deleted"] == True
 
     updated_hanchan_docs = list(hanchans_collection.find({"match_id": match._id}))
-    assert all(h["status"] == 0 for h in updated_hanchan_docs)
+    assert all(h["is_deleted"] == True for h in updated_hanchan_docs)

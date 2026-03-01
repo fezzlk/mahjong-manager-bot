@@ -66,7 +66,6 @@ dummy_group = Group(
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
-    status=2,
     _id=1,
 )
 
@@ -86,7 +85,6 @@ dummy_archived_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(
@@ -104,7 +102,6 @@ dummy_archived_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=2,
     ),
     Hanchan(
@@ -122,7 +119,6 @@ dummy_archived_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=3,
     ),
 ]
@@ -142,7 +138,7 @@ dummy_disabled_hanchan = Hanchan(
         dummy_users[3].line_user_id: -40,
     },
     match_id=1,
-    status=0,
+    is_deleted=True,
 )
 
 dummy_active_hanchan = Hanchan(
@@ -155,7 +151,6 @@ dummy_active_hanchan = Hanchan(
     },
     converted_scores={},
     match_id=1,
-    status=2,
 )
 
 

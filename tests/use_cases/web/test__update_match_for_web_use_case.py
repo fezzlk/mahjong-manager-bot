@@ -14,7 +14,7 @@ def test_execute_updates_match_fields():
     # reply_service: なし
     # DB操作: created = match_repository.create(Match(line_group_id="G1", status=2)); updated = match_repository.find({"_id": created._id})[0]
     # Arrange
-    created = match_repository.create(Match(line_group_id="G1", status=2))
+    created = match_repository.create(Match(line_group_id="G1"))
     app = create_app()
     use_case = UpdateMatchForWebUseCase()
 
@@ -42,7 +42,7 @@ def test_execute_with_missing_status_keeps_existing():
     # reply_service: なし
     # DB操作: created = match_repository.create(Match(line_group_id="G1", status=2)); updated = match_repository.find({"_id": created._id})[0]
     # Arrange
-    created = match_repository.create(Match(line_group_id="G1", status=2))
+    created = match_repository.create(Match(line_group_id="G1"))
     app = create_app()
     use_case = UpdateMatchForWebUseCase()
 
@@ -57,4 +57,4 @@ def test_execute_with_missing_status_keeps_existing():
 
     # Assert
     updated = match_repository.find({"_id": created._id})[0]
-    assert updated.status == 2
+    assert updated.is_deleted == False
