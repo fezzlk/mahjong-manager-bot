@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Tuple
 
@@ -18,7 +19,7 @@ class GroupSettingRepository(IGroupSettingRepository):
                 f"LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。"
             )
 
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = group_settings_collection.insert_one(new_dict)

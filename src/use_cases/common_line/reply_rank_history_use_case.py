@@ -1,5 +1,6 @@
 from itertools import groupby
 import matplotlib as mpl
+mpl.use("agg")
 import matplotlib.pyplot as plt
 import env_var
 from application_service import (
@@ -36,8 +37,6 @@ class ReplyRankHistoryUseCase:
         range_message = message_service.create_range_message(from_dt, to_dt)
         if range_message is not None:
             reply_service.add_message(range_message)
-
-        mpl.use("agg")
 
         # 順位グラフ作成
         rank_info = [0, 0, 0, 0, 0]

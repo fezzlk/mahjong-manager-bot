@@ -8,6 +8,8 @@ from bson.objectid import ObjectId
 
 class UserMode(Enum):
     wait = "wait"
+    # input: user is in the middle of entering data (reserved for future personal input flows)
+    input = "input"
 
 
 @dataclass

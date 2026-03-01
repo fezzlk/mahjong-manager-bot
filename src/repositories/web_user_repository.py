@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Tuple
 
@@ -17,7 +18,7 @@ class WebUserRepository(IWebUserRepository):
         if len(self.find(query={"user_code": new_record.user_code})) != 0:
             raise Exception(f"User Code: {new_record.user_code} のWeb Userはすでに存在しています。")
 
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = web_users_collection.insert_one(new_dict)

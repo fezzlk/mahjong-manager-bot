@@ -58,6 +58,10 @@ class ReplyHanchansOfActiveMatchUseCase:
             hanchans=archived_hanchans,
         )
         line_id_name_dict: Dict[str, str] = {}
+        # UC-08: find_one_by_line_user_id is called once per unique line_id in the
+        # hanchan list. The result set is typically small (2-4 players), so this
+        # is not a significant N+1 issue. get_name_by_line_user_id uses _cached_get_profile_name
+        # (LRU cache) for LINE API calls, further reducing repeated requests.
         for line_id in line_id_list:
             user = user_service.find_one_by_line_user_id(line_id)
             if user is None:

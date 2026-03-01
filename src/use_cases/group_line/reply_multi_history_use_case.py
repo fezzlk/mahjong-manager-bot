@@ -1,4 +1,13 @@
+from datetime import datetime, timedelta
 from typing import Dict, List
+
+import matplotlib
+matplotlib.use("agg")
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+# flake8: noqa
+import japanize_matplotlib
+
 from application_service import (
     reply_service,
     request_info_service,
@@ -11,9 +20,6 @@ from domain_service import (
 )
 import env_var
 from messaging_api_setting import line_bot_api
-
-# flake8: noqa
-import japanize_matplotlib
 
 class ReplyMultiHistoryUseCase:
     def execute(self) -> None:
@@ -76,8 +82,6 @@ class ReplyMultiHistoryUseCase:
             reply_service.add_message(range_message)
 
         # 対戦結果の累計を計算
-        from datetime import datetime, timedelta
-
         total_dict = {line_id: 0 for line_id in active_user_line_ids}
         start_date = matches[0].created_at
         end_date = matches[-1].created_at
@@ -99,11 +103,6 @@ class ReplyMultiHistoryUseCase:
             history_dict[line_id][to_dt] = score
 
         # グラフ描画
-        import matplotlib
-        import matplotlib.pyplot as plt
-        import matplotlib.dates as mdates
-        matplotlib.use("agg")
-
         fig, ax = plt.subplots()
         for line_id in active_user_line_ids:
             plt.step(

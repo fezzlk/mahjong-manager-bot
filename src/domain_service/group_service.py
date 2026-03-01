@@ -1,3 +1,4 @@
+import copy
 import logging
 from typing import Optional, Union
 
@@ -53,9 +54,11 @@ class GroupService(IGroupService):
         return groups[0]
 
     def update(self, target: Group) -> None:
+        # UC-11: use copy to avoid mutating entity.__dict__ during dict comprehension
+        entity_dict = copy.copy(target).__dict__
         group_repository.update(
             {"_id": target._id},
-            {k: v for k, v in target.__dict__.items() if k != "_id"},
+            {k: v for k, v in entity_dict.items() if k != "_id"},
         )
 
     def delete_by_line_group_id(self, line_group_id: str) -> None:

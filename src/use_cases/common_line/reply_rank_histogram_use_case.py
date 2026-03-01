@@ -1,3 +1,8 @@
+import matplotlib as mpl
+mpl.use("agg")
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+
 import env_var
 from application_service import (
     message_service,
@@ -44,11 +49,6 @@ class ReplyRankHistogramUseCase:
         labels.append("飛び")
 
         # グラフ描画
-        import matplotlib as mpl
-        import matplotlib.dates as mdates
-        import matplotlib.pyplot as plt
-        mpl.use("agg")
-
         fig, ax = plt.subplots()
         plt.hist(plot_data, label=labels)
         plt.grid(which="major", axis="y", linestyle="dotted")

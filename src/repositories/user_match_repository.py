@@ -1,3 +1,4 @@
+import copy
 from typing import Dict, List, Tuple
 
 from pymongo import ASCENDING
@@ -19,7 +20,7 @@ class UserMatchRepository(IUserMatchRepository):
         })) != 0:
             raise Exception(f"User ID({new_record.user_id}とMatch ID({new_record.match_id}) のUserMatchはすでに存在しています。")
 
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = user_matches_collection.insert_one(new_dict)

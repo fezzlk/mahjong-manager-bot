@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Tuple
 
@@ -17,7 +18,7 @@ class GroupRepository(IGroupRepository):
         if len(self.find(query={"line_group_id": new_record.line_group_id})) != 0:
             raise Exception(f"LINE Group ID: {new_record.line_group_id} のGroupはすでに存在しています。")
 
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = groups_collection.insert_one(new_dict)

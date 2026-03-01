@@ -1,3 +1,4 @@
+import copy
 import logging
 from typing import List, Optional
 
@@ -79,9 +80,11 @@ class HanchanService(IHanchanService):
         )
 
     def update(self, target: Hanchan) -> None:
+        # UC-11: use copy to avoid mutating entity.__dict__ during dict comprehension
+        entity_dict = copy.copy(target).__dict__
         hanchan_repository.update(
             {"_id": target._id},
-            {k: v for k, v in target.__dict__.items() if k != "_id"},
+            {k: v for k, v in entity_dict.items() if k != "_id"},
         )
 
     def disable_by_match_id(self, match_id: ObjectId) -> None:

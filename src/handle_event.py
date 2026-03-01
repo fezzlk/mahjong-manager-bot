@@ -2,6 +2,7 @@
 
 import logging
 import traceback
+from functools import wraps
 from linebot.v3.webhook import WebhookHandler
 from linebot.v3.webhooks import (
     FollowEvent,
@@ -34,7 +35,8 @@ from use_cases.personal_line.unfollow_use_case import UnfollowUseCase
 logger = logging.getLogger(__name__)
 
 
-def handle_event_decorater(function):
+def handle_event_decorator(function):
+    @wraps(function)
     def handle_event(*args, **kwargs):
         event = args[0]
         logger.info("receipt an event: %s", event)
@@ -59,31 +61,31 @@ def handle_event_decorater(function):
 
 
 @handler.add(FollowEvent)
-@handle_event_decorater
+@handle_event_decorator
 def handle_follow(event):
     FollowUseCase().execute()
 
 
 @handler.add(UnfollowEvent)
-@handle_event_decorater
+@handle_event_decorator
 def handle_unfollow(event):
     UnfollowUseCase().execute()
 
 
 @handler.add(JoinEvent)
-@handle_event_decorater
+@handle_event_decorator
 def handle_join(event):
     JoinGroupUseCase().execute()
 
 
 @handler.add(LeaveEvent)
-@handle_event_decorater
+@handle_event_decorator
 def handle_leave(event):
     GroupQuitUseCase().execute()
 
 
 @handler.add(MessageEvent, message=TextMessageContent)
-@handle_event_decorater
+@handle_event_decorator
 def handle_text_message(event):
     if event.source.type in {"room", "group"}:
         routing_by_text_in_group_line()
@@ -94,13 +96,13 @@ def handle_text_message(event):
 
 
 @handler.add(MessageEvent, message=ImageMessageContent)
-@handle_event_decorater
+@handle_event_decorator
 def handle_image_message(event):
     return
 
 
 @handler.add(PostbackEvent)
-@handle_event_decorater
+@handle_event_decorator
 def handle_postback(event):
     if event.source.type in {"room", "group"}:
         routing_by_text_in_group_line()

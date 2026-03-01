@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Tuple
 
@@ -16,7 +17,7 @@ class YakumanUserRepository(IYakumanUserRepository):
         self,
         new_record: YakumanUser,
     ) -> YakumanUser:
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         new_dict["created_at"] = datetime.now()
         new_dict.pop("_id")
         result = yakuman_users_collection.insert_one(new_dict)

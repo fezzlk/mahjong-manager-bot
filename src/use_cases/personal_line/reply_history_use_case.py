@@ -1,4 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+import matplotlib as mpl
+mpl.use("agg")
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+
 import env_var
 from application_service import (
     message_service,
@@ -98,8 +103,6 @@ class ReplyHistoryUseCase:
 
         # グラフ描画
         # 初回値に0を追加、最後尾には指定された範囲の最終日または現在時点のスコアを追加
-        from datetime import timedelta
-
         if to_dt is None:
             to_dt = datetime.now()
         history[to_dt] = total
@@ -115,11 +118,6 @@ class ReplyHistoryUseCase:
         for k, v in history.items():
             x.append(k)
             y.append(v)
-
-        import matplotlib as mpl
-        import matplotlib.dates as mdates
-        import matplotlib.pyplot as plt
-        mpl.use("agg")
 
         fig, ax = plt.subplots()
         plt.step(history.keys(), history.values(), where="mid")

@@ -1,3 +1,4 @@
+import copy
 import logging
 from typing import List, Optional
 
@@ -61,9 +62,11 @@ class MatchService(IMatchService):
         return new_match
 
     def update(self, target: Match) -> None:
+        # UC-11: use copy to avoid mutating entity.__dict__ during dict comprehension
+        entity_dict = copy.copy(target).__dict__
         match_repository.update(
             {"_id": target._id},
-            {k: v for k, v in target.__dict__.items() if k != "_id"},
+            {k: v for k, v in entity_dict.items() if k != "_id"},
         )
 
     def find_all_for_graph(self, ids: List[ObjectId]) -> List[Match]:

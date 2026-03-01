@@ -2,7 +2,6 @@ import logging
 import logging.config
 import os
 import sys
-from dotenv import load_dotenv
 
 # debugpyはpytest実行時にはimportしない
 debugpy = None
@@ -16,9 +15,6 @@ from flask_bcrypt import Bcrypt
 
 # ===== パス設定 =====
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
-# ===== 環境変数ロード =====
-load_dotenv()
 
 # ===== Flask アプリ初期化 =====
 import env_var

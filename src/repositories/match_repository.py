@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Tuple
 
@@ -13,7 +14,7 @@ class MatchRepository(IMatchRepository):
         self,
         new_record: Match,
     ) -> Match:
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = matches_collection.insert_one(new_dict)

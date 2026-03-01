@@ -163,8 +163,7 @@ class SubmitHanchanUseCase:
             sorted_points: list[tuple[str, int]] = sorted(
                 active_hanchan.raw_scores.items(), key=lambda x: x[1], reverse=True,
             )
-            for i in range(len(sorted_points)):
-                line_id, point = sorted_points[i]
+            for i, (line_id, point) in enumerate(sorted_points):
                 user_hanchan_repository.create(
                     UserHanchan(
                         line_user_id=line_id,
