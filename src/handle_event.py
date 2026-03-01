@@ -43,22 +43,11 @@ def handle_event_decorater(function):
             request_info_service.set_req_info(event)
             function(args[0])
 
-        except BaseException as err:
+        except Exception as err:
             traceback.print_exc()
-            profile = line_bot_api.get_profile(
-                request_info_service.req_line_user_id,
-            )
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message=f"From: {profile.display_name}\n{request_info_service.message}",
-            )
-            reply_service.push_a_message(
-                to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message=str(err),
-            )
-            reply_service.push_a_message(
-                to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message="heroku logs -a mahjong-manager -t",
+                message=f"システムエラー: {type(err).__name__}: {err}",
             )
             reply_service.reset()
             reply_service.add_message(text="システムエラーが発生しました。")
@@ -101,7 +90,7 @@ def handle_text_message(event):
     elif event.source.type == "user":
         routing_by_text_in_personal_line()
     else:
-        raise BaseException("this source type is not supported")
+        raise ValueError("this source type is not supported")
 
 
 @handler.add(MessageEvent, message=ImageMessage)

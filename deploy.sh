@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Cloud Runデプロイスクリプト
 
@@ -20,10 +21,7 @@ IMAGE_NAME="gcr.io/$PROJECT_ID/$SERVICE_NAME"
 # SERVICE_ACCOUNT="mahjong-bot-sa@${PROJECT_ID}.iam.gserviceaccount.com"
 
 echo "Cloud Runデプロイを開始します..."
-
-# プロジェクトを設定
 echo "プロジェクトID: $PROJECT_ID"
-gcloud config set project $PROJECT_ID
 
 # Dockerイメージをビルド
 echo "Dockerイメージをビルドしています..."
@@ -36,6 +34,7 @@ docker push $IMAGE_NAME
 # Cloud Runにデプロイ
 echo "Cloud Runにデプロイしています..."
 gcloud run deploy $SERVICE_NAME \
+  --project "$PROJECT_ID" \
   --image $IMAGE_NAME \
   --platform managed \
   --region $REGION \

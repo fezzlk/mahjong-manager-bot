@@ -1,3 +1,5 @@
+import os
+
 from flask import (
     Blueprint,
     abort,
@@ -64,6 +66,8 @@ def logout():
 
 @views_blueprint.route("/create_dummy", methods=["POST"])
 def create_dummy():
+    if os.environ.get("FLASK_ENV") == "production":
+        abort(404)
     # Avoid importing test-only dummy dependencies at app startup.
     from use_cases.create_dummy_use_case import CreateDummyUseCase
 
@@ -78,6 +82,8 @@ def migrate():
 
 @views_blueprint.route("/test_personal_line", methods=["POST"])
 def test_personal_line():
+    if os.environ.get("FLASK_ENV") == "production":
+        abort(404)
     from application_service import (
         reply_service,
         request_info_service,
