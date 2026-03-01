@@ -3,8 +3,8 @@ from dummies import (
     generate_dummy_text_message_event_from_group,
     generate_dummy_text_message_event_from_user,
 )
-from linebot.models import (
-    TextSendMessage,
+from linebot.v3.messaging import (
+    TextMessage,
 )
 
 from application_service.reply_service import ReplyService
@@ -17,7 +17,7 @@ def test_reply_to_user(mocker):
     dummy_event = generate_dummy_text_message_event_from_user()
     dummy_text = "dummy_text"
     reply_service.texts = [
-        TextSendMessage(text=dummy_text),
+        TextMessage(text=dummy_text),
     ]
 
     mock = mocker.patch.object(
@@ -40,7 +40,7 @@ def test_reply_to_group(mocker):
     dummy_event = generate_dummy_follow_event()
     dummy_text = "dummy_text"
     reply_service.texts = [
-        TextSendMessage(text=dummy_text),
+        TextMessage(text=dummy_text),
     ]
 
     mock = mocker.patch.object(

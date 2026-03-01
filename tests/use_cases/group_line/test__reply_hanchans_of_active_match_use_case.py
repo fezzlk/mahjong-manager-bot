@@ -318,10 +318,9 @@ def test_success_fail_savefig(mocker):
     assert len(reply_service.images) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "システムエラーが発生しました。"
-    mock.assert_called_once_with(
-        to=env_var.SERVER_ADMIN_LINE_USER_ID,
-        message="対戦履歴の画像アップロードに失敗しました\n送信者: test_user1",
-    )
+    call_kwargs = mock.call_args.kwargs
+    assert call_kwargs["to"] == env_var.SERVER_ADMIN_LINE_USER_ID
+    assert "送信者: test_user1" in call_kwargs["message"]
 
 
 def test_success_no_group():

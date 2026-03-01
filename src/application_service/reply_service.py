@@ -271,8 +271,8 @@ class ReplyService(IReplyService):
                         text="いくらにしますか？",
                         actions=[
                             PostbackAction(
-                                label=i,
-                                display_text=i,
+                                label=str(i),
+                                display_text=str(i),
                                 data=f"_update_config 飛び賞 {i}",
                             )
                             for i in [0, 10, 20, 30]

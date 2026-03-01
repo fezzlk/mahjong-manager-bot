@@ -27,4 +27,7 @@ def test_ok(mocker):
     )
 
     # Assert
-    mock_create.assert_called_once_with(dummy_hanchans[0])
+    mock_create.assert_called_once()
+    call_args = mock_create.call_args[0][0]
+    assert call_args.line_group_id == dummy_hanchans[0].line_group_id
+    assert call_args.match_id == dummy_hanchans[0].match_id

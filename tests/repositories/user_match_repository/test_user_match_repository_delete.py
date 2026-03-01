@@ -50,7 +50,7 @@ def test_success():
         )
 
     # Act
-    result = user_match_repository.delete()
+    result = user_match_repository.delete(query={"_id": {"$exists": True}})
 
     # Assert
     assert result == 3

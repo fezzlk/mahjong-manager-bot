@@ -1,4 +1,4 @@
-from linebot.models import TextSendMessage
+from linebot.v3.messaging import TextMessage
 
 from application_service import (
         reply_service,
@@ -82,7 +82,7 @@ def test_execute():
     assert result[0].line_group_id == dummy_group.line_group_id
     assert result[0].mode == "wait"
     assert len(reply_service.texts) == 1
-    assert isinstance(reply_service.texts[0], TextSendMessage)
+    assert isinstance(reply_service.texts[0], TextMessage)
     assert reply_service.texts[0].text == "始める時は「_start」と入力してください。"
 
 
@@ -112,7 +112,7 @@ def test_execute_with_active_hanchan():
     assert result[0].mode == "wait"
     assert result[0].active_match_id == dummy_match._id
     assert len(reply_service.texts) == 1
-    assert isinstance(reply_service.texts[0], TextSendMessage)
+    assert isinstance(reply_service.texts[0], TextMessage)
     assert reply_service.texts[0].text == "始める時は「_start」と入力してください。"
     matches = match_repository.find()
     assert len(matches) == 1
@@ -146,7 +146,7 @@ def test_execute_without_active_hanchan():
     assert result[0].mode == "wait"
     assert result[0].active_match_id == dummy_match._id
     assert len(reply_service.texts) == 1
-    assert isinstance(reply_service.texts[0], TextSendMessage)
+    assert isinstance(reply_service.texts[0], TextMessage)
     assert reply_service.texts[0].text == "始める時は「_start」と入力してください。"
     matches = match_repository.find()
     assert len(matches) == 1

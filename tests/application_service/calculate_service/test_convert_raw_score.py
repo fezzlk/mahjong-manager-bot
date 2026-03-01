@@ -115,7 +115,7 @@ def test_ok_rounding_method2(text_case2):
     # Act
     result, _ = calculate_service.convert_raw_score(
         sorted_points=text_case2[0],
-        rounding_method="五捨六入",
+        rounding_method=1,
     )
 
     # Assert
@@ -181,7 +181,7 @@ def test_ok_rounding_method3(text_case3):
     # Act
     result, _ = calculate_service.convert_raw_score(
         sorted_points=text_case3[0],
-        rounding_method="四捨五入",
+        rounding_method=2,
     )
 
     # Assert
@@ -247,7 +247,7 @@ def test_ok_rounding_method4(text_case4):
     # Act
     result, _ = calculate_service.convert_raw_score(
         sorted_points=text_case4[0],
-        rounding_method="切り捨て",
+        rounding_method=3,
     )
 
     # Assert
@@ -313,7 +313,7 @@ def test_ok_rounding_method5(text_case5):
     # Act
     result, _ = calculate_service.convert_raw_score(
         sorted_points=text_case5[0],
-        rounding_method="切り上げ",
+        rounding_method=4,
     )
 
     # Assert
