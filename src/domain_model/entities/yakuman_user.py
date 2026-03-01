@@ -15,4 +15,5 @@ class YakumanUser:
     updated_at: Optional[datetime] = None
 
     def __setitem__(self, key: str, value: object) -> None:
+        """Set attribute by key."""
         setattr(self, key, value)
