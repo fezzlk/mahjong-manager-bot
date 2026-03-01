@@ -2,7 +2,7 @@ from domain_model.entities.user import User
 from repositories import user_repository
 from use_cases.web.update_user_for_web_use_case import UpdateUserForWebUseCase
 
-from ._web_test_utils import create_app, request_context
+from _web_test_utils import create_app, request_context
 
 
 def test_execute_updates_user_fields():

@@ -2,7 +2,7 @@ from domain_model.entities.match import Match
 from repositories import match_repository
 from use_cases.web.update_match_for_web_use_case import UpdateMatchForWebUseCase
 
-from ._web_test_utils import create_app, request_context
+from _web_test_utils import create_app, request_context
 
 
 def test_execute_updates_match_fields():
