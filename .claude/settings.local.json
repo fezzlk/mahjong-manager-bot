@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\(''mcpServers'', {}\\), indent=2, ensure_ascii=False\\)\\)\")",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(chmod +x:*)",
+      "Bash(gcloud run:*)",
+      "Bash(gcloud logging:*)",
+      "Bash(gcloud secrets:*)",
+      "Bash(gcloud projects:*)",
+      "Bash(git:*)",
+      "Bash(gcloud builds:*)",
+      "Bash(docker build:*)",
+      "Bash(docker push:*)",
+      "Bash(gcloud auth:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:pypi.org)",
+      "Bash(python:*)",
+      "Bash(brew install:*)",
+      "Bash(env:*)",
+      "Bash(PYTHONPATH=src python:*)",
+      "Bash(PYTHONPATH=src python3:*)",
+      "Bash(ls .env*:*)",
+      "Bash(FLASK_SECRET_KEY=dummy JWT_SECRET_KEY=dummy PYTHONPATH=src python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(ruff check:*)",
+      "Bash(python3:*)"
+    ]
+  }
+}

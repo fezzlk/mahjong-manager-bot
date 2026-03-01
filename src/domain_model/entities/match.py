@@ -20,7 +20,7 @@ class Match:
     updated_at: datetime = field(default_factory=datetime.now)
     _id: ObjectId = field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self):  # noqa: D105
         if self.chip_scores is None:
             self.chip_scores = {}
         if self.chip_prices is None:

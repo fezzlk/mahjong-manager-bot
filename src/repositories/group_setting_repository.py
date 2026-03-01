@@ -5,7 +5,9 @@ from typing import Dict, List, Tuple
 from pymongo import ASCENDING, ReturnDocument
 
 from domain_model.entities.group_setting import GroupSetting
-from domain_model.i_repositories.i_group_setting_repository import IGroupSettingRepository
+from domain_model.i_repositories.i_group_setting_repository import (
+    IGroupSettingRepository,
+)
 from mongo_client import group_settings_collection
 
 
@@ -16,7 +18,7 @@ class GroupSettingRepository(IGroupSettingRepository):
     ) -> GroupSetting:
         if len(self.find(query={"line_group_id": new_record.line_group_id})) != 0:
             raise Exception(
-                f"LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。"
+                f"LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。",
             )
 
         new_dict = copy.deepcopy(new_record.__dict__)

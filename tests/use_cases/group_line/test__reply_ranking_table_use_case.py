@@ -4,7 +4,6 @@ from line_models.event import Event
 from repositories import user_repository
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 
-
 dummy_event = Event(
     type="message",
     source_type="group",

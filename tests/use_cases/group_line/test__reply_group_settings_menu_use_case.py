@@ -94,7 +94,7 @@ def test_execute_no_settings():
         ("端数計算方法"),
         ("端数計算方法2"),
         ("チップ"),
-    ]
+    ],
 )
 def case1(request) -> Tuple[int]:
     return request.param

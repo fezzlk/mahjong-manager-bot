@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @lru_cache(maxsize=256)
 def _cached_get_profile_name(line_user_id: str) -> str:
-    """LINE API からプロフィール名を取得してキャッシュする（プロセス内で有効）"""
+    """LINE API からプロフィール名を取得してキャッシュする（プロセス内で有効）""" # noqa: RUF002
     profile = line_bot_api.get_profile(line_user_id)
     return profile.display_name
 
@@ -36,7 +36,7 @@ class UserService(IUserService):
         self,
         line_user_id: str,
     ) -> str:
-        """LINE Bot API から名前の取得を試みる（キャッシュあり）
+        """LINE Bot API から名前の取得を試みる(キャッシュあり)
 
         -> 失敗したら DB から名前の取得を試みる
         -> 失敗したら None を返す

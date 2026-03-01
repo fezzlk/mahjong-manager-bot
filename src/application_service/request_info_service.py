@@ -8,7 +8,7 @@ class RequestInfoService:
     """RequestInfoService
 
     メッセージ送信元の LINE ユーザー ID, トークルーム ID を管理。
-    threading.local() でスレッドごとに独立した状態を持つ（マルチスレッド対応）。
+    threading.local() でスレッドごとに独立した状態を持つ(マルチスレッド対応)。
     """
 
     def __init__(self):
@@ -96,8 +96,8 @@ class RequestInfoService:
         self.req_line_user_id = event.source.user_id
         if event.source.type == "room":
             self.req_line_group_id = event.source.room_id
-            import env_var
-            from application_service import reply_service
+            import env_var  # noqa: PLC0415
+            from application_service import reply_service  # noqa: PLC0415
 
             messages = [
                 "source id: room からのイベントを受け取りました。",
@@ -123,7 +123,7 @@ class RequestInfoService:
                     if hasattr(mentionee, "user_id") and mentionee.user_id is not None:
                         self.mention_line_ids.append(mentionee.user_id)
                     elif "@All" in self.message:
-                        from domain_service import user_group_service
+                        from domain_service import user_group_service  # noqa: PLC0415
 
                         user_groups = user_group_service.find_all_by_line_group_id(
                             self.req_line_group_id,
@@ -139,7 +139,7 @@ class RequestInfoService:
             return
 
         # コマンドエイリアスの確認
-        from repositories import command_alias_repository
+        from repositories import command_alias_repository  # noqa: PLC0415
 
         query = {
             "line_user_id": self.req_line_user_id,

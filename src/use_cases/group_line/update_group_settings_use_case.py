@@ -15,7 +15,7 @@ class UpdateGroupSettingsUseCase:
             try:
                 return int(v)
             except (ValueError, TypeError):
-                raise ValueError(f"[{v}] は整数として解釈できません")
+                raise ValueError(f"[{v}] は整数として解釈できません") from None
 
         try:
             if key == "レート":

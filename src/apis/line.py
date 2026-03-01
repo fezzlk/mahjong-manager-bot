@@ -8,6 +8,7 @@ from flask import (
     url_for,
 )
 from linebot.v3.webhook import WebhookHandler
+
 import env_var
 from application_models.page_contents import PageContents
 from middlewares import login_required

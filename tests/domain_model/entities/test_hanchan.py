@@ -23,7 +23,7 @@ def test_success():
     assert hanchan._id == 3
     assert hanchan.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
     assert hanchan.match_id == 1
-    assert hanchan.is_deleted == True
+    assert hanchan.is_deleted
     assert hanchan.raw_scores == {"a": 20000}
     assert hanchan.converted_scores == {"a": 20}
     assert hanchan.created_at == datetime(2022, 1, 2, 3, 4, 5)
@@ -44,7 +44,7 @@ def test_success_default():
     assert hanchan._id is None
     assert hanchan.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
     assert hanchan.match_id == 1
-    assert hanchan.is_deleted == False
+    assert not hanchan.is_deleted
     assert hanchan.raw_scores == {}
     assert hanchan.converted_scores == {}
     assert hanchan.created_at.date() == datetime.now().date()

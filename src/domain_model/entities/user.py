@@ -23,7 +23,7 @@ class User:
     updated_at: datetime = field(default_factory=datetime.now)
     _id: ObjectId = field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self):  # noqa: D105
         if self.mode not in UserMode._member_names_:
             raise ValueError(f"UserMode の値({self.mode})が不適切です。")
         if self.created_at is None:

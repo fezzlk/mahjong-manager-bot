@@ -25,7 +25,7 @@ def test_success():
     # Assert
     assert match._id == 1
     assert match.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
-    assert match.is_deleted == True
+    assert match.is_deleted
     assert match.chip_prices == {"a": 1}
     assert match.chip_scores == {"a": 2}
     assert match.sum_prices == {"a": 3}
@@ -48,7 +48,7 @@ def test_success_default():
     # Assert
     assert match._id is None
     assert match.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
-    assert match.is_deleted == False
+    assert not match.is_deleted
     assert match.chip_prices == {}
     assert match.chip_scores == {}
     assert match.sum_prices == {}

@@ -10,7 +10,6 @@ from use_cases.group_line.create_match_detail_graph_use_case import (
     CreateMatchDetailGraphUseCase,
 )
 
-
 dummy_event = Event(
     type="message",
     source_type="group",

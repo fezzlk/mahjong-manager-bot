@@ -3,6 +3,7 @@
 import logging
 import traceback
 from functools import wraps
+
 from linebot.v3.webhook import WebhookHandler
 from linebot.v3.webhooks import (
     FollowEvent,
@@ -16,12 +17,10 @@ from linebot.v3.webhooks import (
 )
 
 import env_var
-
 from application_service import (
     reply_service,
     request_info_service,
 )
-from messaging_api_setting import line_bot_api
 
 # ハンドラーを作成
 handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)

@@ -1,7 +1,7 @@
 import json
 import logging
 import threading
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from linebot.v3.exceptions import ApiException
 from linebot.v3.messaging import (
@@ -14,6 +14,7 @@ from linebot.v3.messaging import (
     TextMessage,
 )
 from linebot.v3.webhooks import Event
+
 import env_var
 from domain_model.constants import ROUNDING_METHOD_LIST
 from messaging_api_setting import line_bot_api
@@ -442,7 +443,7 @@ class ReplyService(IReplyService):
                     ReplyMessageRequest(
                         reply_token=event.reply_token,
                         messages=contents,
-                    )
+                    ),
                 )
             except ApiException as err:
                 logger.warning("リプライに失敗しました: %s", err)
@@ -480,7 +481,7 @@ class ReplyService(IReplyService):
             PushMessageRequest(
                 to=to,
                 messages=[TextMessage(text=message)],
-            )
+            ),
         )
 
     def reset(self) -> None:

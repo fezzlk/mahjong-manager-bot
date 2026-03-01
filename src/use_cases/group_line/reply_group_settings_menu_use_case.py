@@ -11,7 +11,7 @@ from domain_service import (
 class ReplyGroupSettingsMenuUseCase:
     def execute(self, body) -> None:
         settings = group_setting_service.find_or_create(
-            request_info_service.req_line_group_id
+            request_info_service.req_line_group_id,
         )
 
         if body == "":

@@ -182,7 +182,7 @@ def test_success_with_default_settings():
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
     matches = match_repository.find({"_id": 1})
-    assert matches[0].is_deleted == False
+    assert not matches[0].is_deleted
 
 
 def test_success():
@@ -231,7 +231,7 @@ def test_success():
     assert groups[0].active_match_id is None
 
     matches = match_repository.find({"_id": 1})
-    assert matches[0].is_deleted == False
+    assert not matches[0].is_deleted
     assert len(matches[0].chip_prices) == 5
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] == 0
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] == 0
@@ -355,7 +355,7 @@ def test_success_with_chip():
     assert groups[0].mode == GroupMode.wait.value
     assert groups[0].active_match_id is None
     matches = match_repository.find()
-    assert matches[0].is_deleted == False
+    assert not matches[0].is_deleted
     assert len(matches[0].chip_prices) == 5
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] == 150
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] == -150

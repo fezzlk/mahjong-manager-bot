@@ -17,7 +17,7 @@ class Hanchan:
     updated_at: datetime = field(default_factory=datetime.now)
     _id: ObjectId = field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self):  # noqa: D105
         if self.raw_scores is None:
             self.raw_scores = {}
         if self.converted_scores is None:

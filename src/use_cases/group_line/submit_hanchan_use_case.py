@@ -175,8 +175,8 @@ class SubmitHanchanUseCase:
 
         except Exception as err:
             logger.exception("submit_hanchan: DB書き込み中にエラーが発生しました")
-            import env_var
-            from application_service import reply_service as rs
+            import env_var  # noqa: PLC0415
+            from application_service import reply_service as rs  # noqa: PLC0415
             rs.reset()
             rs.add_message("半荘結果の保存中にエラーが発生しました。管理者に連絡してください。")
             rs.push_a_message(

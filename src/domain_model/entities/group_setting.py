@@ -14,12 +14,12 @@ from domain_model.constants import (
 )
 
 __all__ = [
-    "GroupSetting",
-    "RATE_LIST",
     "CHIP_RATE_LIST",
     "NUM_OF_PLAYERS_LIST",
     "RANKING_PRIZE_LIST",
+    "RATE_LIST",
     "ROUNDING_METHOD_LIST",
+    "GroupSetting",
     "RoundingMethod",
 ]
 
@@ -37,7 +37,7 @@ class GroupSetting:
     updated_at: datetime = field(default_factory=datetime.now)
     _id: ObjectId = field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self):  # noqa: D105
         if self.ranking_prize is None:
             self.ranking_prize = [20, 10, -10, -20]
         if self.created_at is None:

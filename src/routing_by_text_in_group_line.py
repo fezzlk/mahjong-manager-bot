@@ -4,17 +4,20 @@ from application_service import (
     reply_service,
     request_info_service,
 )
-
 from domain_model.entities.group import GroupMode
 from domain_service import (
     group_service,
 )
 from use_cases.common_line.reply_fortune_use_case import ReplyFortuneUseCase
-from use_cases.common_line.reply_rank_histogram_use_case import ReplyRankHistogramUseCase
+from use_cases.common_line.reply_rank_histogram_use_case import (
+    ReplyRankHistogramUseCase,
+)
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
-from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
 from use_cases.group_line.add_chip_by_text_use_case import AddChipByTextUseCase
-from use_cases.group_line.drop_hanchan_by_index_use_case import DropHanchanByIndexUseCase
+from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
+from use_cases.group_line.drop_hanchan_by_index_use_case import (
+    DropHanchanByIndexUseCase,
+)
 from use_cases.group_line.exit_use_case import ExitUseCase
 from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
@@ -36,7 +39,9 @@ from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableU
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
-from use_cases.group_line.update_group_settings_use_case import UpdateGroupSettingsUseCase
+from use_cases.group_line.update_group_settings_use_case import (
+    UpdateGroupSettingsUseCase,
+)
 
 
 class RCommands(Enum):
@@ -119,7 +124,7 @@ def routing_for_group_by_command(command):
     def _tobi():
         SubmitHanchanUseCase().execute(tobashita_player_id=body)
 
-    _DISPATCH = {
+    dispatch = {
         RCommands.input.name: lambda: StartInputUseCase().execute(),
         RCommands.start.name: lambda: ReplyStartMenuUseCase().execute(),
         RCommands.mode.name: lambda: ReplyGroupModeUseCase().execute(),
@@ -147,6 +152,6 @@ def routing_for_group_by_command(command):
         # intentionally not yet implemented — stub commands reserved for future use
     }
 
-    handler = _DISPATCH.get(command)
+    handler = dispatch.get(command)
     if handler:
         handler()

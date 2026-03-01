@@ -1,9 +1,12 @@
 import io
 import logging
+import os
+from pathlib import Path
 from typing import Dict, List, Tuple
 
-import matplotlib
-matplotlib.use("agg")
+import matplotlib as mpl
+
+mpl.use("agg")
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
@@ -51,13 +54,12 @@ class GraphService(IGraphService):
         # GCS が設定されている場合は GCS にアップロード、なければローカル保存
         if env_var.GCS_BUCKET_NAME:
             return self._upload_to_gcs(buf, upload_file_path)
-        else:
-            return self._save_locally(buf, upload_file_path)
+        return self._save_locally(buf, upload_file_path)
 
     def _upload_to_gcs(self, buf: io.BytesIO, upload_file_path: str) -> Tuple[str, str]:
         """Google Cloud Storage に画像をアップロードし公開 URL を返す"""
         try:
-            from google.cloud import storage
+            from google.cloud import storage  # noqa: PLC0415
 
             blob_name = f"uploads{upload_file_path}"
             client = storage.Client()
@@ -71,11 +73,10 @@ class GraphService(IGraphService):
             return (None, f"対戦履歴の画像アップロードに失敗しました: {err}")
 
     def _save_locally(self, buf: io.BytesIO, upload_file_path: str) -> Tuple[str, str]:
-        """ローカルファイルシステムに画像を保存する（開発環境用）"""
+        """ローカルファイルシステムに画像を保存する（開発環境用）""" # noqa: RUF002
         try:
             local_path = f"src/uploads{upload_file_path}"
-            import os
-            os.makedirs(os.path.dirname(local_path), exist_ok=True)
+            Path(os.path.dirname(local_path)).mkdir(parents=True, exist_ok=True)
             with open(local_path, "wb") as f:
                 f.write(buf.read())
             path = f"uploads{upload_file_path}"

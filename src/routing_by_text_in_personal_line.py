@@ -9,14 +9,18 @@ from domain_service import user_service
 from use_cases.common_line.reply_fortune_use_case import ReplyFortuneUseCase
 from use_cases.common_line.reply_fortune_yaku_use_case import ReplyFortuneYakuUseCase
 from use_cases.common_line.reply_github_url_use_case import ReplyGitHubUrlUseCase
-from use_cases.common_line.reply_rank_histogram_use_case import ReplyRankHistogramUseCase
+from use_cases.common_line.reply_rank_histogram_use_case import (
+    ReplyRankHistogramUseCase,
+)
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
 from use_cases.personal_line.reply_history_use_case import ReplyHistoryUseCase
 from use_cases.personal_line.reply_token_use_case import ReplyTokenUseCase
 from use_cases.personal_line.reply_url_use_case import ReplyUrlUseCase
 from use_cases.personal_line.reply_user_help_use_case import ReplyUserHelpUseCase
 from use_cases.personal_line.reply_user_mode_use_case import ReplyUserModeUseCase
-from use_cases.personal_line.request_link_line_web_use_case import RequestLinkLineWebUseCase
+from use_cases.personal_line.request_link_line_web_use_case import (
+    RequestLinkLineWebUseCase,
+)
 from use_cases.personal_line.user_exit_command_use_case import UserExitCommandUseCase
 
 
@@ -81,7 +85,7 @@ def routing_by_command(command: str):
     """Routing by command for personal chat using dispatch table"""
     req_line_user_id = request_info_service.req_line_user_id
 
-    _DISPATCH = {
+    dispatch = {
         UCommands.mode.name: lambda: ReplyUserModeUseCase().execute(),
         UCommands.exit.name: lambda: UserExitCommandUseCase().execute(req_line_user_id),
         UCommands.payment.name: lambda: reply_service.add_message("支払い機能は開発中です。"),
@@ -98,6 +102,6 @@ def routing_by_command(command: str):
         UCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
     }
 
-    handler = _DISPATCH.get(command)
+    handler = dispatch.get(command)
     if handler:
         handler()

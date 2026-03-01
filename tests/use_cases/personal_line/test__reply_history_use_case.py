@@ -195,7 +195,7 @@ def test_execute(mocker):
     # reply_service: images
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt  # noqa: PLC0415
 
     fig = plt.figure()
     mocker.patch.object(
@@ -253,7 +253,7 @@ def test_execute_with_range(mocker, case2):
     # reply_service: images, texts
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt  # noqa: PLC0415
 
     fig = plt.figure()
     mocker.patch.object(
@@ -301,7 +301,7 @@ def test_fail_file_upload(mocker):
     # reply_service: images, texts
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt  # noqa: PLC0415
 
     fig = plt.figure()
     mock = mocker.patch.object(

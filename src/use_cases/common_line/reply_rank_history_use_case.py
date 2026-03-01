@@ -1,7 +1,10 @@
 from itertools import groupby
+
 import matplotlib as mpl
+
 mpl.use("agg")
 import matplotlib.pyplot as plt
+
 import env_var
 from application_service import (
     message_service,

@@ -1,6 +1,7 @@
 from typing import Dict
 
 from bson.objectid import ObjectId
+
 import env_var
 from application_service import (
     graph_service,

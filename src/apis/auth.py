@@ -10,6 +10,7 @@ from flask import (
 )
 from flask_jwt_extended import create_access_token
 from linebot.v3.webhook import WebhookHandler
+
 import env_var
 from oauth_client import oauth
 from repositories import user_repository, web_user_repository

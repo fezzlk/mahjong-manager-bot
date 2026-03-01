@@ -41,7 +41,7 @@ class FinishMatchUseCase:
             return
 
         settings = group_setting_service.find_or_create(
-            request_info_service.req_line_group_id
+            request_info_service.req_line_group_id,
         )
         chip_rate = settings.chip_rate
         if (
@@ -51,7 +51,7 @@ class FinishMatchUseCase:
             group.mode = GroupMode.chip_input.value
             group_service.update(group)
             reply_service.add_message(
-                "チップの増減数を入力してください。完了したら「_chip_ok」と入力してください。"
+                "チップの増減数を入力してください。完了したら「_chip_ok」と入力してください。",
             )
             return
 

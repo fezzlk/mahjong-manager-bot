@@ -1,4 +1,5 @@
 from typing import Dict
+
 import env_var
 from application_service import (
     graph_service,

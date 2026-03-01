@@ -1,7 +1,7 @@
+from _web_test_utils import create_app, request_context
+
 from application_models.page_contents import PageContents, RegisterFormData
 from use_cases.web.view_register_use_case import ViewRegisterUseCase
-
-from _web_test_utils import create_app, request_context
 
 
 def test_execute_sets_form_defaults():

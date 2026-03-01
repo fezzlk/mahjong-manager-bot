@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Optional, Union
+from typing import Optional
 
 from domain_model.entities.group import Group, GroupMode
 from repositories import group_repository

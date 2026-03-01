@@ -213,7 +213,7 @@ def test_success():
     hanchan = hanchan_repository.find()[0]
     for k, v in expected_c_scores.items():
         assert hanchan.converted_scores[k] == v
-    assert hanchan.is_deleted == False
+    assert not hanchan.is_deleted
     um = user_match_repository.find(
         {"user_id": {"$in": [1, 2, 3, 4]}},
     )

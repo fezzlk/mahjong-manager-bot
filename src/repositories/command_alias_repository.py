@@ -5,7 +5,9 @@ from typing import Dict, List, Tuple
 from pymongo import ASCENDING
 
 from domain_model.entities.command_alias import CommandAlias
-from domain_model.i_repositories.i_command_alias_repository import ICommandAliasRepository
+from domain_model.i_repositories.i_command_alias_repository import (
+    ICommandAliasRepository,
+)
 from mongo_client import command_aliases_collection
 
 

@@ -1,4 +1,5 @@
 import copy
+from datetime import datetime
 from typing import Dict, List, Tuple
 
 from pymongo import ASCENDING
@@ -53,7 +54,6 @@ class UserMatchRepository(IUserMatchRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
-        from datetime import datetime
         new_values["updated_at"] = datetime.now()
         result = user_matches_collection.update_one(query, {"$set": new_values})
         return result.matched_count

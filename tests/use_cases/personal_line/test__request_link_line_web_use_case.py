@@ -10,7 +10,9 @@ from domain_model.entities.user import User, UserMode
 from domain_model.entities.web_user import WebUser
 from line_models.event import Event
 from repositories import web_user_repository
-from use_cases.personal_line.request_link_line_web_use_case import RequestLinkLineWebUseCase
+from use_cases.personal_line.request_link_line_web_use_case import (
+    RequestLinkLineWebUseCase,
+)
 
 dummy_user = User(
     line_user_name="test_user1",

@@ -13,7 +13,9 @@ from repositories import (
     hanchan_repository,
     match_repository,
 )
-from use_cases.group_line.drop_hanchan_by_index_use_case import DropHanchanByIndexUseCase
+from use_cases.group_line.drop_hanchan_by_index_use_case import (
+    DropHanchanByIndexUseCase,
+)
 
 dummy_event = Event(
     type="message",

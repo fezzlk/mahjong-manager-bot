@@ -1,5 +1,4 @@
-"""
-DB-01 migration: status:int → is_deleted:bool
+"""DB-01 migration: status:int → is_deleted:bool
 
 Run once after deploying the code change.
 
@@ -11,8 +10,8 @@ Run once after deploying the code change.
 Usage:
   PYTHONPATH=src python scripts/migrate_status_to_is_deleted.py
 """
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 

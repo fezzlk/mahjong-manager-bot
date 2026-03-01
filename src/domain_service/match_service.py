@@ -25,7 +25,7 @@ class MatchService(IMatchService):
         matches = match_repository.find(
             {
                 "_id": match_id,
-            }
+            },
         )
 
         if len(matches) == 0:
@@ -77,7 +77,7 @@ class MatchService(IMatchService):
         )
 
     def find_all_by_ids_and_line_group_ids(
-        self, ids: List[ObjectId], line_group_ids: List[str]
+        self, ids: List[ObjectId], line_group_ids: List[str],
     ) -> List[Match]:
         return match_repository.find(
             query={"_id": {"$in": ids}, "line_group_id": {"$in": line_group_ids}},

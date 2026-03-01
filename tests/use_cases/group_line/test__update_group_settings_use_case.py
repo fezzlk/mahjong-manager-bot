@@ -7,7 +7,9 @@ from application_service import (
 from domain_model.entities.group_setting import GroupSetting
 from line_models.event import Event
 from repositories import group_setting_repository
-from use_cases.group_line.update_group_settings_use_case import UpdateGroupSettingsUseCase
+from use_cases.group_line.update_group_settings_use_case import (
+    UpdateGroupSettingsUseCase,
+)
 
 dummy_event = Event(
     type="message",
@@ -240,7 +242,7 @@ def test_execute_invalid_key():
         ("飛び賞", "1", "[飛び賞]を[1]に変更できません"),
         ("人数", "2", "[人数]を[2]に変更できません"),
         ("端数計算方法", "5", "[端数計算方法]を[5]に変更できません"),
-    ]
+    ],
 )
 def text_case1(request):
     return request.param

@@ -28,7 +28,7 @@ def test_ok_hit_hanchan(mocker):
     assert isinstance(result, Hanchan)
     assert result.match_id == 1
     assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
-    assert result.is_deleted == False
+    assert not result.is_deleted
     mock_find.assert_called_once_with({"_id": 1})
 
 

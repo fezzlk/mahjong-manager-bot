@@ -1,6 +1,7 @@
 import logging
 
 from pymongo import MongoClient
+
 import env_var
 
 logger = logging.getLogger(__name__)
@@ -12,7 +13,7 @@ if "firestore.goog" in env_var.DATABASE_URL:
     if missing_params:
         raise RuntimeError(
             "DATABASE_URL is missing required params for Firestore MongoDB compatibility: "
-            + ", ".join(missing_params)
+            + ", ".join(missing_params),
         )
 
 mongo_client = MongoClient(env_var.DATABASE_URL)

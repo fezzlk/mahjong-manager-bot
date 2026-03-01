@@ -8,7 +8,6 @@ from use_cases.group_line.add_hanchan_by_points_text_use_case import (
     AddHanchanByPointsTextUseCase,
 )
 
-
 dummy_event = Event(
     type="message",
     source_type="group",

@@ -1,8 +1,8 @@
+from _web_test_utils import create_app, request_context
+
 from domain_model.entities.hanchan import Hanchan
 from repositories import hanchan_repository
 from use_cases.web.update_hanchan_for_web_use_case import UpdateHanchanForWebUseCase
-
-from _web_test_utils import create_app, request_context
 
 
 def test_execute_updates_hanchan_fields():
@@ -61,4 +61,4 @@ def test_execute_with_missing_scores_uses_empty():
 
     # Assert
     updated = hanchan_repository.find({"_id": created._id})[0]
-    assert updated.is_deleted == False
+    assert not updated.is_deleted

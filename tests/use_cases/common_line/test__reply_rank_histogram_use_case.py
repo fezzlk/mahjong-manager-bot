@@ -20,7 +20,9 @@ from repositories import (
     user_hanchan_repository,
     user_repository,
 )
-from use_cases.common_line.reply_rank_histogram_use_case import ReplyRankHistogramUseCase
+from use_cases.common_line.reply_rank_histogram_use_case import (
+    ReplyRankHistogramUseCase,
+)
 
 dummy_users = [
     User(
