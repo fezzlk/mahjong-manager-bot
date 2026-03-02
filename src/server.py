@@ -73,12 +73,28 @@ from apis.api import api_blueprint  # noqa: E402
 
 app.register_blueprint(api_blueprint)
 
+from apis.line import line_blueprint  # noqa: E402
+
+app.register_blueprint(line_blueprint)
+
+from apis.group import group_blueprint  # noqa: E402
+
+app.register_blueprint(group_blueprint)
+
+from apis.config import config_blueprint  # noqa: E402
+
+app.register_blueprint(config_blueprint)
+
+from apis.web_user import web_user_blueprint  # noqa: E402
+
+app.register_blueprint(web_user_blueprint)
+
 
 # ===== React SPA フォールバック =====
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve_spa(path: str):
-    """React の index.html を返す（/api, /auth, /callback, /health, /uploads は除外済み）"""
+    """React の index.html を返す(/api, /auth, /callback, /health, /uploads は除外済み)"""
     from flask import send_from_directory  # noqa: PLC0415
 
     index = _FRONTEND_DIST / "index.html"

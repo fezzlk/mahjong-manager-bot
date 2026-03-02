@@ -50,7 +50,7 @@ def get_matches(web_user, group_id):
 @api_blueprint.route("/matches/<match_id>", methods=["GET"])
 @require_web_user
 def get_match(web_user, match_id):
-    """試合詳細（半荘一覧含む）"""
+    """試合詳細(半荘一覧含む)"""
     from bson.objectid import ObjectId  # noqa: PLC0415
 
     try:

@@ -81,7 +81,7 @@ def get_ranking(web_user, group_id):
 @api_blueprint.route("/groups/<group_id>/stats", methods=["GET"])
 @require_web_user
 def get_group_stats(web_user, group_id):
-    """グループ統計（グラフ用データ）"""
+    """グループ統計(グラフ用データ)"""
     from bson.objectid import ObjectId  # noqa: PLC0415
 
     try:
