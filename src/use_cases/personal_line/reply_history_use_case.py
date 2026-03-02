@@ -6,8 +6,8 @@ mpl.use("agg")
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
-import env_var
 from application_service import (
+    graph_service,
     message_service,
     reply_service,
     request_info_service,
@@ -139,14 +139,9 @@ class ReplyHistoryUseCase:
         plt.gca().spines["right"].set_visible(False)
         plt.gca().spines["top"].set_visible(False)
 
-        try:
-            fig.savefig(f"src/uploads/personal_history/{req_line_id}.png")
-        except FileNotFoundError:
+        path = f"/personal_history/{req_line_id}.png"
+        url, err = graph_service.save_figure(fig, path)
+        if err:
             reply_service.create_and_reply_file_upload_error("対戦履歴", req_line_id)
             return
-        plt.clf()
-        plt.close()
-
-        path = f"uploads/personal_history/{req_line_id}.png"
-        image_url = f"{env_var.SERVER_URL}{path}"
-        reply_service.add_image(image_url)
+        reply_service.add_image(url)

@@ -1,6 +1,7 @@
 """user"""
 
 import logging
+import time
 from functools import lru_cache
 
 from domain_model.entities.user import User, UserMode
@@ -11,10 +12,12 @@ from .interfaces.i_user_service import IUserService
 
 logger = logging.getLogger(__name__)
 
+_PROFILE_CACHE_TTL = 3600  # 1時間
+
 
 @lru_cache(maxsize=256)
-def _cached_get_profile_name(line_user_id: str) -> str:
-    """LINE API からプロフィール名を取得してキャッシュする（プロセス内で有効）""" # noqa: RUF002
+def _cached_get_profile_name(line_user_id: str, _hour_bucket: int = 0) -> str:
+    """LINE API からプロフィール名を取得してキャッシュする（1時間ごとにローテート）""" # noqa: RUF002
     profile = line_bot_api.get_profile(line_user_id)
     return profile.display_name
 
@@ -42,7 +45,8 @@ class UserService(IUserService):
         -> 失敗したら None を返す
         """
         try:
-            return _cached_get_profile_name(line_user_id)
+            hour_bucket = int(time.time() // _PROFILE_CACHE_TTL)
+            return _cached_get_profile_name(line_user_id, hour_bucket)
 
         except Exception:
             target = user_repository.find(

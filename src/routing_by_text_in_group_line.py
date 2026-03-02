@@ -152,6 +152,8 @@ def routing_for_group_by_command(command):
         # intentionally not yet implemented — stub commands reserved for future use
     }
 
-    handler = dispatch.get(command)
-    if handler:
-        handler()
+    action = dispatch.get(command)
+    if action:
+        action()
+    elif command in _VALID_COMMANDS:
+        reply_service.add_message("この機能は現在開発中です。")

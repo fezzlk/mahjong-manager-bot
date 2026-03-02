@@ -4,8 +4,8 @@ mpl.use("agg")
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
-import env_var
 from application_service import (
+    graph_service,
     message_service,
     reply_service,
     request_info_service,
@@ -59,28 +59,12 @@ class ReplyRankHistogramUseCase:
         plt.legend()
 
         path = f"/rank_histogram/{req_line_user_id}.png"
-        try:
-            fig.savefig(f"src/uploads{path}")
-        except FileNotFoundError:
-            reply_service.reset()
-            reply_service.add_message(text="システムエラーが発生しました。")
-            messages = [
-                "順位履歴の画像アップロードに失敗しました",
-                "送信者: "
-                + (
-                    user_service.get_name_by_line_user_id(
-                        request_info_service.req_line_user_id,
-                    )
-                    or request_info_service.req_line_user_id
-                ),
-            ]
-            reply_service.push_a_message(
-                to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message="\n".join(messages),
+        url, err = graph_service.save_figure(fig, path)
+        if err:
+            sender = (
+                user_service.get_name_by_line_user_id(req_line_user_id)
+                or req_line_user_id
             )
+            reply_service.create_and_reply_file_upload_error("順位履歴", sender)
             return
-
-        plt.clf()
-        plt.close()
-
-        reply_service.add_image(f"{env_var.SERVER_URL}/uploads{path}")
+        reply_service.add_image(url)

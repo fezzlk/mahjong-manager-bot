@@ -56,6 +56,22 @@ class GraphService(IGraphService):
             return self._upload_to_gcs(buf, upload_file_path)
         return self._save_locally(buf, upload_file_path)
 
+    def save_figure(self, fig, upload_file_path: str) -> Tuple[str, str]:
+        """Matplotlib Figure を GCS またはローカルに保存し (url, err) を返す"""
+        buf = io.BytesIO()
+        try:
+            fig.savefig(buf, format="png")
+        except Exception as err:
+            logger.exception("グラフ画像の生成に失敗しました")
+            return (None, f"グラフ画像の生成に失敗しました: {err}")
+        finally:
+            plt.clf()
+            plt.close()
+        buf.seek(0)
+        if env_var.GCS_BUCKET_NAME:
+            return self._upload_to_gcs(buf, upload_file_path)
+        return self._save_locally(buf, upload_file_path)
+
     def _upload_to_gcs(self, buf: io.BytesIO, upload_file_path: str) -> Tuple[str, str]:
         """Google Cloud Storage に画像をアップロードし公開 URL を返す"""
         try:

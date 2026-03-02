@@ -1,5 +1,7 @@
 from typing import Dict, List, Tuple
 
+from domain_model.constants import RoundingMethod
+
 from .interfaces.i_calculate_service import ICalculateService
 
 
@@ -52,16 +54,16 @@ class CalculateService(ICalculateService):
         padding = 0
         adjuster = 100000
         # 五捨六入 (index=1)
-        if rounding_method == 1:
+        if rounding_method == RoundingMethod.go_san_roku:
             padding = 400
         # 四捨五入 (index=2)
-        elif rounding_method == 2:
+        elif rounding_method == RoundingMethod.go_sha_go_nyu:
             padding = 500
         # 切り捨て (index=3)
-        elif rounding_method == 3:
+        elif rounding_method == RoundingMethod.floor:
             padding = 0
         # 切り上げ (index=4)
-        elif rounding_method == 4:
+        elif rounding_method == RoundingMethod.ceil:
             padding = 999
         # 3万点以下切り上げ/以上切り捨て (index=0 or デフォルト)
         else:

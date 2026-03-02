@@ -1,6 +1,8 @@
 import logging
 from typing import Dict, Optional
 
+import pymongo.errors
+
 from application_service import (
     calculate_service,
     message_service,
@@ -173,7 +175,7 @@ class SubmitHanchanUseCase:
                     ),
                 )
 
-        except Exception as err:
+        except pymongo.errors.PyMongoError as err:
             logger.exception("submit_hanchan: DB書き込み中にエラーが発生しました")
             import env_var  # noqa: PLC0415
             from application_service import reply_service as rs  # noqa: PLC0415
