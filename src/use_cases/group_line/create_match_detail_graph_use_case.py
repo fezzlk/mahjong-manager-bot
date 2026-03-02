@@ -36,13 +36,14 @@ class CreateMatchDetailGraphUseCase:
         if err_message is not None:
             reply_service.reset()
             reply_service.add_message(text="システムエラーが発生しました。")
-            messages = [
-                err_message,
-                "送信者: " + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
-            ]
-            reply_service.push_a_message(
-                to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message="\n".join(messages),
-            )
+            if env_var.SERVER_ADMIN_LINE_USER_ID:
+                messages = [
+                    err_message,
+                    "送信者: " + (user_service.get_name_by_line_user_id(request_info_service.req_line_user_id) or request_info_service.req_line_user_id),
+                ]
+                reply_service.push_a_message(
+                    to=env_var.SERVER_ADMIN_LINE_USER_ID,
+                    message="\n".join(messages),
+                )
             return None
         return image_url

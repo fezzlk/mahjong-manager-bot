@@ -158,4 +158,4 @@ jobs:
           FLASK_SECRET_KEY: ci-test-secret
           JWT_SECRET_KEY: ci-test-jwt-secret
         run: |
-          pytest --cov=src tests/
+          pytest --cov=src tests/ -v --tb=short 2>&1 | tail -100

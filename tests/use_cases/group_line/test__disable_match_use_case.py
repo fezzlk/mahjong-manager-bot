@@ -1,5 +1,4 @@
-"""
-DisableMatchUseCase はソースが削除済みのため、このテストファイルはスキップします。
+"""DisableMatchUseCase はソースが削除済みのため、このテストファイルはスキップします。
 
 元の use case (use_cases/group_line/disable_match_use_case.py) は
 別の use case に統合されて削除されました。

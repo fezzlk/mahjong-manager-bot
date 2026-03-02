@@ -86,6 +86,29 @@ def migrate():
     return "done"
 
 
+@views_blueprint.route("/auth/test_login")
+def test_login():
+    """E2E テスト専用ログインエンドポイント (production では無効)。
+
+    セッションに login_user_id をセットし、next パラメータのページへリダイレクト。
+    """
+    if os.environ.get("FLASK_ENV") == "production":
+        abort(404)
+    from domain_model.entities.web_user import WebUser  # noqa: PLC0415
+    from repositories import web_user_repository  # noqa: PLC0415
+
+    existing = web_user_repository.find({"user_code": "e2e_test_user"})
+    if existing:
+        web_user = existing[0]
+    else:
+        web_user = web_user_repository.create(
+            WebUser(user_code="e2e_test_user", name="E2E Test User", _id=9999),
+        )
+    session["login_user_id"] = web_user._id
+    next_url = request.args.get("next", "/legacy/")
+    return redirect(next_url)
+
+
 @views_blueprint.route("/test_personal_line", methods=["POST"])
 def test_personal_line():
     if os.environ.get("FLASK_ENV") == "production":
