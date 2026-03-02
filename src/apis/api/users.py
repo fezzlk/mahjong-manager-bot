@@ -1,6 +1,7 @@
 from flask import jsonify, make_response
 
-from repositories import user_repository, web_user_repository
+from repositories import web_user_repository
+
 from . import api_blueprint
 from ._auth import require_web_user
 
@@ -42,7 +43,9 @@ def get_user(web_user, user_id):
 @require_web_user
 def get_user_stats(web_user, user_id):
     """ユーザー個人統計。user_id='me' の場合はログインユーザー。"""
-    from repositories import user_hanchan_repository, hanchan_repository  # noqa: PLC0415
+    from repositories import (  # noqa: PLC0415
+        user_hanchan_repository,
+    )
 
     if user_id == "me":
         line_user_id = web_user.linked_line_user_id

@@ -2,11 +2,10 @@ from flask import jsonify, make_response
 
 from repositories import (
     group_repository,
-    match_repository,
     user_group_repository,
-    user_hanchan_repository,
     user_repository,
 )
+
 from . import api_blueprint
 from ._auth import assert_group_member, require_web_user
 

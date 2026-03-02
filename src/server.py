@@ -69,23 +69,23 @@ from apis.auth import auth_blueprint
 
 app.register_blueprint(auth_blueprint)
 
-from apis.api import api_blueprint  # noqa: E402
+from apis.api import api_blueprint
 
 app.register_blueprint(api_blueprint)
 
-from apis.line import line_blueprint  # noqa: E402
+from apis.line import line_blueprint
 
 app.register_blueprint(line_blueprint)
 
-from apis.group import group_blueprint  # noqa: E402
+from apis.group import group_blueprint
 
 app.register_blueprint(group_blueprint)
 
-from apis.config import config_blueprint  # noqa: E402
+from apis.config import config_blueprint
 
 app.register_blueprint(config_blueprint)
 
-from apis.web_user import web_user_blueprint  # noqa: E402
+from apis.web_user import web_user_blueprint
 
 app.register_blueprint(web_user_blueprint)
 

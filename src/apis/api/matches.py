@@ -7,6 +7,7 @@ from repositories import (
     user_hanchan_repository,
     user_repository,
 )
+
 from . import api_blueprint
 from ._auth import assert_group_member, require_web_user
 
