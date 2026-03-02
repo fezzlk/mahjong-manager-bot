@@ -1,3 +1,4 @@
+import unittest.mock as mock_module
 from unittest.mock import MagicMock
 
 from application_service import reply_service, request_info_service
@@ -67,8 +68,8 @@ def test_execute_with_mention_all_and_invalid_date():
 
 
 def test_success_fail_savefig(mocker):
-    """
-    ユーザーが登録済みで日付フィルターなし → 画像生成まで到達するが、
+    """ユーザーが登録済みで日付フィルターなし → 画像生成まで到達するが。
+
     保存先ディレクトリが存在しない場合は FileNotFoundError が捕捉されて
     システムエラーメッセージが返る。
     PIL・LINE API・urllib3 をモックして外部依存を排除する。
@@ -78,22 +79,22 @@ def test_success_fail_savefig(mocker):
     mock_img.size = (1024, 768)
     mock_img.save.side_effect = FileNotFoundError("No such file or directory")
 
-    mock_Image = MagicMock()
-    mock_Image.new.return_value = mock_img
-    mock_Image.open.return_value = mock_img
-    mock_Image.alpha_composite.return_value = mock_img
+    mock_image = MagicMock()
+    mock_image.new.return_value = mock_img
+    mock_image.open.return_value = mock_img
+    mock_image.alpha_composite.return_value = mock_img
     mocker.patch(
         "use_cases.group_line.reply_ranking_table_use_case.Image",
-        mock_Image,
+        mock_image,
     )
 
     mock_draw = MagicMock()
     mock_draw.textbbox.return_value = (0, 0, 100, 20)
-    mock_ImageDraw = MagicMock()
-    mock_ImageDraw.Draw.return_value = mock_draw
+    mock_image_draw = MagicMock()
+    mock_image_draw.Draw.return_value = mock_draw
     mocker.patch(
         "use_cases.group_line.reply_ranking_table_use_case.ImageDraw",
-        mock_ImageDraw,
+        mock_image_draw,
     )
     mocker.patch(
         "use_cases.group_line.reply_ranking_table_use_case.ImageFont",
@@ -120,7 +121,6 @@ def test_success_fail_savefig(mocker):
     )
 
     # Mock built-in open for profile image file write only at the module level
-    import unittest.mock as mock_module
     mocker.patch(
         "use_cases.group_line.reply_ranking_table_use_case.open",
         mock_module.mock_open(),
