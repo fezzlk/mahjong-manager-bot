@@ -8,6 +8,7 @@ from .user_hanchan_repository import UserHanchanRepository
 from .user_match_repository import UserMatchRepository
 from .user_repository import UserRepository
 from .web_user_repository import WebUserRepository
+from .yakuman_user_repository import YakumanUserRepository
 
 command_alias_repository = CommandAliasRepository()
 group_setting_repository = GroupSettingRepository()
@@ -19,3 +20,4 @@ match_repository = MatchRepository()
 user_match_repository = UserMatchRepository()
 user_hanchan_repository = UserHanchanRepository()
 group_repository = GroupRepository()
+yakuman_user_repository = YakumanUserRepository()

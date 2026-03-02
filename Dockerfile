@@ -1,28 +1,45 @@
+# ============================================================
+# Stage 1: React フロントエンドをビルド
+# ============================================================
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+# 依存関係を先にコピーしてインストール（キャッシュ活用）
+COPY frontend/package*.json ./
+RUN npm ci
+
+# ソースをコピーしてビルド
+COPY frontend/ ./
+RUN npm run build
+
+# ============================================================
+# Stage 2: Python / Flask アプリ
+# ============================================================
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Pythonの出力バッファを無効化（ログがリアルタイムに出るように）
 ENV PYTHONUNBUFFERED=1
 
-# システムパッケージの更新とフォントのインストール
+# システムパッケージ（日本語フォント）
 RUN apt-get update && apt-get install -y \
     fonts-noto-cjk \
     && rm -rf /var/lib/apt/lists/*
 
-# 依存関係を先にコピーしてインストール（キャッシュ最適化）
+# Python 依存関係
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # アプリのソースをコピー
 COPY . .
 
+# Stage 1 で生成した React ビルド成果物をコピー
+# （COPY . . で古い dist が入っていても上書きして最新に保つ）
+COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+
 ENV FLASK_APP=src/server
 
-# Cloud Run expects the container to listen on $PORT (default 8080).
 EXPOSE 8080
 
-# threading.local() でスレッドセーフなリクエスト状態管理を実装済みのため
-# --workers=1 --threads=8 でマルチスレッド処理を有効化
-# (Cloud Run では 1 インスタンス = 1 プロセスが推奨)
-CMD ["sh","-c","gunicorn src.server:app --bind 0.0.0.0:${PORT:-8080} --workers=1 --threads=8 --timeout=60 --log-file=-"]
+CMD ["sh", "-c", "gunicorn src.server:app --bind 0.0.0.0:${PORT:-8080} --workers=1 --threads=8 --timeout=60 --log-file=-"]

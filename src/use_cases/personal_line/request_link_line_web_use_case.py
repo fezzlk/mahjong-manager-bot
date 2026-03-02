@@ -40,7 +40,7 @@ class RequestLinkLineWebUseCase:
                 "_id": web_users[0]._id,
             },
             new_values={
-                "line_user_id": request_info_service.req_line_user_id,
+                "linked_line_user_id": request_info_service.req_line_user_id,
             },
         )
 

@@ -1,4 +1,19 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules   # ホストの node_modules を上書きしない
+    environment:
+      - VITE_FLASK_URL=http://flask_app:5000
+    depends_on:
+      - flask_app
+
   flask_app:
     build: .
     container_name: flask_app

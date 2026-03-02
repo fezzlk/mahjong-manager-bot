@@ -80,3 +80,7 @@ requirements.in
 tmp/
 temp/
 uploads/
+
+# Frontend (マルチステージビルドで Stage 1 が生成するため除外)
+frontend/node_modules/
+frontend/dist/

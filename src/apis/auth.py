@@ -75,5 +75,9 @@ def google_authorize():
     session["id_token"] = token["id_token"]
     session["login_user_id"] = web_user._id
 
+    # JWT を発行してフロントエンドへ渡す
+    jwt_token = create_access_token(identity=str(web_user._id))
     redirect_to = session.pop("next_page_url", "/")
-    return redirect(redirect_to)
+    # React SPA にトークンをクエリパラメータで渡す
+    separator = "&" if "?" in redirect_to else "?"
+    return redirect(f"{redirect_to}{separator}token={jwt_token}")

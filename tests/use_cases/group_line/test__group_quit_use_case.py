@@ -37,3 +37,18 @@ def test_fail_no_line_group_id():
         # Assert
         groups = group_repository.find()
         assert len(groups) == 0
+
+
+def test_success():
+    """グループ退出: req_line_group_id に対応するグループが削除される"""
+    # Arrange
+    use_case = GroupQuitUseCase()
+    group_repository.create(dummy_group)
+    request_info_service.set_req_info(event=dummy_event)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
+    assert len(groups) == 0

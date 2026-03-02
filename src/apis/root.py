@@ -9,7 +9,6 @@ from flask import (
     request,
     send_from_directory,
     session,
-    url_for,
 )
 from linebot.v3.exceptions import InvalidSignatureError
 
@@ -27,7 +26,7 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 
-@views_blueprint.route("/")
+@views_blueprint.route("/legacy/")
 def index():
     page_contents = PageContents(session, request)
     if request.args.get("message") is not None:
@@ -56,7 +55,7 @@ def download_file(filename: str):
     )
 
 
-@views_blueprint.route("/login", methods=["GET"])
+@views_blueprint.route("/legacy/login", methods=["GET"])
 def view_login():
     page_contents = PageContents(session, request)
     return render_template(
@@ -68,7 +67,7 @@ def view_login():
 @views_blueprint.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("views_blueprint.view_login"))
+    return redirect("/login")
 
 
 @views_blueprint.route("/create_dummy", methods=["POST"])
@@ -95,7 +94,7 @@ def test_personal_line():
         reply_service,
         request_info_service,
     )
-    from line_models import Event  # noqa: PLC0415
+    from line_models.event import Event  # noqa: PLC0415
 
     user_id = request.form.get("user_id")
     text = request.form.get("text")
