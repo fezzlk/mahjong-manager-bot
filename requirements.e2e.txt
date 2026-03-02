@@ -1,0 +1,5 @@
+# E2E テスト用追加ライブラリ (requirements.txt に含めず pip-compile 管理外)
+# インストール: pip install -r requirements.txt -r requirements.e2e.txt
+#               playwright install chromium
+playwright>=1.40.0
+pytest-playwright>=0.4.0

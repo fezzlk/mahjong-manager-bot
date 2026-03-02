@@ -148,3 +148,6 @@ src/uploads/
 # Frontend
 frontend/node_modules/
 frontend/dist/
+
+# pip-compile バックアップ (CI で自動生成される一時ファイル)
+requirements*.bak

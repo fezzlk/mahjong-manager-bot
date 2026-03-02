@@ -98,7 +98,7 @@ def test_full_game_flow():
     _set_group_request()
     with patch(
         "application_service.graph_service.GraphService.create_users_point_plot_graph_url",
-        return_value=(None, "test_mock"),
+        return_value=(None, None),
     ):
         FinishMatchUseCase().execute()
 

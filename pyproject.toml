@@ -84,3 +84,9 @@ ignore = [
     "TRY004",
     "TRY300",
 ]
+
+[tool.pytest.ini_options]
+# E2E テスト (Playwright) は通常の pytest 実行から除外。
+# 実行: pytest tests/e2e/playwright/ -v
+# (要: pip install -r requirements.e2e.txt && playwright install chromium)
+norecursedirs = ["tests/e2e"]
