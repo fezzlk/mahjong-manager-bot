@@ -1,6 +1,8 @@
 import os
+
 # testsフォルダをパスに追加
 import sys
+
 from repositories import (
     group_repository,
     group_setting_repository,

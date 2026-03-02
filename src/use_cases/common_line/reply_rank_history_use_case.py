@@ -1,8 +1,12 @@
 from itertools import groupby
+
 import matplotlib as mpl
+
+mpl.use("agg")
 import matplotlib.pyplot as plt
-import env_var
+
 from application_service import (
+    graph_service,
     message_service,
     reply_service,
     request_info_service,
@@ -37,8 +41,6 @@ class ReplyRankHistoryUseCase:
         if range_message is not None:
             reply_service.add_message(range_message)
 
-        mpl.use("agg")
-
         # 順位グラフ作成
         rank_info = [0, 0, 0, 0, 0]
         ave_rank = 0.0
@@ -71,23 +73,15 @@ class ReplyRankHistoryUseCase:
         plt.grid(which="major", axis="y")
         ax.set_axisbelow(True)
         path = f"/rank_bar_chart/{req_line_user_id}.png"
-        try:
-            fig.savefig(f"src/uploads{path}")
-        except FileNotFoundError:
-            (
-                reply_service.create_and_reply_file_upload_error(
-                    "順位履歴",
-                    user_service.get_name_by_line_user_id(
-                        request_info_service.req_line_user_id,
-                    )
-                    or request_info_service.req_line_user_id,
-                ),
+        url, err = graph_service.save_figure(fig, path)
+        if err:
+            sender = (
+                user_service.get_name_by_line_user_id(req_line_user_id)
+                or req_line_user_id
             )
+            reply_service.create_and_reply_file_upload_error("順位履歴", sender)
             return
-        plt.clf()
-        plt.close()
-
-        reply_service.add_image(f"{env_var.SERVER_URL}/uploads{path}")
+        reply_service.add_image(url)
 
         # プロットデータ作成
         plot_data = []
@@ -106,19 +100,12 @@ class ReplyRankHistoryUseCase:
         ax.invert_yaxis()
 
         path = f"/rank_history/{req_line_user_id}.png"
-        try:
-            fig.savefig(f"src/uploads{path}")
-        except FileNotFoundError:
-            reply_service.create_and_reply_file_upload_error(
-                "順位履歴",
-                user_service.get_name_by_line_user_id(
-                    request_info_service.req_line_user_id,
-                )
-                or request_info_service.req_line_user_id,
+        url, err = graph_service.save_figure(fig, path)
+        if err:
+            sender = (
+                user_service.get_name_by_line_user_id(req_line_user_id)
+                or req_line_user_id
             )
+            reply_service.create_and_reply_file_upload_error("順位履歴", sender)
             return
-
-        plt.clf()
-        plt.close()
-
-        reply_service.add_image(f"{env_var.SERVER_URL}/uploads{path}")
+        reply_service.add_image(url)

@@ -66,4 +66,5 @@ def test_execute_fail_savefig(mocker):
 
     # Assert
     assert image_url is None
-    assert err_message == "対戦履歴の画像アップロードに失敗しました"
+    assert err_message is not None
+    assert "グラフ画像の生成に失敗しました" in err_message

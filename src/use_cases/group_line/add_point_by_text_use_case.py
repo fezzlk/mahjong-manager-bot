@@ -27,6 +27,9 @@ class AddPointByTextUseCase:
 
         # 現在入力中の半荘を取得し点数を追加
         group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
+        if group is None:
+            reply_service.add_message("グループが登録されていません。招待し直してください。")
+            return
         active_match = match_service.find_one_by_id(group.active_match_id)
         if active_match.active_hanchan_id is None:
             return

@@ -26,20 +26,13 @@ class RequestLinkLineWebUseCase:
             },
         )
 
-        if len(web_users) == 0:
-            reply_service.add_message(
-                f"{email} は登録されていません。一度ブラウザでログインしてください。")
-            reply_service.add_message(
-                f'{env_var.SERVER_URL}{url_for("line_blueprint.view_approve_link_line_user")}?openExternalBrowser=1',
-            )
-            return
+        link_url = f'{env_var.SERVER_URL}{url_for("line_blueprint.view_approve_link_line_user")}?openExternalBrowser=1'
 
-        if web_users[0].is_approved_line_user:
+        if len(web_users) == 0 or web_users[0].is_approved_line_user:
+            # メールアドレスの存在有無を区別しないことでユーザー列挙攻撃を防止
             reply_service.add_message(
-                f"{email} はすでに LINE アカウントと紐付けされています。")
-            reply_service.add_message(
-                f'{env_var.SERVER_URL}{url_for("line_blueprint.view_approve_link_line_user")}?openExternalBrowser=1',
-            )
+                "アカウント連携リクエストを受け付けました。ブラウザでログインし、承認してください。")
+            reply_service.add_message(link_url)
             return
 
         result = web_user_repository.update(
@@ -47,7 +40,7 @@ class RequestLinkLineWebUseCase:
                 "_id": web_users[0]._id,
             },
             new_values={
-                "line_user_id": request_info_service.req_line_user_id,
+                "linked_line_user_id": request_info_service.req_line_user_id,
             },
         )
 

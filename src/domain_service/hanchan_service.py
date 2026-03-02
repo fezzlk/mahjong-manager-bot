@@ -1,3 +1,5 @@
+import copy
+import logging
 from typing import List, Optional
 
 from bson.objectid import ObjectId
@@ -8,8 +10,7 @@ from repositories import hanchan_repository
 
 from .interfaces.i_hanchan_service import IHanchanService
 
-STATUS_LIST = ["disabled", "active", "archived"]
-
+logger = logging.getLogger(__name__)
 
 class HanchanService(IHanchanService):
 
@@ -57,7 +58,7 @@ class HanchanService(IHanchanService):
         )
         hanchan_repository.create(new_match)
 
-        print(f'create hanchan: group "{line_group_id}"')
+        logger.info('create hanchan: group "%s"', line_group_id)
         return new_match
 
     def find_all_archived_by_match_id(self, match_id: ObjectId) -> List[Hanchan]:
@@ -79,13 +80,15 @@ class HanchanService(IHanchanService):
         )
 
     def update(self, target: Hanchan) -> None:
+        # UC-11: use copy to avoid mutating entity.__dict__ during dict comprehension
+        entity_dict = copy.copy(target).__dict__
         hanchan_repository.update(
             {"_id": target._id},
-            target.__dict__,
+            {k: v for k, v in entity_dict.items() if k != "_id"},
         )
 
     def disable_by_match_id(self, match_id: ObjectId) -> None:
         hanchan_repository.update(
             {"match_id": match_id},
-            {"status": 0},
+            {"is_deleted": True},
         )

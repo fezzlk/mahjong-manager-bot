@@ -31,6 +31,10 @@ class IGroupRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def find_or_create(self, new_record: Group) -> Group:
+        pass
+
+    @abstractmethod
     def update(
         self,
         query: Dict[str, any],

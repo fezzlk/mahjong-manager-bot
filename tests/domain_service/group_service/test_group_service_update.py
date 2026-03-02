@@ -31,7 +31,6 @@ def test_ok(mocker):
     mock_update.assert_called_once_with(
         {"_id": 999},
         {
-            "_id": 999,
             "line_group_id": "G0123456789abcdefghijklmnopqrstu1",
             "mode": "wait",
             "active_match_id": None,

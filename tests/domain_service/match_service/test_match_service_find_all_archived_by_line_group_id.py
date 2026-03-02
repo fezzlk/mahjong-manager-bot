@@ -10,12 +10,10 @@ dummy_matches = [
     Match(
         _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
     ),
     Match(
         _id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
     ),
 ]
 
@@ -30,7 +28,7 @@ def test_ok(mocker):
 
     # Act
     result = match_service.find_all_archived_by_line_group_id(
-        line_group_id="G0123456789abcdefghijklmnopqrstu1"
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
     )
 
     # Assert

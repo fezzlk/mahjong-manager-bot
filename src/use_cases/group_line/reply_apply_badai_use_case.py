@@ -31,7 +31,7 @@ class ReplyApplyBadaiUseCase:
             or len(latest_match.sum_prices_with_chip) == 0
         ):
             reply_service.add_message(
-                "現在進行中の対戦があります。対戦を終了するには「_finish」と送信してください。"
+                "現在進行中の対戦があります。対戦を終了するには「_finish」と送信してください。",
             )
             return
 

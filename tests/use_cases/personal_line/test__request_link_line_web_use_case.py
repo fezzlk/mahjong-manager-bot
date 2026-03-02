@@ -10,7 +10,9 @@ from domain_model.entities.user import User, UserMode
 from domain_model.entities.web_user import WebUser
 from line_models.event import Event
 from repositories import web_user_repository
-from use_cases.personal_line.request_link_line_web_use_case import RequestLinkLineWebUseCase
+from use_cases.personal_line.request_link_line_web_use_case import (
+    RequestLinkLineWebUseCase,
+)
 
 dummy_user = User(
     line_user_name="test_user1",
@@ -108,7 +110,7 @@ def test_fail_no_web_user(mocker):
     assert len(reply_service.texts) == 2
     assert (
         reply_service.texts[0].text
-        == "dummy@example.com は登録されていません。一度ブラウザでログインしてください。"
+        == "アカウント連携リクエストを受け付けました。ブラウザでログインし、承認してください。"
     )
 
 
@@ -152,7 +154,7 @@ def test_fail_have_linked_user(mocker):
     assert len(reply_service.texts) == 2
     assert (
         reply_service.texts[0].text
-        == "email1 はすでに LINE アカウントと紐付けされています。"
+        == "アカウント連携リクエストを受け付けました。ブラウザでログインし、承認してください。"
     )
 
 
@@ -188,6 +190,10 @@ def test_fail_update_web_user(mocker):
         web_user_repository,
         "update",
         return_value=0,
+    )
+    mocker.patch(
+        "use_cases.personal_line.request_link_line_web_use_case.url_for",
+        return_value="",
     )
 
     # Act

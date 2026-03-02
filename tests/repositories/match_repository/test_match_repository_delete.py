@@ -51,4 +51,4 @@ def test_hit_0_record():
     for i in range(len(record_on_db)):
         assert isinstance(record_on_db[i], Match)
         assert record_on_db[i].line_group_id == target_matches[i].line_group_id
-        assert record_on_db[i].status == target_matches[i].status
+        assert record_on_db[i].is_deleted == target_matches[i].is_deleted

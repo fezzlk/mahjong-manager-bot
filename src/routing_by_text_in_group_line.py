@@ -4,23 +4,20 @@ from application_service import (
     reply_service,
     request_info_service,
 )
-
-# from use_cases.group_line.link_user_to_group_use_case import LinkUserToGroupUseCase
 from domain_model.entities.group import GroupMode
 from domain_service import (
     group_service,
 )
 from use_cases.common_line.reply_fortune_use_case import ReplyFortuneUseCase
-from use_cases.common_line.reply_rank_histogram_use_case import ReplyRankHistogramUseCase
+from use_cases.common_line.reply_rank_histogram_use_case import (
+    ReplyRankHistogramUseCase,
+)
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
-
-# from use_cases.group_line.add_hanchan_by_points_text_use_case import AddHanchanByPointsTextUseCase
-from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
 from use_cases.group_line.add_chip_by_text_use_case import AddChipByTextUseCase
-
-# from use_cases.group_line.reply_sum_matches_by_ids_use_case import ReplySumMatchesByIdsUseCase
-# from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
-from use_cases.group_line.drop_hanchan_by_index_use_case import DropHanchanByIndexUseCase
+from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
+from use_cases.group_line.drop_hanchan_by_index_use_case import (
+    DropHanchanByIndexUseCase,
+)
 from use_cases.group_line.exit_use_case import ExitUseCase
 from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
@@ -42,7 +39,9 @@ from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableU
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
-from use_cases.group_line.update_group_settings_use_case import UpdateGroupSettingsUseCase
+from use_cases.group_line.update_group_settings_use_case import (
+    UpdateGroupSettingsUseCase,
+)
 
 
 class RCommands(Enum):
@@ -63,18 +62,25 @@ class RCommands(Enum):
     match = "match"
     tobi = "tobi"
     drop = "drop"
+    # drop_m is defined but not yet implemented (DisableMatchUseCase pending)
     drop_m = "drop_m"
     add_result = "add_result"
     update_config = "update_config"
+    # sum_matches is defined but not yet implemented (ReplySumMatchesByIdsUseCase pending)
     sum_matches = "sum_matches"
     my_results = "my_results"
     history = "history"
     chip_ok = "chip_ok"
     badai = "badai"
+    # entry is defined but not yet implemented (LinkUserToGroupUseCase pending)
     entry = "entry"
     rank = "rank"
     rank_detail = "rank_detail"
     ranking = "ranking"
+
+
+# Use a set for O(1) command lookup
+_VALID_COMMANDS = {c.name for c in RCommands}
 
 
 def routing_by_text_in_group_line():
@@ -83,7 +89,7 @@ def routing_by_text_in_group_line():
     """routing by text"""
     command = request_info_service.command
     if command is not None:
-        if command in [c.name for c in RCommands]:
+        if command in _VALID_COMMANDS:
             routing_for_group_by_command(command)
             return
         reply_service.add_message(
@@ -104,118 +110,50 @@ def routing_by_text_in_group_line():
         return
 
     """wait mode"""
-    """if text is result, add result"""
-
-    # resultRows = [r for r in text.split('\n') if ':' in r]
-    # if len(resultRows) == 4:
-    #     AddHanchanByPointsTextUseCase().execute(text)
 
 
 def routing_for_group_by_command(command):
-    """Routing by command"""
+    """Routing by command using dispatch table"""
     body = request_info_service.body
-    # input
-    if command == RCommands.input.name:
-        StartInputUseCase().execute()
-    # start menu
-    elif command == RCommands.start.name:
-        ReplyStartMenuUseCase().execute()
-    # mode
-    elif command == RCommands.mode.name:
-        ReplyGroupModeUseCase().execute()
-    # exit
-    elif command == RCommands.exit.name:
-        ExitUseCase().execute()
-    # help
-    elif command == RCommands.help.name:
-        ReplyGroupHelpUseCase().execute(RCommands)
-    # setting
-    elif command == RCommands.setting.name:
-        ReplyGroupSettingsMenuUseCase().execute(body)
-    # match detail by index
-    elif command == RCommands.match.name:
-        ReplyMatchByIndexUseCase().execute(body)
-    # drop
-    elif command == RCommands.drop.name:
-        DropHanchanByIndexUseCase().execute(body)
-    # drop match
-    # elif command == RCommands.drop_m.name:
-    #     DisableMatchUseCase().execute()
-    # finish
-    elif command == RCommands.finish.name:
-        FinishMatchUseCase().execute()
-    # finish_confirm
-    elif command == RCommands.finish_confirm.name:
-        ReplyFinishConfirmUseCase().execute()
-    # fortune
-    elif command == RCommands.fortune.name:
-        ReplyFortuneUseCase().execute()
-    # others menu
-    elif command == RCommands.others.name:
-        ReplyOthersMenuUseCase().execute()
-    # active_match
-    elif command == RCommands.active_match.name:
-        ReplyHanchansOfActiveMatchUseCase().execute()
-    # matches
-    elif command == RCommands.matches.name:
-        ReplyMatchesUseCase().execute()
-    # tobi
-    elif command == RCommands.tobi.name:
-        SubmitHanchanUseCase().execute(
-            tobashita_player_id=body,
-        )
-    # update config
-    elif command == RCommands.update_config.name:
+
+    def _update_config():
         key = body.split(" ")[0]
         value = body.split(" ")[1]
-        UpdateGroupSettingsUseCase().execute(
-            key,
-            value,
-        )
-    # history
-    elif command == RCommands.history.name:
-        ReplyMultiHistoryUseCase().execute()
-    # chip_ok
-    elif command == RCommands.chip_ok.name:
-        FinishInputChipUseCase().execute()
-    # badai
-    elif command == RCommands.badai.name:
-        ReplyApplyBadaiUseCase().execute(body)
-    # rank
-    elif command == RCommands.rank.name:
-        ReplyRankHistoryUseCase().execute()
-    # rank detail
-    elif command == RCommands.rank_detail.name:
-        ReplyRankHistogramUseCase().execute()
-    elif command == RCommands.ranking.name:
-        ReplyRankingTableUseCase().execute()
+        UpdateGroupSettingsUseCase().execute(key, value)
 
-    # # entry
-    # elif command == RCommands.entry.name:
-    #     LinkUserToGroupUseCase().execute()
-    # sum_matches
-    # elif command == RCommands.sum_matches.name:
-    #     args = body.split(' ')
-    #     # while 'to' in args:
-    #     #     index = args.index('to')
-    #     #     if index != 0 and len(args) - 1 > index:
-    #     #         args += [
-    #     #             str(i) for i in range(
-    #     #                 int(args[index - 1]),
-    #     #                 int(args[index + 1]) + 1
-    #     #             )
-    #     #         ]
-    #     #     args.remove('to')
-    #     ReplySumMatchesByIdsUseCase().execute(args)
+    def _tobi():
+        SubmitHanchanUseCase().execute(tobashita_player_id=body)
 
+    dispatch = {
+        RCommands.input.name: lambda: StartInputUseCase().execute(),
+        RCommands.start.name: lambda: ReplyStartMenuUseCase().execute(),
+        RCommands.mode.name: lambda: ReplyGroupModeUseCase().execute(),
+        RCommands.exit.name: lambda: ExitUseCase().execute(),
+        RCommands.help.name: lambda: ReplyGroupHelpUseCase().execute(RCommands),
+        RCommands.setting.name: lambda: ReplyGroupSettingsMenuUseCase().execute(body),
+        RCommands.match.name: lambda: ReplyMatchByIndexUseCase().execute(body),
+        RCommands.drop.name: lambda: DropHanchanByIndexUseCase().execute(body),
+        RCommands.finish.name: lambda: FinishMatchUseCase().execute(),
+        RCommands.finish_confirm.name: lambda: ReplyFinishConfirmUseCase().execute(),
+        RCommands.fortune.name: lambda: ReplyFortuneUseCase().execute(),
+        RCommands.others.name: lambda: ReplyOthersMenuUseCase().execute(),
+        RCommands.active_match.name: lambda: ReplyHanchansOfActiveMatchUseCase().execute(),
+        RCommands.matches.name: lambda: ReplyMatchesUseCase().execute(),
+        RCommands.tobi.name: _tobi,
+        RCommands.update_config.name: _update_config,
+        RCommands.history.name: lambda: ReplyMultiHistoryUseCase().execute(),
+        RCommands.chip_ok.name: lambda: FinishInputChipUseCase().execute(),
+        RCommands.badai.name: lambda: ReplyApplyBadaiUseCase().execute(body),
+        RCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
+        RCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
+        RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
+        # drop_m (DisableMatchUseCase), entry (LinkUserToGroupUseCase),
+        # sum_matches (ReplySumMatchesByIdsUseCase), add_result, my_results:
+        # intentionally not yet implemented — stub commands reserved for future use
+    }
 
-# def parse_int_list(args):
-#     args = body.split(' ')
-#     month = None
-#     while 'to' in args:
-#         index = args.index('to')
-#         if index != 0 and len(args)-1 > index:
-#             args += [
-#                 str(i) for i in range(args[index-1], args[index+1]+1)
-#             ]
-#         args.remove('to')
+    action = dispatch.get(command)
+    if action:
+        action()
+    elif command in _VALID_COMMANDS:
+        reply_service.add_message("この機能は現在開発中です。")

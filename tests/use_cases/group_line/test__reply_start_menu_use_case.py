@@ -1,4 +1,4 @@
-from linebot.models import TemplateSendMessage
+from linebot.v3.messaging import TemplateMessage
 
 from application_service import (
     reply_service,
@@ -21,4 +21,4 @@ def test_execute():
 
     # Assert
     assert len(reply_service.buttons) == 1
-    assert isinstance(reply_service.buttons[0], TemplateSendMessage)
+    assert isinstance(reply_service.buttons[0], TemplateMessage)

@@ -9,7 +9,7 @@ def test_success():
     # Act
     match = Match(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
-        status=0,
+        is_deleted=True,
         created_at=datetime(2022, 1, 2, 3, 4, 5),
         updated_at=datetime(2023, 1, 2, 3, 4, 5),
         chip_prices={"a": 1},
@@ -25,7 +25,7 @@ def test_success():
     # Assert
     assert match._id == 1
     assert match.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
-    assert match.status == 0
+    assert match.is_deleted
     assert match.chip_prices == {"a": 1}
     assert match.chip_scores == {"a": 2}
     assert match.sum_prices == {"a": 3}
@@ -48,7 +48,7 @@ def test_success_default():
     # Assert
     assert match._id is None
     assert match.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
-    assert match.status == 2
+    assert not match.is_deleted
     assert match.chip_prices == {}
     assert match.chip_scores == {}
     assert match.sum_prices == {}

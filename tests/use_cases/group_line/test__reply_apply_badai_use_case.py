@@ -17,13 +17,11 @@ dummy_matches = [
     Match(
         _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 1),
     ),
     Match(
         _id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 2),
         sum_scores={
             "U0123456789abcdefghijklmnopqrstu1": 30,
@@ -61,13 +59,12 @@ dummy_matches = [
     Match(
         _id=3,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=0,
+        is_deleted=True,
         created_at=datetime(2010, 1, 1, 1, 1, 3),
     ),
     Match(
         _id=4,
         line_group_id="dummy",
-        status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 4),
     ),
 ]
@@ -213,7 +210,6 @@ def test_execute_with_progress_match():
     progress_match = Match(
         _id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 2),
         sum_scores={
             "U0123456789abcdefghijklmnopqrstu1": 30,
@@ -269,7 +265,6 @@ def test_execute_with_progress_match2():
     progress_match = Match(
         _id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 2),
     )
     match_repository.create(progress_match)

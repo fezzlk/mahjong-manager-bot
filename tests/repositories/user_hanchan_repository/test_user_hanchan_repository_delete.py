@@ -56,7 +56,7 @@ def test_success():
         )
 
     # Act
-    result = user_hanchan_repository.delete()
+    result = user_hanchan_repository.delete(query={"_id": {"$exists": True}})
 
     # Assert
     assert result == 3

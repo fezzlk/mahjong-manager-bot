@@ -8,9 +8,9 @@ from flask import (
     session,
     url_for,
 )
-from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token
-from linebot import WebhookHandler
+from linebot.v3.webhook import WebhookHandler
+
 import env_var
 from oauth_client import oauth
 from repositories import user_repository, web_user_repository
@@ -21,13 +21,15 @@ auth_blueprint = Blueprint("auth_blueprint", __name__, url_prefix="/auth")
 
 @auth_blueprint.route("/login", methods=["POST"])
 def api_login():
-    bcrypt = Bcrypt()
-    user_id = request.args.get("user_id")
-    password = request.args.get("password")
-    bcrypt.check_password_hash(password, "password")
-    access_token = authenticate(line_user_id=user_id)
-    response_body = {"access_token": access_token}
-    return make_response(jsonify(response_body), 200)
+    body = request.get_json(silent=True) or {}
+    user_id = body.get("user_id")
+    if not user_id:
+        return make_response(jsonify({"error": "user_id is required"}), 400)
+    try:
+        access_token = authenticate(line_user_id=user_id)
+    except ValueError:
+        return make_response(jsonify({"error": "Unauthorized"}), 401)
+    return make_response(jsonify({"access_token": access_token}), 200)
 
 
 def authenticate(line_user_id: str) -> str:
@@ -73,5 +75,9 @@ def google_authorize():
     session["id_token"] = token["id_token"]
     session["login_user_id"] = web_user._id
 
+    # JWT を発行してフロントエンドへ渡す
+    jwt_token = create_access_token(identity=str(web_user._id))
     redirect_to = session.pop("next_page_url", "/")
-    return redirect(redirect_to)
+    # React SPA にトークンをクエリパラメータで渡す
+    separator = "&" if "?" in redirect_to else "?"
+    return redirect(f"{redirect_to}{separator}token={jwt_token}")

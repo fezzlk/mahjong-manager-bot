@@ -1,44 +1,103 @@
+import threading
 from typing import Dict, List
 
-from linebot.models.events import Event
+from linebot.v3.webhooks import Event
 
 
 class RequestInfoService:
     """RequestInfoService
 
-    メッセージ送信元の LINE ユーザー ID, トークルーム ID を管理
+    メッセージ送信元の LINE ユーザー ID, トークルーム ID を管理。
+    threading.local() でスレッドごとに独立した状態を持つ(マルチスレッド対応)。
     """
-
-    req_line_user_id: str
-    req_line_group_id: str
-    mention_line_ids: List[str]
-    message: str
-    command: str
-    body: str
-    params: Dict[str, str]
-    is_mention_all: bool
 
     def __init__(self):
-        # 送信元の LINE ユーザー ID, トークルーム ID, グループ ID
-        self.req_line_user_id = None
-        self.req_line_group_id = None
-        self.mention_line_ids = []
-        self.message = None
-        self.command = None
-        self.params = {}
-        self.body = None
-        self.is_mention_all = False
+        self._local = threading.local()
 
-    """
-    メッセージ送信元情報のセット
-    """
+    def _state(self):
+        local = self._local
+        if not hasattr(local, "initialized"):
+            local.req_line_user_id = None
+            local.req_line_group_id = None
+            local.mention_line_ids = []
+            local.message = None
+            local.command = None
+            local.params = {}
+            local.body = None
+            local.is_mention_all = False
+            local.initialized = True
+        return local
+
+    @property
+    def req_line_user_id(self) -> str:
+        return self._state().req_line_user_id
+
+    @req_line_user_id.setter
+    def req_line_user_id(self, value: str):
+        self._state().req_line_user_id = value
+
+    @property
+    def req_line_group_id(self) -> str:
+        return self._state().req_line_group_id
+
+    @req_line_group_id.setter
+    def req_line_group_id(self, value: str):
+        self._state().req_line_group_id = value
+
+    @property
+    def mention_line_ids(self) -> List[str]:
+        return self._state().mention_line_ids
+
+    @mention_line_ids.setter
+    def mention_line_ids(self, value: List[str]):
+        self._state().mention_line_ids = value
+
+    @property
+    def message(self) -> str:
+        return self._state().message
+
+    @message.setter
+    def message(self, value: str):
+        self._state().message = value
+
+    @property
+    def command(self) -> str:
+        return self._state().command
+
+    @command.setter
+    def command(self, value: str):
+        self._state().command = value
+
+    @property
+    def params(self) -> Dict[str, str]:
+        return self._state().params
+
+    @params.setter
+    def params(self, value: Dict[str, str]):
+        self._state().params = value
+
+    @property
+    def body(self) -> str:
+        return self._state().body
+
+    @body.setter
+    def body(self, value: str):
+        self._state().body = value
+
+    @property
+    def is_mention_all(self) -> bool:
+        return self._state().is_mention_all
+
+    @is_mention_all.setter
+    def is_mention_all(self, value: bool):
+        self._state().is_mention_all = value
 
     def set_req_info(self, event: Event) -> None:
         self.req_line_user_id = event.source.user_id
         if event.source.type == "room":
             self.req_line_group_id = event.source.room_id
-            import env_var
-            from application_service import reply_service
+            import env_var  # noqa: PLC0415
+            from application_service import reply_service  # noqa: PLC0415
 
             messages = [
                 "source id: room からのイベントを受け取りました。",
@@ -64,7 +123,7 @@ class RequestInfoService:
                     if hasattr(mentionee, "user_id") and mentionee.user_id is not None:
                         self.mention_line_ids.append(mentionee.user_id)
                     elif "@All" in self.message:
-                        from domain_service import user_group_service
+                        from domain_service import user_group_service  # noqa: PLC0415
 
                         user_groups = user_group_service.find_all_by_line_group_id(
                             self.req_line_group_id,
@@ -80,7 +139,7 @@ class RequestInfoService:
             return
 
         # コマンドエイリアスの確認
-        from repositories import command_alias_repository
+        from repositories import command_alias_repository  # noqa: PLC0415
 
         query = {
             "line_user_id": self.req_line_user_id,
@@ -93,7 +152,7 @@ class RequestInfoService:
             self.message = command_alias[0].command
             self.mention_line_ids = command_alias[0].mentionees
 
-        if (self.message[0] == "_") & (len(self.message) > 1):
+        if self.message.startswith("_") and len(self.message) > 1:
             command_and_params = self.message.split()[0]
             self.body = self.message[len(command_and_params) + 1 :]
             self.command = command_and_params.split("?")[0][1:]
@@ -103,17 +162,14 @@ class RequestInfoService:
                 if len(k_v) >= 2:
                     self.params[k_v[0]] = p[len(k_v[0]) + 1 :]
 
-    """
-    メッセージ送信元情報の削除
-    一つ前のメッセージ送信元の情報が残らないようにするために使う
-    """
-
     def delete_req_info(self) -> None:
-        self.req_line_user_id = None
-        self.req_line_group_id = None
-        self.mention_line_ids = []
-        self.message = None
-        self.command = None
-        self.params = {}
-        self.body = None
-        self.is_mention_all = False
+        """リクエスト完了後に当スレッドの状態をリセット"""
+        state = self._state()
+        state.req_line_user_id = None
+        state.req_line_group_id = None
+        state.mention_line_ids = []
+        state.message = None
+        state.command = None
+        state.params = {}
+        state.body = None
+        state.is_mention_all = False

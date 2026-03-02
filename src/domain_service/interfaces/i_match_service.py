@@ -34,7 +34,7 @@ class IMatchService(metaclass=ABCMeta):
 
     @abstractmethod
     def find_all_by_ids_and_line_group_ids(
-        self, ids: List[ObjectId], line_group_ids: List[str]
+        self, ids: List[ObjectId], line_group_ids: List[str],
     ) -> List[Match]:
         pass
 

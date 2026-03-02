@@ -16,6 +16,7 @@ eggs/
 .eggs/
 lib/
 lib64/
+!frontend/src/lib/
 parts/
 sdist/
 var/
@@ -134,3 +135,16 @@ dmypy.json
 
 # Private local rules
 MCP_PRIVATE_RULES.md
+
+# Claude Code local settings
+.claude/
+
+# Secret setup scripts
+setup_secrets.sh
+
+# Uploaded images (runtime artifacts)
+src/uploads/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/

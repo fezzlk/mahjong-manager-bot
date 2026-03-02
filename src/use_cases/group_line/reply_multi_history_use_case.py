@@ -1,5 +1,15 @@
+from datetime import datetime, timedelta
 from typing import Dict, List
+
+import matplotlib
+matplotlib.use("agg")
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+# flake8: noqa
+import japanize_matplotlib
+
 from application_service import (
+    graph_service,
     reply_service,
     request_info_service,
     message_service,
@@ -9,11 +19,6 @@ from domain_service import (
     match_service,
     user_match_service,
 )
-import env_var
-from messaging_api_setting import line_bot_api
-
-# flake8: noqa
-import japanize_matplotlib
 
 class ReplyMultiHistoryUseCase:
     def execute(self) -> None:
@@ -76,8 +81,6 @@ class ReplyMultiHistoryUseCase:
             reply_service.add_message(range_message)
 
         # 対戦結果の累計を計算
-        from datetime import datetime, timedelta
-
         total_dict = {line_id: 0 for line_id in active_user_line_ids}
         start_date = matches[0].created_at
         end_date = matches[-1].created_at
@@ -99,11 +102,6 @@ class ReplyMultiHistoryUseCase:
             history_dict[line_id][to_dt] = score
 
         # グラフ描画
-        import matplotlib
-        import matplotlib.pyplot as plt
-        import matplotlib.dates as mdates
-        matplotlib.use("agg")
-
         fig, ax = plt.subplots()
         for line_id in active_user_line_ids:
             plt.step(
@@ -127,24 +125,13 @@ class ReplyMultiHistoryUseCase:
         plt.gca().spines["right"].set_visible(False)
         plt.gca().spines["top"].set_visible(False)
 
-        try:
-            fig.savefig(f"src/uploads/group_history/{req_line_user_id}.png")
-        except FileNotFoundError:
-            reply_service.reset()
-            reply_service.add_message(text="システムエラーが発生しました。")
-            messages = [
-                "対戦履歴の画像アップロードに失敗しました",
-                "送信者: " + user_service.get_name_by_line_user_id(req_line_user_id)
-                or req_line_user_id,
-            ]
-            reply_service.push_a_message(
-                to=env_var.SERVER_ADMIN_LINE_USER_ID,
-                message="\n".join(messages),
+        path = f"/group_history/{req_line_user_id}.png"
+        url, err = graph_service.save_figure(fig, path)
+        if err:
+            sender = (
+                user_service.get_name_by_line_user_id(req_line_user_id)
+                or req_line_user_id
             )
+            reply_service.create_and_reply_file_upload_error("対戦履歴", sender)
             return
-        plt.clf()
-        plt.close()
-
-        path = f"uploads/group_history/{req_line_user_id}.png"
-        image_url = f"{env_var.SERVER_URL}{path}"
-        reply_service.add_image(image_url)
+        reply_service.add_image(url)

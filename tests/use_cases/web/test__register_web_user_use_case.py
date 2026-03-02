@@ -1,10 +1,9 @@
 import pytest
+from _web_test_utils import create_app, request_context
 
 from application_models.page_contents import PageContents
 from repositories import web_user_repository
 from use_cases.web.register_web_user_use_case import RegisterWebUserUseCase
-
-from _web_test_utils import create_app, request_context
 
 
 def test_execute_creates_web_user():
@@ -25,7 +24,7 @@ def test_execute_creates_web_user():
 
     # Act
     with request_context(app, form_data=form):
-        from flask import request
+        from flask import request  # noqa: PLC0415
         page_contents = PageContents(session={}, request=request)
         page_contents.request = request
         use_case.execute(page_contents)
@@ -54,7 +53,7 @@ def test_execute_raises_for_invalid_form():
 
     # Act / Assert
     with request_context(app, form_data=form):
-        from flask import request
+        from flask import request  # noqa: PLC0415
         page_contents = PageContents(session={}, request=request)
         with pytest.raises(Exception):
             use_case.execute(page_contents)

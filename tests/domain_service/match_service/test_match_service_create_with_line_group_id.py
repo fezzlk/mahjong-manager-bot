@@ -7,7 +7,6 @@ from repositories import match_repository
 dummy_matches = [
     Match(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
     ),
 ]
 

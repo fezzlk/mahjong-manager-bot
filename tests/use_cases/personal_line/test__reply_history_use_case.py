@@ -30,7 +30,6 @@ dummy_user = User(
 
 dummy_match = Match(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    status=2,
     _id=ObjectId("644c838186bbd9e20a91b783"),
 )
 
@@ -49,7 +48,6 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu3": -20,
             "U0123456789abcdefghijklmnopqrstu4": -40,
         },
-        status=2,
         match_id=ObjectId("644c838186bbd9e20a91b783"),
     ),
     Hanchan(
@@ -66,7 +64,6 @@ dummy_hanchans = [
             "U0123456789abcdefghijklmnopqrstu3": -20,
             "U0123456789abcdefghijklmnopqrstu4": -40,
         },
-        status=2,
         match_id=ObjectId("644c838186bbd9e20a91b783"),
     ),
 ]
@@ -198,7 +195,7 @@ def test_execute(mocker):
     # reply_service: images
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt  # noqa: PLC0415
 
     fig = plt.figure()
     mocker.patch.object(
@@ -256,7 +253,7 @@ def test_execute_with_range(mocker, case2):
     # reply_service: images, texts
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt  # noqa: PLC0415
 
     fig = plt.figure()
     mocker.patch.object(
@@ -304,7 +301,7 @@ def test_fail_file_upload(mocker):
     # reply_service: images, texts
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt  # noqa: PLC0415
 
     fig = plt.figure()
     mock = mocker.patch.object(

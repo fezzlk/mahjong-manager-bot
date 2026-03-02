@@ -2,9 +2,9 @@ import pytest
 from dummies import (
     generate_dummy_join_event,
 )
-from linebot.models import (
-    TemplateSendMessage,
-    TextSendMessage,
+from linebot.v3.messaging import (
+    TemplateMessage,
+    TextMessage,
 )
 
 from application_service import (
@@ -57,9 +57,9 @@ def test_execute():
     assert result[0].line_group_id == dummy_event.source.group_id
     assert result[0].mode == "wait"
     assert len(reply_service.texts) == 3
-    assert isinstance(reply_service.texts[0], TextSendMessage)
-    assert isinstance(reply_service.texts[1], TextSendMessage)
-    assert isinstance(reply_service.texts[2], TextSendMessage)
+    assert isinstance(reply_service.texts[0], TextMessage)
+    assert isinstance(reply_service.texts[1], TextMessage)
+    assert isinstance(reply_service.texts[2], TextMessage)
     assert (
         reply_service.texts[0].text
         == "麻雀の成績管理Botです。参加者は友達登録してください。"
@@ -72,4 +72,4 @@ def test_execute():
         reply_service.texts[2].text == "レートや点数計算方法は「設定」で変更可能です。"
     )
     assert len(reply_service.buttons) == 1
-    assert isinstance(reply_service.buttons[0], TemplateSendMessage)
+    assert isinstance(reply_service.buttons[0], TemplateMessage)

@@ -1,3 +1,4 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Tuple
 
@@ -17,7 +18,7 @@ class WebUserRepository(IWebUserRepository):
         if len(self.find(query={"user_code": new_record.user_code})) != 0:
             raise Exception(f"User Code: {new_record.user_code} のWeb Userはすでに存在しています。")
 
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = web_users_collection.insert_one(new_dict)
@@ -30,23 +31,27 @@ class WebUserRepository(IWebUserRepository):
         new_values: Dict[str, any],
     ) -> int:
         new_values["updated_at"] = datetime.now()
-        result = web_users_collection.update_many(query, {"$set": new_values})
+        result = web_users_collection.update_one(query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
+        limit: int = 0,
     ) -> List[WebUser]:
         records = web_users_collection\
-            .find(filter=query)\
-            .sort(sort)
+            .find(filter=dict(query) if query is not None else {})\
+            .sort(sort)\
+            .limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
+        if not query:
+            raise ValueError("delete() requires a non-empty query to prevent accidental full-collection deletion")
         result = web_users_collection.delete_many(filter=query)
         return result.deleted_count
 

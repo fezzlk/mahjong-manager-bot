@@ -1,8 +1,8 @@
+from _web_test_utils import create_app, request_context
+
 from domain_model.entities.group import Group
 from repositories import group_repository
 from use_cases.web.update_group_for_web_use_case import UpdateGroupForWebUseCase
-
-from _web_test_utils import create_app, request_context
 
 
 def test_execute_updates_group_fields():

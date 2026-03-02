@@ -1,3 +1,5 @@
+import copy
+from datetime import datetime
 from typing import Dict, List, Tuple
 
 from pymongo import ASCENDING
@@ -18,7 +20,7 @@ class UserHanchanRepository(IUserHanchanRepository):
             "hanchan_id": new_record.hanchan_id,
         })) != 0:
             raise Exception(f"LINE User ID({new_record.line_user_id}とHanchan ID({new_record.hanchan_id}) のUserHanchanはすでに存在しています。")
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = user_hanchans_collection.insert_one(new_dict)
@@ -27,18 +29,22 @@ class UserHanchanRepository(IUserHanchanRepository):
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
+        limit: int = 0,
     ) -> List[UserHanchan]:
         records = user_hanchans_collection\
-            .find(filter=query)\
-            .sort(sort)
+            .find(filter=dict(query) if query is not None else {})\
+            .sort(sort)\
+            .limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
+        if not query:
+            raise ValueError("delete() requires a non-empty query to prevent accidental full-collection deletion")
         result = user_hanchans_collection.delete_many(filter=query)
         return result.deleted_count
 
@@ -47,9 +53,8 @@ class UserHanchanRepository(IUserHanchanRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
-        from datetime import datetime
         new_values["updated_at"] = datetime.now()
-        result = user_hanchans_collection.update_many(query, {"$set": new_values})
+        result = user_hanchans_collection.update_one(query, {"$set": new_values})
         return result.matched_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> UserHanchan:

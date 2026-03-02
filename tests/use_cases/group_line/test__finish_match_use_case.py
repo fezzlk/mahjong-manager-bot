@@ -64,7 +64,6 @@ dummy_group = Group(
 dummy_matches = [
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=2,
         sum_scores={
             "U0123456789abcdefghijklmnopqrstu1": 100,
             "U0123456789abcdefghijklmnopqrstu2": 20,
@@ -76,7 +75,6 @@ dummy_matches = [
     ),
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=2,
         _id=2,
     ),
 ]
@@ -97,7 +95,6 @@ dummy_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(
@@ -115,7 +112,6 @@ dummy_hanchans = [
             dummy_users[4].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=2,
     ),
     Hanchan(
@@ -133,7 +129,7 @@ dummy_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=0,
+        is_deleted=True,
         _id=3,
     ),
     Hanchan(
@@ -151,7 +147,6 @@ dummy_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=2,
-        status=2,
         _id=4,
     ),
 ]
@@ -187,7 +182,7 @@ def test_success_with_default_settings():
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
     matches = match_repository.find({"_id": 1})
-    assert matches[0].status == 2
+    assert not matches[0].is_deleted
 
 
 def test_success():
@@ -236,7 +231,7 @@ def test_success():
     assert groups[0].active_match_id is None
 
     matches = match_repository.find({"_id": 1})
-    assert matches[0].status == 2
+    assert not matches[0].is_deleted
     assert len(matches[0].chip_prices) == 5
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] == 0
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] == 0
@@ -360,7 +355,7 @@ def test_success_with_chip():
     assert groups[0].mode == GroupMode.wait.value
     assert groups[0].active_match_id is None
     matches = match_repository.find()
-    assert matches[0].status == 2
+    assert not matches[0].is_deleted
     assert len(matches[0].chip_prices) == 5
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] == 150
     assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] == -150

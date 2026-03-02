@@ -69,7 +69,7 @@ def test_postback_event_from_user():
 
 def test_message_event_from_room(mocker):
     # Arrange
-    from application_service import reply_service
+    from application_service import reply_service  # noqa: PLC0415
 
     mock = mocker.patch.object(reply_service, "push_a_message")
     request_info_service = RequestInfoService()

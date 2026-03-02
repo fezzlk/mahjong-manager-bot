@@ -1,10 +1,23 @@
-version: "3.9"
-
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules   # ホストの node_modules を上書きしない
+    environment:
+      - VITE_FLASK_URL=http://flask_app:5000
+    depends_on:
+      - flask_app
+
   flask_app:
     build: .
     container_name: flask_app
-    command: flask run --host=0.0.0.0 --port=5000
+    command: flask run --host=0.0.0.0 --port=5000 --reload
     volumes:
       - .:/app
     env_file: 
@@ -13,7 +26,7 @@ services:
       - "5000:5000"
       - "5678:5678"   # debugpy用
     environment:
-      - EXTERNAL_DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
+      - DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
       - DATABASE_NAME=db
       - FLASK_APP=src/server
       - FLASK_ENV=development
@@ -32,7 +45,7 @@ services:
     ports:
       - "5679:5678"
     environment:
-      - EXTERNAL_DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
+      - DATABASE_URL=mongodb://root:root@mongo:27017/?authSource=admin
       - DATABASE_NAME=test_db
     depends_on:
       - mongo

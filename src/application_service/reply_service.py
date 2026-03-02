@@ -1,38 +1,75 @@
 import json
-from ctypes import Union
+import logging
+import threading
 from typing import Dict, List
 
-from linebot.exceptions import LineBotApiError
-from linebot.models import (
+from linebot.v3.messaging import (
     ButtonsTemplate,
-    ImageSendMessage,
+    ImageMessage,
     PostbackAction,
-    TemplateSendMessage,
-    TextSendMessage,
+    PushMessageRequest,
+    ReplyMessageRequest,
+    TemplateMessage,
+    TextMessage,
 )
-from linebot.models.events import Event
+from linebot.v3.messaging.exceptions import ApiException
+from linebot.v3.webhooks import Event
+
 import env_var
-from domain_model.entities.group_setting import ROUNDING_METHOD_LIST
+from domain_model.constants import ROUNDING_METHOD_LIST
 from messaging_api_setting import line_bot_api
 
 from .interfaces.i_reply_service import IReplyService
 
+logger = logging.getLogger(__name__)
+
 
 class ReplyService(IReplyService):
     def __init__(self):
-        self.texts: List[TextSendMessage] = []
-        self.buttons: List[Union[TemplateSendMessage, ButtonsTemplate]] = []
-        self.images: List[ImageSendMessage] = []
+        self._local = threading.local()
+
+    def _state(self):
+        local = self._local
+        if not hasattr(local, "initialized"):
+            local.texts = []
+            local.buttons = []
+            local.images = []
+            local.initialized = True
+        return local
+
+    @property
+    def texts(self) -> List[TextMessage]:
+        return self._state().texts
+
+    @texts.setter
+    def texts(self, value: List[TextMessage]):
+        self._state().texts = value
+
+    @property
+    def buttons(self) -> List[TemplateMessage]:
+        return self._state().buttons
+
+    @buttons.setter
+    def buttons(self, value: List[TemplateMessage]):
+        self._state().buttons = value
+
+    @property
+    def images(self) -> List[ImageMessage]:
+        return self._state().images
+
+    @images.setter
+    def images(self, value: List[ImageMessage]):
+        self._state().images = value
 
     def add_message(
         self,
         text: str,
     ) -> None:
-        self.texts.append(TextSendMessage(text=text))
+        self.texts.append(TextMessage(text=text))
 
     def add_image(self, image_url: str) -> None:
         self.images.append(
-            ImageSendMessage(
+            ImageMessage(
                 original_content_url=image_url,
                 preview_image_url=image_url,
             ),
@@ -40,7 +77,7 @@ class ReplyService(IReplyService):
 
     def add_start_menu(self) -> None:
         self.buttons.append(
-            TemplateSendMessage(
+            TemplateMessage(
                 alt_text="スタートメニュー",
                 template=ButtonsTemplate(
                     title="スタートメニュー",
@@ -73,7 +110,7 @@ class ReplyService(IReplyService):
 
     def add_others_menu(self) -> None:
         self.buttons.append(
-            TemplateSendMessage(
+            TemplateMessage(
                 alt_text="その他のメニュー",
                 template=ButtonsTemplate(
                     title="その他のメニュー",
@@ -97,7 +134,7 @@ class ReplyService(IReplyService):
     def add_settings_menu(self, key: str = "") -> None:
         if key in {"", "メニュー1"}:
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="設定メニュー1",
                     template=ButtonsTemplate(
                         title="設定",
@@ -129,7 +166,7 @@ class ReplyService(IReplyService):
             )
         if key == "メニュー2":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="設定メニュー2",
                     template=ButtonsTemplate(
                         title="設定",
@@ -156,7 +193,7 @@ class ReplyService(IReplyService):
             )
         elif key == "レート":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="レート設定",
                     template=ButtonsTemplate(
                         title="レート変更",
@@ -181,7 +218,7 @@ class ReplyService(IReplyService):
             )
         elif key == "高レート":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="高レート設定",
                     template=ButtonsTemplate(
                         title="レート変更",
@@ -206,7 +243,7 @@ class ReplyService(IReplyService):
             )
         elif key == "順位点":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="順位点設定",
                     template=ButtonsTemplate(
                         title="順位点変更",
@@ -227,15 +264,15 @@ class ReplyService(IReplyService):
             )
         elif key == "飛び賞":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="飛び賞設定",
                     template=ButtonsTemplate(
                         title="飛び賞変更",
                         text="いくらにしますか？",
                         actions=[
                             PostbackAction(
-                                label=i,
-                                display_text=i,
+                                label=str(i),
+                                display_text=str(i),
                                 data=f"_update_config 飛び賞 {i}",
                             )
                             for i in [0, 10, 20, 30]
@@ -246,7 +283,7 @@ class ReplyService(IReplyService):
 
         elif key == "端数計算方法":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="計算方法設定1",
                     template=ButtonsTemplate(
                         title="端数計算方法変更",
@@ -272,7 +309,7 @@ class ReplyService(IReplyService):
 
         elif key == "端数計算方法2":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="計算方法設定2",
                     template=ButtonsTemplate(
                         title="端数計算方法変更",
@@ -297,7 +334,7 @@ class ReplyService(IReplyService):
             )
         elif key == "チップ":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="チップ設定",
                     template=ButtonsTemplate(
                         title="チップ",
@@ -322,7 +359,7 @@ class ReplyService(IReplyService):
             )
         elif key == "高チップ":
             self.buttons.append(
-                TemplateSendMessage(
+                TemplateMessage(
                     alt_text="高チップ設定",
                     template=ButtonsTemplate(
                         title="チップ",
@@ -348,7 +385,7 @@ class ReplyService(IReplyService):
 
     def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
         self.buttons.append(
-            TemplateSendMessage(
+            TemplateMessage(
                 alt_text="飛び賞プレイヤー選択",
                 template=ButtonsTemplate(
                     title="飛び賞おめでとうございます",
@@ -374,7 +411,7 @@ class ReplyService(IReplyService):
 
     def add_submit_results_by_ocr_menu(self, results: Dict[str, int]) -> None:
         self.buttons.append(
-            TemplateSendMessage(
+            TemplateMessage(
                 alt_text="画像読み込み実行",
                 template=ButtonsTemplate(
                     title="画像読み込み完了",
@@ -403,16 +440,14 @@ class ReplyService(IReplyService):
         if hasattr(event, "reply_token"):
             try:
                 line_bot_api.reply_message(
-                    event.reply_token,
-                    contents,
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=contents,
+                    ),
                 )
-            except LineBotApiError as err:
-                print("リプライに失敗しました。")
-                # contents の内容が原因でリプライが失敗した時のためのハンドリング
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    [TextSendMessage(text="システムエラーが発生しました。")],
-                )
+            except ApiException as err:
+                logger.warning("リプライに失敗しました: %s", err)
+                # reply_token は一度使用済みのため push_message でエラー通知する
                 self.push_a_message(
                     to=env_var.SERVER_ADMIN_LINE_USER_ID,
                     message=str(err),
@@ -420,7 +455,7 @@ class ReplyService(IReplyService):
 
     def add_confirm_finish_menu(self) -> None:
         self.buttons.append(
-            TemplateSendMessage(
+            TemplateMessage(
                 alt_text="精算実行確認",
                 template=ButtonsTemplate(
                     title="精算",
@@ -442,7 +477,12 @@ class ReplyService(IReplyService):
         )
 
     def push_a_message(self, to: str, message: str) -> None:
-        line_bot_api.push_message(to, [TextSendMessage(text=message)])
+        line_bot_api.push_message(
+            PushMessageRequest(
+                to=to,
+                messages=[TextMessage(text=message)],
+            ),
+        )
 
     def reset(self) -> None:
         self.texts = []
