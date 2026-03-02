@@ -8,7 +8,7 @@ from repositories import (
     user_repository,
 )
 from . import api_blueprint
-from ._auth import require_web_user
+from ._auth import assert_group_member, require_web_user
 
 
 @api_blueprint.route("/groups/<group_id>/matches", methods=["GET"])
@@ -26,6 +26,10 @@ def get_matches(web_user, group_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     line_group_id = groups[0].line_group_id
+    err = assert_group_member(web_user, line_group_id)
+    if err:
+        return err
+
     matches = match_repository.find(
         {"line_group_id": line_group_id},
         sort=[("created_at", -1)],
@@ -62,6 +66,10 @@ def get_match(web_user, match_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     m = matches[0]
+    err = assert_group_member(web_user, m.line_group_id)
+    if err:
+        return err
+
     hanchans = hanchan_repository.find(
         {"match_id": m._id},
         sort=[("created_at", 1)],

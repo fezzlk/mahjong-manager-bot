@@ -10,7 +10,7 @@ from repositories import (
     user_repository,
 )
 from . import api_blueprint
-from ._auth import require_web_user
+from ._auth import assert_group_member, require_web_user
 
 
 @api_blueprint.route("/groups/<group_id>/ranking", methods=["GET"])
@@ -28,6 +28,10 @@ def get_ranking(web_user, group_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     line_group_id = groups[0].line_group_id
+    err = assert_group_member(web_user, line_group_id)
+    if err:
+        return err
+
     matches = match_repository.find({"line_group_id": line_group_id})
 
     # 全半荘の user_hanchan を収集
@@ -93,15 +97,20 @@ def get_group_stats(web_user, group_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     line_group_id = groups[0].line_group_id
+    err = assert_group_member(web_user, line_group_id)
+    if err:
+        return err
+
     matches = match_repository.find(
         {"line_group_id": line_group_id},
         sort=[("created_at", 1)],
     )
 
-    # 累積ポイント推移: {date_str: {user_name: cumulative_pt}}
-    cumulative = defaultdict(float)
+    # 累積ポイント推移: line_user_id をキーに集計し、表示名は別途解決する
+    cumulative: dict[str, float] = defaultdict(float)
+    rank_dist: dict[str, dict] = defaultdict(lambda: {"first": 0, "second": 0, "third": 0, "fourth": 0})
+    user_name_map: dict[str, str] = {}  # line_user_id -> display name
     point_history = []
-    rank_dist = defaultdict(lambda: {"first": 0, "second": 0, "third": 0, "fourth": 0})
 
     for match in matches:
         hanchans = hanchan_repository.find(
@@ -111,20 +120,23 @@ def get_group_stats(web_user, group_id):
         for hanchan in hanchans:
             user_hanchans = user_hanchan_repository.find({"hanchan_id": hanchan._id})
             for uh in user_hanchans:
-                users = user_repository.find({"line_user_id": uh.line_user_id})
-                user_name = users[0].line_user_name if users else uh.line_user_id
-                cumulative[user_name] += uh.point / 1000
+                uid = uh.line_user_id
+                if uid not in user_name_map:
+                    users = user_repository.find({"line_user_id": uid})
+                    user_name_map[uid] = users[0].line_user_name if users else uid
+                cumulative[uid] += uh.point / 1000
                 rank_key = ["first", "second", "third", "fourth"][uh.rank - 1]
-                rank_dist[user_name][rank_key] += 1
+                rank_dist[uid][rank_key] += 1
 
             date_str = hanchan.created_at.strftime("%m/%d")
-            entry = {"date": date_str}
-            entry.update({k: round(v, 1) for k, v in cumulative.items()})
+            entry: dict = {"date": date_str}
+            # キーを表示名に変換してフロントエンドへ渡す
+            entry.update({user_name_map[uid]: round(v, 1) for uid, v in cumulative.items()})
             point_history.append(entry)
 
     rank_distribution = [
-        {"user_name": name, **dist}
-        for name, dist in rank_dist.items()
+        {"user_name": user_name_map[uid], **dist}
+        for uid, dist in rank_dist.items()
     ]
 
     return jsonify({

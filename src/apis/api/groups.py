@@ -8,7 +8,7 @@ from repositories import (
     user_repository,
 )
 from . import api_blueprint
-from ._auth import require_web_user
+from ._auth import assert_group_member, require_web_user
 
 
 def _line_user_id_from_web_user(web_user):
@@ -60,6 +60,10 @@ def get_group(web_user, group_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     g = groups[0]
+    err = assert_group_member(web_user, g.line_group_id)
+    if err:
+        return err
+
     members = user_group_repository.find({"line_group_id": g.line_group_id})
 
     member_list = []

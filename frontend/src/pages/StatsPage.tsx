@@ -35,7 +35,13 @@ export function StatsPage() {
   }
 
   const playerNames = stats?.point_history.length
-    ? Object.keys(stats.point_history[0]).filter((k) => k !== 'date')
+    ? Array.from(
+        new Set(
+          stats.point_history.flatMap((row) =>
+            Object.keys(row).filter((k) => k !== 'date'),
+          ),
+        ),
+      )
     : []
 
   return (
