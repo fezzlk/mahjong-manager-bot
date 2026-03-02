@@ -178,17 +178,15 @@ def generate_dummy_match_list() -> List[Match]:
     return [
         Match(
             line_group_id=groups[0].line_group_id,
-            status=2,
             _id=ObjectId("644c838186bbd9e20a91b783"),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
-            status=0,
+            is_deleted=True,
             _id=ObjectId("644c838186bbd9e20a91b784"),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
-            status=2,
             active_hanchan_id=ObjectId("644c838186bbd9e20a91b784"),
             _id=ObjectId("644c838186bbd9e20a91b785"),
         ),
@@ -202,21 +200,19 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
         Hanchan(
             line_group_id=groups[0].line_group_id,
             match_id=ObjectId("644c838186bbd9e20a91b785"),
-            status=2,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=ObjectId("644c838186bbd9e20a91b785"),
-            status=0,
+            is_deleted=True,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=ObjectId("644c838186bbd9e20a91b785"),
-            status=2,
         ),
     ]
 

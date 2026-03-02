@@ -23,7 +23,7 @@ def test_success():
     assert result.raw_scores == dummy_hanchan.raw_scores
     assert result.converted_scores == dummy_hanchan.converted_scores
     assert result.match_id == dummy_hanchan.match_id
-    assert result.status == dummy_hanchan.status
+    assert result.is_deleted == dummy_hanchan.is_deleted
 
     record_on_db = hanchan_repository.find()
     assert len(record_on_db) == 1
@@ -32,7 +32,7 @@ def test_success():
     assert record_on_db[0].raw_scores == dummy_hanchan.raw_scores
     assert record_on_db[0].converted_scores == dummy_hanchan.converted_scores
     assert record_on_db[0].match_id == dummy_hanchan.match_id
-    assert record_on_db[0].status == dummy_hanchan.status
+    assert record_on_db[0].is_deleted == dummy_hanchan.is_deleted
 
 
 def test_success_with_id():
@@ -40,7 +40,6 @@ def test_success_with_id():
     dummy_hanchan = Hanchan(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
         match_id=ObjectId("644c838186bbd9e20a91b783"),
-        status=2,
         _id=ObjectId("644c838186bbd9e20a91b781"),
     )
 
@@ -56,7 +55,7 @@ def test_success_with_id():
     assert result.raw_scores == dummy_hanchan.raw_scores
     assert result.converted_scores == dummy_hanchan.converted_scores
     assert result.match_id == dummy_hanchan.match_id
-    assert result.status == dummy_hanchan.status
+    assert result.is_deleted == dummy_hanchan.is_deleted
 
     record_on_db = hanchan_repository.find()
     assert len(record_on_db) == 1
@@ -65,4 +64,4 @@ def test_success_with_id():
     assert record_on_db[0].raw_scores == dummy_hanchan.raw_scores
     assert record_on_db[0].converted_scores == dummy_hanchan.converted_scores
     assert record_on_db[0].match_id == dummy_hanchan.match_id
-    assert record_on_db[0].status == dummy_hanchan.status
+    assert record_on_db[0].is_deleted == dummy_hanchan.is_deleted

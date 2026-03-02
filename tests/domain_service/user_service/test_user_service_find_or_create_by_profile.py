@@ -24,8 +24,8 @@ def test_ok_hit_user(mocker):
     # Arrange
     mocker.patch.object(
         user_repository,
-        "find",
-        return_value=dummy_users,
+        "find_or_create",
+        return_value=dummy_users[0],
     )
 
     # Act
@@ -38,14 +38,16 @@ def test_ok_hit_user(mocker):
 
 def test_ok_no_user(mocker):
     # Arrange
-    mocker.patch.object(
-        user_repository,
-        "find",
-        return_value=[],
+    new_user = User(
+        line_user_name="profile",
+        line_user_id="U0123456789abcdefghijklmnopqrstu1",
+        mode=UserMode.wait.value,
+        jantama_name=None,
     )
-    mock_create = mocker.patch.object(
+    mock_find_or_create = mocker.patch.object(
         user_repository,
-        "create",
+        "find_or_create",
+        return_value=new_user,
     )
 
     # Act
@@ -53,4 +55,4 @@ def test_ok_no_user(mocker):
 
     # Assert
     assert result.line_user_name == "profile"
-    mock_create.assert_called_once()
+    mock_find_or_create.assert_called_once()

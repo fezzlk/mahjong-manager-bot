@@ -1,7 +1,8 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-from pymongo import ASCENDING
+from pymongo import ASCENDING, ReturnDocument
 
 from domain_model.entities.user import User
 from domain_model.i_repositories.i_user_repository import IUserRepository
@@ -16,7 +17,7 @@ class UserRepository(IUserRepository):
     ) -> User:
         if len(self.find(query={"line_user_id": new_record.line_user_id})) != 0:
             raise Exception(f"LINE User ID: {new_record.line_user_id} のUserはすでに存在しています。")
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = line_users_collection.insert_one(new_dict)
@@ -29,18 +30,31 @@ class UserRepository(IUserRepository):
         new_values: Dict[str, any],
     ) -> int:
         new_values["updated_at"] = datetime.now()
-        result = line_users_collection.update_many(query, {"$set": new_values})
+        result = line_users_collection.update_one(query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
+        limit: int = 0,
     ) -> List[User]:
         records = line_users_collection\
-            .find(filter=query)\
-            .sort(sort)
+            .find(filter=dict(query) if query is not None else {})\
+            .sort(sort)\
+            .limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
+
+    def find_or_create(self, new_record: User) -> User:
+        """TOCTOU レースフリーな upsert による find-or-create"""
+        new_dict = {k: v for k, v in new_record.__dict__.items() if k != "_id"}
+        result = line_users_collection.find_one_and_update(
+            filter={"line_user_id": new_record.line_user_id},
+            update={"$setOnInsert": new_dict},
+            upsert=True,
+            return_document=ReturnDocument.AFTER,
+        )
+        return self._mapping_record_to_domain(result)
 
     def find_one_by_line_user_id(self, line_user_id: str) -> User:
         records = self.find(query={"line_user_id": line_user_id})
@@ -48,8 +62,10 @@ class UserRepository(IUserRepository):
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
+        if not query:
+            raise ValueError("delete() requires a non-empty query to prevent accidental full-collection deletion")
         result = line_users_collection.delete_many(filter=query)
         return result.deleted_count
 

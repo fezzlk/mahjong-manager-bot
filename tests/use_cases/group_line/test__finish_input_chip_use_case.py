@@ -99,7 +99,6 @@ dummy_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(
@@ -117,7 +116,6 @@ dummy_hanchans = [
             dummy_users[4].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=2,
     ),
     Hanchan(
@@ -135,7 +133,7 @@ dummy_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=0,
+        is_deleted=True,
         _id=3,
     ),
     Hanchan(
@@ -153,7 +151,6 @@ dummy_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=2,
-        status=2,
         _id=4,
     ),
 ]

@@ -1,5 +1,7 @@
 from typing import Dict
+
 import requests
+
 import env_var
 from application_service import (
     reply_service,

@@ -1,0 +1,15 @@
+# 開発・テスト用パッケージ（本番コンテナには含めない）
+-r requirements.in
+
+# テスト
+pytest==6.2.5
+pytest-cov==2.12.1
+pytest-mock==3.11.1
+coverage==7.6.1
+pluggy==1.5.0
+
+# Lint
+ruff==0.11.8
+
+# デバッグ
+debugpy==1.8.0

@@ -1,7 +1,7 @@
 from typing import Tuple
 
 import pytest
-from linebot.models import TemplateSendMessage
+from linebot.v3.messaging import TemplateMessage
 
 from application_service import (
     reply_service,
@@ -57,7 +57,7 @@ def test_execute():
         == "[設定]\n4人麻雀\nレート: 点3\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: 1枚1点\n計算方法: 3万点以下切り上げ/以上切り捨て"
     )
     assert len(reply_service.buttons) == 1
-    assert isinstance(reply_service.buttons[0], TemplateSendMessage)
+    assert isinstance(reply_service.buttons[0], TemplateMessage)
 
 
 def test_execute_no_settings():
@@ -81,7 +81,7 @@ def test_execute_no_settings():
         == "[設定]\n4人麻雀\nレート: 点0\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: 1枚0点\n計算方法: 五捨六入"
     )
     assert len(reply_service.buttons) == 1
-    assert isinstance(reply_service.buttons[0], TemplateSendMessage)
+    assert isinstance(reply_service.buttons[0], TemplateMessage)
 
 
 @pytest.fixture(
@@ -94,7 +94,7 @@ def test_execute_no_settings():
         ("端数計算方法"),
         ("端数計算方法2"),
         ("チップ"),
-    ]
+    ],
 )
 def case1(request) -> Tuple[int]:
     return request.param
@@ -117,4 +117,4 @@ def test_execute_(case1):
     # Assert
     assert len(reply_service.texts) == 0
     assert len(reply_service.buttons) == 1
-    assert isinstance(reply_service.buttons[0], TemplateSendMessage)
+    assert isinstance(reply_service.buttons[0], TemplateMessage)

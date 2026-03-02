@@ -18,13 +18,13 @@ def test_success():
     assert isinstance(result, Match)
     assert type(result._id) is ObjectId
     assert result.line_group_id == dummy_match.line_group_id
-    assert result.status == dummy_match.status
+    assert result.is_deleted == dummy_match.is_deleted
 
     record_on_db = match_repository.find()
     assert len(record_on_db) == 1
     assert record_on_db[0]._id == dummy_match._id
     assert record_on_db[0].line_group_id == dummy_match.line_group_id
-    assert record_on_db[0].status == dummy_match.status
+    assert record_on_db[0].is_deleted == dummy_match.is_deleted
     assert record_on_db[0].sum_prices == {}
     assert record_on_db[0].sum_prices_with_chip == {}
     assert record_on_db[0].chip_prices == {}
@@ -47,13 +47,13 @@ def test_success_without_id():
     assert isinstance(result, Match)
     assert type(result._id) is ObjectId
     assert result.line_group_id == dummy_match.line_group_id
-    assert result.status == dummy_match.status
+    assert result.is_deleted == dummy_match.is_deleted
 
     record_on_db = match_repository.find()
     assert len(record_on_db) == 1
     assert type(record_on_db[0]._id) is ObjectId
     assert record_on_db[0].line_group_id == dummy_match.line_group_id
-    assert record_on_db[0].status == dummy_match.status
+    assert record_on_db[0].is_deleted == dummy_match.is_deleted
     assert record_on_db[0].sum_prices == {}
     assert record_on_db[0].sum_prices_with_chip == {}
     assert record_on_db[0].chip_prices == {}

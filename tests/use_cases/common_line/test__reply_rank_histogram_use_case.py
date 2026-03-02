@@ -20,7 +20,9 @@ from repositories import (
     user_hanchan_repository,
     user_repository,
 )
-from use_cases.common_line.reply_rank_histogram_use_case import ReplyRankHistogramUseCase
+from use_cases.common_line.reply_rank_histogram_use_case import (
+    ReplyRankHistogramUseCase,
+)
 
 dummy_users = [
     User(
@@ -69,7 +71,6 @@ dummy_group = Group(
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
-    status=2,
     _id=1,
 )
 
@@ -89,7 +90,6 @@ dummy_archived_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(
@@ -107,7 +107,6 @@ dummy_archived_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=2,
     ),
 ]

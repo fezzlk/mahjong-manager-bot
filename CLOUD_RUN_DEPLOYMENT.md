@@ -24,6 +24,7 @@ gcloud config set project $PROJECT_ID
 gcloud services enable run.googleapis.com
 gcloud services enable cloudbuild.googleapis.com
 gcloud services enable containerregistry.googleapis.com
+gcloud services enable secretmanager.googleapis.com
 ```
 
 ### 1.2 認証設定
@@ -36,9 +37,44 @@ gcloud auth login
 gcloud auth configure-docker
 ```
 
-## 2. データベース設定
+## 2. Secret Manager のセットアップ
 
-### 2.1 Firestore with MongoDB compatibility の設定
+機密情報（DB URL・LINE トークン等）は Google Secret Manager で管理します。
+`--set-env-vars` での平文設定は行いません。
+
+### 2.1 シークレットの登録
+
+```bash
+# setup_secrets.sh のプロジェクトIDを編集してから実行
+chmod +x setup_secrets.sh
+./setup_secrets.sh
+```
+
+スクリプトは以下を行います:
+- Secret Manager API の有効化
+- 7件のシークレットを対話形式で登録（既存シークレットは新バージョン追加）
+- Cloud Run サービスアカウントへの `roles/secretmanager.secretAccessor` 付与
+
+### 2.2 サービスアカウントについて
+
+Cloud Run はデフォルトでプロジェクトのコンピュートサービスアカウント
+（`<PROJECT_NUMBER>-compute@developer.gserviceaccount.com`）を使用します。
+
+独自のサービスアカウントを使う場合は `setup_secrets.sh` と `deploy.sh` / `cloudbuild.yaml` 内の
+`SERVICE_ACCOUNT` / `--service-account` の設定を変更してください。
+
+> **注意**: `.env` に記載された `GOOGLE_APPLICATION_CREDENTIALS` は別プロジェクトの古い認証情報です。
+> Cloud Run は ADC (Application Default Credentials) で自動認証されるため `GOOGLE_APPLICATION_CREDENTIALS` は不要です。
+
+### 2.3 登録済みシークレットの確認
+
+```bash
+gcloud secrets list --project=$PROJECT_ID
+```
+
+## 3. データベース設定
+
+### 3.1 Firestore with MongoDB compatibility の設定
 
 1. Firestore で MongoDB compatibility を有効化（Enterprise edition）
 2. データベースを作成（Database ID を確認）
@@ -54,19 +90,12 @@ gcloud auth configure-docker
    mongodb://<USERNAME>:<PASSWORD>@<UID>.<LOCATION>.firestore.goog:443/<DATABASE_ID>?loadBalanced=true&authMechanism=SCRAM-SHA-256&tls=true&retryWrites=false
    ```
 
-### 2.2 環境変数の設定
+### 3.2 DATABASE_URL の設定
 
-`env.cloudrun.example`を参考に、実際の環境変数を設定してください：
+`DATABASE_URL` は Secret Manager に登録してください（`setup_secrets.sh` 参照）。
+接続文字列の形式は `env.cloudrun.example` を参照。
 
-```bash
-# 重要な環境変数
-DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/?retryWrites=true&w=majority
-YOUR_CHANNEL_ACCESS_TOKEN=your_line_channel_access_token
-YOUR_CHANNEL_SECRET=your_line_channel_secret
-SERVER_URL=https://your-cloud-run-url.run.app
-```
-
-## 3. デプロイ方法
+## 4. デプロイ方法
 
 ### 方法 1: 自動デプロイスクリプトを使用
 
@@ -97,7 +126,8 @@ gcloud run deploy mahjong-manager-bot \
   --cpu 1 \
   --max-instances 10 \
   --timeout 300 \
-  --set-env-vars FLASK_ENV=production,PORT=8080
+  --set-env-vars "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=your_db_name,SERVER_URL=https://your-cloudrun-url.run.app,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,PORT=8080" \
+  --set-secrets "DATABASE_URL=DATABASE_URL:latest,YOUR_CHANNEL_ACCESS_TOKEN=YOUR_CHANNEL_ACCESS_TOKEN:latest,YOUR_CHANNEL_SECRET=YOUR_CHANNEL_SECRET:latest,GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID:latest,GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET:latest,GOOGLE_GEMINI_API_KEY=GOOGLE_GEMINI_API_KEY:latest,SERVER_ADMIN_LINE_USER_ID=SERVER_ADMIN_LINE_USER_ID:latest"
 ```
 
 ### 方法 3: Cloud Build を使用
@@ -107,26 +137,18 @@ gcloud run deploy mahjong-manager-bot \
 gcloud builds submit --config cloudbuild.yaml .
 ```
 
-## 4. 環境変数の設定
-
-Cloud Run コンソールまたは gcloud コマンドで環境変数を設定：
-
-```bash
-gcloud run services update mahjong-manager-bot \
-  --region asia-northeast1 \
-  --set-env-vars \
-    FLASK_ENV=production,\
-    PORT=8080,\
-    YOUR_CHANNEL_ACCESS_TOKEN=your_token,\
-    YOUR_CHANNEL_SECRET=your_secret,\
-    DATABASE_URL=your_mongodb_url,\
-    DATABASE_NAME=your_db_name,\
-    SERVER_URL=https://your-service-url.run.app
-```
-
 ## 5. デプロイ後の確認
 
-### 5.1 サービス URL の確認
+### 5.1 サービス URL の確認（Secret Manager の確認も）
+
+```bash
+# 登録済みシークレットの確認
+gcloud secrets list --project=$PROJECT_ID
+
+# Cloud Run の Variables & Secrets タブでもマウント状況を確認できます
+```
+
+### 5.2 サービス URL の確認
 
 ```bash
 gcloud run services describe mahjong-manager-bot \
@@ -134,13 +156,13 @@ gcloud run services describe mahjong-manager-bot \
   --format 'value(status.url)'
 ```
 
-### 5.2 ログの確認
+### 5.3 ログの確認
 
 ```bash
 gcloud logs tail --service mahjong-manager-bot
 ```
 
-### 5.3 ヘルスチェック
+### 5.4 ヘルスチェック
 
 ```bash
 curl https://your-service-url.run.app/
@@ -149,6 +171,12 @@ curl https://your-service-url.run.app/
 ## 6. トラブルシューティング
 
 ### 6.1 よくある問題
+
+4. **Secret Manager 権限エラー**
+
+   - Cloud Run サービスアカウントに `roles/secretmanager.secretAccessor` が付与されているか確認
+   - `setup_secrets.sh` の IAM 付与ステップが成功しているか確認
+   - `gcloud secrets list` でシークレットが存在するか確認
 
 1. **データベース接続エラー**
 

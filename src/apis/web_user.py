@@ -10,6 +10,8 @@ from flask import (
 )
 
 # from db_setting import Engine, Session
+from flask_jwt_extended import create_access_token
+
 from application_models.page_contents import (
     PageContents,
     RegisterFormData,
@@ -64,5 +66,4 @@ def generate_api_token():
     user_id = session.get("login_user_id", None)
     if user_id is None:
         raise Exception("システムエラーが発生しました。")
-    from flask_jwt_extended import create_access_token
     return "Bearer " + create_access_token(identity=user_id)

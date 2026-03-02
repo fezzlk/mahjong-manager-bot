@@ -22,5 +22,7 @@ ENV FLASK_APP=src/server
 # Cloud Run expects the container to listen on $PORT (default 8080).
 EXPOSE 8080
 
-# Use $PORT if provided; fall back to 8080 for local runs.
-CMD ["sh","-c","gunicorn src.server:app --bind 0.0.0.0:${PORT:-8080} --log-file=-"]
+# threading.local() でスレッドセーフなリクエスト状態管理を実装済みのため
+# --workers=1 --threads=8 でマルチスレッド処理を有効化
+# (Cloud Run では 1 インスタンス = 1 プロセスが推奨)
+CMD ["sh","-c","gunicorn src.server:app --bind 0.0.0.0:${PORT:-8080} --workers=1 --threads=8 --timeout=60 --log-file=-"]

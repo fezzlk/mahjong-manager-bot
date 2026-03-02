@@ -59,37 +59,32 @@ dummy_users = [
 dummy_matches = [
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=2,
         _id=1,
     ),
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=2,
         _id=2,
     ),
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=2,
         _id=3,
     ),
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=0,
+        is_deleted=True,
         _id=4,
     ),
     Match(
         line_group_id="dummy",
-        status=2,
         _id=5,
     ),
     Match(
         line_group_id="dummy",
-        status=2,
         _id=6,
     ),
     Match(
         line_group_id="dummy",
-        status=0,
+        is_deleted=True,
         _id=7,
     ),
 ]
@@ -277,7 +272,6 @@ def test_execute_not_registered_user():
 dummy_matches2 = [
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=2,
         _id=1,
         chip_scores={
             dummy_users[0].line_user_id: 20,
@@ -367,7 +361,6 @@ def test_execute_delete():
 dummy_matches3 = [
     Match(
         line_group_id=dummy_group.line_group_id,
-        status=2,
         _id=1,
         chip_scores={
             dummy_users[0].line_user_id: 20,

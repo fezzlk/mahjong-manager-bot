@@ -6,7 +6,6 @@ from domain_service import (
 
 dummy_match = Match(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    status=2,
     sum_scores={
         "U0123456789abcdefghijklmnopqrstu1": 100,
         "U0123456789abcdefghijklmnopqrstu2": 20,

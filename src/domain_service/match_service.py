@@ -1,3 +1,5 @@
+import copy
+import logging
 from typing import List, Optional
 
 from bson.objectid import ObjectId
@@ -8,8 +10,7 @@ from repositories import match_repository
 
 from .interfaces.i_match_service import IMatchService
 
-STATUS_LIST = ["disabled", "active", "archived"]
-
+logger = logging.getLogger(__name__)
 
 class MatchService(IMatchService):
     def add_or_drop_chip_score(
@@ -24,7 +25,7 @@ class MatchService(IMatchService):
         matches = match_repository.find(
             {
                 "_id": match_id,
-            }
+            },
         )
 
         if len(matches) == 0:
@@ -57,13 +58,15 @@ class MatchService(IMatchService):
         )
         match_repository.create(new_match)
 
-        print(f'create match: group "{line_group_id}"')
+        logger.info('create match: group "%s"', line_group_id)
         return new_match
 
     def update(self, target: Match) -> None:
+        # UC-11: use copy to avoid mutating entity.__dict__ during dict comprehension
+        entity_dict = copy.copy(target).__dict__
         match_repository.update(
             {"_id": target._id},
-            target.__dict__,
+            {k: v for k, v in entity_dict.items() if k != "_id"},
         )
 
     def find_all_for_graph(self, ids: List[ObjectId]) -> List[Match]:
@@ -74,7 +77,7 @@ class MatchService(IMatchService):
         )
 
     def find_all_by_ids_and_line_group_ids(
-        self, ids: List[ObjectId], line_group_ids: List[str]
+        self, ids: List[ObjectId], line_group_ids: List[str],
     ) -> List[Match]:
         return match_repository.find(
             query={"_id": {"$in": ids}, "line_group_id": {"$in": line_group_ids}},

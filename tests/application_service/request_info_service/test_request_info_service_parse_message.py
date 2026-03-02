@@ -42,7 +42,7 @@ def test_success_only_command(text_case_command):
 
 
 @pytest.fixture(
-    params=["", " ", "a", "body", "body text", "body_text", "body?text", "body&text"]
+    params=["", " ", "a", "body", "body text", "body_text", "body?text", "body&text"],
 )
 def text_case_body(request):
     return request.param
@@ -88,7 +88,7 @@ def test_success_command_body_no_params(text_case_no_params):
         ("a=b", "a", "b"),
         ("abc=xyz", "abc", "xyz"),
         ("?=", "?", ""),
-    ]
+    ],
 )
 def text_case_one_param(request):
     return request.param
@@ -144,7 +144,7 @@ def test_success_command_body_one_param(text_case_one_param):
                 "c": "z",
             },
         ),
-    ]
+    ],
 )
 def text_case_multi_params(request):
     return request.param

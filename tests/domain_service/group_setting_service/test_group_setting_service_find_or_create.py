@@ -41,15 +41,9 @@ def test_ok_hit_group_setting(mocker):
 
 def test_ok_no_group_setting(mocker):
     # Arrange
-    mocker.patch.object(
+    mock_find_or_create = mocker.patch.object(
         group_setting_repository,
-        "find",
-        return_value=[],
-    )
-
-    mock_create = mocker.patch.object(
-        group_setting_repository,
-        "create",
+        "find_or_create",
         return_value=dummy_group_settings[0],
     )
 
@@ -59,4 +53,4 @@ def test_ok_no_group_setting(mocker):
     # Assert
     assert isinstance(result, GroupSetting)
     assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
-    mock_create.assert_called_once()
+    mock_find_or_create.assert_called_once()

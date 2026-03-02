@@ -3,6 +3,7 @@ from datetime import timedelta
 from flask import Flask, jsonify, make_response
 from flask_jwt_extended import JWTManager
 
+import env_var
 from repositories import user_repository
 
 
@@ -15,11 +16,10 @@ def identity(payload):
 
 
 def register_jwt(app: Flask):
-    #     # Flask JWT
-    app.config["JWT_SECRET_KEY"] = "super-secret"
+    app.config["JWT_SECRET_KEY"] = env_var.JWT_SECRET_KEY
     app.config["JWT_ALGORITHM"] = "HS256"  # 暗号化署名のアルゴリズム
     app.config["JWT_LEEWAY"] = 0  # 有効期限に対する余裕時間
-    app.config["JWT_EXPIRATION_DELTA"] = timedelta(seconds=600)  # トークンの有効期間
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(seconds=86400)  # トークンの有効期間 (24時間)
     app.config["JWT_NOT_BEFORE_DELTA"] = timedelta(
         seconds=0,
     )  # トークンの使用を開始する相対時間
@@ -28,5 +28,5 @@ def register_jwt(app: Flask):
     jwt.unauthorized_loader(jwt_unauthorized_loader_handler)
 
 
-def jwt_unauthorized_loader_handler():
+def jwt_unauthorized_loader_handler(error_string: str):
     return make_response(jsonify({"error": "Unauthorized"}), 401)

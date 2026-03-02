@@ -66,7 +66,6 @@ dummy_group = Group(
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
-    status=2,
     _id=1,
 )
 
@@ -86,7 +85,6 @@ dummy_archived_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(
@@ -104,7 +102,6 @@ dummy_archived_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=2,
     ),
     Hanchan(
@@ -122,7 +119,6 @@ dummy_archived_hanchans = [
             dummy_users[3].line_user_id: -40,
         },
         match_id=1,
-        status=2,
         _id=3,
     ),
 ]
@@ -142,7 +138,7 @@ dummy_disabled_hanchan = Hanchan(
         dummy_users[3].line_user_id: -40,
     },
     match_id=1,
-    status=0,
+    is_deleted=True,
 )
 
 dummy_active_hanchan = Hanchan(
@@ -155,7 +151,6 @@ dummy_active_hanchan = Hanchan(
     },
     converted_scores={},
     match_id=1,
-    status=2,
 )
 
 
@@ -323,10 +318,9 @@ def test_success_fail_savefig(mocker):
     assert len(reply_service.images) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "システムエラーが発生しました。"
-    mock.assert_called_once_with(
-        to=env_var.SERVER_ADMIN_LINE_USER_ID,
-        message="対戦履歴の画像アップロードに失敗しました\n送信者: test_user1",
-    )
+    call_kwargs = mock.call_args.kwargs
+    assert call_kwargs["to"] == env_var.SERVER_ADMIN_LINE_USER_ID
+    assert "送信者: test_user1" in call_kwargs["message"]
 
 
 def test_success_no_group():

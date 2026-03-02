@@ -1,7 +1,10 @@
 from datetime import datetime
 from typing import Dict, List
 
+import certifi
+import urllib3
 from PIL import Image, ImageDraw, ImageFont
+
 import env_var
 from application_service import (
     message_service,
@@ -89,8 +92,6 @@ class ReplyRankingTableUseCase:
         for line_id in active_user_line_ids:
             profile = line_bot_api.get_profile(line_id)
 
-            import certifi
-            import urllib3
             request_methods = urllib3.PoolManager(
                 cert_reqs="CERT_REQUIRED", ca_certs=certifi.where(),
             )
@@ -190,22 +191,22 @@ class ReplyRankingTableUseCase:
         text = "累計得点"
         w = 450 * scale
         h = 50 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         text = "参加半荘数"
         w = 600 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         text = "最高得点"
         w = 775 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         text = "平均素点"
         w = 950 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         line_h = 65 * scale
@@ -219,24 +220,24 @@ class ReplyRankingTableUseCase:
 
             text = str(i + 1)
             w = 50 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text(
                 (x, y), text, font_color, font=font, stroke_width=1, align="center",
             )
 
             text = display_name_dict[r[0]]
             w = 190 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="lm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="lm")
             draw.text((x, y), text, font_color, font=font, align="left")
 
             text = ("+" + str(r[1])) if r[1] > 0 else str(r[1])
             w = 450 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(len(point_dict[r[0]]))
             w = 600 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             if max_score_dict[r[0]] == dummy_min_score:
@@ -245,7 +246,7 @@ class ReplyRankingTableUseCase:
                 m = max_score_dict[r[0]]
                 text = ("+" + str(m)) if m > 0 else str(m)
             w = 775 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             if len(point_dict[r[0]]) == 0:
@@ -253,7 +254,7 @@ class ReplyRankingTableUseCase:
             else:
                 text = str(int(sum(point_dict[r[0]]) / len(point_dict[r[0]])))
             w = 950 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             line_h = (175 + 110 * i) * scale
@@ -332,32 +333,32 @@ class ReplyRankingTableUseCase:
         text = "平均順位"
         w = 450 * scale
         h = 50 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         text = "1位"
         w = 550 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         text = "2位"
         w = 650 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         text = "3位"
         w = 750 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         text = "4位"
         w = 850 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         text = "飛び"
         w = 950 * scale
-        x, y, x2, y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
+        x, y, _x2, _y2 = draw.textbbox((w, h), text, font=col_font, anchor="mm")
         draw.text((x, y), text, font_color, font=col_font, align="center")
 
         w1 = 0 * scale
@@ -374,44 +375,44 @@ class ReplyRankingTableUseCase:
 
             text = str(i + 1)
             w = 50 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text(
                 (x, y), text, font_color, font=font, stroke_width=1, align="center",
             )
 
             text = display_name_dict[r[0]]
             w = 190 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="lm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="lm")
             draw.text((x, y), text, font_color, font=font, align="left")
 
             text = ave_rank_str_dict[r[0]]
             w = 450 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][1])
             w = 550 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][2])
             w = 650 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][3])
             w = 750 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][4])
             w = 850 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             text = str(rank_dict[r[0]][0])
             w = 950 * scale
-            x, y, x2, y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
+            x, y, _x2, _y2 = draw.textbbox((w, h), text, font=font, anchor="mm")
             draw.text((x, y), text, font_color, font=font, align="center")
 
             line_h = (175 + 110 * i) * scale

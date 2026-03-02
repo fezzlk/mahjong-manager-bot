@@ -1,7 +1,18 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
+
+_flask_secret_key = os.getenv("FLASK_SECRET_KEY")
+if not _flask_secret_key:
+    raise RuntimeError('env var "FLASK_SECRET_KEY" is not set.')
+FLASK_SECRET_KEY: str = _flask_secret_key
+
+_jwt_secret_key = os.getenv("JWT_SECRET_KEY")
+if not _jwt_secret_key:
+    raise RuntimeError('env var "JWT_SECRET_KEY" is not set.')
+JWT_SECRET_KEY: str = _jwt_secret_key
 
 FLASK_APP = os.getenv("FLASK_APP")
 FLASK_ENV = os.getenv("FLASK_ENV")
@@ -15,6 +26,7 @@ JWT_AUTH_PATH = os.getenv("JWT_AUTH_PATH", "auth")
 FONT_FILE_PATH = os.getenv("FONT_FILE_PATH", "/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GCS_BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
 
 tmp_server_url = os.getenv("SERVER_URL")
 if tmp_server_url is None:

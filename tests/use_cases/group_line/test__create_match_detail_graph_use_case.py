@@ -1,4 +1,5 @@
-from pathlib import Path
+
+import matplotlib.pyplot as plt
 
 from application_service import reply_service, request_info_service
 from domain_model.entities.hanchan import Hanchan
@@ -9,7 +10,6 @@ from repositories import hanchan_repository, match_repository, user_repository
 from use_cases.group_line.create_match_detail_graph_use_case import (
     CreateMatchDetailGraphUseCase,
 )
-
 
 dummy_event = Event(
     type="message",
@@ -61,7 +61,7 @@ def test_execute_handles_file_write_error(mocker):
     # reply_service: texts
     # DB操作: user_repository.create(user); match_repository.create(match); hanchan_repository.create(hanchan)
     # Arrange
-    mocker.patch.object(reply_service, "push_a_message")  # LINE API呼び出しを回避
+    mock_push = mocker.patch.object(reply_service, "push_a_message")  # LINE API呼び出しを回避
     request_info_service.set_req_info(event=dummy_event)
     use_case = CreateMatchDetailGraphUseCase()
 
@@ -78,19 +78,16 @@ def test_execute_handles_file_write_error(mocker):
     )
     hanchan_repository.create(hanchan)
 
-    uploads_dir = Path("src/uploads/match_detail")
-    backup_dir = Path("src/uploads/_match_detail_backup")
-    if uploads_dir.exists():
-        uploads_dir.rename(backup_dir)
+    # savefig を失敗させてエラーフローをテストする
+    fig, ax = plt.subplots()
+    mocker.patch.object(plt, "subplots", return_value=(fig, ax))
+    mocker.patch.object(fig, "savefig", side_effect=FileNotFoundError())
 
-    try:
-        # Act
-        image_url = use_case.execute(match._id)
-    finally:
-        if backup_dir.exists():
-            backup_dir.rename(uploads_dir)
+    # Act
+    image_url = use_case.execute(match._id)
 
     # Assert
     assert image_url is None
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "システムエラーが発生しました。"
+    assert mock_push.call_count == 1

@@ -41,7 +41,7 @@ class FinishMatchUseCase:
             return
 
         settings = group_setting_service.find_or_create(
-            request_info_service.req_line_group_id
+            request_info_service.req_line_group_id,
         )
         chip_rate = settings.chip_rate
         if (
@@ -51,7 +51,7 @@ class FinishMatchUseCase:
             group.mode = GroupMode.chip_input.value
             group_service.update(group)
             reply_service.add_message(
-                "チップの増減数を入力してください。完了したら「_chip_ok」と入力してください。"
+                "チップの増減数を入力してください。完了したら「_chip_ok」と入力してください。",
             )
             return
 
@@ -93,6 +93,6 @@ class FinishMatchUseCase:
             + message_service.create_show_match_result(match=active_match),
         )
 
-        reply_service.add_image(
-            CreateMatchDetailGraphUseCase().execute(active_match._id)
-        )
+        image_url = CreateMatchDetailGraphUseCase().execute(active_match._id)
+        if image_url is not None:
+            reply_service.add_image(image_url)

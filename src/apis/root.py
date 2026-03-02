@@ -1,6 +1,9 @@
+import os
+
 from flask import (
     Blueprint,
     abort,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -8,14 +11,20 @@ from flask import (
     session,
     url_for,
 )
-from linebot import exceptions
-import env_var
+from linebot.v3.exceptions import InvalidSignatureError
+
 from application_models.page_contents import PageContents
 
 # handle_eventからhandlerをインポート（イベントハンドラーが登録された状態）
 from handle_event import handler
 
 views_blueprint = Blueprint("views_blueprint", __name__, url_prefix="/")
+
+
+@views_blueprint.route("/health")
+def health():
+    """Cloud Run ヘルスチェックエンドポイント"""
+    return jsonify({"status": "ok"}), 200
 
 
 @views_blueprint.route("/")
@@ -33,7 +42,7 @@ def callback():
     body = request.get_data(as_text=True)
     try:
         handler.handle(body, signature)
-    except exceptions.InvalidSignatureError:
+    except InvalidSignatureError:
         abort(400)
     return "OK"
 
@@ -64,8 +73,10 @@ def logout():
 
 @views_blueprint.route("/create_dummy", methods=["POST"])
 def create_dummy():
+    if os.environ.get("FLASK_ENV") == "production":
+        abort(404)
     # Avoid importing test-only dummy dependencies at app startup.
-    from use_cases.create_dummy_use_case import CreateDummyUseCase
+    from use_cases.create_dummy_use_case import CreateDummyUseCase  # noqa: PLC0415
 
     CreateDummyUseCase().execute()
     return "Done"
@@ -78,11 +89,13 @@ def migrate():
 
 @views_blueprint.route("/test_personal_line", methods=["POST"])
 def test_personal_line():
-    from application_service import (
+    if os.environ.get("FLASK_ENV") == "production":
+        abort(404)
+    from application_service import (  # noqa: PLC0415
         reply_service,
         request_info_service,
     )
-    from line_models import Event
+    from line_models import Event  # noqa: PLC0415
 
     user_id = request.form.get("user_id")
     text = request.form.get("text")
@@ -91,6 +104,6 @@ def test_personal_line():
         text=text,
     )
     request_info_service.set_req_info(event)
-    import routing_by_text_in_personal_line
+    import routing_by_text_in_personal_line  # noqa: PLC0415
     routing_by_text_in_personal_line.routing_by_text_in_personal_line()
     return "\n\n".join([content.text for content in reply_service.texts])

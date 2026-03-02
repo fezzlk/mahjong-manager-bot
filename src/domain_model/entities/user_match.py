@@ -1,26 +1,19 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 
 from bson.objectid import ObjectId
 
 
-@dataclass()
+@dataclass
 class UserMatch:
     user_id: ObjectId
     match_id: ObjectId
-    created_at: datetime
-    updated_at: datetime
+    _id: ObjectId = field(default=None)
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
 
-    def __init__(
-        self,
-        user_id: ObjectId,
-        match_id: ObjectId,
-        created_at: datetime = datetime.now(),
-        updated_at: datetime = datetime.now(),
-        _id: ObjectId = None,
-    ):
-        self.user_id = user_id
-        self.match_id = match_id
-        self._id = _id
-        self.created_at = created_at
-        self.updated_at = updated_at
+    def __post_init__(self):  # noqa: D105
+        if self.created_at is None:
+            self.created_at = datetime.now()
+        if self.updated_at is None:
+            self.updated_at = datetime.now()

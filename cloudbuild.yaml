@@ -1,12 +1,24 @@
 steps:
-  # Dockerイメージをビルド
+  # Dockerイメージをビルド (Artifact Registry に移行)
   - name: "gcr.io/cloud-builders/docker"
     args:
-      ["build", "-t", "gcr.io/$PROJECT_ID/mahjong-manager-bot:$COMMIT_SHA", "."]
+      - "build"
+      - "-t"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
+      - "-t"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:latest"
+      - "."
 
-  # Container Registryにプッシュ
+  # Artifact Registry にプッシュ
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/$PROJECT_ID/mahjong-manager-bot:$COMMIT_SHA"]
+    args:
+      - "push"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:latest"
 
   # Cloud Runにデプロイ
   - name: "gcr.io/cloud-builders/gcloud"
@@ -15,7 +27,7 @@ steps:
       - "deploy"
       - "mahjong-manager-bot"
       - "--image"
-      - "gcr.io/$PROJECT_ID/mahjong-manager-bot:$COMMIT_SHA"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
       - "--region"
       - "asia-northeast1"
       - "--platform"
@@ -29,8 +41,15 @@ steps:
       - "10"
       - "--timeout"
       - "300"
+      - "--health-check-http-path=/health"
       - "--set-env-vars"
-      - "FLASK_ENV=production,PORT=8080"
+      - "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=mahjong-manager,SERVER_URL=https://mahjong-manager-bot-794762347679.asia-northeast1.run.app,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,PORT=8080,GCS_BUCKET_NAME=mahjong-manager-images"
+      - "--set-secrets"
+      - "DATABASE_URL=DATABASE_URL:latest,YOUR_CHANNEL_ACCESS_TOKEN=YOUR_CHANNEL_ACCESS_TOKEN:latest,YOUR_CHANNEL_SECRET=YOUR_CHANNEL_SECRET:latest,SERVER_ADMIN_LINE_USER_ID=SERVER_ADMIN_LINE_USER_ID:latest,FLASK_SECRET_KEY=FLASK_SECRET_KEY:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest,GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID:latest,GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET:latest,GOOGLE_GEMINI_API_KEY=GOOGLE_GEMINI_API_KEY:latest"
+      # 独自サービスアカウントを使う場合は以下2行のコメントを外す
+      # - "--service-account"
+      # - "mahjong-bot-sa@$PROJECT_ID.iam.gserviceaccount.com"
 
 images:
-  - "gcr.io/$PROJECT_ID/mahjong-manager-bot:$COMMIT_SHA"
+  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
+  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:latest"

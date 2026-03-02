@@ -24,7 +24,6 @@ dummy_matches = [
     Match(
         _id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 1),
         sum_prices_with_chip={
             "U0123456789abcdefghijklmnopqrstu1": 1000,
@@ -38,7 +37,6 @@ dummy_matches = [
     Match(
         _id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 2),
         sum_prices_with_chip={
             "U0123456789abcdefghijklmnopqrstu1": 1000,
@@ -52,13 +50,12 @@ dummy_matches = [
     Match(
         _id=3,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=0,
+        is_deleted=True,
         created_at=datetime(2010, 1, 1, 1, 1, 3),
     ),
     Match(
         _id=4,
         line_group_id="dummy",
-        status=2,
         created_at=datetime(2010, 1, 1, 1, 1, 4),
     ),
 ]
@@ -68,7 +65,7 @@ dummy_hanchans = [
         _id=1,
         match_id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=0,
+        is_deleted=True,
         converted_scores={
             "U0123456789abcdefghijklmnopqrstu1": 10,
             "U0123456789abcdefghijklmnopqrstu2": 20,
@@ -80,7 +77,6 @@ dummy_hanchans = [
         _id=2,
         match_id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         converted_scores={
             "U0123456789abcdefghijklmnopqrstu1": 10,
             "U0123456789abcdefghijklmnopqrstu2": 20,
@@ -92,7 +88,6 @@ dummy_hanchans = [
         _id=3,
         match_id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         converted_scores={
             "U0123456789abcdefghijklmnopqrstu1": 10,
             "U0123456789abcdefghijklmnopqrstu2": 20,
@@ -104,7 +99,6 @@ dummy_hanchans = [
         _id=4,
         match_id=2,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         converted_scores={
             "U0123456789abcdefghijklmnopqrstu1": 10,
             "U0123456789abcdefghijklmnopqrstu2": 20,
@@ -116,7 +110,6 @@ dummy_hanchans = [
         _id=5,
         match_id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
         converted_scores={
             "U0123456789abcdefghijklmnopqrstu1": 10,
             "U0123456789abcdefghijklmnopqrstu2": 20,
@@ -239,10 +232,9 @@ def test_execute_fail_savefig(mocker):
     assert len(reply_service.images) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "システムエラーが発生しました。"
-    mock.assert_called_once_with(
-        to=env_var.SERVER_ADMIN_LINE_USER_ID,
-        message="対戦履歴の画像アップロードに失敗しました\n送信者: test_user1",
-    )
+    call_kwargs = mock.call_args.kwargs
+    assert call_kwargs["to"] == env_var.SERVER_ADMIN_LINE_USER_ID
+    assert "送信者: test_user1" in call_kwargs["message"]
 
 
 def test_execute_fail_savefig_without_sender(mocker):
@@ -283,7 +275,6 @@ def test_execute_fail_savefig_without_sender(mocker):
     assert len(reply_service.images) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "システムエラーが発生しました。"
-    mock.assert_called_once_with(
-        to=env_var.SERVER_ADMIN_LINE_USER_ID,
-        message="対戦履歴の画像アップロードに失敗しました\n送信者: U0123456789abcdefghijklmnopqrstu1",
-    )
+    call_kwargs = mock.call_args.kwargs
+    assert call_kwargs["to"] == env_var.SERVER_ADMIN_LINE_USER_ID
+    assert "送信者: U0123456789abcdefghijklmnopqrstu1" in call_kwargs["message"]

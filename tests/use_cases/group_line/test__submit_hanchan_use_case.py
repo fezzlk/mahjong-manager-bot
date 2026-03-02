@@ -70,7 +70,6 @@ dummy_group = Group(
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
-    status=2,
     _id=1,
 )
 
@@ -89,7 +88,6 @@ dummy_archived_hanchan = Hanchan(
         dummy_users[3].line_user_id: -40,
     },
     match_id=1,
-    status=2,
 )
 
 dummy_disabled_hanchan = Hanchan(
@@ -107,7 +105,7 @@ dummy_disabled_hanchan = Hanchan(
         dummy_users[3].line_user_id: -40,
     },
     match_id=1,
-    status=0,
+    is_deleted=True,
 )
 
 dummy_active_hanchan = Hanchan(
@@ -120,7 +118,6 @@ dummy_active_hanchan = Hanchan(
     },
     converted_scores={},
     match_id=1,
-    status=2,
     _id=1,
 )
 
@@ -134,7 +131,6 @@ dummy_active_hanchan_with_other_user = Hanchan(
     },
     converted_scores={},
     match_id=1,
-    status=2,
 )
 
 dummy_active_hanchan_has_5_points = Hanchan(
@@ -148,7 +144,6 @@ dummy_active_hanchan_has_5_points = Hanchan(
     },
     converted_scores={},
     match_id=1,
-    status=2,
 )
 
 dummy_active_hanchan_has_invalid_sum_point = Hanchan(
@@ -161,7 +156,6 @@ dummy_active_hanchan_has_invalid_sum_point = Hanchan(
     },
     converted_scores={},
     match_id=1,
-    status=2,
 )
 
 dummy_active_hanchan_has_tai = Hanchan(
@@ -174,7 +168,6 @@ dummy_active_hanchan_has_tai = Hanchan(
     },
     converted_scores={},
     match_id=1,
-    status=2,
 )
 
 dummy_active_hanchan_has_minus_point = Hanchan(
@@ -187,7 +180,6 @@ dummy_active_hanchan_has_minus_point = Hanchan(
     },
     converted_scores={},
     match_id=1,
-    status=2,
 )
 
 
@@ -221,7 +213,7 @@ def test_success():
     hanchan = hanchan_repository.find()[0]
     for k, v in expected_c_scores.items():
         assert hanchan.converted_scores[k] == v
-    assert hanchan.status == 2
+    assert not hanchan.is_deleted
     um = user_match_repository.find(
         {"user_id": {"$in": [1, 2, 3, 4]}},
     )

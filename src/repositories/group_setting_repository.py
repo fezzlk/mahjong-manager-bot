@@ -1,10 +1,13 @@
+import copy
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-from pymongo import ASCENDING
+from pymongo import ASCENDING, ReturnDocument
 
 from domain_model.entities.group_setting import GroupSetting
-from domain_model.i_repositories.i_group_setting_repository import IGroupSettingRepository
+from domain_model.i_repositories.i_group_setting_repository import (
+    IGroupSettingRepository,
+)
 from mongo_client import group_settings_collection
 
 
@@ -15,10 +18,10 @@ class GroupSettingRepository(IGroupSettingRepository):
     ) -> GroupSetting:
         if len(self.find(query={"line_group_id": new_record.line_group_id})) != 0:
             raise Exception(
-                f"LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。"
+                f"LINE Group ID: {new_record.line_group_id} のGroupSettingはすでに存在しています。",
             )
 
-        new_dict = new_record.__dict__.copy()
+        new_dict = copy.deepcopy(new_record.__dict__)
         if new_record._id is None:
             new_dict.pop("_id")
         result = group_settings_collection.insert_one(new_dict)
@@ -26,27 +29,44 @@ class GroupSettingRepository(IGroupSettingRepository):
 
         return new_record
 
+    def find_or_create(self, new_record: GroupSetting) -> GroupSetting:
+        """TOCTOU レースフリーな upsert による find-or-create"""
+        new_dict = {k: v for k, v in new_record.__dict__.items() if k != "_id"}
+        result = group_settings_collection.find_one_and_update(
+            filter={"line_group_id": new_record.line_group_id},
+            update={"$setOnInsert": new_dict},
+            upsert=True,
+            return_document=ReturnDocument.AFTER,
+        )
+        return self._mapping_record_to_domain(result)
+
     def update(
         self,
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
         new_values["updated_at"] = datetime.now()
-        result = group_settings_collection.update_many(query, {"$set": new_values})
+        result = group_settings_collection.update_one(query, {"$set": new_values})
         return result.matched_count
 
     def find(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
         sort: List[Tuple[str, any]] = [("_id", ASCENDING)],
+        limit: int = 0,
     ) -> List[GroupSetting]:
-        records = group_settings_collection.find(filter=query).sort(sort)
+        records = group_settings_collection\
+            .find(filter=dict(query) if query is not None else {})\
+            .sort(sort)\
+            .limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
 
     def delete(
         self,
-        query: Dict[str, any] = {},
+        query: Dict[str, any] = None,
     ) -> int:
+        if not query:
+            raise ValueError("delete() requires a non-empty query to prevent accidental full-collection deletion")
         result = group_settings_collection.delete_many(filter=query)
         return result.deleted_count
 

@@ -17,7 +17,6 @@ dummy_archived_hanchans = [
             "U0123456789abcdefghijklmnopqrstu4": -40,
         },
         match_id=1,
-        status=2,
         _id=1,
     ),
     Hanchan(
@@ -35,7 +34,6 @@ dummy_archived_hanchans = [
             "U0123456789abcdefghijklmnopqrstu5": -40,
         },
         match_id=1,
-        status=2,
         _id=2,
     ),
 ]

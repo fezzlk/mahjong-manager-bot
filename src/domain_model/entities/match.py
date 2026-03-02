@@ -1,51 +1,37 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, Optional
 
 from bson.objectid import ObjectId
 
-MATCH_STATUS = ["DISABLE", "ACTIVE", "ARCHIVE"]
 
-
-@dataclass()
+@dataclass
 class Match:
-    _id: ObjectId
     line_group_id: str
-    status: int
-    chip_scores: Dict[str, int]
-    chip_prices: Dict[str, int]
-    sum_scores: Dict[str, int]
-    sum_prices: Dict[str, int]
-    sum_prices_with_chip: Dict[str, int]
-    active_hanchan_id: ObjectId
-    created_at: datetime
-    updated_at: datetime
-    original_id: Optional[int]
+    is_deleted: bool = False
+    chip_scores: Dict[str, int] = field(default_factory=dict)
+    chip_prices: Dict[str, int] = field(default_factory=dict)
+    sum_scores: Dict[str, int] = field(default_factory=dict)
+    sum_prices: Dict[str, int] = field(default_factory=dict)
+    sum_prices_with_chip: Dict[str, int] = field(default_factory=dict)
+    active_hanchan_id: ObjectId = field(default=None)
+    original_id: Optional[int] = None
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
+    _id: ObjectId = field(default=None)
 
-    def __init__(
-        self,
-        line_group_id: str,
-        status: int = 2,
-        created_at: datetime = datetime.now(),
-        updated_at: datetime = datetime.now(),
-        chip_scores: Dict[str, int] = {},
-        chip_prices: Dict[str, int] = {},
-        active_hanchan_id: ObjectId = None,
-        sum_scores: Dict[str, int] = {},
-        sum_prices: Dict[str, int] = {},
-        sum_prices_with_chip: Dict[str, int] = {},
-        _id: ObjectId = None,
-        original_id: Optional[int] = None,
-    ):
-        self._id = _id
-        self.line_group_id = line_group_id
-        self.status = status
-        self.chip_scores = chip_scores
-        self.chip_prices = chip_prices
-        self.sum_scores = sum_scores
-        self.sum_prices = sum_prices
-        self.sum_prices_with_chip = sum_prices_with_chip
-        self.created_at = created_at
-        self.updated_at = updated_at
-        self.active_hanchan_id = active_hanchan_id
-        self.original_id = original_id
+    def __post_init__(self):  # noqa: D105
+        if self.chip_scores is None:
+            self.chip_scores = {}
+        if self.chip_prices is None:
+            self.chip_prices = {}
+        if self.sum_scores is None:
+            self.sum_scores = {}
+        if self.sum_prices is None:
+            self.sum_prices = {}
+        if self.sum_prices_with_chip is None:
+            self.sum_prices_with_chip = {}
+        if self.created_at is None:
+            self.created_at = datetime.now()
+        if self.updated_at is None:
+            self.updated_at = datetime.now()

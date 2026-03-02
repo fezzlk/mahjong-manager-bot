@@ -28,7 +28,7 @@ class DropMatchByIndexUseCase:
 
         target_match = archived_matches[index-1]
         hanchan_service.disable_by_match_id(match_id=target_match._id)
-        target_match.status = 0
+        target_match.is_deleted = True
         match_service.update(target_match)
         reply_service.add_message(
             f"第{index}回の対戦結果を削除しました。",

@@ -11,7 +11,6 @@ from repositories import hanchan_repository, match_repository
 
 dummy_match = Match(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    status=2,
 )
 
 dummy_hanchans = [
@@ -20,14 +19,12 @@ dummy_hanchans = [
         raw_scores={},
         converted_scores={},
         match_id=1,
-        status=2,
     ),
     Hanchan(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         raw_scores={},
         converted_scores={},
         match_id=1,
-        status=2,
     ),
 ]
 
@@ -38,7 +35,7 @@ def test_hit_0_record():
     # Act
     result = hanchan_repository.update(
         query={},
-        new_values={"status": dummy_hanchans[1].status},
+        new_values={"is_deleted": dummy_hanchans[1].is_deleted},
     )
 
     # Assert
@@ -77,4 +74,4 @@ def test_success():
     assert record_on_db[0].raw_scores == dummy_raw_scores
     assert record_on_db[0].converted_scores == target_hanchans[0].converted_scores
     assert record_on_db[0].match_id == target_hanchans[0].match_id
-    assert record_on_db[0].status == target_hanchans[0].status
+    assert record_on_db[0].is_deleted == target_hanchans[0].is_deleted

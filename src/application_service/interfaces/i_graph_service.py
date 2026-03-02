@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 class IGraphService(metaclass=ABCMeta):
@@ -11,4 +11,8 @@ class IGraphService(metaclass=ABCMeta):
         plot_dict: Dict[str, List[int]],
         upload_file_path: str,
     ) -> str:
+        pass
+
+    @abstractmethod
+    def save_figure(self, fig, upload_file_path: str) -> Tuple[str, str]:
         pass

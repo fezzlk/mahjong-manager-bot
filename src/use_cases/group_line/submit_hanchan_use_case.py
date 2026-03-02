@@ -1,4 +1,7 @@
+import logging
 from typing import Dict, Optional
+
+import pymongo.errors
 
 from application_service import (
     calculate_service,
@@ -24,6 +27,8 @@ from repositories import (
     user_hanchan_repository,
     user_match_repository,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class SubmitHanchanUseCase:
@@ -104,71 +109,83 @@ class SubmitHanchanUseCase:
             tobashita_player_id=tobashita_player_id,
         )
 
-        # その半荘の結果を更新
-        active_hanchan.converted_scores = calculate_result
-        hanchan_service.update(active_hanchan)
+        try:
+            # その半荘の結果を更新
+            active_hanchan.converted_scores = calculate_result
+            hanchan_service.update(active_hanchan)
 
-        # user_match, user_group の作成
-        user_ids_in_hanchan = []
-        user_groups = user_group_service.find_all_by_line_group_id(line_group_id)
-        line_user_ids_in_group = [ug.line_user_id for ug in user_groups]
+            # user_match, user_group の作成
+            user_ids_in_hanchan = []
+            user_groups = user_group_service.find_all_by_line_group_id(line_group_id)
+            line_user_ids_in_group = [ug.line_user_id for ug in user_groups]
 
-        for user_line_id in calculate_result:
-            if user_line_id not in line_user_ids_in_group:
-                user_group_repository.create(
-                    UserGroup(
-                        line_group_id=line_group_id,
-                        line_user_id=user_line_id,
+            for user_line_id in calculate_result:
+                if user_line_id not in line_user_ids_in_group:
+                    user_group_repository.create(
+                        UserGroup(
+                            line_group_id=line_group_id,
+                            line_user_id=user_line_id,
+                        ),
+                    )
+                profile = Profile(display_name="", user_id=user_line_id)
+                user = user_service.find_or_create_by_profile(profile)
+                if user is not None:
+                    user_ids_in_hanchan.append(user._id)
+
+            user_matches = user_match_repository.find(
+                {"match_id": active_hanchan.match_id},
+            )
+            linked_user_ids = [um.user_id for um in user_matches]
+            target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
+            for user_id in target_user_ids:
+                user_match = UserMatch(
+                    user_id=user_id,
+                    match_id=active_hanchan.match_id,
+                )
+                user_match_repository.create(user_match)
+
+            # 半荘合計の更新
+            hanchans = hanchan_service.find_all_archived_by_match_id(
+                active_hanchan.match_id,
+            )
+
+            sum_scores: Dict[str, int] = {}
+            for h in hanchans:
+                for line_user_id, converted_score in h.converted_scores.items():
+                    if line_user_id not in sum_scores:
+                        sum_scores[line_user_id] = 0
+                    sum_scores[line_user_id] += converted_score
+
+            # 一半荘の結果をアーカイブ
+            active_match.active_hanchan_id = None
+            active_match.sum_scores = sum_scores
+            match_service.update(active_match)
+
+            # UserHanchan の作成
+            sorted_points: list[tuple[str, int]] = sorted(
+                active_hanchan.raw_scores.items(), key=lambda x: x[1], reverse=True,
+            )
+            for i, (line_id, point) in enumerate(sorted_points):
+                user_hanchan_repository.create(
+                    UserHanchan(
+                        line_user_id=line_id,
+                        hanchan_id=active_hanchan._id,
+                        point=point,
+                        rank=i + 1,
                     ),
                 )
-            profile = Profile(display_name="", user_id=user_line_id)
-            user = user_service.find_or_create_by_profile(profile)
-            if user is not None:
-                user_ids_in_hanchan.append(user._id)
 
-        user_matches = user_match_repository.find(
-            {"match_id": active_hanchan.match_id},
-        )
-        linked_user_ids = [um.user_id for um in user_matches]
-        target_user_ids = set(user_ids_in_hanchan) - set(linked_user_ids)
-        for user_id in target_user_ids:
-            user_match = UserMatch(
-                user_id=user_id,
-                match_id=active_hanchan.match_id,
+        except pymongo.errors.PyMongoError as err:
+            logger.exception("submit_hanchan: DB書き込み中にエラーが発生しました")
+            import env_var  # noqa: PLC0415
+            from application_service import reply_service as rs  # noqa: PLC0415
+            rs.reset()
+            rs.add_message("半荘結果の保存中にエラーが発生しました。管理者に連絡してください。")
+            rs.push_a_message(
+                to=env_var.SERVER_ADMIN_LINE_USER_ID,
+                message=f"submit_hanchan DB書き込みエラー: {type(err).__name__}: {err}",
             )
-            user_match_repository.create(user_match)
-
-        # 半荘合計の更新
-        hanchans = hanchan_service.find_all_archived_by_match_id(
-            active_hanchan.match_id,
-        )
-
-        sum_scores: Dict[str, int] = {}
-        for h in hanchans:
-            for line_user_id, converted_score in h.converted_scores.items():
-                if line_user_id not in sum_scores:
-                    sum_scores[line_user_id] = 0
-                sum_scores[line_user_id] += converted_score
-
-        # 一半荘の結果をアーカイブ
-        active_match.active_hanchan_id = None
-        active_match.sum_scores = sum_scores
-        match_service.update(active_match)
-
-        # UserHanchan の作成
-        sorted_points: list[tuple[str, int]] = sorted(
-            active_hanchan.raw_scores.items(), key=lambda x: x[1], reverse=True,
-        )
-        for i in range(len(sorted_points)):
-            line_id, point = sorted_points[i]
-            user_hanchan_repository.create(
-                UserHanchan(
-                    line_user_id=line_id,
-                    hanchan_id=active_hanchan._id,
-                    point=point,
-                    rank=i + 1,
-                ),
-            )
+            return
 
         # 結果の表示
         reply_service.add_message("一半荘お疲れ様でした。結果を表示します。")

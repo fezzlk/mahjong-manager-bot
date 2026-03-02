@@ -27,7 +27,7 @@ def test_success_find_records():
         assert isinstance(result[i], Match)
         assert type(result[i]._id) is ObjectId
         assert result[i].line_group_id == target_matches[i].line_group_id
-        assert result[i].status == target_matches[i].status
+        assert result[i].is_deleted == target_matches[i].is_deleted
 
 
 def test_success_find_0_record():
@@ -65,7 +65,7 @@ def test_hit_records():
         assert isinstance(result[i], Match)
         assert type(result[i]._id) is ObjectId
         assert result[i].line_group_id == target_matches[i].line_group_id
-        assert result[i].status == target_matches[i].status
+        assert result[i].is_deleted == target_matches[i].is_deleted
 
 
 def test_hit_0_record_with_not_exist_line_group_id():

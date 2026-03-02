@@ -1,7 +1,5 @@
 from abc import ABCMeta, abstractmethod
 
-from linebot.models.responses import Profile
-
 from domain_model.entities.user import User, UserMode
 
 
@@ -24,7 +22,7 @@ class IUserService(metaclass=ABCMeta):
     @abstractmethod
     def find_or_create_by_profile(
         self,
-        profile: Profile,
+        profile,
     ) -> User:
         pass
 

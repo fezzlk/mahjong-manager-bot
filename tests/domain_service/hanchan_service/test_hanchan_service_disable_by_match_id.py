@@ -9,7 +9,6 @@ dummy_hanchans = [
         _id=1,
         match_id=1,
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        status=2,
     ),
 ]
 
@@ -28,5 +27,5 @@ def test_ok_hit(mocker):
     # Assert
     mock_update.assert_called_once_with(
         {"match_id": 1},
-        {"status": 0},
+        {"is_deleted": True},
     )
