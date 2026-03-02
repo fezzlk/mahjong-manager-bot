@@ -27,7 +27,7 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 
-@views_blueprint.route("/")
+@views_blueprint.route("/legacy/")
 def index():
     page_contents = PageContents(session, request)
     if request.args.get("message") is not None:
@@ -56,7 +56,7 @@ def download_file(filename: str):
     )
 
 
-@views_blueprint.route("/login", methods=["GET"])
+@views_blueprint.route("/legacy/login", methods=["GET"])
 def view_login():
     page_contents = PageContents(session, request)
     return render_template(
@@ -68,7 +68,7 @@ def view_login():
 @views_blueprint.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("views_blueprint.view_login"))
+    return redirect("/login")
 
 
 @views_blueprint.route("/create_dummy", methods=["POST"])

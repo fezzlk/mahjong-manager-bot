@@ -2,6 +2,7 @@ import logging
 import logging.config
 import os
 import sys
+from pathlib import Path
 
 # debugpyはpytest実行時にはimportしない
 debugpy = None
@@ -19,7 +20,14 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 # ===== Flask アプリ初期化 =====
 import env_var
 
-app = Flask(__name__)
+# React ビルド成果物のパス（プロジェクトルートからの相対）
+_FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
+
+app = Flask(
+    __name__,
+    static_folder=str(_FRONTEND_DIST / "assets"),
+    static_url_path="/assets",
+)
 app.secret_key = env_var.FLASK_SECRET_KEY
 
 # ===== ロギング設定 =====
@@ -60,6 +68,23 @@ app.register_blueprint(views_blueprint)
 from apis.auth import auth_blueprint
 
 app.register_blueprint(auth_blueprint)
+
+from apis.api import api_blueprint  # noqa: E402
+
+app.register_blueprint(api_blueprint)
+
+
+# ===== React SPA フォールバック =====
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve_spa(path: str):
+    """React の index.html を返す（/api, /auth, /callback, /health, /uploads は除外済み）"""
+    from flask import send_from_directory  # noqa: PLC0415
+
+    index = _FRONTEND_DIST / "index.html"
+    if index.exists():
+        return send_from_directory(str(_FRONTEND_DIST), "index.html")
+    return "Frontend not built. Run: cd frontend && npm run build", 404
 
 
 if __name__ == "__main__":

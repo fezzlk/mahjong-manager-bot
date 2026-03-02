@@ -143,3 +143,7 @@ setup_secrets.sh
 
 # Uploaded images (runtime artifacts)
 src/uploads/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/

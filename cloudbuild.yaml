@@ -1,5 +1,5 @@
 steps:
-  # Dockerイメージをビルド (Artifact Registry に移行)
+  # Dockerイメージをビルド (React ビルドはマルチステージ Dockerfile 内で実行)
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "build"
