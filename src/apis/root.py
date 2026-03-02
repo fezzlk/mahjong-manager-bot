@@ -95,7 +95,7 @@ def test_personal_line():
         reply_service,
         request_info_service,
     )
-    from line_models import Event  # noqa: PLC0415
+    from line_models.event import Event  # noqa: PLC0415
 
     user_id = request.form.get("user_id")
     text = request.form.get("text")
