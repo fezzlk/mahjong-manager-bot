@@ -4,11 +4,10 @@
 このエンドポイントはFLASK_ENV != "production" の場合のみ利用可能。
 """
 
-from conftest import client  # noqa: F401
-
 from application_service import reply_service, request_info_service, rich_menu_service
 from domain_model.entities.user import User
 from line_models.event import Event
+from line_models.profile import Profile
 from messaging_api_setting import line_bot_api
 from repositories import user_repository
 from use_cases.personal_line.follow_use_case import FollowUseCase
@@ -19,7 +18,6 @@ USER_ID = "U_system_test_personal_001_abcd"
 
 def _make_dummy_profile(user_id: str = USER_ID):
     """LINE API get_profile のダミーレスポンス"""
-    from line_models.profile import Profile  # noqa: PLC0415
     return Profile(display_name="test_display_name", user_id=user_id)
 
 

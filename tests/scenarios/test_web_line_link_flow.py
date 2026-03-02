@@ -21,7 +21,9 @@ WEB_USER_EMAIL = "scenario_link_test@example.com"
 
 
 def test_web_line_link_flow(mocker):
-    """1. WebUser を DB に登録
+    """Web LINE 連携フロー。
+
+    1. WebUser を DB に登録
     2. LINE ユーザーがアカウント連携リクエストを送信
     3. WebUser に linked_line_user_id がセットされる
     4. ViewApproveLinkLineUseCase で連携情報が参照できる

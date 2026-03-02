@@ -29,7 +29,9 @@ def _set_group_request(user_index: int = 0):
 
 
 def test_error_recovery_flow():
-    """1. グループ参加
+    """エラーリカバリーフロー。
+
+    1. グループ参加
     2. 第1半荘入力・確定 (誤った点数)
     3. 第2半荘入力中に第1半荘を削除
     4. 第2半荘を確定

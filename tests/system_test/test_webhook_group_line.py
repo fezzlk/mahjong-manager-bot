@@ -6,7 +6,7 @@ HTTP レスポンスと reply_service の状態を検証する。
 import json
 from unittest.mock import patch
 
-from conftest import client  # noqa: F401 (pytest fixture)
+import pytest
 from system_test_helpers import make_group_text_event, make_line_webhook_payload
 
 from application_service import reply_service, request_info_service
@@ -30,7 +30,7 @@ def _post_callback(client, event_dict: dict):
             # ルーティングはモックで制御、ここでは何もしない
 
         mock_handle.side_effect = simulate_handle
-        resp = client.post(
+        return client.post(
             "/callback",
             data=body,
             headers={
@@ -38,7 +38,6 @@ def _post_callback(client, event_dict: dict):
                 "Content-Type": "application/json",
             },
         )
-    return resp
 
 
 def test_callback_endpoint_returns_200(client):
@@ -51,7 +50,6 @@ def test_callback_endpoint_returns_200(client):
 
 def test_callback_endpoint_handles_missing_signature(client):
     """POST /callback → X-Line-Signature ヘッダーなし → TESTING モードでは KeyError が伝播"""
-    import pytest  # noqa: PLC0415
     payload = make_line_webhook_payload([])
     # TESTING=True の場合 Flask は例外を伝播させる
     # X-Line-Signature がないと request.headers[] が KeyError を送出する
@@ -89,9 +87,6 @@ def test_callback_with_simulated_join_event(client):
 
     def simulate_join_handler(raw_body, signature):
         """JoinGroupUseCase を直接呼び出してグループ作成をシミュレート"""
-        from use_cases.group_line.join_group_use_case import (
-            JoinGroupUseCase,
-        )
         request_info_service.req_line_group_id = GROUP_ID + "_cb"
         request_info_service.req_line_user_id = USER_ID
         request_info_service.mention_line_ids = []

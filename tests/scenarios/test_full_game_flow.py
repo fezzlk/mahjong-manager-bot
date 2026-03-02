@@ -35,7 +35,8 @@ def _set_group_request(user_index: int = 0):
 
 
 def test_full_game_flow():
-    """グループ参加 → 入力開始 → 4人分の点数入力 → 半荘確定 → 対局終了
+    """グループ参加 → 入力開始 → 4人分の点数入力 → 半荘確定 → 対局終了。
+
     最終 DB 状態:
     - group.mode = "wait"
     - group.active_match_id = None
