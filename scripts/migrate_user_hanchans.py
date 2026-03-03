@@ -11,7 +11,7 @@
     - すでに results が存在する hanchan はスキップ
 
 注意:
-    - この script は idempotent（何度実行しても安全）
+    - この script は idempotent(何度実行しても安全)
     - 変換後は hanchan.results: [{line_user_id, rank, point, yakuman_count}, ...] 形式になる
     - マイグレーション完了後、user_hanchans コレクションはアーカイブ or 削除可
 """
@@ -59,7 +59,7 @@ def migrate():
             skipped += 1
             continue
 
-        # すでに results が存在する場合はスキップ（idempotent）
+        # すでに results が存在する場合はスキップ(idempotent)
         existing_results = hanchan.get("results") or []
         if existing_results:
             skipped += 1

@@ -90,7 +90,7 @@ class HanchanService(IHanchanService):
         )
 
     def set_results(self, hanchan_id: ObjectId, results: List[UserHanchanResult]) -> None:
-        """半荘の results（embedded UserHanchanResult リスト）を保存する"""
+        """半荘の results(embedded UserHanchanResult リスト)を保存する"""
         hanchan_repository.update(
             {"_id": hanchan_id},
             {"results": results},

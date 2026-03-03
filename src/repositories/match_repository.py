@@ -17,7 +17,7 @@ def _sum_scores_to_list(scores: Dict[str, int]) -> List[dict]:
 
 
 def _sum_scores_to_dict(scores) -> Dict[str, int]:
-    """MongoDB list 形式 → Python Dict に変換する（後方互換: dict 形式もそのまま受け入れる）"""
+    """MongoDB list 形式 → Python Dict に変換する(後方互換: dict 形式もそのまま受け入れる)"""
     if scores is None:
         return {}
     if isinstance(scores, list):

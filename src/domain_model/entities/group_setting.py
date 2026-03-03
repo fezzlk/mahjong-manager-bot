@@ -15,11 +15,11 @@ from domain_model.constants import (
 
 __all__ = [
     "CHIP_RATE_LIST",
-    "EmbeddedGroupSettings",
     "NUM_OF_PLAYERS_LIST",
     "RANKING_PRIZE_LIST",
     "RATE_LIST",
     "ROUNDING_METHOD_LIST",
+    "EmbeddedGroupSettings",
     "GroupSetting",
     "RoundingMethod",
 ]
@@ -27,7 +27,8 @@ __all__ = [
 
 @dataclass
 class EmbeddedGroupSettings:
-    """Group に embedded される設定（_id・line_group_id なし）"""
+    """Group に embedded される設定(_id・line_group_id なし)"""
+
     rate: int = 0
     ranking_prize: List[int] = field(default=None)
     chip_rate: int = 0
@@ -63,7 +64,8 @@ class EmbeddedGroupSettings:
 
 @dataclass
 class GroupSetting:
-    """後方互換のため残す（migration 後に削除予定）"""
+    """後方互換のため残す(migration 後に削除予定)"""
+
     line_group_id: str
     rate: int = 0
     ranking_prize: List[int] = field(default=None)

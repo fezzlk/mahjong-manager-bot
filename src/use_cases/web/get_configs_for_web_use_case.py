@@ -9,7 +9,7 @@ _SETTINGS_FIELDS = ("rate", "ranking_prize", "chip_rate", "tobi_prize", "num_of_
 class GetConfigsForWebUseCase:
 
     def execute(self) -> List[dict]:
-        """全グループの設定を返す（テンプレートが _id キーを参照できるよう dict で返す）"""
+        """全グループの設定を返す(テンプレートが _id キーを参照できるよう dict で返す)"""
         groups = group_repository.find()
         result = []
         for g in groups:

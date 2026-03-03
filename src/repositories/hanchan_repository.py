@@ -48,7 +48,7 @@ class HanchanRepository(IHanchanRepository):
         query: Dict[str, any],
         new_values: Dict[str, any],
     ) -> int:
-        """複数ドキュメントを一括更新する（bulk archive 等の用途専用）"""
+        """複数ドキュメントを一括更新する(bulk archive 等の用途専用)"""
         filter_query = {**query, "is_deleted": {"$ne": True}}
         new_values["updated_at"] = datetime.now()
         result = hanchans_collection.update_many(filter_query, {"$set": new_values})

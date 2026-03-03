@@ -12,7 +12,7 @@
 
 注意:
     - migration 完了後、group_settings コレクションは不要になる
-    - この script は idempotent（何度実行しても安全）
+    - この script は idempotent(何度実行しても安全)
 """
 import os
 import sys

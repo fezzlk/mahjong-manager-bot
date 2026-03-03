@@ -7,21 +7,21 @@ import matplotlib.pyplot as plt
 
 from application_service import (
     graph_service,
+    message_service,
     reply_service,
     request_info_service,
-    message_service,
 )
 from domain_service import (
-    user_service,
     match_service,
     user_match_service,
+    user_service,
 )
+
 
 class ReplyMultiHistoryUseCase:
     def execute(self) -> None:
         req_line_user_id = request_info_service.req_line_user_id
         mention_line_user_ids = request_info_service.mention_line_ids
-        messages = []
         target_user_ids: List[int] = []
         active_user_line_ids: List[str] = []
         line_id_name_dict: Dict[str, str] = {}
@@ -46,7 +46,7 @@ class ReplyMultiHistoryUseCase:
 
         if request_info_service.is_mention_all:
             reply_service.add_message(
-                "@Allによるメンションでは、このグループでの対戦に参加したことのある全ユーザを対象とします。"
+                "@Allによるメンションでは、このグループでの対戦に参加したことのある全ユーザを対象とします。",
             )
 
         # 関連する対戦結果の取得
@@ -57,13 +57,13 @@ class ReplyMultiHistoryUseCase:
             for msg in message_service.DATE_FORMAT_ERROR_MESSAGES:
                 reply_service.add_message(msg)
             return
-        umList = user_match_service.find_all_by_user_id_list(
+        um_list = user_match_service.find_all_by_user_id_list(
             target_user_ids,
             from_dt=from_dt,
             to_dt=to_dt,
         )
         matches = match_service.find_all_for_graph(
-            ids=[um.match_id for um in umList],
+            ids=[um.match_id for um in um_list],
         )
 
         if len(matches) == 0:
@@ -75,7 +75,7 @@ class ReplyMultiHistoryUseCase:
             reply_service.add_message(range_message)
 
         # 対戦結果の累計を計算
-        total_dict = {line_id: 0 for line_id in active_user_line_ids}
+        total_dict = dict.fromkeys(active_user_line_ids, 0)
         start_date = matches[0].created_at
         end_date = matches[-1].created_at
         history_dict = {
@@ -111,7 +111,7 @@ class ReplyMultiHistoryUseCase:
                 start_date - timedelta(minutes=1),
                 end_date
                 + timedelta(seconds=(end_date - start_date).total_seconds() // 100),
-            ]
+            ],
         )
         plt.xticks(rotation=30)
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H時"))

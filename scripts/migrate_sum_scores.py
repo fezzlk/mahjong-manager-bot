@@ -11,7 +11,7 @@
     - すでに配列形式のドキュメントはスキップ
 
 注意:
-    - この script は idempotent（何度実行しても安全）
+    - この script は idempotent(何度実行しても安全)
     - 変換後は sum_scores: [{"line_user_id": "...", "score": N}, ...] 形式になる
 """
 import os
@@ -45,7 +45,7 @@ def migrate():
             skipped += 1
             continue
 
-        # None や空 dict もスキップ（変換不要）
+        # None や空 dict もスキップ(変換不要)
         if not sum_scores:
             skipped += 1
             continue

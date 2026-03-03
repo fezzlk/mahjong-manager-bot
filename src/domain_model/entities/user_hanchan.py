@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 
 @dataclass
 class UserHanchanResult:
-    """Hanchan に embedded される結果（_id・hanchan_id なし）"""
+    """Hanchan に embedded される結果(_id・hanchan_id なし)"""
 
     line_user_id: str
     rank: int
