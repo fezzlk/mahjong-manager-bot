@@ -5,6 +5,33 @@ from bson.objectid import ObjectId
 
 
 @dataclass
+class UserHanchanResult:
+    """Hanchan に embedded される結果（_id・hanchan_id なし）"""
+
+    line_user_id: str
+    rank: int
+    point: int
+    yakuman_count: int = 0
+
+    def to_dict(self) -> dict:
+        return {
+            "line_user_id": self.line_user_id,
+            "rank": self.rank,
+            "point": self.point,
+            "yakuman_count": self.yakuman_count,
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "UserHanchanResult":
+        return cls(
+            line_user_id=d["line_user_id"],
+            rank=d["rank"],
+            point=d["point"],
+            yakuman_count=d.get("yakuman_count", 0),
+        )
+
+
+@dataclass
 class UserHanchan:
     line_user_id: str
     hanchan_id: ObjectId

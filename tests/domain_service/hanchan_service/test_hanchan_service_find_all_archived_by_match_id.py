@@ -33,7 +33,7 @@ def test_ok_hit_hanchan(mocker):
 
     # Assert
     assert len(result) == len(dummy_hanchans)
-    for i in range(len(dummy_hanchans)):
+    for i, _item in enumerate(dummy_hanchans):
         assert isinstance(result[i], Hanchan)
         assert result[i]._id == dummy_hanchans[i]._id
         assert result[i].match_id == dummy_hanchans[i].match_id

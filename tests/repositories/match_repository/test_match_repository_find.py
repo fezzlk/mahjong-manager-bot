@@ -23,7 +23,7 @@ def test_success_find_records():
 
     # Assert
     assert len(result) == len(target_matches)
-    for i in range(len(result)):
+    for i, _item in enumerate(result):
         assert isinstance(result[i], Match)
         assert type(result[i]._id) is ObjectId
         assert result[i].line_group_id == target_matches[i].line_group_id
@@ -61,7 +61,7 @@ def test_hit_records():
 
     # Assert
     assert len(result) == len(target_matches)
-    for i in range(len(result)):
+    for i, _item in enumerate(result):
         assert isinstance(result[i], Match)
         assert type(result[i]._id) is ObjectId
         assert result[i].line_group_id == target_matches[i].line_group_id

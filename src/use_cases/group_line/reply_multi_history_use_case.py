@@ -1,12 +1,9 @@
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-import matplotlib
-matplotlib.use("agg")
-import matplotlib.pyplot as plt
+import japanize_matplotlib  # noqa: F401
 import matplotlib.dates as mdates
-# flake8: noqa
-import japanize_matplotlib
+import matplotlib.pyplot as plt
 
 from application_service import (
     graph_service,
@@ -53,15 +50,12 @@ class ReplyMultiHistoryUseCase:
             )
 
         # 関連する対戦結果の取得
-        from_str = request_info_service.params.get("from")
-        to_str = request_info_service.params.get("to")
-        from_dt, from_is_invalid = message_service.parse_date_from_text(from_str)
-        to_dt, to_is_invalid = message_service.parse_date_from_text(to_str)
-        if from_is_invalid or to_is_invalid:
-            reply_service.add_message("日付は以下のフォーマットで入力してください。")
-            reply_service.add_message(
-                "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD"
-            )
+        from_dt, to_dt, is_valid = message_service.parse_date_range_from_params(
+            request_info_service.params,
+        )
+        if not is_valid:
+            for msg in message_service.DATE_FORMAT_ERROR_MESSAGES:
+                reply_service.add_message(msg)
             return
         umList = user_match_service.find_all_by_user_id_list(
             target_user_ids,

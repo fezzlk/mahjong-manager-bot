@@ -18,7 +18,7 @@ def test_success_find_records():
 
     # Assert
     assert len(result) == len(dummy_group_settings)
-    for i in range(len(result)):
+    for i, _item in enumerate(result):
         assert isinstance(result[i], GroupSetting)
         assert type(result[i]._id) is ObjectId
         assert result[i].line_group_id == dummy_group_settings[i].line_group_id

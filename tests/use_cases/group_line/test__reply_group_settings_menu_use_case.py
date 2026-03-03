@@ -7,23 +7,15 @@ from application_service import (
     reply_service,
     request_info_service,
 )
-from domain_model.entities.group_setting import GroupSetting
+from domain_model.entities.group import Group, GroupMode
+from domain_model.entities.group_setting import EmbeddedGroupSettings
 from line_models.event import Event
-from repositories import group_setting_repository
+from repositories import group_repository
 from use_cases.group_line.reply_group_settings_menu_use_case import (
     ReplyGroupSettingsMenuUseCase,
 )
 
-dummy_group_settings = GroupSetting(
-    line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    rate=3,
-    ranking_prize=[20, 10, -10, -20],
-    chip_rate=1,
-    tobi_prize=10,
-    num_of_players=4,
-    rounding_method=0,
-    _id=1,
-)
+dummy_line_group_id = "G0123456789abcdefghijklmnopqrstu1"
 
 dummy_event = Event(
     type="message",
@@ -41,11 +33,15 @@ def test_execute():
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
     # 想定出力: reply_service.texts の件数が 1 件 / ( / reply_service.buttons の件数が 1 件 / reply_service.buttons[0] が TemplateSendMessage 型
     # reply_service: buttons, texts
-    # DB操作: group_setting_repository.create(dummy_group_settings)
+    # DB操作: group_repository.create; group_repository.update_settings
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyGroupSettingsMenuUseCase()
-    group_setting_repository.create(dummy_group_settings)
+    group_repository.create(Group(line_group_id=dummy_line_group_id, mode=GroupMode.wait.value))
+    group_repository.update_settings(
+        dummy_line_group_id,
+        EmbeddedGroupSettings(rate=3, ranking_prize=[20, 10, -10, -20], chip_rate=1, tobi_prize=10, num_of_players=4, rounding_method=0),
+    )
 
     # Act
     use_case.execute("")

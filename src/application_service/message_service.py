@@ -1,7 +1,7 @@
 import random
 import re
 from datetime import datetime
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple
 
 from domain_model.entities.match import Match
 from domain_service import (
@@ -9,6 +9,11 @@ from domain_service import (
 )
 
 from .interfaces.i_message_service import IMessageService
+
+DATE_FORMAT_ERROR_MESSAGES = (
+    "日付は以下のフォーマットで入力してください。",
+    "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD",
+)
 
 KANSUJI = ["一", "二", "三", "四", "五", "六", "七", "八", "九"]
 HAI = (
@@ -83,6 +88,8 @@ finish_hanchan_messages = [
 
 
 class MessageService(IMessageService):
+    DATE_FORMAT_ERROR_MESSAGES = DATE_FORMAT_ERROR_MESSAGES
+
     def get_random_hai(
         self,
         line_user_id: str,
@@ -199,6 +206,20 @@ class MessageService(IMessageService):
                 return (None, True)
 
         return (result, False)
+
+    def parse_date_range_from_params(
+        self, params: dict,
+    ) -> Tuple[Optional[datetime], Optional[datetime], bool]:
+        """params から "from"/"to" キーを読み取り日付を解析する。
+
+        戻り値: (from_dt, to_dt, is_valid)
+        is_valid=False の場合、from_dt/to_dt は None。
+        """
+        from_str = params.get("from")
+        to_str = params.get("to")
+        from_dt, from_is_invalid = self.parse_date_from_text(from_str)
+        to_dt, to_is_invalid = self.parse_date_from_text(to_str)
+        return from_dt, to_dt, not (from_is_invalid or to_is_invalid)
 
     def create_range_message(self, from_dt: datetime, to_dt: datetime) -> str:
         range_message = ""

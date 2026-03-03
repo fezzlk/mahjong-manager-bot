@@ -55,7 +55,7 @@ def test_success():
 
     # Assert
     assert len(result) == len(dummy_user_matches)
-    for i in range(len(result)):
+    for i, _item in enumerate(result):
         assert result[i].user_id == dummy_user_matches[i].user_id
         assert result[i].match_id == dummy_user_matches[i].match_id
 
@@ -156,6 +156,6 @@ def test_success_with_sort():
         ),
     ]
     assert len(result) == len(expected)
-    for i in range(len(result)):
+    for i, _item in enumerate(result):
         assert result[i].user_id == expected[i].user_id
         assert result[i].match_id == expected[i].match_id

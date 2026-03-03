@@ -84,7 +84,7 @@ def test_success_fail_savefig(mocker):
     mock_image.open.return_value = mock_img
     mock_image.alpha_composite.return_value = mock_img
     mocker.patch(
-        "use_cases.group_line.reply_ranking_table_use_case.Image",
+        "application_service.ranking_table_image_builder.Image",
         mock_image,
     )
 
@@ -93,11 +93,11 @@ def test_success_fail_savefig(mocker):
     mock_image_draw = MagicMock()
     mock_image_draw.Draw.return_value = mock_draw
     mocker.patch(
-        "use_cases.group_line.reply_ranking_table_use_case.ImageDraw",
+        "application_service.ranking_table_image_builder.ImageDraw",
         mock_image_draw,
     )
     mocker.patch(
-        "use_cases.group_line.reply_ranking_table_use_case.ImageFont",
+        "application_service.ranking_table_image_builder.ImageFont",
         MagicMock(),
     )
 

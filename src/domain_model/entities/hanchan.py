@@ -1,8 +1,11 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from bson.objectid import ObjectId
+
+if TYPE_CHECKING:
+    from domain_model.entities.user_hanchan import UserHanchanResult
 
 
 @dataclass
@@ -12,6 +15,7 @@ class Hanchan:
     is_deleted: bool = False
     raw_scores: Dict[str, int] = field(default_factory=dict)
     converted_scores: Dict[str, int] = field(default_factory=dict)
+    results: List["UserHanchanResult"] = field(default_factory=list)
     original_id: Optional[int] = None
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
@@ -22,6 +26,8 @@ class Hanchan:
             self.raw_scores = {}
         if self.converted_scores is None:
             self.converted_scores = {}
+        if self.results is None:
+            self.results = []
         if self.created_at is None:
             self.created_at = datetime.now()
         if self.updated_at is None:

@@ -1,7 +1,5 @@
 from copy import deepcopy
 
-from pymongo import ASCENDING
-
 from application_service import (
     calculate_service,
     reply_service,
@@ -11,13 +9,12 @@ from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.match import Match
 from domain_model.entities.user import User, UserMode
-from domain_model.entities.user_hanchan import UserHanchan
+from domain_model.entities.user_hanchan import UserHanchanResult
 from domain_model.entities.user_match import UserMatch
 from repositories import (
     group_repository,
     hanchan_repository,
     match_repository,
-    user_hanchan_repository,
     user_match_repository,
     user_repository,
 )
@@ -234,43 +231,19 @@ def test_success():
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu3"] == -20
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu4"] == -40
 
-    expected_uhs = [
-        UserHanchan(
-            line_user_id="U0123456789abcdefghijklmnopqrstu1",
-            hanchan_id=1,
-            point=40010,
-            rank=1,
-            yakuman_count=0,
-        ),
-        UserHanchan(
-            line_user_id="U0123456789abcdefghijklmnopqrstu2",
-            hanchan_id=1,
-            point=30000,
-            rank=2,
-            yakuman_count=0,
-        ),
-        UserHanchan(
-            line_user_id="U0123456789abcdefghijklmnopqrstu3",
-            hanchan_id=1,
-            point=20000,
-            rank=3,
-            yakuman_count=0,
-        ),
-        UserHanchan(
-            line_user_id="U0123456789abcdefghijklmnopqrstu4",
-            hanchan_id=1,
-            point=10000,
-            rank=4,
-            yakuman_count=0,
-        ),
+    expected_results = [
+        UserHanchanResult(line_user_id="U0123456789abcdefghijklmnopqrstu1", point=40010, rank=1),
+        UserHanchanResult(line_user_id="U0123456789abcdefghijklmnopqrstu2", point=30000, rank=2),
+        UserHanchanResult(line_user_id="U0123456789abcdefghijklmnopqrstu3", point=20000, rank=3),
+        UserHanchanResult(line_user_id="U0123456789abcdefghijklmnopqrstu4", point=10000, rank=4),
     ]
-    uhs = user_hanchan_repository.find(sort=[("rank", ASCENDING)])
-    for i in range(len(uhs)):
-        assert uhs[i].line_user_id == expected_uhs[i].line_user_id
-        assert uhs[i].hanchan_id == expected_uhs[i].hanchan_id
-        assert uhs[i].point == expected_uhs[i].point
-        assert uhs[i].rank == expected_uhs[i].rank
-        assert uhs[i].yakuman_count == expected_uhs[i].yakuman_count
+    active = hanchan_repository.find({"_id": dummy_active_hanchan._id})[0]
+    results = sorted(active.results, key=lambda r: r.rank)
+    for result, expected in zip(results, expected_results):
+        assert result.line_user_id == expected.line_user_id
+        assert result.point == expected.point
+        assert result.rank == expected.rank
+        assert result.yakuman_count == expected.yakuman_count
 
     reply_service.reset()
 

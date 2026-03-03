@@ -31,7 +31,7 @@ def test_success_find_records():
 
     # Assert
     assert len(result) == len(target_hanchans)
-    for i in range(len(result)):
+    for i, _item in enumerate(result):
         assert isinstance(result[i], Hanchan)
         assert type(result[0]._id) is ObjectId
         assert result[i].line_group_id == target_hanchans[i].line_group_id

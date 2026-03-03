@@ -23,7 +23,7 @@ def test_hit_with_ids():
     assert result == len(target_groups)
     record_on_db = group_setting_repository.find()
     assert len(record_on_db) == len(other_groups)
-    for i in range(len(record_on_db)):
+    for i, _item in enumerate(record_on_db):
         assert record_on_db[i].line_group_id == other_groups[i].line_group_id
         assert record_on_db[i].ranking_prize == other_groups[i].ranking_prize
         assert record_on_db[i].chip_rate == other_groups[i].chip_rate
@@ -51,7 +51,7 @@ def test_hit_0_record():
     assert result == 0
     record_on_db = group_setting_repository.find()
     assert len(record_on_db) == len(dummy_group_settings)
-    for i in range(len(record_on_db)):
+    for i, _item in enumerate(record_on_db):
         assert record_on_db[i].line_group_id == dummy_group_settings[i].line_group_id
         assert record_on_db[i].ranking_prize == dummy_group_settings[i].ranking_prize
         assert record_on_db[i].chip_rate == dummy_group_settings[i].chip_rate

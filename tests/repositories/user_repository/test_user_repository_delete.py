@@ -23,7 +23,7 @@ def test_hit_1_record():
     assert result == 1
     record_on_db = user_repository.find()
     assert len(record_on_db) == len(other_users)
-    for i in range(len(record_on_db)):
+    for i, _item in enumerate(record_on_db):
         assert isinstance(record_on_db[i], User)
         assert record_on_db[i]._id == other_users[i]._id
         assert record_on_db[i].line_user_name == other_users[i].line_user_name
@@ -51,7 +51,7 @@ def test_hit_0_record():
     assert result == 0
     record_on_db = user_repository.find()
     assert len(record_on_db) == len(dummy_users)
-    for i in range(len(record_on_db)):
+    for i, _item in enumerate(record_on_db):
         assert isinstance(record_on_db[i], User)
         assert record_on_db[i].line_user_name == dummy_users[i].line_user_name
         assert record_on_db[i].line_user_id == dummy_users[i].line_user_id

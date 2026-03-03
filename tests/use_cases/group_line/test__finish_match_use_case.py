@@ -3,13 +3,12 @@ from application_service import (
     request_info_service,
 )
 from domain_model.entities.group import Group, GroupMode
-from domain_model.entities.group_setting import GroupSetting
+from domain_model.entities.group_setting import EmbeddedGroupSettings
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.match import Match
 from domain_model.entities.user import User, UserMode
 from repositories import (
     group_repository,
-    group_setting_repository,
     hanchan_repository,
     match_repository,
     user_repository,
@@ -203,11 +202,9 @@ def test_success():
             _id=1,
         ),
     )
-    group_setting_repository.create(
-        GroupSetting(
-            line_group_id="G0123456789abcdefghijklmnopqrstu1",
-            rate=5,
-        ),
+    group_repository.update_settings(
+        "G0123456789abcdefghijklmnopqrstu1",
+        EmbeddedGroupSettings(rate=5),
     )
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -269,11 +266,9 @@ def test_success_with_chip_init():
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
-    group_setting_repository.create(
-        GroupSetting(
-            line_group_id="G0123456789abcdefghijklmnopqrstu1",
-            chip_rate=50,
-        ),
+    group_repository.update_settings(
+        "G0123456789abcdefghijklmnopqrstu1",
+        EmbeddedGroupSettings(chip_rate=50),
     )
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -314,11 +309,10 @@ def test_success_with_chip():
             _id=1,
         ),
     )
-    dummy_group_setting = GroupSetting(
-        line_group_id="G0123456789abcdefghijklmnopqrstu1",
-        chip_rate=50,
+    group_repository.update_settings(
+        "G0123456789abcdefghijklmnopqrstu1",
+        EmbeddedGroupSettings(chip_rate=50),
     )
-    group_setting_repository.create(dummy_group_setting)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     match_repository.create(

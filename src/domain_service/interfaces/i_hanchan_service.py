@@ -4,6 +4,7 @@ from typing import List, Optional
 from bson.objectid import ObjectId
 
 from domain_model.entities.hanchan import Hanchan
+from domain_model.entities.user_hanchan import UserHanchanResult
 
 
 class IHanchanService(metaclass=ABCMeta):
@@ -35,6 +36,10 @@ class IHanchanService(metaclass=ABCMeta):
 
     @abstractmethod
     def update(self, target: Hanchan) -> None:
+        pass
+
+    @abstractmethod
+    def set_results(self, hanchan_id: ObjectId, results: List[UserHanchanResult]) -> None:
         pass
 
     @abstractmethod

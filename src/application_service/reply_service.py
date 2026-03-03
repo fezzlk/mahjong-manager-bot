@@ -447,7 +447,26 @@ class ReplyService(IReplyService):
                 )
             except ApiException as err:
                 logger.warning("リプライに失敗しました: %s", err)
-                # reply_token は一度使用済みのため push_message でエラー通知する
+                # reply_token 期限切れ等の場合は push_message でフォールバック送信
+                push_to = None
+                if hasattr(event, "source"):
+                    source = event.source
+                    if hasattr(source, "group_id") and source.group_id:
+                        push_to = source.group_id
+                    elif hasattr(source, "user_id") and source.user_id:
+                        push_to = source.user_id
+                if push_to:
+                    try:
+                        text_contents = [m for m in contents if isinstance(m, TextMessage)]
+                        if text_contents:
+                            line_bot_api.push_message(
+                                PushMessageRequest(
+                                    to=push_to,
+                                    messages=text_contents,
+                                ),
+                            )
+                    except ApiException:
+                        logger.exception("フォールバック push も失敗しました")
                 self.push_a_message(
                     to=env_var.SERVER_ADMIN_LINE_USER_ID,
                     message=str(err),

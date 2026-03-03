@@ -11,7 +11,6 @@ from repositories import (
     group_repository,
     hanchan_repository,
     match_repository,
-    user_hanchan_repository,
 )
 from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
@@ -86,9 +85,9 @@ def test_full_game_flow():
     # グループが wait モードに戻る
     groups = group_repository.find({"line_group_id": GROUP_ID})
     assert groups[0].mode == GroupMode.wait.value
-    # UserHanchan が 4 件作成されている
-    user_hanchans = user_hanchan_repository.find({"hanchan_id": hanchan_id})
-    assert len(user_hanchans) == 4
+    # hanchan.results に 4 件の結果が embedded されている
+    hanchans_with_results = hanchan_repository.find({"_id": hanchan_id})
+    assert len(hanchans_with_results[0].results) == 4
 
     # === Step 5: 対局終了 (グラフ生成は無視) ===
     # match.active_match_id はリセットされているのでグループに再設定して確認

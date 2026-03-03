@@ -37,7 +37,7 @@ services:
   flask_test:
     build: .
     container_name: flask_test
-    command: tail -f /dev/null
+    command: sh -c "pip install -q -r requirements-dev.in && tail -f /dev/null"
     volumes:
       - .:/app
     env_file:

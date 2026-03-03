@@ -1,6 +1,7 @@
 # Auth
 from flask import (
     Blueprint,
+    abort,
     jsonify,
     make_response,
     redirect,
@@ -21,6 +22,9 @@ auth_blueprint = Blueprint("auth_blueprint", __name__, url_prefix="/auth")
 
 @auth_blueprint.route("/login", methods=["POST"])
 def api_login():
+    # 本番環境ではパスワード認証なし /auth/login を無効化（Google OAuth のみ使用）
+    if env_var.FLASK_ENV == "production":
+        abort(404)
     body = request.get_json(silent=True) or {}
     user_id = body.get("user_id")
     if not user_id:

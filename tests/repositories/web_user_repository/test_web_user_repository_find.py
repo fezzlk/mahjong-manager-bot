@@ -18,7 +18,7 @@ def test_success_find_records():
 
     # Assert
     assert len(result) == len(dummy_web_users)
-    for i in range(len(result)):
+    for i, _item in enumerate(result):
         assert isinstance(result[i], WebUser)
         assert type(result[i]._id) is ObjectId
         assert result[i].user_code == dummy_web_users[i].user_code

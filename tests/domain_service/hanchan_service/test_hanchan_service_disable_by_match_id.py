@@ -15,9 +15,9 @@ dummy_hanchans = [
 
 def test_ok_hit(mocker):
     # Arrange
-    mock_update = mocker.patch.object(
+    mock_update_many = mocker.patch.object(
         hanchan_repository,
-        "update",
+        "update_many",
         return_value=1,
     )
 
@@ -25,7 +25,7 @@ def test_ok_hit(mocker):
     hanchan_service.disable_by_match_id(dummy_hanchans[0].match_id)
 
     # Assert
-    mock_update.assert_called_once_with(
+    mock_update_many.assert_called_once_with(
         {"match_id": 1},
         {"is_deleted": True},
     )

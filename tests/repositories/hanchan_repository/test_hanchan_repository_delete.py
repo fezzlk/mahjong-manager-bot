@@ -29,7 +29,7 @@ def test_hit_with_line_group_id():
     assert result == 2
     record_on_db = hanchan_repository.find()
     assert len(record_on_db) == 1
-    for i in range(len(record_on_db)):
+    for i, _item in enumerate(record_on_db):
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
         assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores
@@ -61,7 +61,7 @@ def test_hit_0_record():
     assert result == 0
     record_on_db = hanchan_repository.find()
     assert len(record_on_db) == len(other_hanchans)
-    for i in range(len(record_on_db)):
+    for i, _item in enumerate(record_on_db):
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
         assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
         assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores

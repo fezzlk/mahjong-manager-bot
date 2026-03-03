@@ -48,7 +48,7 @@ def test_hit_0_record():
     assert result == 0
     record_on_db = match_repository.find()
     assert len(record_on_db) == len(target_matches)
-    for i in range(len(record_on_db)):
+    for i, _item in enumerate(record_on_db):
         assert isinstance(record_on_db[i], Match)
         assert record_on_db[i].line_group_id == target_matches[i].line_group_id
         assert record_on_db[i].is_deleted == target_matches[i].is_deleted

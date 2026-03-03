@@ -12,12 +12,11 @@ from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.match import Match
 from domain_model.entities.user import User, UserMode
-from domain_model.entities.user_hanchan import UserHanchan
+from domain_model.entities.user_hanchan import UserHanchanResult
 from repositories import (
     group_repository,
     hanchan_repository,
     match_repository,
-    user_hanchan_repository,
     user_repository,
 )
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
@@ -72,6 +71,13 @@ dummy_match = Match(
     _id=1,
 )
 
+_results_per_hanchan = [
+    UserHanchanResult(line_user_id=dummy_users[0].line_user_id, point=40000, rank=1),
+    UserHanchanResult(line_user_id=dummy_users[1].line_user_id, point=30000, rank=2),
+    UserHanchanResult(line_user_id=dummy_users[2].line_user_id, point=20000, rank=3),
+    UserHanchanResult(line_user_id=dummy_users[3].line_user_id, point=10000, rank=4),
+]
+
 dummy_archived_hanchans = [
     Hanchan(
         line_group_id=dummy_group.line_group_id,
@@ -87,6 +93,7 @@ dummy_archived_hanchans = [
             dummy_users[2].line_user_id: -20,
             dummy_users[3].line_user_id: -40,
         },
+        results=_results_per_hanchan,
         match_id=1,
         _id=1,
     ),
@@ -104,59 +111,9 @@ dummy_archived_hanchans = [
             dummy_users[2].line_user_id: -20,
             dummy_users[3].line_user_id: -40,
         },
+        results=_results_per_hanchan,
         match_id=1,
         _id=2,
-    ),
-]
-
-dummy_user_hanchans = [
-    UserHanchan(
-        line_user_id=dummy_users[0].line_user_id,
-        hanchan_id=dummy_archived_hanchans[0]._id,
-        point=40000,
-        rank=1,
-    ),
-    UserHanchan(
-        line_user_id=dummy_users[1].line_user_id,
-        hanchan_id=dummy_archived_hanchans[0]._id,
-        point=30000,
-        rank=2,
-    ),
-    UserHanchan(
-        line_user_id=dummy_users[2].line_user_id,
-        hanchan_id=dummy_archived_hanchans[0]._id,
-        point=20000,
-        rank=3,
-    ),
-    UserHanchan(
-        line_user_id=dummy_users[3].line_user_id,
-        hanchan_id=dummy_archived_hanchans[0]._id,
-        point=10000,
-        rank=4,
-    ),
-    UserHanchan(
-        line_user_id=dummy_users[0].line_user_id,
-        hanchan_id=dummy_archived_hanchans[1]._id,
-        point=40000,
-        rank=1,
-    ),
-    UserHanchan(
-        line_user_id=dummy_users[1].line_user_id,
-        hanchan_id=dummy_archived_hanchans[1]._id,
-        point=30000,
-        rank=2,
-    ),
-    UserHanchan(
-        line_user_id=dummy_users[2].line_user_id,
-        hanchan_id=dummy_archived_hanchans[1]._id,
-        point=20000,
-        rank=3,
-    ),
-    UserHanchan(
-        line_user_id=dummy_users[3].line_user_id,
-        hanchan_id=dummy_archived_hanchans[1]._id,
-        point=10000,
-        rank=4,
     ),
 ]
 
@@ -218,8 +175,6 @@ def test_success(mocker):
     for dummy_archived_hanchan in dummy_archived_hanchans:
         hanchan_repository.create(dummy_archived_hanchan)
     match_repository.create(dummy_match)
-    for dummy_user_hanchan in dummy_user_hanchans:
-        user_hanchan_repository.create(dummy_user_hanchan)
 
     # Act
     use_case.execute()
@@ -243,7 +198,7 @@ def test_success_with_range(mocker, case2):
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
     # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が case2[1] である / reply_service.images の件数が 2 件
     # reply_service: images, texts
-    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); match_repository.create(dummy_match); user_hanchan_repository.create(dummy_user_hanchan)
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); match_repository.create(dummy_match)
     # Arrange
     fig, ax = plt.subplots()
     mocker.patch.object(
@@ -264,8 +219,6 @@ def test_success_with_range(mocker, case2):
     for dummy_archived_hanchan in dummy_archived_hanchans:
         hanchan_repository.create(dummy_archived_hanchan)
     match_repository.create(dummy_match)
-    for dummy_user_hanchan in dummy_user_hanchans:
-        user_hanchan_repository.create(dummy_user_hanchan)
 
     # Act
     use_case.execute()
@@ -344,8 +297,6 @@ def test_success_fail_savefig(mocker):
     for dummy_archived_hanchan in dummy_archived_hanchans:
         hanchan_repository.create(dummy_archived_hanchan)
     match_repository.create(dummy_match)
-    for dummy_user_hanchan in dummy_user_hanchans:
-        user_hanchan_repository.create(dummy_user_hanchan)
 
     # Act
     use_case.execute()
