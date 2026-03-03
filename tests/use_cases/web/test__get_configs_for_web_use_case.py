@@ -17,6 +17,8 @@ def test_execute_returns_configs():
 
     # Assert
     assert len(configs) == 2
+    assert all(isinstance(c, dict) for c in configs)
+    assert all("_id" in c for c in configs)
 
 
 def test_execute_returns_empty_list():
