@@ -11,7 +11,7 @@ from application_service import (
 )
 from domain_model.entities.group import GroupMode
 from domain_model.entities.user_group import UserGroup
-from domain_model.entities.user_hanchan import UserHanchan
+from domain_model.entities.user_hanchan import UserHanchanResult
 from domain_model.entities.user_match import UserMatch
 from domain_service import (
     group_service,
@@ -24,7 +24,6 @@ from domain_service import (
 from line_models.profile import Profile
 from repositories import (
     user_group_repository,
-    user_hanchan_repository,
     user_match_repository,
 )
 
@@ -161,19 +160,19 @@ class SubmitHanchanUseCase:
             active_match.sum_scores = sum_scores
             match_service.update(active_match)
 
-            # UserHanchan の作成
+            # hanchan.results に結果を embedded 保存
             sorted_points: list[tuple[str, int]] = sorted(
                 active_hanchan.raw_scores.items(), key=lambda x: x[1], reverse=True,
             )
-            for i, (line_id, point) in enumerate(sorted_points):
-                user_hanchan_repository.create(
-                    UserHanchan(
-                        line_user_id=line_id,
-                        hanchan_id=active_hanchan._id,
-                        point=point,
-                        rank=i + 1,
-                    ),
+            results = [
+                UserHanchanResult(
+                    line_user_id=line_id,
+                    point=point,
+                    rank=i + 1,
                 )
+                for i, (line_id, point) in enumerate(sorted_points)
+            ]
+            hanchan_service.set_results(active_hanchan._id, results)
 
         except pymongo.errors.PyMongoError as err:
             logger.exception("submit_hanchan: DB書き込み中にエラーが発生しました")

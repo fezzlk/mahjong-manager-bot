@@ -22,13 +22,13 @@ def test_hit_1_record():
     assert result == 1
     record_on_db = web_user_repository.find()
     assert len(record_on_db) == len(other_users)
-    for i in range(len(record_on_db)):
-        assert isinstance(record_on_db[i], WebUser)
-        assert record_on_db[i].user_code == dummy_web_users[i].user_code
-        assert record_on_db[i].name == dummy_web_users[i].name
-        assert record_on_db[i].email == dummy_web_users[i].email
-        assert record_on_db[i].linked_line_user_id == dummy_web_users[i].linked_line_user_id
-        assert record_on_db[i].is_approved_line_user == dummy_web_users[i].is_approved_line_user
+    for i, _item in enumerate(record_on_db):
+        assert isinstance(_item, WebUser)
+        assert _item.user_code == dummy_web_users[i].user_code
+        assert _item.name == dummy_web_users[i].name
+        assert _item.email == dummy_web_users[i].email
+        assert _item.linked_line_user_id == dummy_web_users[i].linked_line_user_id
+        assert _item.is_approved_line_user == dummy_web_users[i].is_approved_line_user
 
 
 def test_hit_0_record():
@@ -50,10 +50,10 @@ def test_hit_0_record():
     assert result == 0
     record_on_db = web_user_repository.find()
     assert len(record_on_db) == len(dummy_web_users)
-    for i in range(len(record_on_db)):
-        assert isinstance(record_on_db[i], WebUser)
-        assert record_on_db[i].user_code == dummy_web_users[i].user_code
-        assert record_on_db[i].name == dummy_web_users[i].name
-        assert record_on_db[i].email == dummy_web_users[i].email
-        assert record_on_db[i].linked_line_user_id == dummy_web_users[i].linked_line_user_id
-        assert record_on_db[i].is_approved_line_user == dummy_web_users[i].is_approved_line_user
+    for i, _item in enumerate(record_on_db):
+        assert isinstance(_item, WebUser)
+        assert _item.user_code == dummy_web_users[i].user_code
+        assert _item.name == dummy_web_users[i].name
+        assert _item.email == dummy_web_users[i].email
+        assert _item.linked_line_user_id == dummy_web_users[i].linked_line_user_id
+        assert _item.is_approved_line_user == dummy_web_users[i].is_approved_line_user

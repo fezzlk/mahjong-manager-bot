@@ -6,6 +6,7 @@ from bson.objectid import ObjectId
 from pymongo import ASCENDING
 
 from domain_model.entities.hanchan import Hanchan
+from domain_model.entities.user_hanchan import UserHanchanResult
 from repositories import hanchan_repository
 
 from .interfaces.i_hanchan_service import IHanchanService
@@ -81,14 +82,22 @@ class HanchanService(IHanchanService):
 
     def update(self, target: Hanchan) -> None:
         # UC-11: use copy to avoid mutating entity.__dict__ during dict comprehension
+        # Exclude "results" — use set_results() to update embedded results separately
         entity_dict = copy.copy(target).__dict__
         hanchan_repository.update(
             {"_id": target._id},
-            {k: v for k, v in entity_dict.items() if k != "_id"},
+            {k: v for k, v in entity_dict.items() if k not in ("_id", "results")},
+        )
+
+    def set_results(self, hanchan_id: ObjectId, results: List[UserHanchanResult]) -> None:
+        """半荘の results(embedded UserHanchanResult リスト)を保存する"""
+        hanchan_repository.update(
+            {"_id": hanchan_id},
+            {"results": results},
         )
 
     def disable_by_match_id(self, match_id: ObjectId) -> None:
-        hanchan_repository.update(
+        hanchan_repository.update_many(
             {"match_id": match_id},
             {"is_deleted": True},
         )

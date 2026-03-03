@@ -1,8 +1,5 @@
 from itertools import groupby
 
-import matplotlib as mpl
-
-mpl.use("agg")
 import matplotlib.pyplot as plt
 
 from application_service import (
@@ -21,15 +18,12 @@ from domain_service import (
 class ReplyRankHistoryUseCase:
     def execute(self) -> None:
         req_line_user_id = request_info_service.req_line_user_id
-        from_str = request_info_service.params.get("from")
-        to_str = request_info_service.params.get("to")
-        from_dt, from_is_invalid = message_service.parse_date_from_text(from_str)
-        to_dt, to_is_invalid = message_service.parse_date_from_text(to_str)
-        if from_is_invalid or to_is_invalid:
-            reply_service.add_message("日付は以下のフォーマットで入力してください。")
-            reply_service.add_message(
-                "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD",
-            )
+        from_dt, to_dt, is_valid = message_service.parse_date_range_from_params(
+            request_info_service.params,
+        )
+        if not is_valid:
+            for msg in message_service.DATE_FORMAT_ERROR_MESSAGES:
+                reply_service.add_message(msg)
             return
         user_hanchans = user_hanchan_service.find_all_each_line_user_id(
             line_user_ids=[req_line_user_id],

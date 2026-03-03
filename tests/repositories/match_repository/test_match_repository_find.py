@@ -23,11 +23,11 @@ def test_success_find_records():
 
     # Assert
     assert len(result) == len(target_matches)
-    for i in range(len(result)):
-        assert isinstance(result[i], Match)
-        assert type(result[i]._id) is ObjectId
-        assert result[i].line_group_id == target_matches[i].line_group_id
-        assert result[i].is_deleted == target_matches[i].is_deleted
+    for i, _item in enumerate(result):
+        assert isinstance(_item, Match)
+        assert type(_item._id) is ObjectId
+        assert _item.line_group_id == target_matches[i].line_group_id
+        assert _item.is_deleted == target_matches[i].is_deleted
 
 
 def test_success_find_0_record():
@@ -61,11 +61,11 @@ def test_hit_records():
 
     # Assert
     assert len(result) == len(target_matches)
-    for i in range(len(result)):
-        assert isinstance(result[i], Match)
-        assert type(result[i]._id) is ObjectId
-        assert result[i].line_group_id == target_matches[i].line_group_id
-        assert result[i].is_deleted == target_matches[i].is_deleted
+    for i, _item in enumerate(result):
+        assert isinstance(_item, Match)
+        assert type(_item._id) is ObjectId
+        assert _item.line_group_id == target_matches[i].line_group_id
+        assert _item.is_deleted == target_matches[i].is_deleted
 
 
 def test_hit_0_record_with_not_exist_line_group_id():

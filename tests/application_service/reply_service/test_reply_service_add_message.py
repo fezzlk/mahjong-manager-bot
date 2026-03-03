@@ -25,11 +25,11 @@ def test_success_messages():
     ]
 
     # Act
-    for i in range(len(dummy_texts)):
-        reply_service.add_message(dummy_texts[i])
+    for text in dummy_texts:
+        reply_service.add_message(text)
 
     # Assert
     assert len(reply_service.texts) == len(dummy_texts)
-    for i in range(len(reply_service.texts)):
-        assert reply_service.texts[i].type == "text"
-        assert reply_service.texts[i].text == dummy_texts[i]
+    for msg, expected_text in zip(reply_service.texts, dummy_texts):
+        assert msg.type == "text"
+        assert msg.text == expected_text

@@ -1,12 +1,14 @@
-from domain_model.entities.group_setting import GroupSetting
-from domain_service import (
-    group_setting_service,
-)
-from repositories import group_setting_repository
+from domain_model.entities.group import Group, GroupMode
+from domain_model.entities.group_setting import EmbeddedGroupSettings
+from domain_service import group_setting_service
+from repositories import group_repository
 
-dummy_group_settings = [
-    GroupSetting(
-        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+dummy_line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+
+dummy_group_with_settings = Group(
+    line_group_id=dummy_line_group_id,
+    mode=GroupMode.wait.value,
+    settings=EmbeddedGroupSettings(
         rate=0,
         ranking_prize=[20, 10, -10, -20],
         chip_rate=0,
@@ -14,43 +16,47 @@ dummy_group_settings = [
         num_of_players=4,
         rounding_method=0,
     ),
-]
+)
+
+dummy_group_without_settings = Group(
+    line_group_id=dummy_line_group_id,
+    mode=GroupMode.wait.value,
+    settings=None,
+)
 
 
 def test_ok_hit_group_setting(mocker):
-    # Arrange
+    # group.settings が設定済みの場合、settings がそのまま返り update は呼ばれないこと
     mocker.patch.object(
-        group_setting_repository,
+        group_repository,
         "find",
-        return_value=dummy_group_settings,
+        return_value=[dummy_group_with_settings],
     )
-    mock_create = mocker.patch.object(
-        group_setting_repository,
-        "create",
-        return_value=dummy_group_settings[0],
+    mock_update_settings = mocker.patch.object(
+        group_repository,
+        "update_settings",
     )
 
-    # Act
-    result = group_setting_service.find_or_create("G0123456789abcdefghijklmnopqrstu1")
+    result = group_setting_service.find_or_create(dummy_line_group_id)
 
-    # Assert
-    assert isinstance(result, GroupSetting)
-    assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
-    mock_create.assert_not_called()
+    assert isinstance(result, EmbeddedGroupSettings)
+    assert result.rate == 0
+    mock_update_settings.assert_not_called()
 
 
 def test_ok_no_group_setting(mocker):
-    # Arrange
-    mock_find_or_create = mocker.patch.object(
-        group_setting_repository,
-        "find_or_create",
-        return_value=dummy_group_settings[0],
+    # group は存在するが settings が None の場合、デフォルト設定が保存されて返ること
+    mocker.patch.object(
+        group_repository,
+        "find",
+        return_value=[dummy_group_without_settings],
+    )
+    mock_update_settings = mocker.patch.object(
+        group_repository,
+        "update_settings",
     )
 
-    # Act
-    result = group_setting_service.find_or_create("G0123456789abcdefghijklmnopqrstu1")
+    result = group_setting_service.find_or_create(dummy_line_group_id)
 
-    # Assert
-    assert isinstance(result, GroupSetting)
-    assert result.line_group_id == "G0123456789abcdefghijklmnopqrstu1"
-    mock_find_or_create.assert_called_once()
+    assert isinstance(result, EmbeddedGroupSettings)
+    mock_update_settings.assert_called_once()

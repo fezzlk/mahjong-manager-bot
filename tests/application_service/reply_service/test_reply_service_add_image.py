@@ -26,12 +26,12 @@ def test_success_messages():
     ]
 
     # Act
-    for i in range(len(dummy_image_urls)):
-        reply_service.add_image(dummy_image_urls[i])
+    for url in dummy_image_urls:
+        reply_service.add_image(url)
 
     # Assert
     assert len(reply_service.images) == len(dummy_image_urls)
-    for i in range(len(reply_service.images)):
-        assert reply_service.images[i].type == "image"
-        assert reply_service.images[i].original_content_url == dummy_image_urls[i]
-        assert reply_service.images[i].preview_image_url == dummy_image_urls[i]
+    for img, url in zip(reply_service.images, dummy_image_urls):
+        assert img.type == "image"
+        assert img.original_content_url == url
+        assert img.preview_image_url == url

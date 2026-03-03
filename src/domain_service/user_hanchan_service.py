@@ -1,4 +1,4 @@
-"""user"""
+"""user_hanchan_service: hanchan.results に embedded された結果を UserHanchan として返す"""
 
 from datetime import datetime
 from typing import List
@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 from pymongo import ASCENDING
 
 from domain_model.entities.user_hanchan import UserHanchan
-from repositories import user_hanchan_repository
+from repositories import hanchan_repository
 
 from .interfaces.i_user_hanchan_service import IUserHanchanService
 
@@ -20,15 +20,31 @@ class UserHanchanService(IUserHanchanService):
         from_dt: datetime = None,
         to_dt: datetime = None,
     ) -> List[UserHanchan]:
-        query_list = [{"line_user_id": {"$in": line_user_ids}}]
+        query_list = [
+            {"results": {"$elemMatch": {"line_user_id": {"$in": line_user_ids}}}},
+        ]
         if from_dt is not None:
             query_list.append({"created_at": {"$gte": from_dt}})
         if to_dt is not None:
             query_list.append({"created_at": {"$lte": to_dt}})
-        return user_hanchan_repository.find(
+        hanchans = hanchan_repository.find(
             query={"$and": query_list},
-            sort=[("hanchan_id", ASCENDING)],
+            sort=[("_id", ASCENDING)],
         )
+        line_user_ids_set = set(line_user_ids)
+        result = []
+        for h in hanchans:
+            for r in h.results:
+                if r.line_user_id in line_user_ids_set:
+                    result.append(UserHanchan(
+                        line_user_id=r.line_user_id,
+                        hanchan_id=h._id,
+                        point=r.point,
+                        rank=r.rank,
+                        yakuman_count=r.yakuman_count,
+                        created_at=h.created_at,
+                    ))
+        return result
 
     def find_all_with_line_user_ids_and_hanchan_ids(
         self,
@@ -38,14 +54,28 @@ class UserHanchanService(IUserHanchanService):
         to_dt: datetime = None,
     ) -> List[UserHanchan]:
         query_list = [{
-            "hanchan_id": {"$in": hanchan_ids},
-            "line_user_id": {"$in": line_user_ids},
+            "_id": {"$in": hanchan_ids},
+            "results": {"$elemMatch": {"line_user_id": {"$in": line_user_ids}}},
         }]
         if from_dt is not None:
             query_list.append({"created_at": {"$gte": from_dt}})
         if to_dt is not None:
             query_list.append({"created_at": {"$lte": to_dt}})
-        return user_hanchan_repository.find(
+        hanchans = hanchan_repository.find(
             query={"$and": query_list},
-            sort=[("hanchan_id", ASCENDING)],
+            sort=[("_id", ASCENDING)],
         )
+        line_user_ids_set = set(line_user_ids)
+        result = []
+        for h in hanchans:
+            for r in h.results:
+                if r.line_user_id in line_user_ids_set:
+                    result.append(UserHanchan(
+                        line_user_id=r.line_user_id,
+                        hanchan_id=h._id,
+                        point=r.point,
+                        rank=r.rank,
+                        yakuman_count=r.yakuman_count,
+                        created_at=h.created_at,
+                    ))
+        return result

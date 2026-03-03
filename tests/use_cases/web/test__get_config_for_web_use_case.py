@@ -1,39 +1,34 @@
-from domain_model.entities.group_setting import GroupSetting
-from repositories import group_setting_repository
+from domain_model.entities.group import Group, GroupMode
+from repositories import group_repository
 from use_cases.web.get_config_for_web_use_case import GetConfigForWebUseCase
 
 
-def test_execute_returns_config_by_id():
-    # 目的: test_execute_returns_config_by_id の挙動を検証する。
-    # 入力: なし
-    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: config is not None / config.line_group_id が "G1" である
-    # reply_service: なし
-    # DB操作: created = group_setting_repository.create(GroupSetting(line_group_id="G1"))
+def test_execute_returns_config_by_line_group_id():
+    # 目的: line_group_id でグループの設定を取得できること
+    # 入力: G1 グループを作成
+    # 想定出力: config is not None / dict である / _id == "G1"
     # Arrange
-    created = group_setting_repository.create(GroupSetting(line_group_id="G1"))
+    group_repository.create(Group(line_group_id="G1", mode=GroupMode.wait.value))
     use_case = GetConfigForWebUseCase()
 
     # Act
-    config = use_case.execute(created._id)
+    config = use_case.execute("G1")
 
     # Assert
     assert config is not None
-    assert config.line_group_id == "G1"
+    assert isinstance(config, dict)
+    assert config["_id"] == "G1"
 
 
-def test_execute_returns_none_for_missing_id():
-    # 目的: test_execute_returns_none_for_missing_id の挙動を検証する。
+def test_execute_returns_none_for_missing_line_group_id():
+    # 目的: 存在しない line_group_id を指定した場合に None が返ること
     # 入力: なし
-    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
     # 想定出力: config is None
-    # reply_service: なし
-    # DB操作: なし
     # Arrange
     use_case = GetConfigForWebUseCase()
 
     # Act
-    config = use_case.execute("000000000000000000000000")
+    config = use_case.execute("nonexistent_group_id")
 
     # Assert
     assert config is None

@@ -31,14 +31,14 @@ def test_success_find_records():
 
     # Assert
     assert len(result) == len(target_hanchans)
-    for i in range(len(result)):
-        assert isinstance(result[i], Hanchan)
+    for i, _item in enumerate(result):
+        assert isinstance(_item, Hanchan)
         assert type(result[0]._id) is ObjectId
-        assert result[i].line_group_id == target_hanchans[i].line_group_id
-        assert result[i].match_id == target_hanchans[i].match_id
-        assert result[i].raw_scores == target_hanchans[i].raw_scores
-        assert result[i].converted_scores == target_hanchans[i].converted_scores
-        assert result[i].is_deleted == target_hanchans[i].is_deleted
+        assert _item.line_group_id == target_hanchans[i].line_group_id
+        assert _item.match_id == target_hanchans[i].match_id
+        assert _item.raw_scores == target_hanchans[i].raw_scores
+        assert _item.converted_scores == target_hanchans[i].converted_scores
+        assert _item.is_deleted == target_hanchans[i].is_deleted
 
 
 def test_hit_1_record():

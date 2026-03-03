@@ -18,15 +18,15 @@ def test_success_find_records():
 
     # Assert
     assert len(result) == len(dummy_group_settings)
-    for i in range(len(result)):
-        assert isinstance(result[i], GroupSetting)
-        assert type(result[i]._id) is ObjectId
-        assert result[i].line_group_id == dummy_group_settings[i].line_group_id
-        assert result[i].ranking_prize == dummy_group_settings[i].ranking_prize
-        assert result[i].chip_rate == dummy_group_settings[i].chip_rate
-        assert result[i].tobi_prize == dummy_group_settings[i].tobi_prize
-        assert result[i].num_of_players == dummy_group_settings[i].num_of_players
-        assert result[i].rounding_method == dummy_group_settings[i].rounding_method
+    for i, _item in enumerate(result):
+        assert isinstance(_item, GroupSetting)
+        assert type(_item._id) is ObjectId
+        assert _item.line_group_id == dummy_group_settings[i].line_group_id
+        assert _item.ranking_prize == dummy_group_settings[i].ranking_prize
+        assert _item.chip_rate == dummy_group_settings[i].chip_rate
+        assert _item.tobi_prize == dummy_group_settings[i].tobi_prize
+        assert _item.num_of_players == dummy_group_settings[i].num_of_players
+        assert _item.rounding_method == dummy_group_settings[i].rounding_method
 
 
 def test_hit_0_record():

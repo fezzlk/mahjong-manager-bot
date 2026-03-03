@@ -3,7 +3,7 @@ from application_service import (
     request_info_service,
 )
 from domain_model.entities.group_setting import ROUNDING_METHOD_LIST
-from repositories import group_setting_repository
+from domain_service import group_service
 
 
 class UpdateGroupSettingsUseCase:
@@ -69,8 +69,5 @@ class UpdateGroupSettingsUseCase:
             reply_service.add_message(str(e))
             return
 
-        group_setting_repository.update(
-            {"line_group_id": target_id},
-            {column: db_value},
-        )
+        group_service.update_settings(target_id, column, db_value)
         reply_service.add_message(f"[{key}]を[{display_value}]に変更しました。")

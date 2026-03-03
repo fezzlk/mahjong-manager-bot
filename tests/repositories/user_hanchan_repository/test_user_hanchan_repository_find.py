@@ -61,9 +61,9 @@ def test_success():
 
     # Assert
     assert len(result) == len(dummy_user_hanchans)
-    for i in range(len(result)):
-        assert result[i].line_user_id == dummy_user_hanchans[i].line_user_id
-        assert result[i].hanchan_id == dummy_user_hanchans[i].hanchan_id
+    for i, _item in enumerate(result):
+        assert _item.line_user_id == dummy_user_hanchans[i].line_user_id
+        assert _item.hanchan_id == dummy_user_hanchans[i].hanchan_id
 
 
 def test_success_with_filter():
@@ -178,6 +178,6 @@ def test_success_with_sort():
         ),
     ]
     assert len(result) == len(expected)
-    for i in range(len(result)):
-        assert result[i].line_user_id == expected[i].line_user_id
-        assert result[i].hanchan_id == expected[i].hanchan_id
+    for i, _item in enumerate(result):
+        assert _item.line_user_id == expected[i].line_user_id
+        assert _item.hanchan_id == expected[i].hanchan_id

@@ -1,43 +1,44 @@
-from domain_model.entities.group_setting import GroupSetting
-from repositories import group_setting_repository
+from domain_model.entities.group import Group, GroupMode
+from domain_model.entities.group_setting import EmbeddedGroupSettings
+from repositories import group_repository
 from use_cases.web.delete_configs_for_web_use_case import DeleteConfigsForWebUseCase
 
 
-def test_execute_deletes_configs_by_ids():
-    # 目的: test_execute_deletes_configs_by_ids の挙動を検証する。
-    # 入力: なし
-    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: remaining の件数が 1 件 / remaining[0].line_group_id が "G2" である
-    # reply_service: なし
-    # DB操作: c1 = group_setting_repository.create(GroupSetting(line_group_id="G1")); c2 = group_setting_repository.create(GroupSetting(line_group_id="G2")); remaining = group_setting_repository.find()
+def test_execute_clears_settings_by_line_group_ids():
+    # 目的: 指定した line_group_id の settings が None にリセットされること
+    # 入力: G1, G2 グループを作成し両方に settings を設定
+    # 想定出力: G1 の settings は None / G2 の settings は残る
     # Arrange
-    c1 = group_setting_repository.create(GroupSetting(line_group_id="G1"))
-    group_setting_repository.create(GroupSetting(line_group_id="G2"))
+    settings = EmbeddedGroupSettings(rate=5)
+    group_repository.create(Group(line_group_id="G1", mode=GroupMode.wait.value))
+    group_repository.create(Group(line_group_id="G2", mode=GroupMode.wait.value))
+    group_repository.update({"line_group_id": "G1"}, {"settings": settings.to_dict()})
+    group_repository.update({"line_group_id": "G2"}, {"settings": settings.to_dict()})
     use_case = DeleteConfigsForWebUseCase()
 
     # Act
-    use_case.execute([c1._id])
+    use_case.execute(["G1"])
 
     # Assert
-    remaining = group_setting_repository.find()
-    assert len(remaining) == 1
-    assert remaining[0].line_group_id == "G2"
+    g1 = group_repository.find({"line_group_id": "G1"})[0]
+    g2 = group_repository.find({"line_group_id": "G2"})[0]
+    assert g1.settings is None
+    assert g2.settings is not None
 
 
 def test_execute_with_empty_ids_does_nothing():
-    # 目的: test_execute_with_empty_ids_does_nothing の挙動を検証する。
-    # 入力: なし
-    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: remaining の件数が 1 件
-    # reply_service: なし
-    # DB操作: group_setting_repository.create(GroupSetting(line_group_id="G1")); remaining = group_setting_repository.find()
+    # 目的: 空リストを渡した場合に設定が変わらないこと
+    # 入力: G1 グループに settings を設定
+    # 想定出力: G1 の settings は変わらない
     # Arrange
-    group_setting_repository.create(GroupSetting(line_group_id="G1"))
+    settings = EmbeddedGroupSettings(rate=5)
+    group_repository.create(Group(line_group_id="G1", mode=GroupMode.wait.value))
+    group_repository.update({"line_group_id": "G1"}, {"settings": settings.to_dict()})
     use_case = DeleteConfigsForWebUseCase()
 
     # Act
     use_case.execute([])
 
     # Assert
-    remaining = group_setting_repository.find()
-    assert len(remaining) == 1
+    g1 = group_repository.find({"line_group_id": "G1"})[0]
+    assert g1.settings is not None

@@ -18,15 +18,15 @@ def test_success_find_records():
 
     # Assert
     assert len(result) == len(dummy_web_users)
-    for i in range(len(result)):
-        assert isinstance(result[i], WebUser)
-        assert type(result[i]._id) is ObjectId
-        assert result[i].user_code == dummy_web_users[i].user_code
-        assert result[i].name == dummy_web_users[i].name
-        assert result[i].email == dummy_web_users[i].email
-        assert result[i].linked_line_user_id == dummy_web_users[i].linked_line_user_id
+    for i, _item in enumerate(result):
+        assert isinstance(_item, WebUser)
+        assert type(_item._id) is ObjectId
+        assert _item.user_code == dummy_web_users[i].user_code
+        assert _item.name == dummy_web_users[i].name
+        assert _item.email == dummy_web_users[i].email
+        assert _item.linked_line_user_id == dummy_web_users[i].linked_line_user_id
         assert (
-            result[i].is_approved_line_user == dummy_web_users[i].is_approved_line_user
+            _item.is_approved_line_user == dummy_web_users[i].is_approved_line_user
         )
 
 

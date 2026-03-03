@@ -3,14 +3,13 @@ from application_service import (
     request_info_service,
 )
 from domain_model.entities.group import Group, GroupMode
-from domain_model.entities.group_setting import GroupSetting
+from domain_model.entities.group_setting import EmbeddedGroupSettings
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.match import Match
 from domain_model.entities.user import User, UserMode
 from line_models.event import Event
 from repositories import (
     group_repository,
-    group_setting_repository,
     hanchan_repository,
     match_repository,
     user_repository,
@@ -62,10 +61,7 @@ dummy_group = Group(
     _id=1,
 )
 
-dummy_group_setting = GroupSetting(
-    line_group_id="G0123456789abcdefghijklmnopqrstu1",
-    chip_rate=50,
-)
+dummy_embedded_settings = EmbeddedGroupSettings(chip_rate=50)
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
@@ -177,7 +173,6 @@ def test_fail_no_group():
 
     use_case = FinishInputChipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
-    group_setting_repository.create(dummy_group_setting)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     match_repository.create(dummy_match)
@@ -208,7 +203,7 @@ def test_fail_no_match():
     use_case = FinishInputChipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
-    group_setting_repository.create(dummy_group_setting)
+    group_repository.update_settings(dummy_group.line_group_id, dummy_embedded_settings)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     for dummy_hanchan in dummy_hanchans:
@@ -238,7 +233,7 @@ def test_fail_chip_sum_mismatch():
     use_case = FinishInputChipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
-    group_setting_repository.create(dummy_group_setting)
+    group_repository.update_settings(dummy_group.line_group_id, dummy_embedded_settings)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     match_repository.create(
@@ -281,7 +276,7 @@ def test_success():
     use_case = FinishInputChipUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
-    group_setting_repository.create(dummy_group_setting)
+    group_repository.update_settings(dummy_group.line_group_id, dummy_embedded_settings)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
     match_repository.create(dummy_match)

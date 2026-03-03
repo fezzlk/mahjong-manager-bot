@@ -34,6 +34,7 @@ def test_ok(mocker):
             "line_group_id": "G0123456789abcdefghijklmnopqrstu1",
             "mode": "wait",
             "active_match_id": None,
+            "settings": None,
             "created_at": datetime(2010,1,2,3,4,0,0),
             "updated_at": datetime(2010,1,2,3,4,0,0),
         },
