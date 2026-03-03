@@ -5,8 +5,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Tuple
 
-import env_var
 from PIL import Image, ImageDraw, ImageFont
+
+import env_var
 
 logger = logging.getLogger(__name__)
 

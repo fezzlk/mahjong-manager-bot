@@ -24,12 +24,12 @@ def test_hit_1_record():
     record_on_db = user_repository.find()
     assert len(record_on_db) == len(other_users)
     for i, _item in enumerate(record_on_db):
-        assert isinstance(record_on_db[i], User)
-        assert record_on_db[i]._id == other_users[i]._id
-        assert record_on_db[i].line_user_name == other_users[i].line_user_name
-        assert record_on_db[i].line_user_id == other_users[i].line_user_id
-        assert record_on_db[i].mode == other_users[i].mode
-        assert record_on_db[i].jantama_name == other_users[i].jantama_name
+        assert isinstance(_item, User)
+        assert _item._id == other_users[i]._id
+        assert _item.line_user_name == other_users[i].line_user_name
+        assert _item.line_user_id == other_users[i].line_user_id
+        assert _item.mode == other_users[i].mode
+        assert _item.jantama_name == other_users[i].jantama_name
 
 
 def test_hit_0_record():
@@ -52,8 +52,8 @@ def test_hit_0_record():
     record_on_db = user_repository.find()
     assert len(record_on_db) == len(dummy_users)
     for i, _item in enumerate(record_on_db):
-        assert isinstance(record_on_db[i], User)
-        assert record_on_db[i].line_user_name == dummy_users[i].line_user_name
-        assert record_on_db[i].line_user_id == dummy_users[i].line_user_id
-        assert record_on_db[i].mode == dummy_users[i].mode
-        assert record_on_db[i].jantama_name == dummy_users[i].jantama_name
+        assert isinstance(_item, User)
+        assert _item.line_user_name == dummy_users[i].line_user_name
+        assert _item.line_user_id == dummy_users[i].line_user_id
+        assert _item.mode == dummy_users[i].mode
+        assert _item.jantama_name == dummy_users[i].jantama_name

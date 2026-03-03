@@ -19,12 +19,12 @@ def test_success_find_records():
     # Assert
     assert len(result) == len(dummy_users)
     for i, _item in enumerate(result):
-        assert isinstance(result[i], User)
-        assert type(result[i]._id) is ObjectId
-        assert result[i].line_user_name == dummy_users[i].line_user_name
-        assert result[i].line_user_id == dummy_users[i].line_user_id
-        assert result[i].mode == dummy_users[i].mode
-        assert result[i].jantama_name == dummy_users[i].jantama_name
+        assert isinstance(_item, User)
+        assert type(_item._id) is ObjectId
+        assert _item.line_user_name == dummy_users[i].line_user_name
+        assert _item.line_user_id == dummy_users[i].line_user_id
+        assert _item.mode == dummy_users[i].mode
+        assert _item.jantama_name == dummy_users[i].jantama_name
 
 
 def test_success_find_0_record():

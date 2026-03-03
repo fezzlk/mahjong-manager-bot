@@ -24,12 +24,12 @@ def test_hit_with_ids():
     record_on_db = group_setting_repository.find()
     assert len(record_on_db) == len(other_groups)
     for i, _item in enumerate(record_on_db):
-        assert record_on_db[i].line_group_id == other_groups[i].line_group_id
-        assert record_on_db[i].ranking_prize == other_groups[i].ranking_prize
-        assert record_on_db[i].chip_rate == other_groups[i].chip_rate
-        assert record_on_db[i].tobi_prize == other_groups[i].tobi_prize
-        assert record_on_db[i].num_of_players == other_groups[i].num_of_players
-        assert record_on_db[i].rounding_method == other_groups[i].rounding_method
+        assert _item.line_group_id == other_groups[i].line_group_id
+        assert _item.ranking_prize == other_groups[i].ranking_prize
+        assert _item.chip_rate == other_groups[i].chip_rate
+        assert _item.tobi_prize == other_groups[i].tobi_prize
+        assert _item.num_of_players == other_groups[i].num_of_players
+        assert _item.rounding_method == other_groups[i].rounding_method
 
 
 def test_hit_0_record():
@@ -52,11 +52,11 @@ def test_hit_0_record():
     record_on_db = group_setting_repository.find()
     assert len(record_on_db) == len(dummy_group_settings)
     for i, _item in enumerate(record_on_db):
-        assert record_on_db[i].line_group_id == dummy_group_settings[i].line_group_id
-        assert record_on_db[i].ranking_prize == dummy_group_settings[i].ranking_prize
-        assert record_on_db[i].chip_rate == dummy_group_settings[i].chip_rate
-        assert record_on_db[i].tobi_prize == dummy_group_settings[i].tobi_prize
-        assert record_on_db[i].num_of_players == dummy_group_settings[i].num_of_players
+        assert _item.line_group_id == dummy_group_settings[i].line_group_id
+        assert _item.ranking_prize == dummy_group_settings[i].ranking_prize
+        assert _item.chip_rate == dummy_group_settings[i].chip_rate
+        assert _item.tobi_prize == dummy_group_settings[i].tobi_prize
+        assert _item.num_of_players == dummy_group_settings[i].num_of_players
         assert (
-            record_on_db[i].rounding_method == dummy_group_settings[i].rounding_method
+            _item.rounding_method == dummy_group_settings[i].rounding_method
         )

@@ -19,10 +19,10 @@ def test_success_find_records():
     # Assert
     assert len(result) == len(dummy_groups)
     for i, _item in enumerate(result):
-        assert isinstance(result[i], Group)
-        assert type(result[i]._id) is ObjectId
-        assert result[i].line_group_id == dummy_groups[i].line_group_id
-        assert result[i].mode == dummy_groups[i].mode
+        assert isinstance(_item, Group)
+        assert type(_item._id) is ObjectId
+        assert _item.line_group_id == dummy_groups[i].line_group_id
+        assert _item.mode == dummy_groups[i].mode
 
 
 def test_hit_0_record():

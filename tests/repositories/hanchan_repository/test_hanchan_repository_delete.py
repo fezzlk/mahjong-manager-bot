@@ -30,12 +30,12 @@ def test_hit_with_line_group_id():
     record_on_db = hanchan_repository.find()
     assert len(record_on_db) == 1
     for i, _item in enumerate(record_on_db):
-        assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
-        assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
-        assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores
-        assert record_on_db[i].converted_scores == other_hanchans[i].converted_scores
-        assert record_on_db[i].match_id == other_hanchans[i].match_id
-        assert record_on_db[i].is_deleted == other_hanchans[i].is_deleted
+        assert _item.line_group_id == other_hanchans[i].line_group_id
+        assert _item.line_group_id == other_hanchans[i].line_group_id
+        assert _item.raw_scores == other_hanchans[i].raw_scores
+        assert _item.converted_scores == other_hanchans[i].converted_scores
+        assert _item.match_id == other_hanchans[i].match_id
+        assert _item.is_deleted == other_hanchans[i].is_deleted
 
 
 def test_hit_0_record():
@@ -62,9 +62,9 @@ def test_hit_0_record():
     record_on_db = hanchan_repository.find()
     assert len(record_on_db) == len(other_hanchans)
     for i, _item in enumerate(record_on_db):
-        assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
-        assert record_on_db[i].line_group_id == other_hanchans[i].line_group_id
-        assert record_on_db[i].raw_scores == other_hanchans[i].raw_scores
-        assert record_on_db[i].converted_scores == other_hanchans[i].converted_scores
-        assert record_on_db[i].match_id == other_hanchans[i].match_id
-        assert record_on_db[i].is_deleted == other_hanchans[i].is_deleted
+        assert _item.line_group_id == other_hanchans[i].line_group_id
+        assert _item.line_group_id == other_hanchans[i].line_group_id
+        assert _item.raw_scores == other_hanchans[i].raw_scores
+        assert _item.converted_scores == other_hanchans[i].converted_scores
+        assert _item.match_id == other_hanchans[i].match_id
+        assert _item.is_deleted == other_hanchans[i].is_deleted

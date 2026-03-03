@@ -35,8 +35,8 @@ def test_ok_hit_hanchan(mocker):
     assert len(result) == len(dummy_hanchans)
     for i, _item in enumerate(dummy_hanchans):
         assert isinstance(result[i], Hanchan)
-        assert result[i]._id == dummy_hanchans[i]._id
-        assert result[i].match_id == dummy_hanchans[i].match_id
-        assert result[i].line_group_id == dummy_hanchans[i].line_group_id
-        assert result[i].is_deleted == dummy_hanchans[i].is_deleted
+        assert result[i]._id == _item._id
+        assert result[i].match_id == _item.match_id
+        assert result[i].line_group_id == _item.line_group_id
+        assert result[i].is_deleted == _item.is_deleted
     mock_find.assert_called_once_with({"match_id": 1, "converted_scores": {"$ne": {}}}, [("_id", ASCENDING)])

@@ -56,8 +56,8 @@ def test_success():
     # Assert
     assert len(result) == len(dummy_user_groups)
     for i, _item in enumerate(result):
-        assert result[i].line_user_id == dummy_user_groups[i].line_user_id
-        assert result[i].line_group_id == dummy_user_groups[i].line_group_id
+        assert _item.line_user_id == dummy_user_groups[i].line_user_id
+        assert _item.line_group_id == dummy_user_groups[i].line_group_id
 
 
 def test_success_with_filter():
@@ -157,5 +157,5 @@ def test_success_with_sort():
     ]
     assert len(result) == len(expected)
     for i, _item in enumerate(result):
-        assert result[i].line_user_id == expected[i].line_user_id
-        assert result[i].line_group_id == expected[i].line_group_id
+        assert _item.line_user_id == expected[i].line_user_id
+        assert _item.line_group_id == expected[i].line_group_id

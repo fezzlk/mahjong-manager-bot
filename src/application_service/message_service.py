@@ -210,7 +210,7 @@ class MessageService(IMessageService):
     def parse_date_range_from_params(
         self, params: dict,
     ) -> Tuple[Optional[datetime], Optional[datetime], bool]:
-        """params から "from"/"to" キーを読み取り日付を解析する。
+        """Params から "from"/"to" キーを読み取り日付を解析する。
 
         戻り値: (from_dt, to_dt, is_valid)
         is_valid=False の場合、from_dt/to_dt は None。
