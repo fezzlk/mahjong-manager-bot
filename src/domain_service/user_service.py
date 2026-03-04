@@ -49,6 +49,7 @@ class UserService(IUserService):
             return _cached_get_profile_name(line_user_id, hour_bucket)
 
         except Exception:
+            logger.warning("LINE API profile fetch failed, falling back to DB: user_id=%s", line_user_id)
             target = user_repository.find(
                 query={"line_user_id": line_user_id},
             )

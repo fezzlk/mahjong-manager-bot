@@ -1,3 +1,4 @@
+import logging
 from typing import Dict
 
 from application_service import (
@@ -15,6 +16,8 @@ from domain_service import (
 from use_cases.group_line.create_match_detail_graph_use_case import (
     CreateMatchDetailGraphUseCase,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class FinishMatchUseCase:
@@ -86,6 +89,7 @@ class FinishMatchUseCase:
         group.mode = GroupMode.wait.value
         group.active_match_id = None
         group_service.update(group)
+        logger.info("finish match: group=%s match=%s hanchans=%d", line_group_id, active_match._id, len(hanchans))
 
         # 応答メッセージ作成
         reply_service.add_message(

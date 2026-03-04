@@ -1,3 +1,4 @@
+import logging
 import os
 
 from flask import (
@@ -11,6 +12,8 @@ from flask import (
     session,
 )
 from linebot.v3.exceptions import InvalidSignatureError
+
+logger = logging.getLogger(__name__)
 
 from application_models.page_contents import PageContents
 
@@ -42,6 +45,7 @@ def callback():
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
+        logger.warning("Invalid LINE signature")
         abort(400)
     return "OK"
 
