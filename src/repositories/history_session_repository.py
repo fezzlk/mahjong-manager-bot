@@ -1,4 +1,3 @@
-import copy
 from datetime import datetime
 from typing import List, Optional
 
@@ -19,14 +18,14 @@ class HistorySessionRepository:
     def find_active_by_group_id(self, line_group_id: str) -> Optional[HistorySession]:
         """expires_at が未来のセッションのみ返す。期限切れまたは未作成は None。"""
         record = history_sessions_collection.find_one(
-            {"line_group_id": line_group_id, "expires_at": {"$gt": datetime.now()}}
+            {"line_group_id": line_group_id, "expires_at": {"$gt": datetime.now()}},
         )
         if record is None:
             return None
         return self._to_domain(record)
 
     def update_selected_users(
-        self, line_group_id: str, selected_line_ids: List[str]
+        self, line_group_id: str, selected_line_ids: List[str],
     ) -> int:
         result = history_sessions_collection.update_one(
             {"line_group_id": line_group_id},
@@ -36,7 +35,7 @@ class HistorySessionRepository:
 
     def delete_by_group_id(self, line_group_id: str) -> int:
         result = history_sessions_collection.delete_many(
-            {"line_group_id": line_group_id}
+            {"line_group_id": line_group_id},
         )
         return result.deleted_count
 

@@ -5,8 +5,8 @@ from typing import Dict, List
 
 from linebot.v3.messaging import (
     ButtonsTemplate,
-    FlexBubble,
     FlexBox,
+    FlexBubble,
     FlexButton,
     FlexCarousel,
     FlexMessage,
@@ -23,10 +23,9 @@ from linebot.v3.messaging import (
 from linebot.v3.messaging.exceptions import ApiException
 from linebot.v3.webhooks import Event
 
-from domain_model.entities.user import User
-
 import env_var
 from domain_model.constants import ROUNDING_METHOD_LIST
+from domain_model.entities.user import User
 from messaging_api_setting import line_bot_api
 
 from .interfaces.i_reply_service import IReplyService
@@ -521,25 +520,25 @@ class ReplyService(IReplyService):
                                 label="自分だけ",
                                 display_text="自分だけ",
                                 data="_history_target?t=self",
-                            )
+                            ),
                         ),
                         QuickReplyItem(
                             action=PostbackAction(
                                 label="グループ全員",
                                 display_text="グループ全員",
                                 data="_history_target?t=all",
-                            )
+                            ),
                         ),
                         QuickReplyItem(
                             action=PostbackAction(
                                 label="ユーザを選ぶ",
                                 display_text="ユーザを選ぶ",
                                 data="_history_target?t=select",
-                            )
+                            ),
                         ),
-                    ]
+                    ],
                 ),
-            )
+            ),
         )
 
     def add_history_period_quick_reply(self) -> None:
@@ -553,43 +552,43 @@ class ReplyService(IReplyService):
                                 label="今月",
                                 display_text="今月",
                                 data="_history_exec?p=month",
-                            )
+                            ),
                         ),
                         QuickReplyItem(
                             action=PostbackAction(
                                 label="先月",
                                 display_text="先月",
                                 data="_history_exec?p=last_month",
-                            )
+                            ),
                         ),
                         QuickReplyItem(
                             action=PostbackAction(
                                 label="直近3ヶ月",
                                 display_text="直近3ヶ月",
                                 data="_history_exec?p=3months",
-                            )
+                            ),
                         ),
                         QuickReplyItem(
                             action=PostbackAction(
                                 label="半年",
                                 display_text="半年",
                                 data="_history_exec?p=6months",
-                            )
+                            ),
                         ),
                         QuickReplyItem(
                             action=PostbackAction(
                                 label="全期間",
                                 display_text="全期間",
                                 data="_history_exec?p=all",
-                            )
+                            ),
                         ),
-                    ]
+                    ],
                 ),
-            )
+            ),
         )
 
     def add_history_user_select_carousel(
-        self, members: List[User], selected_ids: List[str]
+        self, members: List[User], selected_ids: List[str],
     ) -> None:
         bubbles = []
         for user in members:
@@ -624,7 +623,7 @@ class ReplyService(IReplyService):
                             ),
                         ],
                     ),
-                )
+                ),
             )
 
         # 確定 Bubble
@@ -655,14 +654,14 @@ class ReplyService(IReplyService):
                         ),
                     ],
                 ),
-            )
+            ),
         )
 
         self.buttons.append(
             FlexMessage(
                 alt_text="ユーザを選んでください",
                 contents=FlexCarousel(contents=bubbles),
-            )
+            ),
         )
 
     def push_a_message(self, to: str, message: str) -> None:

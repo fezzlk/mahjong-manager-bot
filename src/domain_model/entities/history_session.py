@@ -11,7 +11,7 @@ class HistorySession:
     requester_line_id: str
     selected_line_ids: List[str] = field(default_factory=list)
     expires_at: datetime = field(
-        default_factory=lambda: datetime.now() + timedelta(minutes=1)
+        default_factory=lambda: datetime.now() + timedelta(minutes=1),
     )
     _id: Optional[ObjectId] = field(default=None)
 

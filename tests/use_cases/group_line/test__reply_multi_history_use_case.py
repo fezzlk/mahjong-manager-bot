@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import pytest
 
 import env_var
-import matplotlib.pyplot as plt
-
 from application_service import (
     graph_service,
     reply_service,

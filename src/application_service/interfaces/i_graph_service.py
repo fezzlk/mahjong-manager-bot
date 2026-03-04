@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 
 class IGraphService(metaclass=ABCMeta):
@@ -26,5 +26,5 @@ class IGraphService(metaclass=ABCMeta):
         to_dt: Optional[datetime],
         line_id_name_dict: Optional[Dict[str, str]] = None,
         match_count: Optional[int] = None,
-    ) -> Any:
+    ):
         pass

@@ -25,19 +25,19 @@ def _period_to_date_range(period: str) -> Tuple[Optional[datetime], Optional[dat
     if period == "month":
         from_dt = today.replace(day=1)
         return from_dt, None
-    elif period == "last_month":
+    if period == "last_month":
         first_of_this_month = today.replace(day=1)
         last_month = first_of_this_month - timedelta(days=1)
         from_dt = last_month.replace(day=1)
         return from_dt, first_of_this_month
-    elif period == "3months":
+    if period == "3months":
         from_dt = today - timedelta(days=90)
         return from_dt, None
-    elif period == "6months":
+    if period == "6months":
         from_dt = today - timedelta(days=180)
         return from_dt, None
-    else:  # "all"
-        return None, None
+    # "all"
+    return None, None
 
 
 class ExecuteHistoryUseCase:

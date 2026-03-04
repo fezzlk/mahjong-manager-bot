@@ -65,6 +65,6 @@ class IReplyService(metaclass=ABCMeta):
 
     @abstractmethod
     def add_history_user_select_carousel(
-        self, members: List[User], selected_ids: List[str]
+        self, members: List[User], selected_ids: List[str],
     ) -> None:
         pass

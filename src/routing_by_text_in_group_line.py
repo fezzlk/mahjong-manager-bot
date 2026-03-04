@@ -15,9 +15,13 @@ from use_cases.common_line.reply_rank_histogram_use_case import (
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
 from use_cases.group_line.add_chip_by_text_use_case import AddChipByTextUseCase
 from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
+from use_cases.group_line.confirm_history_selection_use_case import (
+    ConfirmHistorySelectionUseCase,
+)
 from use_cases.group_line.drop_hanchan_by_index_use_case import (
     DropHanchanByIndexUseCase,
 )
+from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.exit_use_case import ExitUseCase
 from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
@@ -33,21 +37,17 @@ from use_cases.group_line.reply_hanchans_of_active_match_use_case import (
 )
 from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndexUseCase
 from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
-from use_cases.group_line.confirm_history_selection_use_case import (
-    ConfirmHistorySelectionUseCase,
-)
-from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
+from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
+from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
+from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
 from use_cases.group_line.select_history_target_use_case import (
     SelectHistoryTargetUseCase,
 )
 from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
-from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
-from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
-from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
-from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
+from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
 from use_cases.group_line.update_group_settings_use_case import (
     UpdateGroupSettingsUseCase,
 )

@@ -18,9 +18,8 @@ class ToggleHistoryUserUseCase:
         selected = list(session.selected_line_ids)
         if user_id in selected:
             selected.remove(user_id)
-        else:
-            if len(selected) < 10:
-                selected.append(user_id)
+        elif len(selected) < 10:
+            selected.append(user_id)
 
         history_session_repository.update_selected_users(group_id, selected)
 
