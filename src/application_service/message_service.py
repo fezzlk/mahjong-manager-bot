@@ -229,3 +229,17 @@ class MessageService(IMessageService):
             range_message += f"{to_dt.strftime('%Y年%m月%d日')}0時まで"
 
         return None if range_message == "" else "範囲指定: " + range_message
+
+    def parse_date_range_from_params(
+        self, params: dict,
+    ) -> Tuple[Optional[datetime], Optional[datetime], bool]:
+        """Params から "from"/"to" キーを読み取り日付を解析する。
+
+        戻り値: (from_dt, to_dt, is_valid)
+        is_valid=False の場合、from_dt/to_dt は None。
+        """
+        from_str = params.get("from")
+        to_str = params.get("to")
+        from_dt, from_is_invalid = self.parse_date_from_text(from_str)
+        to_dt, to_is_invalid = self.parse_date_from_text(to_str)
+        return from_dt, to_dt, not (from_is_invalid or to_is_invalid)

@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+from typing import Dict
 
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
+import japanize_matplotlib  # noqa: F401
 
 from application_service import (
     graph_service,
@@ -71,7 +71,7 @@ class ReplyHistoryUseCase:
         total = 0
 
         # グラフ描画用プロットデータ
-        history = {}
+        history: Dict[datetime, int] = {}
 
         for match in matches:
             score = 0
@@ -98,38 +98,12 @@ class ReplyHistoryUseCase:
         )
 
         # グラフ描画
-        # 初回値に0を追加、最後尾には指定された範囲の最終日または現在時点のスコアを追加
-        if to_dt is None:
-            to_dt = datetime.now()
-        history[to_dt] = total
-
-        start_date: datetime = min(history.keys())
-        end_date: datetime = max(history.keys())
-        history[start_date - timedelta(minutes=2)] = 0
-        history[start_date - timedelta(minutes=1)] = 0
-        history = dict(sorted(history.items()))
-
-        x = []
-        y = []
-        for k, v in history.items():
-            x.append(k)
-            y.append(v)
-
-        fig, ax = plt.subplots()
-        plt.step(history.keys(), history.values(), where="mid")
-
-        plt.grid(which="major", axis="y")
-        plt.xlim(
-            [
-                start_date - timedelta(minutes=2),
-                end_date
-                + timedelta(seconds=(end_date - start_date).total_seconds() // 100),
-            ],
+        fig = graph_service.build_history_step_graph(
+            histories={req_line_id: history},
+            start_date=matches[0].created_at,
+            to_dt=to_dt,
+            match_count=len(matches),
         )
-        plt.xticks(rotation=30)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H時"))
-        plt.gca().spines["right"].set_visible(False)
-        plt.gca().spines["top"].set_visible(False)
 
         path = f"/personal_history/{req_line_id}.png"
         url, err = graph_service.save_figure(fig, path)

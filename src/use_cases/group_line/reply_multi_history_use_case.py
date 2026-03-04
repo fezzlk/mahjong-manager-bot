@@ -1,9 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List
 
 import japanize_matplotlib  # noqa: F401
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 
 from application_service import (
     graph_service,
@@ -76,48 +74,23 @@ class ReplyMultiHistoryUseCase:
 
         # 対戦結果の累計を計算
         total_dict = dict.fromkeys(active_user_line_ids, 0)
-        start_date = matches[0].created_at
-        end_date = matches[-1].created_at
-        history_dict = {
-            line_id: {
-                start_date - timedelta(minutes=2): 0,
-                start_date - timedelta(minutes=1): 0,
-            }
-            for line_id in active_user_line_ids
+        history_dict: Dict[str, Dict[datetime, int]] = {
+            line_id: {} for line_id in active_user_line_ids
         }
         for match in matches:
             for line_id, score in match.sum_scores.items():
                 if line_id in active_user_line_ids:
                     total_dict[line_id] += score
                     history_dict[line_id][match.created_at] = total_dict[line_id]
-        if to_dt is None:
-            to_dt = datetime.now()
-        for line_id, score in total_dict.items():
-            history_dict[line_id][to_dt] = score
 
-        # グラフ描画
-        fig, ax = plt.subplots()
-        for line_id in active_user_line_ids:
-            plt.step(
-                history_dict[line_id].keys(),
-                history_dict[line_id].values(),
-                where="post",
-                label=line_id_name_dict[line_id],
-            )
-
-        plt.grid(which="major", axis="y")
-        plt.xlim(
-            [
-                start_date - timedelta(minutes=1),
-                end_date
-                + timedelta(seconds=(end_date - start_date).total_seconds() // 100),
-            ],
+        is_single = len(active_user_line_ids) == 1
+        fig = graph_service.build_history_step_graph(
+            histories=history_dict,
+            start_date=matches[0].created_at,
+            to_dt=to_dt,
+            line_id_name_dict=line_id_name_dict if not is_single else None,
+            match_count=len(matches) if is_single else None,
         )
-        plt.xticks(rotation=30)
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%d %H時"))
-        plt.legend()
-        plt.gca().spines["right"].set_visible(False)
-        plt.gca().spines["top"].set_visible(False)
 
         path = f"/group_history/{req_line_user_id}.png"
         url, err = graph_service.save_figure(fig, path)

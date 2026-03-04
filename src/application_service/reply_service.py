@@ -5,15 +5,25 @@ from typing import Dict, List
 
 from linebot.v3.messaging import (
     ButtonsTemplate,
+    FlexBubble,
+    FlexBox,
+    FlexButton,
+    FlexCarousel,
+    FlexMessage,
+    FlexText,
     ImageMessage,
     PostbackAction,
     PushMessageRequest,
+    QuickReply,
+    QuickReplyItem,
     ReplyMessageRequest,
     TemplateMessage,
     TextMessage,
 )
 from linebot.v3.messaging.exceptions import ApiException
 from linebot.v3.webhooks import Event
+
+from domain_model.entities.user import User
 
 import env_var
 from domain_model.constants import ROUNDING_METHOD_LIST
@@ -125,6 +135,11 @@ class ReplyService(IReplyService):
                             label="対戦履歴",
                             display_text="対戦履歴",
                             data="_matches",
+                        ),
+                        PostbackAction(
+                            label="成績推移",
+                            display_text="成績推移",
+                            data="_history_start",
                         ),
                     ],
                 ),
@@ -493,6 +508,161 @@ class ReplyService(IReplyService):
                     ],
                 ),
             ),
+        )
+
+    def add_history_target_quick_reply(self) -> None:
+        self.texts.append(
+            TextMessage(
+                text="誰の成績推移を表示しますか？",
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="自分だけ",
+                                display_text="自分だけ",
+                                data="_history_target?t=self",
+                            )
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="グループ全員",
+                                display_text="グループ全員",
+                                data="_history_target?t=all",
+                            )
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="ユーザを選ぶ",
+                                display_text="ユーザを選ぶ",
+                                data="_history_target?t=select",
+                            )
+                        ),
+                    ]
+                ),
+            )
+        )
+
+    def add_history_period_quick_reply(self) -> None:
+        self.texts.append(
+            TextMessage(
+                text="期間を選んでください。",
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="今月",
+                                display_text="今月",
+                                data="_history_exec?p=month",
+                            )
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="先月",
+                                display_text="先月",
+                                data="_history_exec?p=last_month",
+                            )
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="直近3ヶ月",
+                                display_text="直近3ヶ月",
+                                data="_history_exec?p=3months",
+                            )
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="半年",
+                                display_text="半年",
+                                data="_history_exec?p=6months",
+                            )
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="全期間",
+                                display_text="全期間",
+                                data="_history_exec?p=all",
+                            )
+                        ),
+                    ]
+                ),
+            )
+        )
+
+    def add_history_user_select_carousel(
+        self, members: List[User], selected_ids: List[str]
+    ) -> None:
+        bubbles = []
+        for user in members:
+            is_selected = user.line_user_id in selected_ids
+            body_bg_color = "#1DB446" if is_selected else "#FFFFFF"
+            btn_label = f"✓ {user.line_user_name}" if is_selected else user.line_user_name
+            bubbles.append(
+                FlexBubble(
+                    body=FlexBox(
+                        layout="vertical",
+                        background_color=body_bg_color,
+                        contents=[
+                            FlexText(
+                                text=user.line_user_name,
+                                weight="bold",
+                                size="md",
+                                wrap=True,
+                                color="#FFFFFF" if is_selected else "#333333",
+                            ),
+                        ],
+                    ),
+                    footer=FlexBox(
+                        layout="vertical",
+                        contents=[
+                            FlexButton(
+                                action=PostbackAction(
+                                    label=btn_label[:20],
+                                    display_text=btn_label[:20],
+                                    data=f"_history_toggle?u={user.line_user_id}",
+                                ),
+                                style="primary" if is_selected else "secondary",
+                            ),
+                        ],
+                    ),
+                )
+            )
+
+        # 確定 Bubble
+        n = len(selected_ids)
+        confirm_label = f"この{n}人で表示する" if n > 0 else "選択してください"
+        bubbles.append(
+            FlexBubble(
+                body=FlexBox(
+                    layout="vertical",
+                    contents=[
+                        FlexText(
+                            text=f"{n}人選択中",
+                            weight="bold",
+                            size="lg",
+                        ),
+                    ],
+                ),
+                footer=FlexBox(
+                    layout="vertical",
+                    contents=[
+                        FlexButton(
+                            action=PostbackAction(
+                                label=confirm_label,
+                                display_text=confirm_label,
+                                data="_history_confirm",
+                            ),
+                            style="primary",
+                        ),
+                    ],
+                ),
+            )
+        )
+
+        self.buttons.append(
+            FlexMessage(
+                alt_text="ユーザを選んでください",
+                contents=FlexCarousel(contents=bubbles),
+            )
         )
 
     def push_a_message(self, to: str, message: str) -> None:

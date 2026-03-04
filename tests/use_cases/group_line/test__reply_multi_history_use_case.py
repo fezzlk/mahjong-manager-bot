@@ -5,7 +5,10 @@ import matplotlib.pyplot as plt
 import pytest
 
 import env_var
+import matplotlib.pyplot as plt
+
 from application_service import (
+    graph_service,
     reply_service,
     request_info_service,
 )
@@ -275,16 +278,9 @@ def test_execute(mocker):
     # reply_service: images
     # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
-    fig, ax = plt.subplots()
-    mocker.patch.object(
-        plt,
-        "subplots",
-        return_value=(fig, ax),
-    )
-    mocker.patch.object(
-        fig,
-        "savefig",
-    )
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mocker.patch.object(fig, "savefig")
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -321,16 +317,9 @@ def test_execute_with_range(mocker, case2):
     # reply_service: images, texts
     # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
-    fig, ax = plt.subplots()
-    mocker.patch.object(
-        plt,
-        "subplots",
-        return_value=(fig, ax),
-    )
-    mocker.patch.object(
-        fig,
-        "savefig",
-    )
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mocker.patch.object(fig, "savefig")
 
     dummy_user_matches_local = [
         UserMatch(
@@ -393,17 +382,9 @@ def test_execute_fail_savefig(mocker):
         reply_service,
         "push_a_message",
     )
-    fig, ax = plt.subplots()
-    mocker.patch.object(
-        plt,
-        "subplots",
-        return_value=(fig, ax),
-    )
-    mocker.patch.object(
-        fig,
-        "savefig",
-        side_effect=FileNotFoundError(),
-    )
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mocker.patch.object(fig, "savefig", side_effect=FileNotFoundError())
 
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
@@ -438,16 +419,9 @@ def test_execute_no_match(mocker):
     # reply_service: texts
     # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user)
     # Arrange
-    fig, ax = plt.subplots()
-    mocker.patch.object(
-        plt,
-        "subplots",
-        return_value=(fig, ax),
-    )
-    mocker.patch.object(
-        fig,
-        "savefig",
-    )
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mocker.patch.object(fig, "savefig")
 
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
@@ -475,16 +449,9 @@ def test_execute_contain_unknown_user(mocker):
     # reply_service: images, texts
     # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
-    fig, ax = plt.subplots()
-    mocker.patch.object(
-        plt,
-        "subplots",
-        return_value=(fig, ax),
-    )
-    mocker.patch.object(
-        fig,
-        "savefig",
-    )
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mocker.patch.object(fig, "savefig")
 
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
@@ -526,16 +493,9 @@ def test_execute_with_mention(mocker):
     # reply_service: images
     # DB操作: match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_repository.create(dummy_user); user_match_repository.create(dummy_user_match)
     # Arrange
-    fig, ax = plt.subplots()
-    mocker.patch.object(
-        plt,
-        "subplots",
-        return_value=(fig, ax),
-    )
-    mocker.patch.object(
-        fig,
-        "savefig",
-    )
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mocker.patch.object(fig, "savefig")
 
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)

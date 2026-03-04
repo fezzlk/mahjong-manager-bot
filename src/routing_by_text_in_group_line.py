@@ -33,7 +33,16 @@ from use_cases.group_line.reply_hanchans_of_active_match_use_case import (
 )
 from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndexUseCase
 from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
+from use_cases.group_line.confirm_history_selection_use_case import (
+    ConfirmHistorySelectionUseCase,
+)
+from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
+from use_cases.group_line.select_history_target_use_case import (
+    SelectHistoryTargetUseCase,
+)
+from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
+from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
 from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
@@ -70,6 +79,11 @@ class RCommands(Enum):
     sum_matches = "sum_matches"
     my_results = "my_results"
     history = "history"
+    history_start = "history_start"
+    history_target = "history_target"
+    history_toggle = "history_toggle"
+    history_confirm = "history_confirm"
+    history_exec = "history_exec"
     chip_ok = "chip_ok"
     badai = "badai"
     # entry is defined but not yet implemented (LinkUserToGroupUseCase pending)
@@ -142,6 +156,11 @@ def routing_for_group_by_command(command):
         RCommands.tobi.name: _tobi,
         RCommands.update_config.name: _update_config,
         RCommands.history.name: lambda: ReplyMultiHistoryUseCase().execute(),
+        RCommands.history_start.name: lambda: StartHistoryFlowUseCase().execute(),
+        RCommands.history_target.name: lambda: SelectHistoryTargetUseCase().execute(),
+        RCommands.history_toggle.name: lambda: ToggleHistoryUserUseCase().execute(),
+        RCommands.history_confirm.name: lambda: ConfirmHistorySelectionUseCase().execute(),
+        RCommands.history_exec.name: lambda: ExecuteHistoryUseCase().execute(),
         RCommands.chip_ok.name: lambda: FinishInputChipUseCase().execute(),
         RCommands.badai.name: lambda: ReplyApplyBadaiUseCase().execute(body),
         RCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
