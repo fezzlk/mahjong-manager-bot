@@ -3,6 +3,8 @@ from typing import Dict, List
 
 from linebot.v3.webhooks import Event
 
+from domain_model.entities.user import User
+
 
 class IReplyService(metaclass=ABCMeta):
 
@@ -51,4 +53,18 @@ class IReplyService(metaclass=ABCMeta):
 
     @abstractmethod
     def create_and_reply_file_upload_error(self, title: str, sender: str) -> None:
+        pass
+
+    @abstractmethod
+    def add_history_target_quick_reply(self) -> None:
+        pass
+
+    @abstractmethod
+    def add_history_period_quick_reply(self) -> None:
+        pass
+
+    @abstractmethod
+    def add_history_user_select_carousel(
+        self, members: List[User], selected_ids: List[str],
+    ) -> None:
         pass

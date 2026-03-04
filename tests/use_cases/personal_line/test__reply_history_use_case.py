@@ -1,11 +1,13 @@
 from datetime import datetime
 from typing import Dict
 
+import matplotlib.pyplot as plt
 import pytest
 from bson.objectid import ObjectId
 
 import env_var
 from application_service import (
+    graph_service,
     reply_service,
     request_info_service,
 )
@@ -195,19 +197,9 @@ def test_execute(mocker):
     # reply_service: images
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt  # noqa: PLC0415
-
-    fig = plt.figure()
-    mocker.patch.object(
-        plt,
-        "figure",
-        return_value=fig,
-    )
-    mock_fig = mocker.patch.object(
-        fig,
-        "savefig",
-        return_value=None,
-    )
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mock_fig = mocker.patch.object(fig, "savefig", return_value=None)
 
     user = user_repository.create(dummy_user)
     match = match_repository.create(dummy_match)
@@ -253,19 +245,9 @@ def test_execute_with_range(mocker, case2):
     # reply_service: images, texts
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt  # noqa: PLC0415
-
-    fig = plt.figure()
-    mocker.patch.object(
-        plt,
-        "figure",
-        return_value=fig,
-    )
-    mock_fig = mocker.patch.object(
-        fig,
-        "savefig",
-        return_value=None,
-    )
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mock_fig = mocker.patch.object(fig, "savefig", return_value=None)
     user = user_repository.create(dummy_user)
     match = match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -301,23 +283,10 @@ def test_fail_file_upload(mocker):
     # reply_service: images, texts
     # DB操作: user = user_repository.create(dummy_user); match = match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); user_match_repository.create(dummy_user_match)
     # Arrange
-    import matplotlib.pyplot as plt  # noqa: PLC0415
-
-    fig = plt.figure()
-    mock = mocker.patch.object(
-        reply_service,
-        "push_a_message",
-    )
-    mocker.patch.object(
-        plt,
-        "figure",
-        return_value=fig,
-    )
-    mocker.patch.object(
-        fig,
-        "savefig",
-        side_effect=FileNotFoundError(),
-    )
+    mock = mocker.patch.object(reply_service, "push_a_message")
+    fig, _ = plt.subplots()
+    mocker.patch.object(graph_service, "build_history_step_graph", return_value=fig)
+    mocker.patch.object(fig, "savefig", side_effect=FileNotFoundError())
 
     user = user_repository.create(dummy_user)
     match = match_repository.create(dummy_match)
