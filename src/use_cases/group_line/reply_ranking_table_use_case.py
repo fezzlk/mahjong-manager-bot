@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
 
@@ -19,6 +20,8 @@ from domain_service import (
     user_service,
 )
 from messaging_api_setting import line_bot_api
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -204,6 +207,7 @@ class ReplyRankingTableUseCase:
         )
 
     def _handle_image_save_error(self) -> None:
+        logger.error("ranking table image save failed: group=%s", request_info_service.req_line_group_id)
         reply_service.reset()
         reply_service.add_message(text="システムエラーが発生しました。")
         messages = [

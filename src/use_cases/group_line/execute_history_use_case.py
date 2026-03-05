@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Tuple
 
@@ -15,6 +16,7 @@ from domain_service import (
 )
 from repositories import history_session_repository
 
+logger = logging.getLogger(__name__)
 _TIMEOUT_MSG = "タイムアウトしました。その他メニューの「成績推移」から再度お試しください。"
 
 
@@ -48,6 +50,7 @@ class ExecuteHistoryUseCase:
 
         session = history_session_repository.find_active_by_group_id(group_id)
         if session is None:
+            logger.warning("history session timeout or not found: group=%s", group_id)
             reply_service.add_message(_TIMEOUT_MSG)
             return
 

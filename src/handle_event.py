@@ -1,7 +1,6 @@
 """LINE messaging API handler"""
 
 import logging
-import traceback
 from functools import wraps
 
 from linebot.v3.webhook import WebhookHandler
@@ -45,7 +44,7 @@ def handle_event_decorator(function):
             function(args[0])
 
         except Exception as err:
-            traceback.print_exc()
+            logger.exception("Unhandled exception in event handler")
             reply_service.push_a_message(
                 to=env_var.SERVER_ADMIN_LINE_USER_ID,
                 message=f"システムエラー: {type(err).__name__}: {err}",
