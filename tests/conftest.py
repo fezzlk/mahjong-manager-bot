@@ -51,10 +51,11 @@ def pytest_sessionstart(session):
 @pytest.fixture(scope="function", autouse=True)
 def reset_services():
     """各テストの前後でDBをクリーンにする"""
+    from domain_service.user_service import _cached_get_profile_name
     from mongo_client import mongo_client
 
     mongo_client.drop_database(env_var.DATABASE_NAME)
     request_info_service.delete_req_info()
     reply_service.reset()
+    _cached_get_profile_name.cache_clear()
     yield
-    # 必要に応じてtear down処理を追加

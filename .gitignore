@@ -143,3 +143,6 @@ setup_secrets.sh
 
 # Uploaded images (runtime artifacts)
 src/uploads/
+
+# GCP service account keys
+*-sa-key.json
