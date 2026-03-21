@@ -9,6 +9,7 @@ Usage:
   Or set FIRESTORE_TEST_DATABASE_NAME to override the default test DB name.
 """
 
+import contextlib
 import os
 
 import pytest
@@ -44,16 +45,12 @@ def firestore_db(firestore_client):
     return firestore_client[FIRESTORE_DB_NAME]
 
 
-@pytest.fixture()
+@pytest.fixture
 def collection(firestore_db):
     """Function-scoped test collection, cleaned up after each test."""
     col = firestore_db[TEST_COLLECTION]
-    try:
+    with contextlib.suppress(Exception):
         col.delete_many({})
-    except Exception:
-        pass
     yield col
-    try:
+    with contextlib.suppress(Exception):
         col.delete_many({})
-    except Exception:
-        pass

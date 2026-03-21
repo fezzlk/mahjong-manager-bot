@@ -1,6 +1,6 @@
 """Firestore MongoDB API: CRUD operations via pymongo."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from bson.objectid import ObjectId
 
@@ -28,7 +28,7 @@ class TestInsert:
         assert isinstance(doc["_id"], ObjectId)
 
     def test_insert_with_datetime(self, collection):
-        now = datetime.utcnow()
+        now = datetime.now(tz=timezone.utc)
         collection.insert_one({"created_at": now, "name": "datetime_test"})
         doc = collection.find_one({"name": "datetime_test"})
         assert isinstance(doc["created_at"], datetime)

@@ -4,7 +4,6 @@ Tests the specific pymongo query patterns used by the application
 and migration scripts.
 """
 
-from datetime import datetime
 
 import pymongo
 import pytest
@@ -178,7 +177,7 @@ class TestIndexOperations:
         assert index_name is not None
         indexes = list(collection.list_indexes())
         field_names = [
-            list(idx["key"].keys())[0]
+            next(iter(idx["key"].keys()))
             for idx in indexes
             if "_id" not in idx["key"]
         ]
@@ -202,6 +201,7 @@ class TestCollectionOperations:
 
     def test_drop_collection_not_supported(self, firestore_db):
         """Firestore MongoDB API does NOT support the 'drop' command.
+
         Migration scripts should use delete_many({}) instead of drop().
         """
         col = firestore_db["compat_test_drop"]
