@@ -44,7 +44,7 @@ def test_execute_sets_profile_with_line_link(mocker):
     use_case = ViewUserInfoUseCase()
 
     # mock external API
-    from messaging_api_setting import line_bot_api  # noqa: PLC0415
+    from messaging_api_setting import line_bot_api
     if line_bot_api is None:
         mocker.patch("messaging_api_setting.line_bot_api", SimpleNamespace(get_profile=lambda _: SimpleNamespace(display_name="LineName")))
     else:

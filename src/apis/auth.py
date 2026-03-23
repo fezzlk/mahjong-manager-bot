@@ -1,4 +1,5 @@
 # Auth
+import requests
 from flask import (
     Blueprint,
     jsonify,
@@ -39,40 +40,45 @@ def authenticate(line_user_id: str) -> str:
     return create_access_token(identity=users[0].line_user_id)
 
 
-@auth_blueprint.route("/google/login")
-def google_login():
-    google = oauth.create_client("google")
-    redirect_uri = url_for("auth_blueprint.google_authorize", _external=True)
-    return google.authorize_redirect(redirect_uri)
+@auth_blueprint.route("/line/login")
+def line_login():
+    line = oauth.create_client("line")
+    redirect_uri = url_for("auth_blueprint.line_authorize", _external=True)
+    return line.authorize_redirect(redirect_uri)
 
 
-@auth_blueprint.route("/google/authorize")
-def google_authorize():
-    # 認証
-    google = oauth.create_client("google")
-    token = google.authorize_access_token()
-    resp = google.get("userinfo")
-    user_info = resp.json()
+@auth_blueprint.route("/line/authorize")
+def line_authorize():
+    line = oauth.create_client("line")
+    token = line.authorize_access_token()
 
-    # ユーザ検索
-    email = user_info["email"]
+    # LINE Profile API でユーザー情報取得
+    resp = requests.get(
+        "https://api.line.me/v2/profile",
+        headers={"Authorization": f"Bearer {token['access_token']}"},
+        timeout=10,
+    )
+    resp.raise_for_status()
+    profile = resp.json()
+    line_user_id = profile["userId"]
+    display_name = profile.get("displayName", "")
+
+    # linked_line_user_id で web_users を検索
     web_users = web_user_repository.find(
-        {"email": email},
+        {"linked_line_user_id": line_user_id},
     )
 
     # ヒットしない場合は新規登録画面
     if len(web_users) == 0:
-        session["login_email"] = email
-        session["login_name"] = user_info["name"]
+        session["login_line_user_id"] = line_user_id
+        session["login_name"] = display_name
         return redirect(
             url_for("web_user_blueprint.view_register", _external=True),
         )
 
     # ヒットした場合はログイン
     web_user = web_users[0]
-    session["login_picture"] = user_info["picture"]
     session["access_token"] = token["access_token"]
-    session["id_token"] = token["id_token"]
     session["login_user_id"] = web_user._id
 
     redirect_to = session.pop("next_page_url", "/")

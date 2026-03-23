@@ -14,7 +14,7 @@ def request_context(app: Flask, form_data=None, session_data=None):
     form_data = form_data or {}
     session_data = session_data or {}
     with app.test_request_context("/", method="POST", data=form_data):
-        from flask import session  # noqa: PLC0415
+        from flask import session
 
         for key, value in session_data.items():
             session[key] = value
