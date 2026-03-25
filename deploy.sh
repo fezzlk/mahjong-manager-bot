@@ -49,11 +49,11 @@ gcloud run deploy $SERVICE_NAME \
   --max-instances 10 \
   --timeout 300 \
   --health-check-http-path=/health \
-  --set-env-vars "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=mahjong-manager,SERVER_URL=https://mahjong-manager-bot-794762347679.asia-northeast1.run.app,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,PORT=8080,GCS_BUCKET_NAME=mahjong-manager-images" \
+  --set-env-vars "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=mahjong-manager,SERVER_URL=https://mahjong-manager.fezzlk.com,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,PORT=8080,GCS_BUCKET_NAME=mahjong-manager-images" \
   --set-secrets "DATABASE_URL=DATABASE_URL:latest,YOUR_CHANNEL_ACCESS_TOKEN=YOUR_CHANNEL_ACCESS_TOKEN:latest,YOUR_CHANNEL_SECRET=YOUR_CHANNEL_SECRET:latest,SERVER_ADMIN_LINE_USER_ID=SERVER_ADMIN_LINE_USER_ID:latest,FLASK_SECRET_KEY=FLASK_SECRET_KEY:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest,LINE_LOGIN_CHANNEL_ID=LINE_LOGIN_CHANNEL_ID:latest,LINE_LOGIN_CHANNEL_SECRET=LINE_LOGIN_CHANNEL_SECRET:latest"
   # --service-account "${SERVICE_ACCOUNT}"  # 独自SAを使う場合はコメントを外す
 
 echo "デプロイが完了しました！"
-echo "サービスURL: https://mahjong-manager-bot-794762347679.asia-northeast1.run.app"
+echo "サービスURL: https://mahjong-manager.fezzlk.com"
 echo "イメージタグ: $IMAGE_TAG"
 echo "ロールバック例: gcloud run deploy $SERVICE_NAME --image ${IMAGE_NAME}:<前のタグ> --project $PROJECT_ID --region $REGION"
