@@ -35,6 +35,7 @@ from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndex
 from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
 from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
 from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
+from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
@@ -77,6 +78,7 @@ class RCommands(Enum):
     rank = "rank"
     rank_detail = "rank_detail"
     ranking = "ranking"
+    reopen = "reopen"
 
 
 # Use a set for O(1) command lookup
@@ -129,7 +131,7 @@ def _save_last_command(command: str):
 
 
 def _should_auto_start_input(group_id: str) -> bool:
-    """wait モードで数値テキストが来たとき、直前コマンドが input なら True"""
+    """Wait モードで数値テキストが来たとき、直前コマンドが input なら True"""
     group = group_service.find_one_by_line_group_id(group_id)
     if group is None or group.last_command != RCommands.input.name:
         return False
@@ -176,6 +178,7 @@ def routing_for_group_by_command(command):
         RCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
         RCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
         RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
+        RCommands.reopen.name: lambda: ReopenMatchUseCase().execute(),
         # drop_m (DisableMatchUseCase), entry (LinkUserToGroupUseCase),
         # sum_matches (ReplySumMatchesByIdsUseCase), add_result, my_results:
         # intentionally not yet implemented — stub commands reserved for future use
