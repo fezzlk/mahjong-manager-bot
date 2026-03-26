@@ -81,6 +81,7 @@ class GroupRepository(IGroupRepository):
             mode=record.get("mode"),
             active_match_id=record.get("active_match_id"),
             settings=settings,
+            last_command=record.get("last_command"),
             created_at=record.get("created_at"),
             updated_at=record.get("updated_at"),
             _id=record.get("_id"),
