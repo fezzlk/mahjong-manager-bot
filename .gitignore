@@ -16,7 +16,6 @@ eggs/
 .eggs/
 lib/
 lib64/
-!frontend/src/lib/
 parts/
 sdist/
 var/
@@ -145,9 +144,5 @@ setup_secrets.sh
 # Uploaded images (runtime artifacts)
 src/uploads/
 
-# Frontend
-frontend/node_modules/
-frontend/dist/
-
-# pip-compile バックアップ (CI で自動生成される一時ファイル)
-requirements*.bak
+# GCP service account keys
+*-sa-key.json

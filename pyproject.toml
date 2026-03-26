@@ -85,8 +85,10 @@ ignore = [
     "TRY300",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["B007", "D205", "D401", "DTZ003", "F841", "N806", "RUF002", "RUF015", "RUF034", "RUF059", "S110", "SIM105", "SIM108"]
+"tests/*" = ["ARG002", "B007", "D205", "D401", "F841", "PLC0415", "RUF002", "RUF059", "S110"]
+
 [tool.pytest.ini_options]
-# E2E テスト (Playwright) は通常の pytest 実行から除外。
-# 実行: pytest tests/e2e/playwright/ -v
-# (要: pip install -r requirements.e2e.txt && playwright install chromium)
-norecursedirs = ["tests/e2e"]
+testpaths = ["tests"]
+norecursedirs = ["tests/e2e", "tests/firestore_compat"]

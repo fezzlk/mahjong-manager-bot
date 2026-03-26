@@ -35,6 +35,7 @@ from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndex
 from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
 from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
 from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
+from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
@@ -77,6 +78,7 @@ class RCommands(Enum):
     rank = "rank"
     rank_detail = "rank_detail"
     ranking = "ranking"
+    reopen = "reopen"
 
 
 # Use a set for O(1) command lookup
@@ -90,6 +92,7 @@ def routing_by_text_in_group_line():
     command = request_info_service.command
     if command is not None:
         if command in _VALID_COMMANDS:
+            _save_last_command(command)
             routing_for_group_by_command(command)
             return
         reply_service.add_message(
@@ -109,7 +112,35 @@ def routing_by_text_in_group_line():
         AddChipByTextUseCase().execute(request_info_service.message)
         return
 
-    """wait mode"""
+    """wait mode — レース条件対策: 直前コマンドが input なら自動でモード切替"""
+    if _should_auto_start_input(group_id):
+        StartInputUseCase().execute()
+        current_mode = group_service.get_mode(group_id)
+        if current_mode == GroupMode.input.value:
+            AddPointByTextUseCase().execute(request_info_service.message)
+        return
+
+
+def _save_last_command(command: str):
+    """グループの last_command を更新"""
+    group_id = request_info_service.req_line_group_id
+    group = group_service.find_one_by_line_group_id(group_id)
+    if group is not None:
+        group.last_command = command
+        group_service.update(group)
+
+
+def _should_auto_start_input(group_id: str) -> bool:
+    """Wait モードで数値テキストが来たとき、直前コマンドが input なら True"""
+    group = group_service.find_one_by_line_group_id(group_id)
+    if group is None or group.last_command != RCommands.input.name:
+        return False
+    # メッセージが数値（点数入力）かどうか判定
+    message = request_info_service.message
+    if message is None:
+        return False
+    cleaned = message.strip().lstrip("-")
+    return cleaned.isdigit()
 
 
 def routing_for_group_by_command(command):
@@ -147,6 +178,7 @@ def routing_for_group_by_command(command):
         RCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
         RCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
         RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
+        RCommands.reopen.name: lambda: ReopenMatchUseCase().execute(),
         # drop_m (DisableMatchUseCase), entry (LinkUserToGroupUseCase),
         # sum_matches (ReplySumMatchesByIdsUseCase), add_result, my_results:
         # intentionally not yet implemented — stub commands reserved for future use
