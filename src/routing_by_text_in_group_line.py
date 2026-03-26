@@ -90,6 +90,7 @@ def routing_by_text_in_group_line():
     command = request_info_service.command
     if command is not None:
         if command in _VALID_COMMANDS:
+            _save_last_command(command)
             routing_for_group_by_command(command)
             return
         reply_service.add_message(
@@ -109,7 +110,35 @@ def routing_by_text_in_group_line():
         AddChipByTextUseCase().execute(request_info_service.message)
         return
 
-    """wait mode"""
+    """wait mode — レース条件対策: 直前コマンドが input なら自動でモード切替"""
+    if _should_auto_start_input(group_id):
+        StartInputUseCase().execute()
+        current_mode = group_service.get_mode(group_id)
+        if current_mode == GroupMode.input.value:
+            AddPointByTextUseCase().execute(request_info_service.message)
+        return
+
+
+def _save_last_command(command: str):
+    """グループの last_command を更新"""
+    group_id = request_info_service.req_line_group_id
+    group = group_service.find_one_by_line_group_id(group_id)
+    if group is not None:
+        group.last_command = command
+        group_service.update(group)
+
+
+def _should_auto_start_input(group_id: str) -> bool:
+    """wait モードで数値テキストが来たとき、直前コマンドが input なら True"""
+    group = group_service.find_one_by_line_group_id(group_id)
+    if group is None or group.last_command != RCommands.input.name:
+        return False
+    # メッセージが数値（点数入力）かどうか判定
+    message = request_info_service.message
+    if message is None:
+        return False
+    cleaned = message.strip().lstrip("-")
+    return cleaned.isdigit()
 
 
 def routing_for_group_by_command(command):

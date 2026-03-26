@@ -17,6 +17,7 @@ class Group:
     line_group_id: str
     mode: str = GroupMode.wait.value
     active_match_id: ObjectId = field(default=None)
+    last_command: str = field(default=None)
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
     _id: ObjectId = field(default=None)
