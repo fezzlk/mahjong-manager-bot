@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List, Tuple
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple
 
 
 class IGraphService(metaclass=ABCMeta):
@@ -15,4 +16,15 @@ class IGraphService(metaclass=ABCMeta):
 
     @abstractmethod
     def save_figure(self, fig, upload_file_path: str) -> Tuple[str, str]:
+        pass
+
+    @abstractmethod
+    def build_history_step_graph(
+        self,
+        histories: Dict[str, Dict[datetime, int]],
+        start_date: datetime,
+        to_dt: Optional[datetime],
+        line_id_name_dict: Optional[Dict[str, str]] = None,
+        match_count: Optional[int] = None,
+    ):
         pass

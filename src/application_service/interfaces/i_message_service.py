@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple
 
 from domain_model.entities.match import Match
 
@@ -37,4 +37,10 @@ class IMessageService(metaclass=ABCMeta):
 
     @abstractmethod
     def create_range_message(self, from_dt: datetime, to_dt: datetime) -> str:
+        pass
+
+    @abstractmethod
+    def parse_date_range_from_params(
+        self, params: dict,
+    ) -> Tuple[Optional[datetime], Optional[datetime], bool]:
         pass

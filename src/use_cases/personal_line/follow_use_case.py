@@ -1,3 +1,5 @@
+import logging
+
 from application_service import (
     reply_service,
     request_info_service,
@@ -8,6 +10,8 @@ from domain_service import (
 )
 from messaging_api_setting import line_bot_api
 
+logger = logging.getLogger(__name__)
+
 
 class FollowUseCase:
 
@@ -17,6 +21,7 @@ class FollowUseCase:
             request_info_service.req_line_user_id,
         )
         user = user_service.find_or_create_by_profile(profile)
+        logger.info("follow: user=%s (%s)", user.line_user_id, user.line_user_name)
         reply_service.add_message(
             f"こんにちは。\n麻雀対戦結果管理アカウントである Mahjong Manager は {user.line_user_name} さんの快適な麻雀生活をサポートします。")
         rich_menu_service.create_and_link(

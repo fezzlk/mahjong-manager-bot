@@ -15,9 +15,13 @@ from use_cases.common_line.reply_rank_histogram_use_case import (
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
 from use_cases.group_line.add_chip_by_text_use_case import AddChipByTextUseCase
 from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
+from use_cases.group_line.confirm_history_selection_use_case import (
+    ConfirmHistorySelectionUseCase,
+)
 from use_cases.group_line.drop_hanchan_by_index_use_case import (
     DropHanchanByIndexUseCase,
 )
+from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.exit_use_case import ExitUseCase
 from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
@@ -38,8 +42,13 @@ from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCa
 from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
+from use_cases.group_line.select_history_target_use_case import (
+    SelectHistoryTargetUseCase,
+)
+from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
+from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
 from use_cases.group_line.update_group_settings_use_case import (
     UpdateGroupSettingsUseCase,
 )
@@ -71,6 +80,11 @@ class RCommands(Enum):
     sum_matches = "sum_matches"
     my_results = "my_results"
     history = "history"
+    history_start = "history_start"
+    history_target = "history_target"
+    history_toggle = "history_toggle"
+    history_confirm = "history_confirm"
+    history_exec = "history_exec"
     chip_ok = "chip_ok"
     badai = "badai"
     # entry is defined but not yet implemented (LinkUserToGroupUseCase pending)
@@ -173,6 +187,11 @@ def routing_for_group_by_command(command):
         RCommands.tobi.name: _tobi,
         RCommands.update_config.name: _update_config,
         RCommands.history.name: lambda: ReplyMultiHistoryUseCase().execute(),
+        RCommands.history_start.name: lambda: StartHistoryFlowUseCase().execute(),
+        RCommands.history_target.name: lambda: SelectHistoryTargetUseCase().execute(),
+        RCommands.history_toggle.name: lambda: ToggleHistoryUserUseCase().execute(),
+        RCommands.history_confirm.name: lambda: ConfirmHistorySelectionUseCase().execute(),
+        RCommands.history_exec.name: lambda: ExecuteHistoryUseCase().execute(),
         RCommands.chip_ok.name: lambda: FinishInputChipUseCase().execute(),
         RCommands.badai.name: lambda: ReplyApplyBadaiUseCase().execute(body),
         RCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),

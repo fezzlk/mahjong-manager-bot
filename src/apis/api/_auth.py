@@ -1,5 +1,6 @@
 """API認証ヘルパー: JWT から WebUser を取得するデコレータ"""
 import functools
+import logging
 from typing import Callable
 
 from bson.objectid import ObjectId
@@ -7,6 +8,8 @@ from flask import jsonify, make_response
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
 from repositories import user_group_repository, web_user_repository
+
+logger = logging.getLogger(__name__)
 
 
 def require_web_user(f: Callable) -> Callable:
@@ -19,12 +22,14 @@ def require_web_user(f: Callable) -> Callable:
         try:
             verify_jwt_in_request()
         except Exception:
+            logger.warning("JWT verification failed")
             return make_response(jsonify({"error": "Unauthorized"}), 401)
 
         identity = get_jwt_identity()
         try:
             web_users = web_user_repository.find({"_id": ObjectId(identity)})
         except Exception:
+            logger.warning("WebUser lookup failed for identity: %s", identity)
             return make_response(jsonify({"error": "Unauthorized"}), 401)
 
         if len(web_users) == 0:
