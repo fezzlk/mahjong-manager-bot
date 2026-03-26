@@ -1,0 +1,298 @@
+from application_service import (
+    reply_service,
+    request_info_service,
+)
+from domain_model.entities.group import Group, GroupMode
+from domain_model.entities.group_setting import EmbeddedGroupSettings
+from domain_model.entities.hanchan import Hanchan
+from domain_model.entities.match import Match
+from domain_model.entities.user import User, UserMode
+from line_models.event import Event
+from repositories import (
+    group_repository,
+    hanchan_repository,
+    match_repository,
+    user_repository,
+)
+from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
+
+dummy_users = [
+    User(
+        line_user_name="test_user1",
+        line_user_id="U0123456789abcdefghijklmnopqrstu1",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user1",
+        _id=1,
+    ),
+    User(
+        line_user_name="test_user2",
+        line_user_id="U0123456789abcdefghijklmnopqrstu2",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user2",
+        _id=2,
+    ),
+    User(
+        line_user_name="test_user3",
+        line_user_id="U0123456789abcdefghijklmnopqrstu3",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user3",
+        _id=3,
+    ),
+    User(
+        line_user_name="test_user4",
+        line_user_id="U0123456789abcdefghijklmnopqrstu4",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user4",
+        _id=4,
+    ),
+    User(
+        line_user_name="test_user5",
+        line_user_id="U0123456789abcdefghijklmnopqrstu5",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user5",
+        _id=5,
+    ),
+]
+
+dummy_group = Group(
+    line_group_id="G0123456789abcdefghijklmnopqrstu1",
+    mode=GroupMode.chip_input.value,
+    active_match_id=1,
+    _id=1,
+)
+
+dummy_embedded_settings = EmbeddedGroupSettings(chip_rate=50)
+
+dummy_match = Match(
+    line_group_id=dummy_group.line_group_id,
+    chip_scores={
+        "U0123456789abcdefghijklmnopqrstu1": 3,
+        "U0123456789abcdefghijklmnopqrstu2": -3,
+    },
+    sum_scores={
+        "U0123456789abcdefghijklmnopqrstu1": 100,
+        "U0123456789abcdefghijklmnopqrstu2": 20,
+        "U0123456789abcdefghijklmnopqrstu3": -40,
+        "U0123456789abcdefghijklmnopqrstu4": -40,
+        "U0123456789abcdefghijklmnopqrstu5": -40,
+    },
+    _id=1,
+)
+
+dummy_hanchans = [
+    Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 40000,
+            dummy_users[1].line_user_id: 30000,
+            dummy_users[2].line_user_id: 20000,
+            dummy_users[3].line_user_id: 10000,
+        },
+        converted_scores={
+            dummy_users[0].line_user_id: 50,
+            dummy_users[1].line_user_id: 10,
+            dummy_users[2].line_user_id: -20,
+            dummy_users[3].line_user_id: -40,
+        },
+        match_id=1,
+        _id=1,
+    ),
+    Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 40000,
+            dummy_users[1].line_user_id: 30000,
+            dummy_users[2].line_user_id: 20000,
+            dummy_users[4].line_user_id: 10000,
+        },
+        converted_scores={
+            dummy_users[0].line_user_id: 50,
+            dummy_users[1].line_user_id: 10,
+            dummy_users[2].line_user_id: -20,
+            dummy_users[4].line_user_id: -40,
+        },
+        match_id=1,
+        _id=2,
+    ),
+    Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 40000,
+            dummy_users[1].line_user_id: 30000,
+            dummy_users[2].line_user_id: 20000,
+            dummy_users[3].line_user_id: 10000,
+        },
+        converted_scores={
+            dummy_users[0].line_user_id: 50,
+            dummy_users[1].line_user_id: 10,
+            dummy_users[2].line_user_id: -20,
+            dummy_users[3].line_user_id: -40,
+        },
+        match_id=1,
+        is_deleted=True,
+        _id=3,
+    ),
+    Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 40000,
+            dummy_users[1].line_user_id: 30000,
+            dummy_users[2].line_user_id: 20000,
+            dummy_users[3].line_user_id: 10000,
+        },
+        converted_scores={
+            dummy_users[0].line_user_id: 50,
+            dummy_users[1].line_user_id: 10,
+            dummy_users[2].line_user_id: -20,
+            dummy_users[3].line_user_id: -40,
+        },
+        match_id=2,
+        _id=4,
+    ),
+]
+
+dummy_event = Event(
+    type="message",
+    source_type="group",
+    user_id="U0123456789abcdefghijklmnopqrstu1",
+    group_id="G0123456789abcdefghijklmnopqrstu1",
+    message_type="text",
+    text="_chip_ok",
+)
+
+
+def test_fail_no_group():
+    # 目的: test_fail_no_group の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / (
+    # reply_service: texts
+    # DB操作: group_setting_repository.create(dummy_group_setting); user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan)
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+
+    use_case = FinishInputChipUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert (
+        reply_service.texts[0].text
+        == "グループが登録されていません。招待し直してください。"
+    )
+
+
+def test_fail_no_match():
+    # 目的: test_fail_no_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "計算対象の試合が見つかりません。" である / groups[0].mode が GroupMode.chip_input.value である / groups[0].active_match_id が 1 である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); group_setting_repository.create(dummy_group_setting); user_repository.create(dummy_user); hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+
+    use_case = FinishInputChipUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    group_repository.update_settings(dummy_group.line_group_id, dummy_embedded_settings)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "計算対象の試合が見つかりません。"
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
+    assert groups[0].mode == GroupMode.chip_input.value
+    assert groups[0].active_match_id == 1
+
+
+def test_fail_chip_sum_mismatch():
+    # 目的: test_fail_chip_sum_mismatch の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.chip_input.value である / groups[0].active_match_id が 1 である
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); group_setting_repository.create(dummy_group_setting); user_repository.create(dummy_user); match_repository.create(; hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+
+    use_case = FinishInputChipUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    group_repository.update_settings(dummy_group.line_group_id, dummy_embedded_settings)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    match_repository.create(
+        Match(
+            line_group_id=dummy_group.line_group_id,
+            chip_scores={
+                "U0123456789abcdefghijklmnopqrstu1": 4,
+                "U0123456789abcdefghijklmnopqrstu2": -3,
+            },
+            _id=1,
+        ),
+    )
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert (
+        reply_service.texts[0].text
+        == "チップ増減数の合計が+1です。0になるようにしてください。)"
+    )
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
+    assert groups[0].mode == GroupMode.wait.chip_input.value
+    assert groups[0].active_match_id == 1
+
+
+def test_success():
+    # 目的: test_success の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.value である / groups[0].active_match_id is None
+    # reply_service: texts
+    # DB操作: group_repository.create(dummy_group); group_setting_repository.create(dummy_group_setting); user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+
+    use_case = FinishInputChipUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    group_repository.update_settings(dummy_group.line_group_id, dummy_embedded_settings)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert (
+        reply_service.texts[0].text
+        == "【対戦結果】 \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n"
+        + "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
+    )
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
+    assert groups[0].mode == GroupMode.wait.value
+    assert groups[0].active_match_id is None

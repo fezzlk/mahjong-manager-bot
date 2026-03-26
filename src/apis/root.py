@@ -1,92 +1,135 @@
+import logging
+import os
+
 from flask import (
     Blueprint,
     abort,
-    request,
-    render_template,
-    url_for,
+    jsonify,
     redirect,
-    session,
+    render_template,
+    request,
     send_from_directory,
+    session,
 )
-from ApplicationModels.PageContents import PageContents
-from use_cases.CreateDummyUseCase import CreateDummyUseCase
+from linebot.v3.exceptions import InvalidSignatureError
 
-from linebot import WebhookHandler, exceptions
-import env_var
+logger = logging.getLogger(__name__)
 
-handler = WebhookHandler(env_var.YOUR_CHANNEL_SECRET)
-views_blueprint = Blueprint('views_blueprint', __name__, url_prefix='/')
+from application_models.page_contents import PageContents
+
+# handle_eventからhandlerをインポート（イベントハンドラーが登録された状態）
+from handle_event import handler
+
+views_blueprint = Blueprint("views_blueprint", __name__, url_prefix="/")
 
 
-@views_blueprint.route('/')
+@views_blueprint.route("/health")
+def health():
+    """Cloud Run ヘルスチェックエンドポイント"""
+    return jsonify({"status": "ok"}), 200
+
+
+@views_blueprint.route("/legacy/")
 def index():
     page_contents = PageContents(session, request)
-    if request.args.get('message') is not None:
-        page_contents.message = request.args.get('message')
-    return render_template('index.html', page_contents=page_contents)
+    if request.args.get("message") is not None:
+        page_contents.message = request.args.get("message")
+    return render_template("index.html", page_contents=page_contents)
 
 
-@views_blueprint.route("/callback", methods=['POST'])
+@views_blueprint.route("/callback", methods=["POST"])
 def callback():
-    """ Endpoint for LINE messaging API """
-
-    signature = request.headers['X-Line-Signature']
+    """Endpoint for LINE messaging API"""
+    signature = request.headers["X-Line-Signature"]
     body = request.get_data(as_text=True)
     try:
         handler.handle(body, signature)
-    except exceptions.InvalidSignatureError:
+    except InvalidSignatureError:
+        logger.warning("Invalid LINE signature")
         abort(400)
-    return 'OK'
+    return "OK"
 
 
-@views_blueprint.route('/uploads/<path:filename>')
+@views_blueprint.route("/uploads/<path:filename>")
 def download_file(filename: str):
     return send_from_directory(
         "uploads/",
         filename,
-        as_attachment=True
+        as_attachment=True,
     )
 
 
-@views_blueprint.route('/login', methods=['GET'])
+@views_blueprint.route("/legacy/login", methods=["GET"])
 def view_login():
     page_contents = PageContents(session, request)
     return render_template(
-        'login.html',
+        "login.html",
         page_contents=page_contents,
     )
 
 
-@views_blueprint.route('/logout')
+@views_blueprint.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for('views_blueprint.view_login'))
+    return redirect("/login")
 
 
-@views_blueprint.route('/create_dummy', methods=['POST'])
+@views_blueprint.route("/create_dummy", methods=["POST"])
 def create_dummy():
+    if os.environ.get("FLASK_ENV") == "production":
+        abort(404)
+    # Avoid importing test-only dummy dependencies at app startup.
+    from use_cases.create_dummy_use_case import CreateDummyUseCase  # noqa: PLC0415
+
     CreateDummyUseCase().execute()
-    return 'Done'
+    return "Done"
 
-@views_blueprint.route('/migrate', methods=['POST'])
+
+@views_blueprint.route("/migrate", methods=["POST"])
 def migrate():
-    return 'done'
+    return "done"
 
-@views_blueprint.route('/test_personal_line', methods=['POST'])
+
+@views_blueprint.route("/auth/test_login")
+def test_login():
+    """E2E テスト専用ログインエンドポイント (production では無効)。
+
+    セッションに login_user_id をセットし、next パラメータのページへリダイレクト。
+    """
+    if os.environ.get("FLASK_ENV") == "production":
+        abort(404)
+    from domain_model.entities.web_user import WebUser  # noqa: PLC0415
+    from repositories import web_user_repository  # noqa: PLC0415
+
+    existing = web_user_repository.find({"user_code": "e2e_test_user"})
+    if existing:
+        web_user = existing[0]
+    else:
+        web_user = web_user_repository.create(
+            WebUser(user_code="e2e_test_user", name="E2E Test User", _id=9999),
+        )
+    session["login_user_id"] = web_user._id
+    next_url = request.args.get("next", "/legacy/")
+    return redirect(next_url)
+
+
+@views_blueprint.route("/test_personal_line", methods=["POST"])
 def test_personal_line():
-
-    from ApplicationService import (
+    if os.environ.get("FLASK_ENV") == "production":
+        abort(404)
+    from application_service import (  # noqa: PLC0415
         reply_service,
         request_info_service,
     )
-    from line_models import Event
-    user_id = request.form.get('user_id')
-    text = request.form.get('text')
+    from line_models.event import Event  # noqa: PLC0415
+
+    user_id = request.form.get("user_id")
+    text = request.form.get("text")
     event = Event(
         user_id=user_id,
         text=text,
     )
     request_info_service.set_req_info(event)
-    import routing_by_text_in_personal_line
-    routing_by_text_in_personal_line.routing_by_text_in_personal_line()    
-    return '\n\n'.join([content.text for content in reply_service.texts])
+    import routing_by_text_in_personal_line  # noqa: PLC0415
+    routing_by_text_in_personal_line.routing_by_text_in_personal_line()
+    return "\n\n".join([content.text for content in reply_service.texts])

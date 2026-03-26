@@ -1,0 +1,129 @@
+from datetime import datetime
+
+from application_service import (
+    reply_service,
+    request_info_service,
+)
+from domain_model.entities.match import Match
+from line_models.event import Event
+from repositories import (
+    match_repository,
+)
+from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
+
+dummy_matches = [
+    Match(
+        _id=1,
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        created_at=datetime(2010, 1, 1, 1, 1, 1),
+        sum_prices_with_chip={
+            "U0123456789abcdefghijklmnopqrstu1": 1000,
+            "U0123456789abcdefghijklmnopqrstu2": 1800,
+            "U0123456789abcdefghijklmnopqrstu3": -1800,
+            "U0123456789abcdefghijklmnopqrstu4": -400,
+            "U0123456789abcdefghijklmnopqrstu5": -300,
+            "dummy": -300,
+        },
+    ),
+    Match(
+        _id=2,
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        created_at=datetime(2010, 1, 1, 1, 1, 2),
+        sum_scores={
+            "U0123456789abcdefghijklmnopqrstu1": 30,
+            "U0123456789abcdefghijklmnopqrstu2": 60,
+            "U0123456789abcdefghijklmnopqrstu3": -60,
+            "U0123456789abcdefghijklmnopqrstu4": -10,
+            "U0123456789abcdefghijklmnopqrstu5": -10,
+            "dummy": -10,
+        },
+        sum_prices={
+            "U0123456789abcdefghijklmnopqrstu1": 900,
+            "U0123456789abcdefghijklmnopqrstu2": 1800,
+            "U0123456789abcdefghijklmnopqrstu3": -1800,
+            "U0123456789abcdefghijklmnopqrstu4": -300,
+            "U0123456789abcdefghijklmnopqrstu5": -300,
+            "dummy": -300,
+        },
+        chip_scores={
+            "U0123456789abcdefghijklmnopqrstu1": 10,
+            "U0123456789abcdefghijklmnopqrstu4": -10,
+        },
+        chip_prices={
+            "U0123456789abcdefghijklmnopqrstu1": 100,
+            "U0123456789abcdefghijklmnopqrstu4": -100,
+        },
+        sum_prices_with_chip={
+            "U0123456789abcdefghijklmnopqrstu1": 1000,
+            "U0123456789abcdefghijklmnopqrstu2": 1800,
+            "U0123456789abcdefghijklmnopqrstu3": -1800,
+            "U0123456789abcdefghijklmnopqrstu4": -400,
+            "U0123456789abcdefghijklmnopqrstu5": -300,
+            "dummy": -300,
+        },
+    ),
+    Match(
+        _id=3,
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        is_deleted=True,
+        created_at=datetime(2010, 1, 1, 1, 1, 3),
+    ),
+    Match(
+        _id=4,
+        line_group_id="dummy",
+        created_at=datetime(2010, 1, 1, 1, 1, 4),
+    ),
+]
+
+dummy_event = Event(
+    type="message",
+    source_type="group",
+    user_id="U0123456789abcdefghijklmnopqrstu1",
+    group_id="G0123456789abcdefghijklmnopqrstu1",
+    message_type="text",
+    text="_matches",
+)
+
+
+def test_execute():
+    # 目的: test_execute の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / ( / reply_service.texts[1].text が "第1回 2010-01-01\n第2回 2010-01-01" である
+    # reply_service: texts
+    # DB操作: match_repository.create(dummy_match)
+    # Arrange
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyMatchesUseCase()
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 2
+    assert (
+        reply_service.texts[0].text
+        == "このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。"
+    )
+    assert reply_service.texts[1].text == "第1回 2010-01-01\n第2回 2010-01-01"
+
+
+def test_execute_no_match():
+    # 目的: test_execute_no_match の挙動を検証する。
+    # 入力: なし
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "まだ対戦結果がありません。" である
+    # reply_service: texts
+    # DB操作: なし
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyMatchesUseCase()
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "まだ対戦結果がありません。"

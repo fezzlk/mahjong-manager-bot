@@ -7,12 +7,12 @@
 # )
 # import json
 # from flask_jwt_extended import jwt_required, get_jwt_identity
-# from ApplicationModels.EnhancedJSONEncoder import EnhancedJSONEncoder
+# from application_models.enhanced_json_encoder import EnhancedJSONEncoder
 # # from xml.dom import NotFoundErr
-# # from use_cases.web.GetUserForWebUseCase import GetUserForWebUseCase
-# # from use_cases.web.GetUsersForWebUseCase import GetUsersForWebUseCase
-# # from use_cases.web.UpdateUserForWebUseCase import UpdateUserForWebUseCase
-# # from use_cases.web.DeleteUsersForWebUseCase import DeleteUsersForWebUseCase
+# # from use_cases.web.get_user_for_web_use_case import GetUserForWebUseCase
+# # from use_cases.web.get_users_for_web_use_case import GetUsersForWebUseCase
+# # from use_cases.web.update_user_for_web_use_case import UpdateUserForWebUseCase
+# # from use_cases.web.delete_users_for_web_use_case import DeleteUsersForWebUseCase
 # from middlewares import parse_jwt_token
 # from repositories import (
 #     web_user_repository, user_repository, session_scope

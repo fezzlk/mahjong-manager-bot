@@ -106,9 +106,11 @@ celerybeat.pid
 .venv
 env/
 venv/
+mmvenv/
 ENV/
 env.bak/
 venv.bak/
+mmvenv.bak/
 
 # Spyder project settings
 .spyderproject
@@ -129,3 +131,18 @@ dmypy.json
 .pyre/
 
 /docker
+
+# Private local rules
+MCP_PRIVATE_RULES.md
+
+# Claude Code local settings
+.claude/
+
+# Secret setup scripts
+setup_secrets.sh
+
+# Uploaded images (runtime artifacts)
+src/uploads/
+
+# GCP service account keys
+*-sa-key.json

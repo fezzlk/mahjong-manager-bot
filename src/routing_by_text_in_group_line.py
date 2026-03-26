@@ -1,95 +1,118 @@
 from enum import Enum
 
-from DomainService import (
+from application_service import (
+    reply_service,
+    request_info_service,
+)
+from domain_model.entities.group import GroupMode
+from domain_service import (
     group_service,
 )
-
-from ApplicationService import (
-    request_info_service,
-    reply_service,
+from use_cases.common_line.reply_fortune_use_case import ReplyFortuneUseCase
+from use_cases.common_line.reply_rank_histogram_use_case import (
+    ReplyRankHistogramUseCase,
 )
-from use_cases.common_line.ReplyFortuneUseCase import ReplyFortuneUseCase
-from use_cases.group_line.SubmitHanchanUseCase import SubmitHanchanUseCase
-
-from use_cases.group_line.ExitUseCase import ExitUseCase
-from use_cases.group_line.ReplyGroupHelpUseCase import ReplyGroupHelpUseCase
-from use_cases.group_line.ReplyGroupSettingsMenuUseCase import ReplyGroupSettingsMenuUseCase
-from use_cases.group_line.ReplyStartMenuUseCase import ReplyStartMenuUseCase
-from use_cases.group_line.ReplyOthersMenuUseCase import ReplyOthersMenuUseCase
-from use_cases.group_line.ReplyGroupModeUseCase import ReplyGroupModeUseCase
-from use_cases.group_line.ReplyApplyBadaiUseCase import ReplyApplyBadaiUseCase
-
-# from use_cases.group_line.AddHanchanByPointsTextUseCase import AddHanchanByPointsTextUseCase
-from use_cases.group_line.AddPointByTextUseCase import AddPointByTextUseCase
-from use_cases.group_line.AddTipByTextUseCase import AddTipByTextUseCase
-from use_cases.group_line.StartInputUseCase import StartInputUseCase
-
-from use_cases.group_line.ReplyHanchansOfActiveMatchUseCase import ReplyHanchansOfActiveMatchUseCase
-from use_cases.group_line.ReplyMatchesUseCase import ReplyMatchesUseCase
-from use_cases.group_line.ReplyMatchByIndexUseCase import ReplyMatchByIndexUseCase
-# from use_cases.group_line.ReplySumMatchesByIdsUseCase import ReplySumMatchesByIdsUseCase
-# from use_cases.group_line.DisableMatchUseCase import DisableMatchUseCase
-from use_cases.group_line.DropHanchanByIndexUseCase import DropHanchanByIndexUseCase
-from use_cases.group_line.FinishMatchUseCase import FinishMatchUseCase
-from use_cases.group_line.ReplyFinishConfirmUseCase import ReplyFinishConfirmUseCase
-from use_cases.group_line.FinishInputTipUseCase import FinishInputTipUseCase
-from use_cases.group_line.ReplyRankingTableUseCase import ReplyRankingTableUseCase
-
-from use_cases.group_line.UpdateGroupSettingsUseCase import UpdateGroupSettingsUseCase
-from use_cases.group_line.ReplyMultiHistoryUseCase import ReplyMultiHistoryUseCase
-from use_cases.common_line.ReplyRankHistoryUseCase import ReplyRankHistoryUseCase
-from use_cases.common_line.ReplyRankHistogramUseCase import ReplyRankHistogramUseCase
-# from use_cases.group_line.LinkUserToGroupUseCase import LinkUserToGroupUseCase
-
-from DomainModel.entities.Group import GroupMode
+from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
+from use_cases.group_line.add_chip_by_text_use_case import AddChipByTextUseCase
+from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
+from use_cases.group_line.confirm_history_selection_use_case import (
+    ConfirmHistorySelectionUseCase,
+)
+from use_cases.group_line.drop_hanchan_by_index_use_case import (
+    DropHanchanByIndexUseCase,
+)
+from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
+from use_cases.group_line.exit_use_case import ExitUseCase
+from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
+from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
+from use_cases.group_line.reply_apply_badai_use_case import ReplyApplyBadaiUseCase
+from use_cases.group_line.reply_finish_confirm_use_case import ReplyFinishConfirmUseCase
+from use_cases.group_line.reply_group_help_use_case import ReplyGroupHelpUseCase
+from use_cases.group_line.reply_group_mode_use_case import ReplyGroupModeUseCase
+from use_cases.group_line.reply_group_settings_menu_use_case import (
+    ReplyGroupSettingsMenuUseCase,
+)
+from use_cases.group_line.reply_hanchans_of_active_match_use_case import (
+    ReplyHanchansOfActiveMatchUseCase,
+)
+from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndexUseCase
+from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
+from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
+from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
+from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
+from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
+from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
+from use_cases.group_line.select_history_target_use_case import (
+    SelectHistoryTargetUseCase,
+)
+from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
+from use_cases.group_line.start_input_use_case import StartInputUseCase
+from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
+from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
+from use_cases.group_line.update_group_settings_use_case import (
+    UpdateGroupSettingsUseCase,
+)
 
 
 class RCommands(Enum):
     """Commands for group"""
 
-    start = 'start'
-    exit = 'exit'  # danger(入力中の半荘データが disabled になる)
-    input = 'input'
-    mode = 'mode'
-    help = 'help'
-    setting = 'setting'
-    active_match = 'active_match'
-    finish = 'finish'
-    finish_confirm = 'finish_confirm'
-    fortune = 'fortune'
-    others = 'others'
-    matches = 'matches'
-    match = 'match'
-    tobi = 'tobi'
-    drop = 'drop'
-    drop_m = 'drop_m'
-    add_result = 'add_result'
-    update_config = 'update_config'
-    sum_matches = 'sum_matches'
-    my_results = 'my_results'
-    history = 'history'
-    tip_ok = 'tip_ok'
-    badai = 'badai'
-    entry = 'entry'
-    rank = 'rank'
-    rank_detail = 'rank_detail'
-    ranking = 'ranking'
+    start = "start"
+    exit = "exit"  # danger(入力中の半荘データが disabled になる)
+    input = "input"
+    mode = "mode"
+    help = "help"
+    setting = "setting"
+    active_match = "active_match"
+    finish = "finish"
+    finish_confirm = "finish_confirm"
+    fortune = "fortune"
+    others = "others"
+    matches = "matches"
+    match = "match"
+    tobi = "tobi"
+    drop = "drop"
+    # drop_m is defined but not yet implemented (DisableMatchUseCase pending)
+    drop_m = "drop_m"
+    add_result = "add_result"
+    update_config = "update_config"
+    # sum_matches is defined but not yet implemented (ReplySumMatchesByIdsUseCase pending)
+    sum_matches = "sum_matches"
+    my_results = "my_results"
+    history = "history"
+    history_start = "history_start"
+    history_target = "history_target"
+    history_toggle = "history_toggle"
+    history_confirm = "history_confirm"
+    history_exec = "history_exec"
+    chip_ok = "chip_ok"
+    badai = "badai"
+    # entry is defined but not yet implemented (LinkUserToGroupUseCase pending)
+    entry = "entry"
+    rank = "rank"
+    rank_detail = "rank_detail"
+    ranking = "ranking"
+    reopen = "reopen"
+
+
+# Use a set for O(1) command lookup
+_VALID_COMMANDS = {c.name for c in RCommands}
 
 
 def routing_by_text_in_group_line():
     group_service.find_or_create(request_info_service.req_line_group_id)
-    
+
     """routing by text"""
-    method = request_info_service.method
-    if method is not None:
-        if method in [c.name for c in RCommands]:
-            routing_for_group_by_method(method)
+    command = request_info_service.command
+    if command is not None:
+        if command in _VALID_COMMANDS:
+            _save_last_command(command)
+            routing_for_group_by_command(command)
             return
-        else:
-            reply_service.add_message(
-                '使い方がわからない場合は「_help」と入力してください。'
-            )
-            return
+        reply_service.add_message(
+            "使い方がわからない場合は「_help」と入力してください。",
+        )
+        return
 
     """routing by text on each mode"""
     group_id = request_info_service.req_line_group_id
@@ -98,122 +121,90 @@ def routing_by_text_in_group_line():
     if current_mode == GroupMode.input.value:
         AddPointByTextUseCase().execute(request_info_service.message)
         return
-    """tip input mode"""
-    if current_mode == GroupMode.tip_input.value:
-        AddTipByTextUseCase().execute(request_info_service.message)
+    """chip input mode"""
+    if current_mode == GroupMode.chip_input.value:
+        AddChipByTextUseCase().execute(request_info_service.message)
         return
 
-    """wait mode"""
-    """if text is result, add result"""
-
-    # resultRows = [r for r in text.split('\n') if ':' in r]
-    # if len(resultRows) == 4:
-    #     AddHanchanByPointsTextUseCase().execute(text)
-
-
-def routing_for_group_by_method(method):
-    """routing by method"""
-    body = request_info_service.body
-    # input
-    if method == RCommands.input.name:
+    """wait mode — レース条件対策: 直前コマンドが input なら自動でモード切替"""
+    if _should_auto_start_input(group_id):
         StartInputUseCase().execute()
-    # start menu
-    elif method == RCommands.start.name:
-        ReplyStartMenuUseCase().execute()
-    # mode
-    elif method == RCommands.mode.name:
-        ReplyGroupModeUseCase().execute()
-    # exit
-    elif method == RCommands.exit.name:
-        ExitUseCase().execute()
-    # help
-    elif method == RCommands.help.name:
-        ReplyGroupHelpUseCase().execute(RCommands)
-    # setting
-    elif method == RCommands.setting.name:
-        ReplyGroupSettingsMenuUseCase().execute(body)
-    # match detail by index
-    elif method == RCommands.match.name:
-        ReplyMatchByIndexUseCase().execute(body)
-    # drop
-    elif method == RCommands.drop.name:
-        DropHanchanByIndexUseCase().execute(body)
-    # drop match
-    # elif method == RCommands.drop_m.name:
-    #     DisableMatchUseCase().execute()
-    # finish
-    elif method == RCommands.finish.name:
-        FinishMatchUseCase().execute()
-    # finish_confirm
-    elif method == RCommands.finish_confirm.name:
-        ReplyFinishConfirmUseCase().execute()
-    # fortune
-    elif method == RCommands.fortune.name:
-        ReplyFortuneUseCase().execute()
-    # others menu
-    elif method == RCommands.others.name:
-        ReplyOthersMenuUseCase().execute()
-    # active_match
-    elif method == RCommands.active_match.name:
-        ReplyHanchansOfActiveMatchUseCase().execute()
-    # matches
-    elif method == RCommands.matches.name:
-        ReplyMatchesUseCase().execute()
-    # tobi
-    elif method == RCommands.tobi.name:
-        SubmitHanchanUseCase().execute(
-            tobashita_player_id=body
-        )
-    # update config
-    elif method == RCommands.update_config.name:
-        key = body.split(' ')[0]
-        value = body.split(' ')[1]
-        UpdateGroupSettingsUseCase().execute(
-            key, value
-        )
-    # history
-    elif method == RCommands.history.name:
-        ReplyMultiHistoryUseCase().execute()
-    # tip_ok
-    elif method == RCommands.tip_ok.name:
-        FinishInputTipUseCase().execute()
-    # badai
-    elif method == RCommands.badai.name:
-        ReplyApplyBadaiUseCase().execute(body)
-    # rank
-    elif method == RCommands.rank.name:
-        ReplyRankHistoryUseCase().execute()
-    # rank detail
-    elif method == RCommands.rank_detail.name:
-        ReplyRankHistogramUseCase().execute()
-    elif method == RCommands.ranking.name:
-        ReplyRankingTableUseCase().execute()
+        current_mode = group_service.get_mode(group_id)
+        if current_mode == GroupMode.input.value:
+            AddPointByTextUseCase().execute(request_info_service.message)
+        return
 
-    # # entry
-    # elif method == RCommands.entry.name:
-    #     LinkUserToGroupUseCase().execute()
-    # sum_matches
-    # elif method == RCommands.sum_matches.name:
-    #     args = body.split(' ')
-    #     # while 'to' in args:
-    #     #     index = args.index('to')
-    #     #     if index != 0 and len(args) - 1 > index:
-    #     #         args += [
-    #     #             str(i) for i in range(
-    #     #                 int(args[index - 1]),
-    #     #                 int(args[index + 1]) + 1
-    #     #             )
-    #     #         ]
-    #     #     args.remove('to')
-    #     ReplySumMatchesByIdsUseCase().execute(args)
 
-# def parse_int_list(args):
-#     args = body.split(' ')
-#     month = None
-#     while 'to' in args:
-#         index = args.index('to')
-#         if index != 0 and len(args)-1 > index:
-#             args += [
-#                 str(i) for i in range(args[index-1], args[index+1]+1)
-#             ]
-#         args.remove('to')
+def _save_last_command(command: str):
+    """グループの last_command を更新"""
+    group_id = request_info_service.req_line_group_id
+    group = group_service.find_one_by_line_group_id(group_id)
+    if group is not None:
+        group.last_command = command
+        group_service.update(group)
+
+
+def _should_auto_start_input(group_id: str) -> bool:
+    """Wait モードで数値テキストが来たとき、直前コマンドが input なら True"""
+    group = group_service.find_one_by_line_group_id(group_id)
+    if group is None or group.last_command != RCommands.input.name:
+        return False
+    # メッセージが数値（点数入力）かどうか判定
+    message = request_info_service.message
+    if message is None:
+        return False
+    cleaned = message.strip().lstrip("-")
+    return cleaned.isdigit()
+
+
+def routing_for_group_by_command(command):
+    """Routing by command using dispatch table"""
+    body = request_info_service.body
+
+    def _update_config():
+        key = body.split(" ")[0]
+        value = body.split(" ")[1]
+        UpdateGroupSettingsUseCase().execute(key, value)
+
+    def _tobi():
+        SubmitHanchanUseCase().execute(tobashita_player_id=body)
+
+    dispatch = {
+        RCommands.input.name: lambda: StartInputUseCase().execute(),
+        RCommands.start.name: lambda: ReplyStartMenuUseCase().execute(),
+        RCommands.mode.name: lambda: ReplyGroupModeUseCase().execute(),
+        RCommands.exit.name: lambda: ExitUseCase().execute(),
+        RCommands.help.name: lambda: ReplyGroupHelpUseCase().execute(RCommands),
+        RCommands.setting.name: lambda: ReplyGroupSettingsMenuUseCase().execute(body),
+        RCommands.match.name: lambda: ReplyMatchByIndexUseCase().execute(body),
+        RCommands.drop.name: lambda: DropHanchanByIndexUseCase().execute(body),
+        RCommands.finish.name: lambda: FinishMatchUseCase().execute(),
+        RCommands.finish_confirm.name: lambda: ReplyFinishConfirmUseCase().execute(),
+        RCommands.fortune.name: lambda: ReplyFortuneUseCase().execute(),
+        RCommands.others.name: lambda: ReplyOthersMenuUseCase().execute(),
+        RCommands.active_match.name: lambda: ReplyHanchansOfActiveMatchUseCase().execute(),
+        RCommands.matches.name: lambda: ReplyMatchesUseCase().execute(),
+        RCommands.tobi.name: _tobi,
+        RCommands.update_config.name: _update_config,
+        RCommands.history.name: lambda: ReplyMultiHistoryUseCase().execute(),
+        RCommands.history_start.name: lambda: StartHistoryFlowUseCase().execute(),
+        RCommands.history_target.name: lambda: SelectHistoryTargetUseCase().execute(),
+        RCommands.history_toggle.name: lambda: ToggleHistoryUserUseCase().execute(),
+        RCommands.history_confirm.name: lambda: ConfirmHistorySelectionUseCase().execute(),
+        RCommands.history_exec.name: lambda: ExecuteHistoryUseCase().execute(),
+        RCommands.chip_ok.name: lambda: FinishInputChipUseCase().execute(),
+        RCommands.badai.name: lambda: ReplyApplyBadaiUseCase().execute(body),
+        RCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
+        RCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
+        RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
+        RCommands.reopen.name: lambda: ReopenMatchUseCase().execute(),
+        # drop_m (DisableMatchUseCase), entry (LinkUserToGroupUseCase),
+        # sum_matches (ReplySumMatchesByIdsUseCase), add_result, my_results:
+        # intentionally not yet implemented — stub commands reserved for future use
+    }
+
+    action = dispatch.get(command)
+    if action:
+        action()
+    elif command in _VALID_COMMANDS:
+        reply_service.add_message("この機能は現在開発中です。")

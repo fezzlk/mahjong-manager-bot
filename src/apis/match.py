@@ -6,12 +6,12 @@
 #     url_for,
 # )
 # from xml.dom import NotFoundErr
-# from use_cases.web.GetMatchForWebUseCase import GetMatchForWebUseCase
-# # from use_cases.web.GetMatchesForWebUseCase import GetMatchesForWebUseCase
-# from use_cases.web.DeleteMatchesForWebUseCase import DeleteMatchesForWebUseCase
-# from use_cases.web.UpdateMatchForWebUseCase import UpdateMatchForWebUseCase
+# from use_cases.web.get_match_for_web_use_case import GetMatchForWebUseCase
+# # from use_cases.web.get_matches_for_web_use_case import GetMatchesForWebUseCase
+# from use_cases.web.delete_matches_for_web_use_case import DeleteMatchesForWebUseCase
+# from use_cases.web.update_match_for_web_use_case import UpdateMatchForWebUseCase
 # from flask_jwt_extended import jwt_required, get_jwt_identity
-# from ApplicationModels.EnhancedJSONEncoder import EnhancedJSONEncoder
+# from application_models.enhanced_json_encoder import EnhancedJSONEncoder
 # import json
 # from repositories import (
 #     web_user_repository, user_group_repository, match_repository, session_scope
@@ -61,7 +61,7 @@
 # #         'hanchan_ids',
 # #         'created_at',
 # #         'status',
-# #         'tip_scores',
+# #         'chip_scores',
 # #         'users']
 # #     input_keys = ['line_group_id', 'hanchan_ids', 'status']
 # #     return render_template(

@@ -7,16 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.11.14"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
@@ -27,78 +27,108 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8
-      - name: Lint with flake8
+          pip install $(grep '^ruff==' requirements-dev.in)
+      - name: Run ruff
+        run: ruff check .
+
+  check_requirements:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Docker Compose
+        uses: docker/setup-buildx-action@v3
+
+      - name: Backup current requirements.txt
         run: |
-          # Python 構文エラーまたは未定義の名前がある場合はビルドを停止する
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zeroはすべてのエラーを警告として扱う。 GitHubのエディタの幅は127文字
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          echo "Backing up current requirements.txt to requirements_tmp.txt..."
+          cp requirements.txt requirements_tmp.txt
 
-  # build:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       python-version: [3.7]
+      - name: Generate new requirements.txt using Docker Compose
+        run: |
+          echo "Generating new requirements.txt inside Docker..."
+          docker compose -f docker-compose.piptools.yml run --rm piptools
 
-  #   services:
-  #     db:
-  #       image: postgres
-  #       env:
-  #         POSTGRES_DB: postgres
-  #         POSTGRES_USER: postgres
-  #         POSTGRES_PASSWORD: postgres
-  #       ports:
-  #         - 5432:5432
+      - name: Compare requirements.txt with backed-up version
+        run: |
+          echo "Checking if regenerated requirements.txt differs from the original..."
 
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Set up Python ${{ matrix.python-version }}
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: ${{ matrix.python-version }}
-  #     - name: Cache pip
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: ~/.cache/pip
-  #         # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
-  #         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pip-
-  #           ${{ runner.os }}-
-  #     - name: Install dependencies
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install -r requirements.txt
-  #     - name: Build server
-  #       env:
-  #         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-  #         YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
-  #         YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
-  #         EXTERNAL_DATABASE_URL: mongodb://localhost:27017/
-  #         DATABASE_NAME: db
-  #         SERVER_URL: http://localhost:5000/
-  #       run: |
-  #         flask run
+          # コメント行を除去して比較
+          grep -v '^#' requirements_tmp.txt | sort > req_old_clean.txt
+          grep -v '^#' requirements.txt | sort > req_new_clean.txt
 
-  test:
+          if ! diff -u req_old_clean.txt req_new_clean.txt; then
+            echo "::error::requirements.txt is not in sync with requirements.in."
+            echo "Please regenerate it locally using 'docker-compose -f docker-compose.piptools.yml run --rm piptools'."
+            exit 1
+          else
+            echo "✅ requirements.txt is up to date."
+          fi
+
+  build:
+    needs: check_requirements
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10"]
-        mongodb-version: ["4.4"]
+        python-version: ["3.11.14"]
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Docker Compose
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and start containers
+        run: |
+          docker compose up -d --build
+        env:
+          ENV_FILE_PATH: .env.example
+
+      - name: Wait for Flask app to be ready
+        run: |
+          echo "Waiting for Flask app to respond on port 5000..."
+          for i in {1..30}; do
+            if curl -s http://localhost:5000/ > /dev/null; then
+              echo "✅ Flask app is up!"
+              exit 0
+            fi
+            echo "⏳ Waiting ($i/30)..."
+            sleep 1
+          done
+          echo "❌ Server did not become ready in time."
+          docker compose logs
+          exit 1
+
+      - name: Show logs (if failure)
+        if: failure()
+        run: docker compose logs web
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down
+        env:
+          ENV_FILE_PATH: .env.example
+
+  test:
+    needs: check_requirements
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11.14"]
+        mongodb-version: ["8.0"]
 
     steps:
       # 対象のブランチにチェックアウト
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
       # Python の準備
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
       # 依存パッケージのキャッシュ管理
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           # 対応する要件ファイルにキャッシュヒットがあるかどうかを確認する
@@ -111,7 +141,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements.dev.txt ]; then pip install -r requirements.dev.txt; fi
       # テスト用 DB
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
@@ -121,10 +150,12 @@ jobs:
       - name: Test with pytest
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          YOUR_CHANNEL_ACCESS_TOKEN: ${{ secrets.YOUR_CHANNEL_ACCESS_TOKEN }}
-          YOUR_CHANNEL_SECRET: ${{ secrets.YOUR_CHANNEL_SECRET }}
-          EXTERNAL_DATABASE_URL: mongodb://localhost:27017/
-          DATABASE_NAME: db
+          YOUR_CHANNEL_ACCESS_TOKEN: ci-dummy-token
+          YOUR_CHANNEL_SECRET: ci-dummy-secret
+          DATABASE_URL: mongodb://localhost:27017/?authSource=admin
+          DATABASE_NAME: test
           SERVER_URL: http://localhost:5000/
+          FLASK_SECRET_KEY: ci-test-secret
+          JWT_SECRET_KEY: ci-test-jwt-secret
         run: |
-          pytest --cov=src src/
+          pytest --cov=src tests/ -v --tb=short 2>&1 | tail -100
