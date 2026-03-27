@@ -165,7 +165,7 @@ def test_execute():
     assert len(reply_service.texts) == 2
     assert (
         reply_service.texts[0].text
-        == "第2回\n2010年01月01日\ntest_user1: 1000pt (+30(+10枚))\ntest_user2: 1800pt (+60(0枚))\ntest_user3: -1800pt (-60(0枚))\ntest_user4: -400pt (-10(-10枚))\ntest_user5: -300pt (-10(0枚))\n友達未登録: -300pt (-10(0枚))"
+        == "第2回\n2010年01月01日\ntest_user1: 1000pt (+30 / チップ+10枚)\ntest_user2: 1800pt (+60 / チップ0枚)\ntest_user3: -1800pt (-60 / チップ0枚)\ntest_user4: -400pt (-10 / チップ-10枚)\ntest_user5: -300pt (-10 / チップ0枚)\n友達未登録: -300pt (-10 / チップ0枚)"
     )
     assert (
         reply_service.texts[1].text

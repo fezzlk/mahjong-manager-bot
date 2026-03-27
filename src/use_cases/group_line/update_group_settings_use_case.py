@@ -35,10 +35,10 @@ class UpdateGroupSettingsUseCase:
             elif key == "チップ":
                 column = "chip_rate"
                 db_value = _parse_int(value)
-                if db_value not in [0, 10, 30, 50, 100, 500]:
+                if db_value not in [0, 1]:
                     reply_service.add_message(f"[{key}]を[{value}]に変更できません")
                     return
-                display_value = f"1枚{value}円"
+                display_value = "なし" if db_value == 0 else "あり(1枚=1点)"
             elif key == "飛び賞":
                 column = "tobi_prize"
                 db_value = _parse_int(value)

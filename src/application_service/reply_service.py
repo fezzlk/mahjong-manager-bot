@@ -355,42 +355,14 @@ class ReplyService(IReplyService):
                         text="どれにしますか？",
                         actions=[
                             PostbackAction(
-                                label=f"1枚{i}円",
-                                display_text=f"1枚{i}円",
-                                data=f"_update_config チップ {i}",
-                            )
-                            for i in [0, 10, 30]
-                        ]
-                        + [
-                            PostbackAction(
-                                label="1枚50円以上",
-                                display_text="1枚50円以上",
-                                data="_setting 高チップ",
+                                label="なし",
+                                display_text="なし",
+                                data="_update_config チップ 0",
                             ),
-                        ],
-                    ),
-                ),
-            )
-        elif key == "高チップ":
-            self.buttons.append(
-                TemplateMessage(
-                    alt_text="高チップ設定",
-                    template=ButtonsTemplate(
-                        title="チップ",
-                        text="どれにしますか？",
-                        actions=[
                             PostbackAction(
-                                label=f"1枚{i}円",
-                                display_text=f"1枚{i}円",
-                                data=f"_update_config チップ {i}",
-                            )
-                            for i in [50, 100, 500]
-                        ]
-                        + [
-                            PostbackAction(
-                                label="1枚30円以下",
-                                display_text="1枚30円以下",
-                                data="_setting チップ",
+                                label="あり(1枚=1点)",
+                                display_text="あり(1枚=1点)",
+                                data="_update_config チップ 1",
                             ),
                         ],
                     ),
