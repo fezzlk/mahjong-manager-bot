@@ -94,7 +94,7 @@ class FinishMatchUseCase:
         # 応答メッセージ作成
         reply_service.add_message(
             "【対戦結果】 \n"
-            + message_service.create_show_match_result(match=active_match),
+            + message_service.create_show_match_result(match=active_match, unit=settings.unit),
         )
 
         image_url = CreateMatchDetailGraphUseCase().execute(active_match._id)

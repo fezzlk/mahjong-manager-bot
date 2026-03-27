@@ -80,6 +80,7 @@ class GroupSettingRepository(IGroupSettingRepository):
             chip_rate=record.get("chip_rate"),
             num_of_players=record.get("num_of_players"),
             rounding_method=record.get("rounding_method"),
+            unit=record.get("unit", "pt"),
             created_at=record.get("created_at"),
             updated_at=record.get("updated_at"),
         )

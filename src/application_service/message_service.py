@@ -126,7 +126,7 @@ class MessageService(IMessageService):
     def get_finish_hanchan_message(self) -> str:
         return random.choice(finish_hanchan_messages)
 
-    def create_show_match_result(self, match: Match) -> str:
+    def create_show_match_result(self, match: Match, unit: str = "pt") -> str:
         sum_prices_with_chip = match.sum_prices_with_chip
         chip_scores = match.chip_scores
         sum_scores = match.sum_scores
@@ -142,7 +142,7 @@ class MessageService(IMessageService):
             )
 
             show_prize_money_list.append(
-                f"{name}: {price!s}円 ({show_score}{additional_chip_message})",
+                f"{name}: {price!s}{unit} ({show_score}{additional_chip_message})",
             )
         return "\n".join(show_prize_money_list)
 

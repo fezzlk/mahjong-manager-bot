@@ -130,7 +130,7 @@ def test_execute():
     assert reply_service.texts[0].text == "直前の対戦の最終会計を表示します。"
     assert (
         reply_service.texts[1].text
-        == "対戦開始日: 2010年01月01日\n場代: 3000円(500円×6人)\ntest_user1: 500円\ntest_user2: 1300円\ntest_user3: -2300円\ntest_user4: -900円\ntest_user5: -800円\n友達未登録: -800円"
+        == "対戦開始日: 2010年01月01日\n場代: 3000pt(500pt×6人)\ntest_user1: 500pt\ntest_user2: 1300pt\ntest_user3: -2300pt\ntest_user4: -900pt\ntest_user5: -800pt\n友達未登録: -800pt"
     )
 
 
@@ -157,7 +157,7 @@ def test_execute_with_fraction():
     assert reply_service.texts[0].text == "直前の対戦の最終会計を表示します。"
     assert (
         reply_service.texts[1].text
-        == "対戦開始日: 2010年01月01日\n場代: 2996円(500円×6人-4円)\ntest_user1: 500円\ntest_user2: 1300円\ntest_user3: -2300円\ntest_user4: -900円\ntest_user5: -800円\n友達未登録: -800円"
+        == "対戦開始日: 2010年01月01日\n場代: 2996pt(500pt×6人-4pt)\ntest_user1: 500pt\ntest_user2: 1300pt\ntest_user3: -2300pt\ntest_user4: -900pt\ntest_user5: -800pt\n友達未登録: -800pt"
     )
 
 

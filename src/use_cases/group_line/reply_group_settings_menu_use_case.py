@@ -24,5 +24,6 @@ class ReplyGroupSettingsMenuUseCase:
             s.append(f"飛び賞: {settings.tobi_prize}点")
             s.append(f"チップ: 1枚{settings.chip_rate}点")
             s.append(f"計算方法: {ROUNDING_METHOD_LIST[settings.rounding_method]}")
+            s.append(f"単位: {settings.unit}")
             reply_service.add_message("\n".join(s))
         reply_service.add_settings_menu(body)

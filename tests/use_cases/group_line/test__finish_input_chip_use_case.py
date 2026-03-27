@@ -290,8 +290,8 @@ def test_success():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "【対戦結果】 \ntest_user1: 150円 (+100(+3枚))\ntest_user2: -150円 (+20(-3枚))\n"
-        + "test_user3: 0円 (-40(0枚))\ntest_user4: 0円 (-40(0枚))\ntest_user5: 0円 (-40(0枚))"
+        == "【対戦結果】 \ntest_user1: 150pt (+100(+3枚))\ntest_user2: -150pt (+20(-3枚))\n"
+        + "test_user3: 0pt (-40(0枚))\ntest_user4: 0pt (-40(0枚))\ntest_user5: 0pt (-40(0枚))"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value

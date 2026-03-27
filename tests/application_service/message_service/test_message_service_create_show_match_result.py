@@ -43,7 +43,7 @@ def test_success_with_unknown_users(mocker):
     # Assert
     assert (
         result
-        == "友達未登録: 3100円 (+100(+10枚))\n友達未登録: 600円 (+20(0枚))\n友達未登録: -1300円 (-40(-10枚))\n友達未登録: -1200円 (-40(0枚))\n友達未登録: -1200円 (-40(0枚))"
+        == "友達未登録: 3100pt (+100(+10枚))\n友達未登録: 600pt (+20(0枚))\n友達未登録: -1300pt (-40(-10枚))\n友達未登録: -1200pt (-40(0枚))\n友達未登録: -1200pt (-40(0枚))"
     )
 
 
@@ -74,5 +74,5 @@ def test_success(mocker):
     # Assert
     assert (
         result
-        == "test_user1: 3100円 (+100(+10枚))\ntest_user2: 600円 (+20(0枚))\ntest_user3: -1300円 (-40(-10枚))\ntest_user4: -1200円 (-40(0枚))\ntest_user5: -1200円 (-40(0枚))"
+        == "test_user1: 3100pt (+100(+10枚))\ntest_user2: 600pt (+20(0枚))\ntest_user3: -1300pt (-40(-10枚))\ntest_user4: -1200pt (-40(0枚))\ntest_user5: -1200pt (-40(0枚))"
     )

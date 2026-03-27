@@ -73,6 +73,7 @@ class GroupSetting:
     tobi_prize: int = 10
     num_of_players: int = 4
     rounding_method: int = RoundingMethod.go_san_roku
+    unit: str = "pt"
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
     _id: ObjectId = field(default=None)

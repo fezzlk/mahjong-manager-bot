@@ -4,6 +4,7 @@ from application_service import (
     request_info_service,
 )
 from domain_service import (
+    group_setting_service,
     hanchan_service,
     match_service,
 )
@@ -30,7 +31,8 @@ class ReplyMatchByIndexUseCase:
             return
 
         match = archived_matches[index-1]
-        result = message_service.create_show_match_result(match=match)
+        setting = group_setting_service.find_or_create(line_group_id)
+        result = message_service.create_show_match_result(match=match, unit=setting.unit)
 
         reply_service.add_message(f'第{index}回\n{match.created_at.strftime("%Y年%m月%d日")}\n{result}')
 
