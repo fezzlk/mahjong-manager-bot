@@ -395,6 +395,24 @@ class ReplyService(IReplyService):
             ),
         )
 
+    def add_chip_complete_button(self) -> None:
+        self.buttons.append(
+            TemplateMessage(
+                alt_text="チップ入力完了",
+                template=ButtonsTemplate(
+                    title="チップ入力",
+                    text="各自のチップ増減数を入力してください。\n全員分の入力が完了したらボタンを押してください。",
+                    actions=[
+                        PostbackAction(
+                            label="入力完了",
+                            display_text="入力完了",
+                            data="_chip_ok",
+                        ),
+                    ],
+                ),
+            ),
+        )
+
     def add_submit_results_by_ocr_menu(self, results: Dict[str, int]) -> None:
         self.buttons.append(
             TemplateMessage(

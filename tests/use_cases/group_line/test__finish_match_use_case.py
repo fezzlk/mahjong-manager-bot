@@ -276,11 +276,8 @@ def test_success_with_chip_init():
     use_case.execute()
 
     # Assert
-    assert len(reply_service.texts) == 1
-    assert (
-        reply_service.texts[0].text
-        == "チップの増減数を入力してください。完了したら「_chip_ok」と入力してください。"
-    )
+    assert len(reply_service.texts) == 0
+    assert len(reply_service.buttons) == 1
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.chip_input.value
     assert groups[0].active_match_id == 1

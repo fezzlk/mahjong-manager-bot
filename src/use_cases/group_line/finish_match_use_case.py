@@ -53,9 +53,7 @@ class FinishMatchUseCase:
         ):
             group.mode = GroupMode.chip_input.value
             group_service.update(group)
-            reply_service.add_message(
-                "チップの増減数を入力してください。完了したら「_chip_ok」と入力してください。",
-            )
+            reply_service.add_chip_complete_button()
             return
 
         # 精算
