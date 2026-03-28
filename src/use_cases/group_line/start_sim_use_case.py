@@ -31,14 +31,12 @@ class StartSimUseCase:
             active_match = match_service.create_with_line_group_id(group.line_group_id)
             group.active_match_id = active_match._id
 
-        # match の active hanchan を取得、なければ作成
-        active_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
-        if active_hanchan is None:
-            active_hanchan = hanchan_service.create_with_line_group_id_and_match_id(
-                group.line_group_id, active_match._id,
-            )
-            active_match.active_hanchan_id = active_hanchan._id
-            match_service.update(active_match)
+        # sim 用に常に新しい半荘を作成（既存の input 半荘データが混入しないようにする）
+        sim_hanchan = hanchan_service.create_with_line_group_id_and_match_id(
+            group.line_group_id, active_match._id,
+        )
+        active_match.active_hanchan_id = sim_hanchan._id
+        match_service.update(active_match)
 
         group.mode = GroupMode.sim.value
         group_service.update(group)
