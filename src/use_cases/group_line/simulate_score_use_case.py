@@ -82,18 +82,14 @@ class SimulateScoreUseCase:
         # グループ設定を取得して計算
         setting = group_setting_service.find_or_create(line_group_id)
 
-        # トビ（マイナス点）がある場合、1位を tobashita_player_id とする
-        tobashita_player_id = None
-        if setting.tobi_prize and any(v < 0 for v in points.values()):
-            sorted_by_score = sorted(points.items(), key=lambda x: x[1], reverse=True)
-            tobashita_player_id = sorted_by_score[0][0]
+        # シミュレーションでは飛び賞を省略（tobashita_player_id を渡さない）
+        has_tobi = setting.tobi_prize and any(v < 0 for v in points.values())
 
         result = calculate_service.run(
             points=points,
             ranking_prize=setting.ranking_prize,
             tobi_prize=setting.tobi_prize,
             rounding_method=setting.rounding_method,
-            tobashita_player_id=tobashita_player_id,
         )
 
         # 結果を順位順に表示
@@ -106,9 +102,8 @@ class SimulateScoreUseCase:
             lines.append(f"{rank}位 {name}({raw}点): {sign}{score}")
 
         header = "[シミュレーション結果]"
-        if tobashita_player_id is not None:
-            tobi_name = user_service.get_name_by_line_user_id(tobashita_player_id) or "友達未登録"
-            header += f"\n※飛び賞: {tobi_name}(1位)"
+        if has_tobi:
+            header += "\n※シミュレーションのため飛び賞は省略"
 
         reply_service.add_message(
             header + "\n" + "\n".join(lines),
