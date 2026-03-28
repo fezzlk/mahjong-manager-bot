@@ -53,9 +53,7 @@ class FinishMatchUseCase:
         ):
             group.mode = GroupMode.chip_input.value
             group_service.update(group)
-            reply_service.add_message(
-                "チップの増減数を入力してください。完了したら「_chip_ok」と入力してください。",
-            )
+            reply_service.add_chip_complete_button()
             return
 
         # 精算
@@ -63,26 +61,19 @@ class FinishMatchUseCase:
         sum_scores = active_match.sum_scores
         chip_scores = active_match.chip_scores
 
-        chip_prices: Dict[str, int] = {}
         sum_prices: Dict[str, int] = {}
         sum_prices_with_chip: Dict[str, int] = {}
         for line_user_id, converted_score in sum_scores.items():
-            if chip_scores.get(line_user_id) is None:
-                chip_score = 0
-                chip_scores[line_user_id] = 0
-            else:
-                chip_score = chip_scores.get(line_user_id)
-
-            chip_price = chip_score * chip_rate
-            chip_prices[line_user_id] = chip_price
-
-            price = converted_score * rate
-            sum_prices[line_user_id] = price
-
-            sum_prices_with_chip[line_user_id] = price + chip_price
+            # チップ設定が有効な場合のみチップを加算
+            chip_score = chip_scores.get(line_user_id, 0) if chip_rate != 0 else 0
+            # チップを累計ポイントに加算してからレートを掛ける
+            total_score = converted_score + chip_score
+            price = total_score * rate
+            sum_prices[line_user_id] = converted_score * rate
+            sum_prices_with_chip[line_user_id] = price
 
         # 試合のアーカイブ
-        active_match.chip_prices = chip_prices
+        active_match.chip_prices = {}
         active_match.sum_prices = sum_prices
         active_match.sum_prices_with_chip = sum_prices_with_chip
         match_service.update(active_match)

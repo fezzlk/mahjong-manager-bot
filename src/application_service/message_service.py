@@ -132,17 +132,21 @@ class MessageService(IMessageService):
         sum_scores = match.sum_scores
 
         show_prize_money_list = []
+        has_chip = any(v != 0 for v in chip_scores.values()) if chip_scores else False
         for line_user_id, score in sum_scores.items():
             name = user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"
             show_score = ("+" if score > 0 else "") + str(score)
             price = sum_prices_with_chip.get(line_user_id, 0)
-            chip_count = chip_scores.get(line_user_id, 0)
-            additional_chip_message = (
-                f"({('+' if chip_count > 0 else '') + str(chip_count)}枚)"
-            )
+
+            if has_chip:
+                chip_count = chip_scores.get(line_user_id, 0)
+                chip_str = f" / チップ{('+' if chip_count > 0 else '')}{chip_count}枚"
+                detail = f" ({show_score}{chip_str})"
+            else:
+                detail = f" ({show_score})"
 
             show_prize_money_list.append(
-                f"{name}: {price!s}{unit} ({show_score}{additional_chip_message})",
+                f"{name}: {price!s}{unit}{detail}",
             )
         return "\n".join(show_prize_money_list)
 

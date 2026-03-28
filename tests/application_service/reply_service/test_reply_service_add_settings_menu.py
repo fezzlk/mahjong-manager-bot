@@ -56,17 +56,6 @@ def test_success_key_chip():
     assert len(reply_service.buttons) == 1
 
 
-def test_success_key_high_high_chip():
-    # Arrange
-    reply_service = ReplyService()
-
-    # Act
-    reply_service.add_settings_menu("高チップ")
-
-    # Assert
-    assert len(reply_service.buttons) == 1
-
-
 def test_success_key_ranking_point():
     # Arrange
     reply_service = ReplyService()

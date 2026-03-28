@@ -92,14 +92,14 @@ def test_execute_chip_rate():
     _setup()
     use_case = UpdateGroupSettingsUseCase()
 
-    use_case.execute("チップ", "100")
+    use_case.execute("チップ", "1")
 
     assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].text == "[チップ]を[1枚100円]に変更しました。"
+    assert reply_service.texts[0].text == "[チップ]を[あり(1枚=1点)]に変更しました。"
     s = _get_settings()
     assert s.rate == 0
     assert s.ranking_prize == [20, 10, -10, -20]
-    assert s.chip_rate == 100
+    assert s.chip_rate == 1
     assert s.tobi_prize == 10
     assert s.num_of_players == 4
     assert s.rounding_method == 0
@@ -189,7 +189,7 @@ def test_execute_invalid_key():
         ("レート", "6", "[レート]を[6]に変更できません"),
         ("順位点", "10,20,30", "[順位点]を[10,20,30]に変更できません"),
         ("順位点", "10,20,30,40,50", "[順位点]を[10,20,30,40,50]に変更できません"),
-        ("チップ", "1", "[チップ]を[1]に変更できません"),
+        ("チップ", "2", "[チップ]を[2]に変更できません"),
         ("飛び賞", "1", "[飛び賞]を[1]に変更できません"),
         ("人数", "2", "[人数]を[2]に変更できません"),
         ("端数計算方法", "5", "[端数計算方法]を[5]に変更できません"),

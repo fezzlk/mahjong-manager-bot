@@ -61,7 +61,7 @@ dummy_group = Group(
     _id=1,
 )
 
-dummy_embedded_settings = EmbeddedGroupSettings(chip_rate=50)
+dummy_embedded_settings = EmbeddedGroupSettings(chip_rate=1)
 
 dummy_match = Match(
     line_group_id=dummy_group.line_group_id,
@@ -290,8 +290,8 @@ def test_success():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "【対戦結果】 \ntest_user1: 150pt (+100(+3枚))\ntest_user2: -150pt (+20(-3枚))\n"
-        + "test_user3: 0pt (-40(0枚))\ntest_user4: 0pt (-40(0枚))\ntest_user5: 0pt (-40(0枚))"
+        == "【対戦結果】 \ntest_user1: 0pt (+100 / チップ+3枚)\ntest_user2: 0pt (+20 / チップ-3枚)\n"
+        + "test_user3: 0pt (-40 / チップ0枚)\ntest_user4: 0pt (-40 / チップ0枚)\ntest_user5: 0pt (-40 / チップ0枚)"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value

@@ -176,7 +176,7 @@ def test_success_with_default_settings():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "【対戦結果】 \ntest_user1: 0pt (+100(0枚))\ntest_user2: 0pt (+20(0枚))\ntest_user3: 0pt (-40(0枚))\ntest_user4: 0pt (-40(0枚))\ntest_user5: 0pt (-40(0枚))"
+        == "【対戦結果】 \ntest_user1: 0pt (+100)\ntest_user2: 0pt (+20)\ntest_user3: 0pt (-40)\ntest_user4: 0pt (-40)\ntest_user5: 0pt (-40)"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
@@ -220,8 +220,8 @@ def test_success():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "【対戦結果】 \ntest_user1: 5000pt (+100(0枚))\ntest_user2: 1000pt (+20(0枚))\n"
-        + "test_user3: -2000pt (-40(0枚))\ntest_user4: -2000pt (-40(0枚))\ntest_user5: -2000pt (-40(0枚))"
+        == "【対戦結果】 \ntest_user1: 5000pt (+100)\ntest_user2: 1000pt (+20)\n"
+        + "test_user3: -2000pt (-40)\ntest_user4: -2000pt (-40)\ntest_user5: -2000pt (-40)"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
@@ -229,12 +229,7 @@ def test_success():
 
     matches = match_repository.find({"_id": 1})
     assert not matches[0].is_deleted
-    assert len(matches[0].chip_prices) == 5
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] == 0
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] == 0
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu3"] == 0
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu4"] == 0
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu5"] == 0
+    assert matches[0].chip_prices == {}
     assert len(matches[0].sum_scores) == 5
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] == 100
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
@@ -268,7 +263,7 @@ def test_success_with_chip_init():
     group_repository.create(dummy_group)
     group_repository.update_settings(
         "G0123456789abcdefghijklmnopqrstu1",
-        EmbeddedGroupSettings(chip_rate=50),
+        EmbeddedGroupSettings(chip_rate=1),
     )
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -281,11 +276,8 @@ def test_success_with_chip_init():
     use_case.execute()
 
     # Assert
-    assert len(reply_service.texts) == 1
-    assert (
-        reply_service.texts[0].text
-        == "チップの増減数を入力してください。完了したら「_chip_ok」と入力してください。"
-    )
+    assert len(reply_service.texts) == 0
+    assert len(reply_service.buttons) == 1
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.chip_input.value
     assert groups[0].active_match_id == 1
@@ -311,7 +303,7 @@ def test_success_with_chip():
     )
     group_repository.update_settings(
         "G0123456789abcdefghijklmnopqrstu1",
-        EmbeddedGroupSettings(chip_rate=50),
+        EmbeddedGroupSettings(rate=5, chip_rate=1),
     )
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -342,20 +334,15 @@ def test_success_with_chip():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "【対戦結果】 \ntest_user1: 150pt (+100(+3枚))\ntest_user2: -150pt (+20(-3枚))\n"
-        + "test_user3: 0pt (-40(0枚))\ntest_user4: 0pt (-40(0枚))\ntest_user5: 0pt (-40(0枚))"
+        == "【対戦結果】 \ntest_user1: 5150pt (+100 / チップ+3枚)\ntest_user2: 850pt (+20 / チップ-3枚)\n"
+        + "test_user3: -2000pt (-40 / チップ0枚)\ntest_user4: -2000pt (-40 / チップ0枚)\ntest_user5: -2000pt (-40 / チップ0枚)"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
     assert groups[0].active_match_id is None
     matches = match_repository.find()
     assert not matches[0].is_deleted
-    assert len(matches[0].chip_prices) == 5
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu1"] == 150
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu2"] == -150
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu3"] == 0
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu4"] == 0
-    assert matches[0].chip_prices["U0123456789abcdefghijklmnopqrstu5"] == 0
+    assert matches[0].chip_prices == {}
     assert len(matches[0].sum_scores) == 5
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] == 100
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu2"] == 20
@@ -363,17 +350,17 @@ def test_success_with_chip():
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu4"] == -40
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu5"] == -40
     assert len(matches[0].sum_prices) == 5
-    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu1"] == 0
-    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu2"] == 0
-    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu3"] == 0
-    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu4"] == 0
-    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu5"] == 0
+    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu1"] == 5000
+    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu2"] == 1000
+    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu3"] == -2000
+    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu4"] == -2000
+    assert matches[0].sum_prices["U0123456789abcdefghijklmnopqrstu5"] == -2000
     assert len(matches[0].sum_prices_with_chip) == 5
-    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu1"] == 150
-    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu2"] == -150
-    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu3"] == 0
-    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu4"] == 0
-    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu5"] == 0
+    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu1"] == 5150
+    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu2"] == 850
+    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu3"] == -2000
+    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu4"] == -2000
+    assert matches[0].sum_prices_with_chip["U0123456789abcdefghijklmnopqrstu5"] == -2000
 
 
 def test_success_without_active_match():
