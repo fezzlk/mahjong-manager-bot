@@ -46,9 +46,9 @@ from use_cases.group_line.select_history_target_use_case import (
     SelectHistoryTargetUseCase,
 )
 from use_cases.group_line.simulate_score_use_case import SimulateScoreUseCase
-from use_cases.group_line.start_sim_use_case import StartSimUseCase
 from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
+from use_cases.group_line.start_sim_use_case import StartSimUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
 from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
 from use_cases.group_line.update_group_settings_use_case import (
@@ -169,8 +169,9 @@ def routing_for_group_by_command(command):
     body = request_info_service.body
 
     def _update_config():
-        key = body.split(" ")[0]
-        value = body.split(" ")[1]
+        parts = body.split(" ", 1)
+        key = parts[0]
+        value = parts[1] if len(parts) > 1 else ""
         UpdateGroupSettingsUseCase().execute(key, value)
 
     def _tobi():

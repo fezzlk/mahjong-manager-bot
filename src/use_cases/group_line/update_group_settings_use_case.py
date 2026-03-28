@@ -60,6 +60,13 @@ class UpdateGroupSettingsUseCase:
                     reply_service.add_message(f"[{key}]を[{value}]に変更できません")
                     return
                 display_value = ROUNDING_METHOD_LIST[db_value]
+            elif key == "単位":
+                column = "unit"
+                db_value = value.strip()
+                if not db_value or len(db_value) > 10:
+                    reply_service.add_message(f"[{key}]を[{value}]に変更できません（10文字以内）")
+                    return
+                display_value = db_value
             else:
                 reply_service.add_message(
                     f"項目[{key}]は未知の項目のため、[{key}]を[{value}]に変更できません",
