@@ -64,7 +64,8 @@ class FinishMatchUseCase:
         sum_prices: Dict[str, int] = {}
         sum_prices_with_chip: Dict[str, int] = {}
         for line_user_id, converted_score in sum_scores.items():
-            chip_score = chip_scores.get(line_user_id, 0)
+            # チップ設定が有効な場合のみチップを加算
+            chip_score = chip_scores.get(line_user_id, 0) if chip_rate != 0 else 0
             # チップを累計ポイントに加算してからレートを掛ける
             total_score = converted_score + chip_score
             price = total_score * rate
