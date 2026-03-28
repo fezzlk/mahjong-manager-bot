@@ -35,6 +35,7 @@ class EmbeddedGroupSettings:
     tobi_prize: int = 10
     num_of_players: int = 4
     rounding_method: int = RoundingMethod.go_san_roku
+    unit: str = "pt"
 
     def __post_init__(self):  # noqa: D105
         if self.ranking_prize is None:
@@ -48,6 +49,7 @@ class EmbeddedGroupSettings:
             "tobi_prize": self.tobi_prize,
             "num_of_players": self.num_of_players,
             "rounding_method": self.rounding_method,
+            "unit": self.unit,
         }
 
     @classmethod
@@ -59,6 +61,7 @@ class EmbeddedGroupSettings:
             tobi_prize=d.get("tobi_prize", 10),
             num_of_players=d.get("num_of_players", 4),
             rounding_method=d.get("rounding_method", RoundingMethod.go_san_roku),
+            unit=d.get("unit", "pt"),
         )
 
 
