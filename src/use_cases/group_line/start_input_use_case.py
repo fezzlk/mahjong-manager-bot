@@ -25,6 +25,10 @@ class StartInputUseCase:
             reply_service.add_message("すでに入力モードです。")
             return
 
+        # sim モードからの切り替え時は sim 用半荘をクリーンアップ
+        if group.mode == GroupMode.sim.value:
+            self._cleanup_sim_hanchan(group)
+
         # group の active match を取得、なければ作成
         active_match = match_service.find_one_by_id(group.active_match_id)
         if active_match is None:
@@ -47,3 +51,16 @@ class StartInputUseCase:
         reply_service.add_message(
             f"第{len(hanchans) + 1}回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)",
         )
+
+    @staticmethod
+    def _cleanup_sim_hanchan(group) -> None:
+        """sim モードの半荘を削除し、active_hanchan_id をリセットする。"""
+        active_match = match_service.find_one_by_id(group.active_match_id)
+        if active_match is None:
+            return
+        sim_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
+        if sim_hanchan is not None:
+            sim_hanchan.is_deleted = True
+            hanchan_service.update(sim_hanchan)
+        active_match.active_hanchan_id = None
+        match_service.update(active_match)

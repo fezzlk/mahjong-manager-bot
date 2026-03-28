@@ -11,6 +11,7 @@ from domain_model.entities.group_setting import EmbeddedGroupSettings
 class GroupMode(Enum):
     wait = "wait"
     input = "input"
+    sim = "sim"
     chip_input = "chip_input"
     chip_ok = "chip_ok"
 

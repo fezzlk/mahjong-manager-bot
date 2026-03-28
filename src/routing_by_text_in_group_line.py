@@ -25,6 +25,7 @@ from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.exit_use_case import ExitUseCase
 from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
+from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
 from use_cases.group_line.reply_apply_badai_use_case import ReplyApplyBadaiUseCase
 from use_cases.group_line.reply_finish_confirm_use_case import ReplyFinishConfirmUseCase
 from use_cases.group_line.reply_group_help_use_case import ReplyGroupHelpUseCase
@@ -39,12 +40,13 @@ from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndex
 from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
 from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
 from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
-from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
 from use_cases.group_line.select_history_target_use_case import (
     SelectHistoryTargetUseCase,
 )
+from use_cases.group_line.simulate_score_use_case import SimulateScoreUseCase
+from use_cases.group_line.start_sim_use_case import StartSimUseCase
 from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
@@ -93,6 +95,7 @@ class RCommands(Enum):
     rank_detail = "rank_detail"
     ranking = "ranking"
     reopen = "reopen"
+    sim = "sim"
 
 
 # Use a set for O(1) command lookup
@@ -120,6 +123,10 @@ def routing_by_text_in_group_line():
     """input mode"""
     if current_mode == GroupMode.input.value:
         AddPointByTextUseCase().execute(request_info_service.message)
+        return
+    """sim mode"""
+    if current_mode == GroupMode.sim.value:
+        SimulateScoreUseCase().execute(request_info_service.message)
         return
     """chip input mode"""
     if current_mode == GroupMode.chip_input.value:
@@ -198,6 +205,7 @@ def routing_for_group_by_command(command):
         RCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
         RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
         RCommands.reopen.name: lambda: ReopenMatchUseCase().execute(),
+        RCommands.sim.name: lambda: StartSimUseCase().execute(),
         # drop_m (DisableMatchUseCase), entry (LinkUserToGroupUseCase),
         # sum_matches (ReplySumMatchesByIdsUseCase), add_result, my_results:
         # intentionally not yet implemented — stub commands reserved for future use
