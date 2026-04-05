@@ -147,7 +147,7 @@ def routing_by_text_in_group_line():
 
 
 def _save_last_command(command: str):
-    """グループの last_command を更新（タイムスタンプ付き）"""
+    """グループの last_command を更新 (タイムスタンプ付き)."""
     group_id = request_info_service.req_line_group_id
     group = group_service.find_one_by_line_group_id(group_id)
     if group is not None:
@@ -159,9 +159,9 @@ def _save_last_command(command: str):
 def _should_auto_start_input(group_id: str) -> bool:
     """Wait モードで数値テキストが来たとき、_input が直近に実行されていれば True。
 
-    _input コマンドと整数メッセージがほぼ同時に送られた場合（並行 Worker で
-    整数側が先に処理されるケース）に、整数を拾うためのレース条件対策。
-    タイムウィンドウ（_AUTO_INPUT_WINDOW_SECONDS 秒）を超えた場合は発動しない。
+    _input コマンドと整数メッセージがほぼ同時に送られた場合 (並行 Worker で
+    整数側が先に処理されるケース) に、整数を拾うためのレース条件対策。
+    タイムウィンドウ (_AUTO_INPUT_WINDOW_SECONDS 秒) を超えた場合は発動しない。
     """
     group = group_service.find_one_by_line_group_id(group_id)
     if group is None or group.last_command != RCommands.input.name:

@@ -47,7 +47,7 @@ def test_already_sim_mode():
 
 
 def test_new_match_and_hanchan():
-    """match も hanchan もない場合、両方新規作成してsimモードになる。"""
+    """Match も hanchan もない場合、両方新規作成してsimモードになる。"""
     request_info_service.set_req_info(event=dummy_event)
     group_repository.create(
         Group(line_group_id="G0123456789abcdefghijklmnopqrstu1", _id=1),
@@ -69,7 +69,8 @@ def test_new_match_and_hanchan():
 
 def test_always_creates_fresh_hanchan():
     """既存の active hanchan があっても、sim 用に新しい半荘を作成する。
-    これにより input モードの途中入力が sim に混入しない。"""
+    これにより input モードの途中入力が sim に混入しない。
+    """
     request_info_service.set_req_info(event=dummy_event)
     existing_hanchan = Hanchan(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",

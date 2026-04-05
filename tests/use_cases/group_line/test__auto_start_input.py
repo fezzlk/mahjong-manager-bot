@@ -15,7 +15,6 @@ from domain_model.entities.user import User, UserMode
 from line_models.event import Event
 from repositories import (
     group_repository,
-    hanchan_repository,
     match_repository,
     user_repository,
 )

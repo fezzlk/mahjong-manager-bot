@@ -83,8 +83,9 @@ def _setup_group_with_match_and_hanchan(mode=GroupMode.wait.value):
 
 
 def test_sim_to_input_cleans_up_sim_hanchan():
-    """sim → input 切り替え時に sim 用半荘が削除され、
-    新しい空の半荘で input モードが開始される。"""
+    """Sim → input 切り替え時に sim 用半荘が削除され、
+    新しい空の半荘で input モードが開始される。
+    """
     _setup_users()
     request_info_service.set_req_info(event=sim_event)
 
@@ -133,7 +134,7 @@ def test_sim_to_input_cleans_up_sim_hanchan():
 
 
 def test_input_to_sim_does_not_reuse_input_hanchan():
-    """input → sim 切り替え時に、input の途中データが sim に混入しない。"""
+    """Input → sim 切り替え時に、input の途中データが sim に混入しない。"""
     _setup_users()
     _setup_group_with_match_and_hanchan(mode=GroupMode.input.value)
 
@@ -155,7 +156,7 @@ def test_input_to_sim_does_not_reuse_input_hanchan():
 
 
 def test_input_to_sim_to_input_no_data_leak():
-    """input → sim → input の往復で、sim のデータが input に漏れない。"""
+    """Input → sim → input の往復で、sim のデータが input に漏れない。"""
     _setup_users()
     _setup_group_with_match_and_hanchan(mode=GroupMode.input.value)
 
