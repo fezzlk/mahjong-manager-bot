@@ -36,6 +36,7 @@ def test_ok(mocker):
             "active_match_id": None,
             "settings": None,
             "last_command": None,
+            "last_command_at": None,
             "created_at": datetime(2010,1,2,3,4,0,0),
             "updated_at": datetime(2010,1,2,3,4,0,0),
         },
