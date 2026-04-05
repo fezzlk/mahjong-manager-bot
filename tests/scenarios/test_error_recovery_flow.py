@@ -45,7 +45,7 @@ def test_error_recovery_flow():
     _set_group_request()
     StartInputUseCase().execute()
 
-    from repositories import group_repository  # noqa: PLC0415
+    from repositories import group_repository
     groups = group_repository.find({"line_group_id": GROUP_ID})
     match_id = groups[0].active_match_id
 

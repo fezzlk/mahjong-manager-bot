@@ -54,7 +54,7 @@ class StartInputUseCase:
 
     @staticmethod
     def _cleanup_sim_hanchan(group) -> None:
-        """sim モードの半荘を削除し、active_hanchan_id をリセットする。"""
+        """Sim モードの半荘を削除し、active_hanchan_id をリセットする。"""
         active_match = match_service.find_one_by_id(group.active_match_id)
         if active_match is None:
             return
