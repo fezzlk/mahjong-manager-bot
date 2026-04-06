@@ -205,8 +205,7 @@ class ReplyService(IReplyService):
                     ),
                 ),
             )
-        elif key in {"レート", "高レート"}:
-            # "高レート" は後方互換のため残す（過去チャット履歴の "点4~" ボタン対応）
+        elif key == "レート":
             self.texts.append(
                 TextMessage(
                     text="レートを選んでください",

@@ -37,20 +37,6 @@ def test_success_key_rate():
     assert len(reply_service.texts[0].quick_reply.items) == 7
 
 
-def test_success_key_high_rate_legacy():
-    """後方互換: 過去チャット履歴の '高レート' ボタンも新しい Quick Reply を返す。"""
-    # Arrange
-    reply_service = ReplyService()
-
-    # Act
-    reply_service.add_settings_menu("高レート")
-
-    # Assert
-    assert len(reply_service.texts) == 1
-    assert reply_service.texts[0].quick_reply is not None
-    assert len(reply_service.texts[0].quick_reply.items) == 7
-
-
 def test_success_key_chip():
     # Arrange
     reply_service = ReplyService()
