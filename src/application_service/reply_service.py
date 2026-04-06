@@ -206,51 +206,28 @@ class ReplyService(IReplyService):
                 ),
             )
         elif key == "レート":
-            self.buttons.append(
-                TemplateMessage(
-                    alt_text="レート設定",
-                    template=ButtonsTemplate(
-                        title="レート変更",
-                        text="レートを選んでください",
-                        actions=[
-                            PostbackAction(
-                                label=f"点{i}",
-                                display_text=f"点{i}",
-                                data=f"_update_config レート {i}",
-                            )
-                            for i in range(1, 4)
+            self.texts.append(
+                TextMessage(
+                    text="レートを選んでください",
+                    quick_reply=QuickReply(
+                        items=[
+                            QuickReplyItem(
+                                action=PostbackAction(
+                                    label="なし",
+                                    display_text="なし",
+                                    data="_update_config レート 0",
+                                ),
+                            ),
                         ]
                         + [
-                            PostbackAction(
-                                label="点4~",
-                                display_text="点4~",
-                                data="_setting 高レート",
-                            ),
-                        ],
-                    ),
-                ),
-            )
-        elif key == "高レート":
-            self.buttons.append(
-                TemplateMessage(
-                    alt_text="高レート設定",
-                    template=ButtonsTemplate(
-                        title="レート変更",
-                        text="レートを選んでください",
-                        actions=[
-                            PostbackAction(
-                                label=f"点{i}",
-                                display_text=f"点{i}",
-                                data=f"_update_config レート {i}",
+                            QuickReplyItem(
+                                action=PostbackAction(
+                                    label=f"点{i}",
+                                    display_text=f"点{i}",
+                                    data=f"_update_config レート {i}",
+                                ),
                             )
-                            for i in [4, 5, 10]
-                        ]
-                        + [
-                            PostbackAction(
-                                label="点1~3",
-                                display_text="点1~3",
-                                data="_setting レート",
-                            ),
+                            for i in [1, 2, 3, 4, 5, 10]
                         ],
                     ),
                 ),

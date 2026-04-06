@@ -30,19 +30,11 @@ def test_success_key_rate():
     # Act
     reply_service.add_settings_menu("レート")
 
-    # Assert
-    assert len(reply_service.buttons) == 1
-
-
-def test_success_key_high_rate():
-    # Arrange
-    reply_service = ReplyService()
-
-    # Act
-    reply_service.add_settings_menu("高レート")
-
-    # Assert
-    assert len(reply_service.buttons) == 1
+    # Assert: Quick Reply で返るため texts に追加される
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].quick_reply is not None
+    # なし + 点1~5 + 点10 = 7 items
+    assert len(reply_service.texts[0].quick_reply.items) == 7
 
 
 def test_success_key_chip():

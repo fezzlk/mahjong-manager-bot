@@ -83,8 +83,6 @@ def test_execute_no_settings():
 @pytest.fixture(
     params=[
         ("メニュー2"),
-        ("レート"),
-        ("高レート"),
         ("順位点"),
         ("飛び賞"),
         ("端数計算方法"),
@@ -97,12 +95,7 @@ def case1(request) -> Tuple[int]:
 
 
 def test_execute_(case1):
-    # 目的: test_execute_ の挙動を検証する。
-    # 入力: case1
-    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 0 件 / reply_service.buttons の件数が 1 件 / reply_service.buttons[0] が TemplateSendMessage 型
-    # reply_service: buttons, texts
-    # DB操作: なし
+    # 目的: ButtonsTemplate で返る設定メニューの挙動を検証する。
     # Arrange
     request_info_service.set_req_info(event=dummy_event)
     use_case = ReplyGroupSettingsMenuUseCase()
@@ -114,3 +107,15 @@ def test_execute_(case1):
     assert len(reply_service.texts) == 0
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateMessage)
+
+
+def test_execute_rate():
+    """レート設定は Quick Reply で返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyGroupSettingsMenuUseCase()
+
+    use_case.execute("レート")
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].quick_reply is not None
+    assert len(reply_service.buttons) == 0
