@@ -39,7 +39,10 @@ class RankingTableImageBuilder:
     def _paste_profile_images(self, base: Image.Image, sorted_ids: list) -> None:
         scale = self.SCALE
         for i, line_id in enumerate(sorted_ids):
-            profile_image = Image.open(f"src/uploads/profile_image/{line_id}.jpeg")
+            profile_image_path = f"src/uploads/profile_image/{line_id}.jpeg"
+            if not os.path.exists(profile_image_path):
+                continue
+            profile_image = Image.open(profile_image_path)
             profile_image = profile_image.resize((50 * scale, 50 * scale))
             mask = Image.new("L", profile_image.size, 0)
             draw_mask = ImageDraw.Draw(mask)
