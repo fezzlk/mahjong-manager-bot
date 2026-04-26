@@ -1,6 +1,6 @@
 import logging
-import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import certifi
@@ -143,7 +143,7 @@ class ReplyRankingTableUseCase:
 
     def _fetch_profile_images(self, active_user_line_ids: List[str]) -> Dict[str, str]:
         display_name_dict = {}
-        os.makedirs("src/uploads/profile_image", exist_ok=True)
+        Path("src/uploads/profile_image").mkdir(parents=True, exist_ok=True)
         for line_id in active_user_line_ids:
             profile = line_bot_api.get_profile(line_id)
             display_name_dict[line_id] = profile.display_name
