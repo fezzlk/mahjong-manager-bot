@@ -148,6 +148,7 @@ class ReplyRankingTableUseCase:
             profile = line_bot_api.get_profile(line_id)
             display_name_dict[line_id] = profile.display_name
             if not profile.picture_url:
+                Path(f"src/uploads/profile_image/{line_id}.jpeg").unlink(missing_ok=True)
                 continue
             request_methods = urllib3.PoolManager(
                 cert_reqs="CERT_REQUIRED", ca_certs=certifi.where(),
