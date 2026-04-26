@@ -43,15 +43,3 @@ def login_required(f):
     return decorated_login_required
 
 
-def parse_jwt_token(f):
-    @wraps(f)
-    def decorated_parse_jwt_token(*args, **kwargs):
-        # web_users = web_user_repository.find(
-        #     query={
-        #         "_id": get_jwt_identity(),
-        #     },
-        # )
-
-        return f(*args, **kwargs)
-
-    return decorated_parse_jwt_token

@@ -1,10 +1,10 @@
-from linebot import LineBotApi
+from linebot.v3.messaging import ApiClient, Configuration, MessagingApi
 
 import env_var
 
-line_bot_api: LineBotApi = None
+if not env_var.YOUR_CHANNEL_ACCESS_TOKEN:
+    raise RuntimeError('env var "YOUR_CHANNEL_ACCESS_TOKEN" is not set.')
 
-if env_var.YOUR_CHANNEL_ACCESS_TOKEN is not None:
-    line_bot_api = LineBotApi(env_var.YOUR_CHANNEL_ACCESS_TOKEN)
-else:
-    print("line_bot_api is not setup: YOUR_CHANNEL_ACCESS_TOKEN is not set.")
+_configuration = Configuration(access_token=env_var.YOUR_CHANNEL_ACCESS_TOKEN)
+_api_client = ApiClient(_configuration)
+line_bot_api: MessagingApi = MessagingApi(_api_client)

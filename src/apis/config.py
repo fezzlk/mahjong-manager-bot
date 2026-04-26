@@ -8,10 +8,10 @@ from flask import (
     url_for,
 )
 
-from use_cases.web.DeleteConfigsForWebUseCase import DeleteConfigsForWebUseCase
-from use_cases.web.GetConfigForWebUseCase import GetConfigForWebUseCase
-from use_cases.web.GetConfigsForWebUseCase import GetConfigsForWebUseCase
-from use_cases.web.UpdateConfigForWebUseCase import UpdateConfigForWebUseCase
+from use_cases.web.delete_configs_for_web_use_case import DeleteConfigsForWebUseCase
+from use_cases.web.get_config_for_web_use_case import GetConfigForWebUseCase
+from use_cases.web.get_configs_for_web_use_case import GetConfigsForWebUseCase
+from use_cases.web.update_config_for_web_use_case import UpdateConfigForWebUseCase
 
 config_blueprint = Blueprint(
     "config_blueprint",
@@ -23,8 +23,8 @@ config_blueprint = Blueprint(
 @config_blueprint.route("/")
 def get_configs():
     data = GetConfigsForWebUseCase().execute()
-    keys = ["_id", "key", "value", "target_id"]
-    input_keys = ["key", "value", "target_id"]
+    keys = ["_id", "rate", "ranking_prize", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
+    input_keys = ["rate", "ranking_prize", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
     return render_template(
         "model.html",
         title="configs",
@@ -40,7 +40,7 @@ def configs_detail(_id):
     data = GetConfigForWebUseCase().execute(_id)
     if data is None:
         raise NotFoundErr()
-    input_keys = ["_id", "key", "value", "target_id"]
+    input_keys = ["line_group_id", "rate", "ranking_prize", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
     return render_template(
         "detail.html",
         title="configs",
@@ -64,5 +64,5 @@ def update_config():
 @config_blueprint.route("/delete", methods=["POST"])
 def delete_configs():
     target_id = request.args.get("target_id")
-    DeleteConfigsForWebUseCase().execute([int(target_id)])
+    DeleteConfigsForWebUseCase().execute([target_id])
     return redirect(url_for("config_blueprint.get_configs"))

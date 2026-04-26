@@ -8,35 +8,13 @@
       <div class="card-body">
         <div class="card-title h3 text-center">Login</div>
         <div class="card-text">
-          <form>
-            <div class="form-group text-center">
-              <input
-                class="m-1 form-control"
-                name="user_code"
-                placeholder="UserCode or e-mail"
-                type="text"
-                disabled
-              />
-              <input
-                class="m-1 form-control"
-                name="password"
-                placeholder="Password"
-                type="password"
-                disabled
-              />
-              <input
-                class="m-1 btn btn-primary"
-                name="login_btn"
-                value="Login"
-                type="submit"
-                style="width:80px"
-                disabled
-              />
-            </form>
+          <div class="text-center">
+            <a
+              class="btn btn-success"
+              href="{{ url_for('auth_blueprint.line_login') }}"
+              style="background-color: #06C755; border-color: #06C755; color: white;"
+            >LINE でログイン</a>
           </div>
-          <a class="nav-link text-dark" href="{{ url_for('auth_blueprint.google_login') }}"
-            >Google アカウントでログイン</a
-          >
         </div>
       </div>
     </div>

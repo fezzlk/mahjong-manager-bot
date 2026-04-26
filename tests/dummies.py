@@ -3,14 +3,14 @@ from typing import Dict, List
 
 from bson.objectid import ObjectId
 
-from DomainModel.entities.Group import Group, GroupMode
-from DomainModel.entities.GroupSetting import GroupSetting
-from DomainModel.entities.Hanchan import Hanchan
-from DomainModel.entities.Match import Match
-from DomainModel.entities.User import User, UserMode
-from DomainModel.entities.WebUser import WebUser
-from line_models.Event import Event
-from line_models.Profile import Profile
+from domain_model.entities.group import Group, GroupMode
+from domain_model.entities.group_setting import GroupSetting
+from domain_model.entities.hanchan import Hanchan
+from domain_model.entities.match import Match
+from domain_model.entities.user import User, UserMode
+from domain_model.entities.web_user import WebUser
+from line_models.event import Event
+from line_models.profile import Profile
 
 """
     list 内の既存のインスタンスは変更禁止、追加のみ可能
@@ -178,17 +178,15 @@ def generate_dummy_match_list() -> List[Match]:
     return [
         Match(
             line_group_id=groups[0].line_group_id,
-            status=2,
             _id=ObjectId("644c838186bbd9e20a91b783"),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
-            status=0,
+            is_deleted=True,
             _id=ObjectId("644c838186bbd9e20a91b784"),
         ),
         Match(
             line_group_id=groups[0].line_group_id,
-            status=2,
             active_hanchan_id=ObjectId("644c838186bbd9e20a91b784"),
             _id=ObjectId("644c838186bbd9e20a91b785"),
         ),
@@ -202,21 +200,19 @@ def generate_dummy_hanchan_list() -> List[Hanchan]:
         Hanchan(
             line_group_id=groups[0].line_group_id,
             match_id=ObjectId("644c838186bbd9e20a91b785"),
-            status=2,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=ObjectId("644c838186bbd9e20a91b785"),
-            status=0,
+            is_deleted=True,
         ),
         Hanchan(
             line_group_id=groups[2].line_group_id,
             raw_scores={},
             converted_scores={},
             match_id=ObjectId("644c838186bbd9e20a91b785"),
-            status=2,
         ),
     ]
 

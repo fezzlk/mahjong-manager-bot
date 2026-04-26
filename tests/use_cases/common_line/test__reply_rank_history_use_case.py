@@ -1,0 +1,311 @@
+from typing import Dict
+
+import matplotlib.pyplot as plt
+import pytest
+
+import env_var
+from application_service import (
+    reply_service,
+    request_info_service,
+)
+from domain_model.entities.group import Group, GroupMode
+from domain_model.entities.hanchan import Hanchan
+from domain_model.entities.match import Match
+from domain_model.entities.user import User, UserMode
+from domain_model.entities.user_hanchan import UserHanchanResult
+from repositories import (
+    group_repository,
+    hanchan_repository,
+    match_repository,
+    user_repository,
+)
+from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
+
+dummy_users = [
+    User(
+        line_user_name="test_user1",
+        line_user_id="U0123456789abcdefghijklmnopqrstu1",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user1",
+        _id=1,
+    ),
+    User(
+        line_user_name="test_user2",
+        line_user_id="U0123456789abcdefghijklmnopqrstu2",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user2",
+        _id=2,
+    ),
+    User(
+        line_user_name="test_user3",
+        line_user_id="U0123456789abcdefghijklmnopqrstu3",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user3",
+        _id=3,
+    ),
+    User(
+        line_user_name="test_user4",
+        line_user_id="U0123456789abcdefghijklmnopqrstu4",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user4",
+        _id=4,
+    ),
+    User(
+        line_user_name="test_user5",
+        line_user_id="U0123456789abcdefghijklmnopqrstu5",
+        mode=UserMode.wait.value,
+        jantama_name="jantama_user5",
+        _id=5,
+    ),
+]
+
+dummy_group = Group(
+    line_group_id="G0123456789abcdefghijklmnopqrstu1",
+    mode=GroupMode.input.value,
+    active_match_id=1,
+    _id=1,
+)
+
+dummy_match = Match(
+    line_group_id=dummy_group.line_group_id,
+    _id=1,
+)
+
+_results_per_hanchan = [
+    UserHanchanResult(line_user_id=dummy_users[0].line_user_id, point=40000, rank=1),
+    UserHanchanResult(line_user_id=dummy_users[1].line_user_id, point=30000, rank=2),
+    UserHanchanResult(line_user_id=dummy_users[2].line_user_id, point=20000, rank=3),
+    UserHanchanResult(line_user_id=dummy_users[3].line_user_id, point=10000, rank=4),
+]
+
+dummy_archived_hanchans = [
+    Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 40000,
+            dummy_users[1].line_user_id: 30000,
+            dummy_users[2].line_user_id: 20000,
+            dummy_users[3].line_user_id: 10000,
+        },
+        converted_scores={
+            dummy_users[0].line_user_id: 50,
+            dummy_users[1].line_user_id: 10,
+            dummy_users[2].line_user_id: -20,
+            dummy_users[3].line_user_id: -40,
+        },
+        results=_results_per_hanchan,
+        match_id=1,
+        _id=1,
+    ),
+    Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 40000,
+            dummy_users[1].line_user_id: 30000,
+            dummy_users[2].line_user_id: 20000,
+            dummy_users[3].line_user_id: 10000,
+        },
+        converted_scores={
+            dummy_users[0].line_user_id: 50,
+            dummy_users[1].line_user_id: 10,
+            dummy_users[2].line_user_id: -20,
+            dummy_users[3].line_user_id: -40,
+        },
+        results=_results_per_hanchan,
+        match_id=1,
+        _id=2,
+    ),
+]
+
+
+@ pytest.fixture(params=[
+    {"from": "x"},
+    {"to": "x"},
+    {"from": "x", "to": "20220101"},
+    {"from": "20220101", "to": "x"},
+    {"from": "x", "to": "x"},
+])
+def case1(request) -> Dict[str, str]:
+    return request.param
+
+def test_ng_invalid_range_format(case1):
+    # 目的: test_ng_invalid_range_format の挙動を検証する。
+    # 入力: case1
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 2 件 / reply_service.texts[0].text が "日付は以下のフォーマットで入力してください。" である / reply_service.texts[1].text が "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD" である
+    # reply_service: texts
+    # DB操作: なし
+    # Arrange
+    use_case = ReplyRankHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    request_info_service.params = case1
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 2
+    assert reply_service.texts[0].text == "日付は以下のフォーマットで入力してください。"
+    assert reply_service.texts[1].text == "[日付の入力方法]\n\nYYYY年MM月DD日\n→ YYYYMMDD\n\n20YY年MM月DD日\n→ YYMMDD\n\n今年MM月DD日\n→ MMDD\n\n今月DD日\n→ DD"
+
+
+def test_success(mocker):
+    # 目的: test_success の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 0 件 / reply_service.images の件数が 2 件
+    # reply_service: images, texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); match_repository.create(dummy_match); user_hanchan_repository.create(dummy_user_hanchan)
+    # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        "subplots",
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        "savefig",
+    )
+    use_case = ReplyRankHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_archived_hanchan in dummy_archived_hanchans:
+        hanchan_repository.create(dummy_archived_hanchan)
+    match_repository.create(dummy_match)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 0
+    assert len(reply_service.images) == 2
+    reply_service.reset()
+
+@ pytest.fixture(params=[
+    ({"from": "20230101"}, "範囲指定: 2023年01月01日0時から"),
+    ({"to": "20241231"}, "範囲指定: 2024年12月31日0時まで"),
+    ({"from": "20230101", "to": "20241231"}, "範囲指定: 2023年01月01日0時から2024年12月31日0時まで"),
+])
+def case2(request) -> Dict[str, str]:
+    return request.param
+
+def test_success_with_range(mocker, case2):
+    # 目的: test_success_with_range の挙動を検証する。
+    # 入力: mocker, case2
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が case2[1] である / reply_service.images の件数が 2 件
+    # reply_service: images, texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); match_repository.create(dummy_match)
+    # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        "subplots",
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        "savefig",
+    )
+    use_case = ReplyRankHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    request_info_service.params = case2[0]
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_archived_hanchan in dummy_archived_hanchans:
+        hanchan_repository.create(dummy_archived_hanchan)
+    match_repository.create(dummy_match)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == case2[1]
+    assert len(reply_service.images) == 2
+    reply_service.reset()
+
+def test_success_no_user_hanchan(mocker):
+    # 目的: test_success_no_user_hanchan の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.texts の件数が 0 件 / reply_service.images の件数が 2 件
+    # reply_service: images, texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); match_repository.create(dummy_match)
+    # Arrange
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        "subplots",
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        "savefig",
+    )
+
+    use_case = ReplyRankHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_archived_hanchan in dummy_archived_hanchans:
+        hanchan_repository.create(dummy_archived_hanchan)
+    match_repository.create(dummy_match)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.texts) == 0
+    assert len(reply_service.images) == 2
+    reply_service.reset()
+
+def test_success_fail_savefig(mocker):
+    # 目的: test_success_fail_savefig の挙動を検証する。
+    # 入力: mocker
+    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
+    # 想定出力: reply_service.images の件数が 0 件 / reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "システムエラーが発生しました。" である
+    # reply_service: images, texts
+    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); hanchan_repository.create(dummy_archived_hanchan); match_repository.create(dummy_match); user_hanchan_repository.create(dummy_user_hanchan)
+    # Arrange
+    mock = mocker.patch.object(
+        reply_service,
+        "push_a_message",
+    )
+    fig, ax = plt.subplots()
+    mocker.patch.object(
+        plt,
+        "subplots",
+        return_value=(fig, ax),
+    )
+    mocker.patch.object(
+        fig,
+        "savefig",
+        side_effect=FileNotFoundError(),
+    )
+
+    use_case = ReplyRankHistoryUseCase()
+    request_info_service.req_line_user_id = dummy_users[0].line_user_id
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_archived_hanchan in dummy_archived_hanchans:
+        hanchan_repository.create(dummy_archived_hanchan)
+    match_repository.create(dummy_match)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    assert len(reply_service.images) == 0
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "システムエラーが発生しました。"
+    mock.assert_called_once_with(
+        to=env_var.SERVER_ADMIN_LINE_USER_ID,
+        message="順位履歴の画像アップロードに失敗しました\n送信者: test_user1",
+    )

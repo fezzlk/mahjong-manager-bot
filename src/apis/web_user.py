@@ -10,15 +10,17 @@ from flask import (
 )
 
 # from db_setting import Engine, Session
-from ApplicationModels.PageContents import (
+from flask_jwt_extended import create_access_token
+
+from application_models.page_contents import (
     PageContents,
     RegisterFormData,
     ViewUserInfoData,
 )
 from middlewares import login_required
-from use_cases.web.RegisterWebUserUseCase import RegisterWebUserUseCase
-from use_cases.web.ViewRegisterUseCase import ViewRegisterUseCase
-from use_cases.web.ViewUserInfoUseCase import ViewUserInfoUseCase
+from use_cases.web.register_web_user_use_case import RegisterWebUserUseCase
+from use_cases.web.view_register_use_case import ViewRegisterUseCase
+from use_cases.web.view_user_info_use_case import ViewUserInfoUseCase
 
 web_user_blueprint = Blueprint("web_user_blueprint", __name__, url_prefix="/web_user")
 
@@ -64,5 +66,4 @@ def generate_api_token():
     user_id = session.get("login_user_id", None)
     if user_id is None:
         raise Exception("システムエラーが発生しました。")
-    from flask_jwt_extended import create_access_token
     return "Bearer " + create_access_token(identity=user_id)

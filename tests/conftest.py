@@ -3,6 +3,8 @@ import sys
 import os
 import pytest
 from dotenv import load_dotenv
+from pymongo import MongoClient
+from pymongo.errors import PyMongoError
 
 # ================================
 # 🧩 パス設定
@@ -24,10 +26,23 @@ else:
 # ================================
 # 📦 アプリモジュールインポート
 # ================================
-from mongo_client import mongo_client  # src/mongo_client.py
 import env_var
 import server
-from ApplicationService import reply_service, request_info_service
+from application_service import reply_service, request_info_service
+
+
+# ================================
+# 🩺 DBヘルスチェック（セッション開始時に1回だけ）
+# ================================
+def pytest_sessionstart(session):
+    """Pytest開始時にDB接続を確認し、失敗したら終了する"""
+    try:
+        # ping は最小コストの接続確認
+        client = MongoClient(env_var.DATABASE_URL)
+        client.admin.command("ping")
+    except PyMongoError as exc:
+        message = "MongoDB is not reachable. Please start the test DB server."
+        pytest.exit(message, returncode=1)
 
 
 # ================================
@@ -36,8 +51,12 @@ from ApplicationService import reply_service, request_info_service
 @pytest.fixture(scope="function", autouse=True)
 def reset_services():
     """各テストの前後でDBをクリーンにする"""
+    from domain_service.user_service import _cached_get_profile_name
+    from mongo_client import mongo_client
+    from domain_service.user_service import _cached_get_profile_name
+
     mongo_client.drop_database(env_var.DATABASE_NAME)
     request_info_service.delete_req_info()
     reply_service.reset()
+    _cached_get_profile_name.cache_clear()
     yield
-    # 必要に応じてtear down処理を追加
