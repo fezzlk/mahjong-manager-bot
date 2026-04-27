@@ -69,7 +69,6 @@ class RankingTableImageBuilder:
             bucket = client.bucket(env_var.GCS_BUCKET_NAME)
             blob = bucket.blob(blob_name)
             blob.upload_from_file(buf, content_type="image/png")
-            blob.make_public()
             return (blob.public_url, None)
         except Exception as err:
             logger.exception("GCS へのアップロードに失敗しました")
