@@ -70,7 +70,6 @@ class MatchService(IMatchService):
         )
 
     def find_all_for_graph(self, ids: List[ObjectId]) -> List[Match]:
-        # 将来的にはGroupに含まれるメンバーの半荘のみを対象とする
         return match_repository.find(
             query={"_id": {"$in": ids}},
             sort=[("created_at", ASCENDING)],
@@ -81,6 +80,7 @@ class MatchService(IMatchService):
     ) -> List[Match]:
         return match_repository.find(
             query={"_id": {"$in": ids}, "line_group_id": {"$in": line_group_ids}},
+            sort=[("created_at", ASCENDING)],
         )
 
     def find_latest_one(self, line_group_id: str) -> Optional[Match]:

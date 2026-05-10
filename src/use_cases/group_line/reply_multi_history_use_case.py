@@ -60,8 +60,9 @@ class ReplyMultiHistoryUseCase:
             from_dt=from_dt,
             to_dt=to_dt,
         )
-        matches = match_service.find_all_for_graph(
+        matches = match_service.find_all_by_ids_and_line_group_ids(
             ids=[um.match_id for um in um_list],
+            line_group_ids=[request_info_service.req_line_group_id],
         )
 
         if len(matches) == 0:

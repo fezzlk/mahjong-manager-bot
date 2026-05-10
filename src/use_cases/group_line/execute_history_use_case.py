@@ -89,8 +89,9 @@ class ExecuteHistoryUseCase:
             from_dt=from_dt,
             to_dt=to_dt,
         )
-        matches = match_service.find_all_for_graph(
+        matches = match_service.find_all_by_ids_and_line_group_ids(
             ids=[um.match_id for um in um_list],
+            line_group_ids=[group_id],
         )
 
         if not matches:
