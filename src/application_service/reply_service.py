@@ -516,7 +516,7 @@ class ReplyService(IReplyService):
                     display_text="全グループ",
                     data="_personal_history?g=all",
                 ),
-            )
+            ),
         ]
         for g in groups[:12]:
             label = (g.group_name or g.line_group_id)[:20]
@@ -527,13 +527,13 @@ class ReplyService(IReplyService):
                         display_text=label,
                         data=f"_personal_history?g={g.line_group_id}",
                     ),
-                )
+                ),
             )
         self.texts.append(
             TextMessage(
                 text="どのグループの成績を表示しますか？",
                 quick_reply=QuickReply(items=items),
-            )
+            ),
         )
 
     def add_history_period_quick_reply(self) -> None:

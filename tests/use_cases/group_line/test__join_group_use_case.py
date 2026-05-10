@@ -2,11 +2,11 @@ import pytest
 from dummies import (
     generate_dummy_join_event,
 )
-from linebot.v3.messaging.exceptions import ApiException
 from linebot.v3.messaging import (
     TemplateMessage,
     TextMessage,
 )
+from linebot.v3.messaging.exceptions import ApiException
 
 from application_service import (
     reply_service,

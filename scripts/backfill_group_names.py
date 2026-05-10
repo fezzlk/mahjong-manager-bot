@@ -12,8 +12,9 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-import env_var  # noqa: F401 — loads .env
 from linebot.v3.exceptions import ApiException
+
+import env_var  # noqa: F401 — loads .env
 from messaging_api_setting import line_bot_api
 from mongo_client import groups_collection
 
