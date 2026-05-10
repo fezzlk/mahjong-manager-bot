@@ -23,6 +23,8 @@ class Group:
     active_match_id: ObjectId = field(default=None)
     settings: Optional[EmbeddedGroupSettings] = field(default=None)
     last_command: str = field(default=None)
+    group_name: Optional[str] = field(default=None)
+    group_picture_url: Optional[str] = field(default=None)
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
     _id: ObjectId = field(default=None)

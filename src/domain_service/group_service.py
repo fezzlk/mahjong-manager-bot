@@ -81,6 +81,17 @@ class GroupService(IGroupService):
         setattr(settings, column, value)
         group_repository.update_settings(line_group_id, settings)
 
+    def update_group_info(
+        self,
+        line_group_id: str,
+        group_name: str,
+        group_picture_url: Optional[str],
+    ) -> None:
+        group_repository.update(
+            {"line_group_id": line_group_id},
+            {"group_name": group_name, "group_picture_url": group_picture_url},
+        )
+
     def delete_by_line_group_id(self, line_group_id: str) -> None:
         group_repository.delete(
             {"line_group_id": line_group_id},
