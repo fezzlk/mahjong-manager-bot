@@ -12,3 +12,6 @@ class UserGroupService(IUserGroupService):
 
     def find_all_by_line_group_id(self, line_group_id: str) -> List[UserGroup]:
         return user_group_repository.find(query={"line_group_id": line_group_id})
+
+    def find_all_by_line_user_id(self, line_user_id: str) -> List[UserGroup]:
+        return user_group_repository.find(query={"line_user_id": line_user_id})

@@ -14,7 +14,9 @@ from domain_service import (
     user_match_service,
 )
 from repositories import (
+    group_repository,
     hanchan_repository,
+    user_group_repository,
     user_repository,
 )
 
@@ -34,6 +36,18 @@ class ReplyHistoryUseCase:
                 "既に友達の場合は一度ブロックして、ブロック解除を行ってください。",
             )
             return
+
+        g_param = request_info_service.params.get("g")
+
+        if g_param is None:
+            user_groups = user_group_repository.find({"line_user_id": req_line_id})
+            if len(user_groups) >= 2:
+                group_ids = [ug.line_group_id for ug in user_groups]
+                groups = group_repository.find({"line_group_id": {"$in": group_ids}})
+                reply_service.add_personal_history_group_quick_reply(groups)
+                return
+            g_param = "all"
+
         from_dt, to_dt, is_valid = message_service.parse_date_range_from_params(
             request_info_service.params,
         )
@@ -46,9 +60,15 @@ class ReplyHistoryUseCase:
             from_dt=from_dt,
             to_dt=to_dt,
         )
-        matches = match_service.find_all_for_graph(
-            ids=[um.match_id for um in um_list],
-        )
+        if g_param != "all":
+            matches = match_service.find_all_by_ids_and_line_group_ids(
+                ids=[um.match_id for um in um_list],
+                line_group_ids=[g_param],
+            )
+        else:
+            matches = match_service.find_all_for_graph(
+                ids=[um.match_id for um in um_list],
+            )
 
         if len(matches) == 0:
             reply_service.add_message(

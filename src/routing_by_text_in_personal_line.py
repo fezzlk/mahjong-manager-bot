@@ -41,6 +41,7 @@ class UCommands(Enum):
     url = "url"
     rank = "rank"
     rank_detail = "rank_detail"
+    personal_history = "personal_history"
 
 
 # Use a set for O(1) command lookup
@@ -100,6 +101,7 @@ def routing_by_command(command: str):
         UCommands.url.name: lambda: ReplyUrlUseCase().execute(),
         UCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
         UCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
+        UCommands.personal_history.name: lambda: ReplyHistoryUseCase().execute(),
     }
 
     handler = dispatch.get(command)
