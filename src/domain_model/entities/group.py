@@ -26,6 +26,7 @@ class Group:
     group_name: Optional[str] = field(default=None)
     group_picture_url: Optional[str] = field(default=None)
     last_command_at: Optional[datetime] = field(default=None)
+    merged_into: Optional[str] = field(default=None)
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
     _id: ObjectId = field(default=None)

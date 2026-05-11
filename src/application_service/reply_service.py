@@ -536,6 +536,26 @@ class ReplyService(IReplyService):
             ),
         )
 
+    def add_migrate_target_quick_reply(self, groups) -> None:
+        items = []
+        for g in groups[:13]:
+            label = (g.group_name or g.line_group_id)[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_migrate_confirm?to={g.line_group_id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どのグループに統合しますか？\n（このグループの成績が選択先グループに含まれます）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
     def add_history_period_quick_reply(self) -> None:
         self.texts.append(
             TextMessage(

@@ -39,6 +39,7 @@ def test_ok(mocker):
             "group_name": None,
             "group_picture_url": None,
             "last_command_at": None,
+            "merged_into": None,
             "created_at": datetime(2010,1,2,3,4,0,0),
             "updated_at": datetime(2010,1,2,3,4,0,0),
         },

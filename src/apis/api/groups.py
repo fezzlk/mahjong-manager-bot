@@ -32,6 +32,8 @@ def get_groups(web_user):
         if not found:
             continue
         g = found[0]
+        if g.merged_into:
+            continue  # 統合済み旧グループはリストに表示しない
         # メンバー数取得
         members = user_group_repository.find({"line_group_id": line_group_id})
         groups.append({

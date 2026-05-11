@@ -10,6 +10,7 @@ from application_service import (
     request_info_service,
 )
 from domain_service import (
+    group_service,
     match_service,
     user_match_service,
 )
@@ -43,9 +44,14 @@ class ReplyHistoryUseCase:
             user_groups = user_group_repository.find({"line_user_id": req_line_id})
             if len(user_groups) >= 2:
                 group_ids = [ug.line_group_id for ug in user_groups]
-                groups = group_repository.find({"line_group_id": {"$in": group_ids}})
-                reply_service.add_personal_history_group_quick_reply(groups)
-                return
+                # 統合済み旧グループは Quick Reply に表示しない
+                groups = group_repository.find({
+                    "line_group_id": {"$in": group_ids},
+                    "merged_into": None,
+                })
+                if len(groups) >= 2:
+                    reply_service.add_personal_history_group_quick_reply(groups)
+                    return
             g_param = "all"
 
         from_dt, to_dt, is_valid = message_service.parse_date_range_from_params(
@@ -61,9 +67,10 @@ class ReplyHistoryUseCase:
             to_dt=to_dt,
         )
         if g_param != "all":
+            effective_ids = group_service.get_effective_line_group_ids(g_param)
             matches = match_service.find_all_by_ids_and_line_group_ids(
                 ids=[um.match_id for um in um_list],
-                line_group_ids=[g_param],
+                line_group_ids=effective_ids,
             )
         else:
             matches = match_service.find_all_for_graph(
