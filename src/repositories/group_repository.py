@@ -84,6 +84,7 @@ class GroupRepository(IGroupRepository):
             last_command=record.get("last_command"),
             group_name=record.get("group_name"),
             group_picture_url=record.get("group_picture_url"),
+            last_command_at=record.get("last_command_at"),
             created_at=record.get("created_at"),
             updated_at=record.get("updated_at"),
             _id=record.get("_id"),
