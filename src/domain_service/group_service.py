@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Optional
+from typing import List, Optional
 
 from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.group_setting import EmbeddedGroupSettings
@@ -80,6 +80,27 @@ class GroupService(IGroupService):
         settings = self.get_settings_or_create(line_group_id)
         setattr(settings, column, value)
         group_repository.update_settings(line_group_id, settings)
+
+    def update_group_info(
+        self,
+        line_group_id: str,
+        group_name: str,
+        group_picture_url: Optional[str],
+    ) -> None:
+        group_repository.update(
+            {"line_group_id": line_group_id},
+            {"group_name": group_name, "group_picture_url": group_picture_url},
+        )
+
+    def set_merged_into(self, line_group_id: str, merged_into: str) -> None:
+        group_repository.update(
+            {"line_group_id": line_group_id},
+            {"merged_into": merged_into},
+        )
+
+    def get_effective_line_group_ids(self, line_group_id: str) -> List[str]:
+        merged = group_repository.find({"merged_into": line_group_id})
+        return [line_group_id] + [g.line_group_id for g in merged]
 
     def delete_by_line_group_id(self, line_group_id: str) -> None:
         group_repository.delete(

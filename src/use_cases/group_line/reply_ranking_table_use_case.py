@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import certifi
@@ -142,16 +143,19 @@ class ReplyRankingTableUseCase:
 
     def _fetch_profile_images(self, active_user_line_ids: List[str]) -> Dict[str, str]:
         display_name_dict = {}
+        Path("src/uploads/profile_image").mkdir(parents=True, exist_ok=True)
         for line_id in active_user_line_ids:
             profile = line_bot_api.get_profile(line_id)
+            display_name_dict[line_id] = profile.display_name
+            if not profile.picture_url:
+                Path(f"src/uploads/profile_image/{line_id}.jpeg").unlink(missing_ok=True)
+                continue
             request_methods = urllib3.PoolManager(
                 cert_reqs="CERT_REQUIRED", ca_certs=certifi.where(),
             )
             response = request_methods.request("GET", profile.picture_url)
-            f = open(f"src/uploads/profile_image/{line_id}.jpeg", "wb")
-            f.write(response.data)
-            f.close()
-            display_name_dict[line_id] = profile.display_name
+            with open(f"src/uploads/profile_image/{line_id}.jpeg", "wb") as f:
+                f.write(response.data)
         return display_name_dict
 
     def _aggregate_stats(self, matches, hanchans, user_hanchans, active_user_line_ids) -> _RankingStats:

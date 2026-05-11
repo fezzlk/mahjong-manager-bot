@@ -22,6 +22,7 @@ from use_cases.personal_line.request_link_line_web_use_case import (
     RequestLinkLineWebUseCase,
 )
 from use_cases.personal_line.user_exit_command_use_case import UserExitCommandUseCase
+from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
 
 
 class UCommands(Enum):
@@ -41,6 +42,8 @@ class UCommands(Enum):
     url = "url"
     rank = "rank"
     rank_detail = "rank_detail"
+    personal_history = "personal_history"
+    personal_migrate = "personal_migrate"
 
 
 # Use a set for O(1) command lookup
@@ -100,6 +103,8 @@ def routing_by_command(command: str):
         UCommands.url.name: lambda: ReplyUrlUseCase().execute(),
         UCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
         UCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
+        UCommands.personal_history.name: lambda: ReplyHistoryUseCase().execute(),
+        UCommands.personal_migrate.name: lambda: MigrateGroupUseCase().execute_personal(),
     }
 
     handler = dispatch.get(command)

@@ -1,4 +1,4 @@
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
 
 from repositories import web_user_repository
 
@@ -68,7 +68,19 @@ def get_user_stats(web_user, user_id):
             "point_history": [],
         })
 
-    user_hanchans = user_hanchan_repository.find({"line_user_id": line_user_id})
+    group_id = request.args.get("group_id")
+    if group_id:
+        from domain_service import group_service  # noqa: PLC0415
+        from repositories import hanchan_repository  # noqa: PLC0415
+        effective_ids = group_service.get_effective_line_group_ids(group_id)
+        hanchans = hanchan_repository.find({"line_group_id": {"$in": effective_ids}})
+        hanchan_ids = [h._id for h in hanchans]
+        user_hanchans = user_hanchan_repository.find({
+            "line_user_id": line_user_id,
+            "hanchan_id": {"$in": hanchan_ids},
+        })
+    else:
+        user_hanchans = user_hanchan_repository.find({"line_user_id": line_user_id})
 
     total = len(user_hanchans)
     if total == 0:

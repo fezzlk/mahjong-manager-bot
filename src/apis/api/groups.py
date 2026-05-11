@@ -32,11 +32,14 @@ def get_groups(web_user):
         if not found:
             continue
         g = found[0]
+        if g.merged_into:
+            continue  # 統合済み旧グループはリストに表示しない
         # メンバー数取得
         members = user_group_repository.find({"line_group_id": line_group_id})
         groups.append({
             "id": str(g._id),
-            "name": line_group_id,  # Group には name フィールドがないため line_group_id を使用
+            "line_group_id": line_group_id,
+            "name": g.group_name or line_group_id,
             "description": None,
             "member_count": len(members),
         })
@@ -75,7 +78,8 @@ def get_group(web_user, group_id):
 
     return jsonify({
         "id": str(g._id),
-        "name": g.line_group_id,
+        "line_group_id": g.line_group_id,
+        "name": g.group_name or g.line_group_id,
         "description": None,
         "member_count": len(members),
         "members": member_list,

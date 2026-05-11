@@ -39,7 +39,10 @@ class RankingTableImageBuilder:
     def _paste_profile_images(self, base: Image.Image, sorted_ids: list) -> None:
         scale = self.SCALE
         for i, line_id in enumerate(sorted_ids):
-            profile_image = Image.open(f"src/uploads/profile_image/{line_id}.jpeg")
+            profile_image_path = Path(f"src/uploads/profile_image/{line_id}.jpeg")
+            if not profile_image_path.exists():
+                continue
+            profile_image = Image.open(profile_image_path)
             profile_image = profile_image.resize((50 * scale, 50 * scale))
             mask = Image.new("L", profile_image.size, 0)
             draw_mask = ImageDraw.Draw(mask)
@@ -66,7 +69,6 @@ class RankingTableImageBuilder:
             bucket = client.bucket(env_var.GCS_BUCKET_NAME)
             blob = bucket.blob(blob_name)
             blob.upload_from_file(buf, content_type="image/png")
-            blob.make_public()
             return (blob.public_url, None)
         except Exception as err:
             logger.exception("GCS へのアップロードに失敗しました")

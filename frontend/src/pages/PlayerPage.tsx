@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
@@ -11,11 +12,12 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import api from '@/lib/api'
-import type { WebUser, UserStats } from '@/types'
+import type { WebUser, UserStats, Group } from '@/types'
 
 export function PlayerPage() {
   const { id } = useParams<{ id: string }>()
   const userId = id === 'me' ? 'me' : id
+  const [selectedLineGroupId, setSelectedLineGroupId] = useState<string | null>(null)
 
   const { data: user, isLoading: userLoading } = useQuery({
     queryKey: ['users', userId],
@@ -25,9 +27,19 @@ export function PlayerPage() {
         : api.get<WebUser>(`/users/${userId}`).then((r) => r.data),
   })
 
+  const { data: groups } = useQuery({
+    queryKey: ['groups'],
+    queryFn: () => api.get<Group[]>('/groups').then((r) => r.data),
+    enabled: userId === 'me',
+  })
+
+  const statsUrl = selectedLineGroupId
+    ? `/users/${userId}/stats?group_id=${selectedLineGroupId}`
+    : `/users/${userId}/stats`
+
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ['users', userId, 'stats'],
-    queryFn: () => api.get<UserStats>(`/users/${userId}/stats`).then((r) => r.data),
+    queryKey: ['users', userId, 'stats', selectedLineGroupId],
+    queryFn: () => api.get<UserStats>(statsUrl).then((r) => r.data),
     enabled: !!userId,
   })
 
@@ -54,6 +66,35 @@ export function PlayerPage() {
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
       </div>
+
+      {/* グループセレクタ（2グループ以上のとき表示） */}
+      {groups && groups.length >= 2 && (
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+          <button
+            onClick={() => setSelectedLineGroupId(null)}
+            className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              selectedLineGroupId === null
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+            }`}
+          >
+            全グループ
+          </button>
+          {groups.map((g) => (
+            <button
+              key={g.id}
+              onClick={() => setSelectedLineGroupId(g.line_group_id)}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                selectedLineGroupId === g.line_group_id
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              }`}
+            >
+              {g.name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* サマリーカード */}
       {stats && (

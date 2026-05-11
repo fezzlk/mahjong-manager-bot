@@ -55,6 +55,7 @@ from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.start_sim_use_case import StartSimUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
 from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
+from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
 from use_cases.group_line.update_group_settings_use_case import (
     UpdateGroupSettingsUseCase,
 )
@@ -100,6 +101,8 @@ class RCommands(Enum):
     ranking = "ranking"
     reopen = "reopen"
     sim = "sim"
+    migrate = "migrate"
+    migrate_confirm = "migrate_confirm"
 
 
 # Use a set for O(1) command lookup
@@ -223,6 +226,8 @@ def routing_for_group_by_command(command):
         RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
         RCommands.reopen.name: lambda: ReopenMatchUseCase().execute(),
         RCommands.sim.name: lambda: StartSimUseCase().execute(),
+        RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
+        RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),
         # drop_m (DisableMatchUseCase), entry (LinkUserToGroupUseCase),
         # sum_matches (ReplySumMatchesByIdsUseCase), add_result, my_results:
         # intentionally not yet implemented — stub commands reserved for future use

@@ -508,6 +508,96 @@ class ReplyService(IReplyService):
             ),
         )
 
+    def add_personal_history_group_quick_reply(self, groups) -> None:
+        items = [
+            QuickReplyItem(
+                action=PostbackAction(
+                    label="全グループ",
+                    display_text="全グループ",
+                    data="_personal_history?g=all",
+                ),
+            ),
+        ]
+        for g in groups[:12]:
+            label = (g.group_name or g.line_group_id)[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_personal_history?g={g.line_group_id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どのグループの成績を表示しますか？",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_migrate_target_quick_reply(self, groups) -> None:
+        items = []
+        for g in groups[:13]:
+            label = (g.group_name or g.line_group_id)[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_migrate_confirm?to={g.line_group_id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どのグループに統合しますか？\n（このグループの成績が選択先グループに含まれます）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_personal_migrate_source_quick_reply(self, groups) -> None:
+        """個人DM: 統合元 (旧グループ) 選択 QR"""
+        items = []
+        for g in groups[:13]:
+            label = (g.group_name or g.line_group_id)[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_personal_migrate?src={g.line_group_id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どのグループを統合しますか？\n（成績を別グループに移したいグループを選んでください）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_personal_migrate_dest_quick_reply(self, groups, src_group_id: str) -> None:
+        """個人DM: 統合先 (新グループ) 選択 QR"""
+        items = []
+        for g in groups[:13]:
+            label = (g.group_name or g.line_group_id)[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_personal_migrate?src={src_group_id}&to={g.line_group_id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どのグループに統合しますか？\n（選択先グループに成績がまとめられます）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
     def add_history_period_quick_reply(self) -> None:
         self.texts.append(
             TextMessage(

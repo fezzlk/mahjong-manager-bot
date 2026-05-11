@@ -7,6 +7,7 @@ export interface WebUser {
 
 export interface Group {
   id: string
+  line_group_id: string
   name: string
   description?: string
   member_count?: number
