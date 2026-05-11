@@ -557,7 +557,7 @@ class ReplyService(IReplyService):
         )
 
     def add_personal_migrate_source_quick_reply(self, groups) -> None:
-        """個人DM: 統合元（旧グループ）選択 QR"""
+        """個人DM: 統合元 (旧グループ) 選択 QR"""
         items = []
         for g in groups[:13]:
             label = (g.group_name or g.line_group_id)[:20]
@@ -578,7 +578,7 @@ class ReplyService(IReplyService):
         )
 
     def add_personal_migrate_dest_quick_reply(self, groups, src_group_id: str) -> None:
-        """個人DM: 統合先（新グループ）選択 QR"""
+        """個人DM: 統合先 (新グループ) 選択 QR"""
         items = []
         for g in groups[:13]:
             label = (g.group_name or g.line_group_id)[:20]

@@ -56,18 +56,18 @@ class MigrateGroupUseCase:
         )
 
     def execute_personal(self) -> None:
-        """_personal_migrate: 個人DMからの統合操作（パラメータで3ステップ分岐）。
+        """_personal_migrate: 個人DM からの統合操作 (パラメータで3ステップ分岐)。
 
-        params なし         → Step 1: 統合元グループ選択 QR
-        src=<id> のみ       → Step 2: 統合先グループ選択 QR
-        src=<id>&to=<id>   → Step 3: 統合確定
+        params なし        -> Step 1: 統合元グループ選択 QR
+        src=<id> のみ      -> Step 2: 統合先グループ選択 QR
+        src=<id>&to=<id>  -> Step 3: 統合確定
         """
         req_line_user_id = request_info_service.req_line_user_id
         src_param = request_info_service.params.get("src")
         to_param = request_info_service.params.get("to")
 
         if src_param and to_param:
-            self._personal_confirm(req_line_user_id, src_param, to_param)
+            self._personal_confirm(src_param, to_param)
         elif src_param:
             self._personal_select_dest(req_line_user_id, src_param)
         else:
@@ -108,9 +108,7 @@ class MigrateGroupUseCase:
         reply_service.add_message(f"「{src_name}」の統合先を選んでください。")
         reply_service.add_personal_migrate_dest_quick_reply(dests, src_group_id)
 
-    def _personal_confirm(
-        self, line_user_id: str, src_group_id: str, to_group_id: str
-    ) -> None:
+    def _personal_confirm(self, src_group_id: str, to_group_id: str) -> None:
         targets = group_repository.find({"line_group_id": to_group_id})
         if not targets:
             reply_service.add_message("統合先グループが存在しません。")
