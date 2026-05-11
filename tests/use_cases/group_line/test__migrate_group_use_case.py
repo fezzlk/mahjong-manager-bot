@@ -1,6 +1,7 @@
 from dummies import (
     generate_dummy_group_list,
     generate_dummy_text_message_event_from_group,
+    generate_dummy_text_message_event_from_user,
     generate_dummy_user_list,
 )
 from linebot.v3.messaging import TextMessage
@@ -101,3 +102,82 @@ def test_confirm_invalid_to():
 
     assert len(reply_service.texts) == 1
     assert "存在しません" in reply_service.texts[0].text
+
+
+# --- 個人DM フロー ---
+
+def _setup_personal_request(params=None):
+    event = generate_dummy_text_message_event_from_user()
+    request_info_service.set_req_info(event=event)
+    if params:
+        request_info_service.params = params
+
+
+def test_execute_personal_step1_shows_source_quick_reply():
+    """個人DM: params なし → 統合元選択 QR が返る（2グループ以上必要）。"""
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_SRC_GROUP.line_group_id),
+    )
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_DST_GROUP.line_group_id),
+    )
+    _setup_personal_request()
+
+    MigrateGroupUseCase().execute_personal()
+
+    assert len(reply_service.texts) == 1
+    msg = reply_service.texts[0]
+    assert isinstance(msg, TextMessage)
+    assert msg.quick_reply is not None
+    assert len(msg.quick_reply.items) == 2
+
+
+def test_execute_personal_step1_too_few_groups():
+    """個人DM: 1グループのみ → エラーメッセージ。"""
+    group_repository.create(_SRC_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_SRC_GROUP.line_group_id),
+    )
+    _setup_personal_request()
+
+    MigrateGroupUseCase().execute_personal()
+
+    assert len(reply_service.texts) == 1
+    assert "2つ以上" in reply_service.texts[0].text
+
+
+def test_execute_personal_step2_shows_dest_quick_reply():
+    """個人DM: src=<id> → 統合先選択 QR が返る。"""
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_SRC_GROUP.line_group_id),
+    )
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_DST_GROUP.line_group_id),
+    )
+    _setup_personal_request(params={"src": _SRC_GROUP.line_group_id})
+
+    MigrateGroupUseCase().execute_personal()
+
+    assert len(reply_service.texts) == 2  # "選んでください" + Quick Reply
+    assert reply_service.texts[1].quick_reply is not None
+    assert len(reply_service.texts[1].quick_reply.items) == 1  # DST_GROUP のみ
+
+
+def test_execute_personal_step3_confirms():
+    """個人DM: src=<id>&to=<id> → merged_into がセットされる。"""
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    _setup_personal_request(params={
+        "src": _SRC_GROUP.line_group_id,
+        "to": _DST_GROUP.line_group_id,
+    })
+
+    MigrateGroupUseCase().execute_personal()
+
+    result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
+    assert result[0].merged_into == _DST_GROUP.line_group_id
+    assert "統合しました" in reply_service.texts[0].text
