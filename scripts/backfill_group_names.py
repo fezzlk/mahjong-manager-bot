@@ -5,18 +5,32 @@ the group summary from LINE API. Groups where the bot has already left
 will fail the API call and are silently skipped.
 
 Usage:
-  PYTHONPATH=src python scripts/backfill_group_names.py
+  DATABASE_URL=... YOUR_CHANNEL_ACCESS_TOKEN=... DATABASE_NAME=mahjong-manager \
+    python3 scripts/backfill_group_names.py
+
+  Or: put DATABASE_URL / YOUR_CHANNEL_ACCESS_TOKEN / DATABASE_NAME in a
+  .env.backfill file and run:
+    set -a && source .env.backfill && set +a && python3 scripts/backfill_group_names.py
 """
 import os
-import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+import certifi
+from dotenv import load_dotenv
+from linebot.v3.messaging import ApiClient, Configuration, MessagingApi
+from linebot.v3.messaging.exceptions import ApiException
+from pymongo import MongoClient
 
-from linebot.v3.exceptions import ApiException
+load_dotenv(".env.backfill")
 
-import env_var  # noqa: F401 — loads .env
-from messaging_api_setting import line_bot_api
-from mongo_client import groups_collection
+_DATABASE_URL = os.environ["DATABASE_URL"]
+_DATABASE_NAME = os.environ.get("DATABASE_NAME", "mahjong-manager")
+_TOKEN = os.environ["YOUR_CHANNEL_ACCESS_TOKEN"]
+
+_mongo = MongoClient(_DATABASE_URL, tlsCAFile=certifi.where())
+groups_collection = _mongo[_DATABASE_NAME]["groups"]
+
+_cfg = Configuration(access_token=_TOKEN, ssl_ca_cert=certifi.where())
+line_bot_api = MessagingApi(ApiClient(_cfg))
 
 
 def main() -> None:
