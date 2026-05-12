@@ -33,6 +33,14 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
 
+          {/* 公開ページ（認証不要） */}
+          <Route element={<AppLayout />}>
+            <Route path="/groups/:id/matches" element={<MatchListPage />} />
+            <Route path="/groups/:id/matches/:matchId" element={<MatchDetailPage />} />
+            <Route path="/groups/:id/ranking" element={<RankingPage />} />
+          </Route>
+
+          {/* 認証必須ページ */}
           <Route
             element={
               <ProtectedRoute>
@@ -43,9 +51,6 @@ function App() {
             <Route index element={<DashboardPage />} />
             <Route path="/groups" element={<GroupListPage />} />
             <Route path="/groups/:id" element={<GroupDetailPage />} />
-            <Route path="/groups/:id/matches" element={<MatchListPage />} />
-            <Route path="/groups/:id/matches/:matchId" element={<MatchDetailPage />} />
-            <Route path="/groups/:id/ranking" element={<RankingPage />} />
             <Route path="/groups/:id/stats" element={<StatsPage />} />
             <Route path="/players/:id" element={<PlayerPage />} />
             <Route path="/settings" element={<SettingsPage />} />

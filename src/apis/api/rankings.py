@@ -15,9 +15,8 @@ from ._auth import assert_group_member, require_web_user
 
 
 @api_blueprint.route("/groups/<group_id>/ranking", methods=["GET"])
-@require_web_user
-def get_ranking(web_user, group_id):
-    """グループ内ランキング"""
+def get_ranking(group_id):
+    """グループ内ランキング（公開）"""
     from bson.objectid import ObjectId  # noqa: PLC0415
 
     try:
@@ -29,9 +28,6 @@ def get_ranking(web_user, group_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     line_group_id = groups[0].line_group_id
-    err = assert_group_member(web_user, line_group_id)
-    if err:
-        return err
 
     matches = match_repository.find({"line_group_id": line_group_id})
 

@@ -9,13 +9,11 @@ from repositories import (
 )
 
 from . import api_blueprint
-from ._auth import assert_group_member, require_web_user
 
 
 @api_blueprint.route("/groups/<group_id>/matches", methods=["GET"])
-@require_web_user
-def get_matches(web_user, group_id):
-    """グループ内の試合一覧"""
+def get_matches(group_id):
+    """グループ内の試合一覧（公開）"""
     from bson.objectid import ObjectId  # noqa: PLC0415
 
     try:
@@ -27,9 +25,6 @@ def get_matches(web_user, group_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     line_group_id = groups[0].line_group_id
-    err = assert_group_member(web_user, line_group_id)
-    if err:
-        return err
 
     matches = match_repository.find(
         {"line_group_id": line_group_id},
@@ -53,9 +48,8 @@ def get_matches(web_user, group_id):
 
 
 @api_blueprint.route("/matches/<match_id>", methods=["GET"])
-@require_web_user
-def get_match(web_user, match_id):
-    """試合詳細(半荘一覧含む)"""
+def get_match(match_id):
+    """試合詳細(半荘一覧含む)（公開）"""
     from bson.objectid import ObjectId  # noqa: PLC0415
 
     try:
@@ -67,9 +61,6 @@ def get_match(web_user, match_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     m = matches[0]
-    err = assert_group_member(web_user, m.line_group_id)
-    if err:
-        return err
 
     hanchans = hanchan_repository.find(
         {"match_id": m._id},
