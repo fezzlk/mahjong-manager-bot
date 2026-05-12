@@ -72,13 +72,11 @@ def line_authorize():
         {"linked_line_user_id": line_user_id},
     )
 
-    # ヒットしない場合は新規登録画面
+    # ヒットしない場合は新規登録画面（React SPA）
     if len(web_users) == 0:
         session["login_line_user_id"] = line_user_id
         session["login_name"] = display_name
-        return redirect(
-            url_for("web_user_blueprint.view_register", _external=True),
-        )
+        return redirect("/register")
 
     # ヒットした場合はログイン
     web_user = web_users[0]

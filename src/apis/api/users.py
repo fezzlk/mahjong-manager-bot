@@ -1,9 +1,52 @@
-from flask import jsonify, make_response, request
+from flask import jsonify, make_response, request, session
+from flask_jwt_extended import create_access_token
 
+from domain_model.entities.web_user import WebUser
 from repositories import web_user_repository
 
 from . import api_blueprint
 from ._auth import require_web_user
+
+
+@api_blueprint.route("/register-info", methods=["GET"])
+def get_register_info():
+    """LINE 認証後の新規登録フォーム用情報。セッションから LINE ユーザー情報を返す。"""
+    line_user_id = session.get("login_line_user_id")
+    if not line_user_id:
+        return make_response(jsonify({"error": "No registration session"}), 401)
+    return jsonify({
+        "line_user_id": line_user_id,
+        "name": session.get("login_name", ""),
+    })
+
+
+@api_blueprint.route("/register", methods=["POST"])
+def register_web_user():
+    """LINE 認証後の新規 WebUser 登録。JWT を発行して返す。"""
+    line_user_id = session.get("login_line_user_id")
+    if not line_user_id:
+        return make_response(jsonify({"error": "No registration session"}), 401)
+
+    body = request.get_json(silent=True) or {}
+    name = body.get("name") or session.get("login_name", "")
+
+    # 同じ LINE ユーザーで既に登録済みの場合は 409
+    existing = web_user_repository.find({"linked_line_user_id": line_user_id})
+    if existing:
+        return make_response(jsonify({"error": "Already registered"}), 409)
+
+    new_user = WebUser(
+        user_code=line_user_id,
+        name=name,
+        linked_line_user_id=line_user_id,
+    )
+    web_user = web_user_repository.create(new_user)
+
+    session.pop("login_line_user_id", None)
+    session.pop("login_name", None)
+
+    access_token = create_access_token(identity=str(web_user._id))
+    return jsonify({"access_token": access_token}), 201
 
 
 @api_blueprint.route("/me", methods=["GET"])
