@@ -16,7 +16,7 @@ from linebot.v3.exceptions import InvalidSignatureError
 logger = logging.getLogger(__name__)
 
 from application_models.page_contents import PageContents
-from server import limiter
+from extensions import limiter
 
 # handle_eventからhandlerをインポート（イベントハンドラーが登録された状態）
 from handle_event import handler
