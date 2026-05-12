@@ -61,6 +61,10 @@ from oauth_client import oauth
 
 oauth.init_app(app)
 
+from extensions import limiter  # noqa: E402
+
+limiter.init_app(app)
+
 # ===== Blueprint登録 =====
 from apis.root import views_blueprint
 
