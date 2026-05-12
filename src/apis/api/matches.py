@@ -13,7 +13,7 @@ from . import api_blueprint
 
 @api_blueprint.route("/groups/<group_id>/matches", methods=["GET"])
 def get_matches(group_id):
-    """グループ内の試合一覧（公開）"""
+    """グループ内の試合一覧 (公開)"""
     from bson.objectid import ObjectId  # noqa: PLC0415
 
     try:
@@ -49,7 +49,7 @@ def get_matches(group_id):
 
 @api_blueprint.route("/matches/<match_id>", methods=["GET"])
 def get_match(match_id):
-    """試合詳細(半荘一覧含む)（公開）"""
+    """試合詳細 (半荘一覧含む、公開)"""
     from bson.objectid import ObjectId  # noqa: PLC0415
 
     try:

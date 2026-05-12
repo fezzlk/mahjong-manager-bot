@@ -16,7 +16,7 @@ from ._auth import assert_group_member, require_web_user
 
 @api_blueprint.route("/groups/<group_id>/ranking", methods=["GET"])
 def get_ranking(group_id):
-    """グループ内ランキング（公開）"""
+    """グループ内ランキング (公開)"""
     from bson.objectid import ObjectId  # noqa: PLC0415
 
     try:
