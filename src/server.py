@@ -13,6 +13,8 @@ if not any("pytest" in arg for arg in sys.argv):
         debugpy = None
 from flask import Flask
 from flask_bcrypt import Bcrypt
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 # ===== パス設定 =====
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -60,6 +62,13 @@ bcrypt = Bcrypt(app)
 from oauth_client import oauth
 
 oauth.init_app(app)
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=[],
+    storage_uri="memory://",
+)
 
 # ===== Blueprint登録 =====
 from apis.root import views_blueprint

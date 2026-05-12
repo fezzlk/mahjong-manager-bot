@@ -29,6 +29,7 @@ from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.exit_use_case import ExitUseCase
 from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
+from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
 from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
 from use_cases.group_line.reply_apply_badai_use_case import ReplyApplyBadaiUseCase
 from use_cases.group_line.reply_finish_confirm_use_case import ReplyFinishConfirmUseCase
@@ -55,7 +56,6 @@ from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.start_sim_use_case import StartSimUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
 from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
-from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
 from use_cases.group_line.update_group_settings_use_case import (
     UpdateGroupSettingsUseCase,
 )

@@ -13,6 +13,7 @@ from use_cases.common_line.reply_rank_histogram_use_case import (
     ReplyRankHistogramUseCase,
 )
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
+from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
 from use_cases.personal_line.reply_history_use_case import ReplyHistoryUseCase
 from use_cases.personal_line.reply_token_use_case import ReplyTokenUseCase
 from use_cases.personal_line.reply_url_use_case import ReplyUrlUseCase
@@ -22,7 +23,6 @@ from use_cases.personal_line.request_link_line_web_use_case import (
     RequestLinkLineWebUseCase,
 )
 from use_cases.personal_line.user_exit_command_use_case import UserExitCommandUseCase
-from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
 
 
 class UCommands(Enum):

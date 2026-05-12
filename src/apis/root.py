@@ -16,6 +16,7 @@ from linebot.v3.exceptions import InvalidSignatureError
 logger = logging.getLogger(__name__)
 
 from application_models.page_contents import PageContents
+from server import limiter
 
 # handle_eventからhandlerをインポート（イベントハンドラーが登録された状態）
 from handle_event import handler
@@ -38,6 +39,7 @@ def index():
 
 
 @views_blueprint.route("/callback", methods=["POST"])
+@limiter.limit("300/minute")
 def callback():
     """Endpoint for LINE messaging API"""
     signature = request.headers["X-Line-Signature"]
