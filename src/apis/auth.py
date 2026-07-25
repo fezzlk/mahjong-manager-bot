@@ -89,9 +89,19 @@ def line_authorize():
     session["access_token"] = token["access_token"]
     session["login_user_id"] = web_user._id
 
-    # JWT を発行してフロントエンドへ渡す
+    # JWT を発行してフロントエンドへ渡す。ブラウザ履歴・Referrer・アクセスログへの
+    # 平文JWT漏洩を避けるため、URLクエリではなく短命(60秒)のhttpOnly Cookieで
+    # 一度だけ橋渡しする。SPA は起動時に GET /api/v1/auth/exchange でこの
+    # Cookie を読み取り、以後は通常どおり Authorization ヘッダーで認証する。
     jwt_token = create_access_token(identity=str(web_user._id))
     redirect_to = session.pop("next_page_url", "/")
-    # React SPA にトークンをクエリパラメータで渡す
-    separator = "&" if "?" in redirect_to else "?"
-    return redirect(f"{redirect_to}{separator}token={jwt_token}")
+    response = make_response(redirect(redirect_to))
+    response.set_cookie(
+        "pending_token",
+        jwt_token,
+        max_age=60,
+        httponly=True,
+        secure=env_var.FLASK_ENV == "production",
+        samesite="Lax",
+    )
+    return response
