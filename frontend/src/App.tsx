@@ -13,6 +13,7 @@ import { StatsPage } from '@/pages/StatsPage'
 import { PlayerPage } from '@/pages/PlayerPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { PrivacyPolicyPage } from '@/pages/PrivacyPolicyPage'
+import { TermsOfServicePage } from '@/pages/TermsOfServicePage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,6 +31,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
 
           <Route
             element={
