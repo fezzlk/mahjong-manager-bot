@@ -21,6 +21,11 @@ MONGO_USER="test-ci-user"
 SA_NAME="firestore-test-ci"
 SA_EMAIL="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 
+# サービスアカウントキーはリポジトリ外に保管する(誤コミット防止)。
+# 既定はリポジトリと同階層の兄弟ディレクトリ。上書きしたい場合は環境変数で指定する。
+KEY_FILE="${FIRESTORE_TEST_SA_KEY_PATH:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/mahjong-manager-bot-secrets/firestore-test-sa-key.json}"
+mkdir -p "$(dirname "${KEY_FILE}")"
+
 echo "=== Firestore Test DB Setup ==="
 echo "Project: ${PROJECT_ID}"
 echo "Test DB: ${TEST_DB_NAME}"
@@ -96,7 +101,6 @@ gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
     --quiet > /dev/null 2>&1
 echo "  Granted roles/datastore.user to SA."
 
-KEY_FILE="firestore-test-sa-key.json"
 if [ -f "${KEY_FILE}" ]; then
     echo "  Key file '${KEY_FILE}' already exists. Skipping."
 else
