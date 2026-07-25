@@ -6,6 +6,7 @@ from flask import jsonify, make_response, request
 from application_service import calculate_service, reply_service
 from domain_model.entities.user_hanchan import UserHanchanResult
 from domain_service import group_setting_service, hanchan_service
+from extensions import limiter
 from mongo_client import audit_logs_collection
 from repositories import (
     hanchan_repository,
@@ -41,6 +42,7 @@ def _write_audit_log(operator_id, action, target_id, before, after):
 
 
 @api_blueprint.route("/hanchans/<hanchan_id>", methods=["DELETE"])
+@limiter.limit("30/minute")
 @require_web_user
 def delete_hanchan(web_user, hanchan_id):
     try:
@@ -78,6 +80,7 @@ def delete_hanchan(web_user, hanchan_id):
 
 
 @api_blueprint.route("/hanchans/<hanchan_id>/scores", methods=["PUT"])
+@limiter.limit("30/minute")
 @require_web_user
 def update_hanchan_scores(web_user, hanchan_id):
     try:
@@ -167,6 +170,7 @@ def update_hanchan_scores(web_user, hanchan_id):
 
 
 @api_blueprint.route("/matches/<match_id>", methods=["DELETE"])
+@limiter.limit("30/minute")
 @require_web_user
 def delete_match(web_user, match_id):
     try:
@@ -199,6 +203,7 @@ def delete_match(web_user, match_id):
 
 
 @api_blueprint.route("/matches/<match_id>/chips", methods=["PUT"])
+@limiter.limit("30/minute")
 @require_web_user
 def update_match_chips(web_user, match_id):
     try:
