@@ -109,5 +109,6 @@ def get_match(web_user, match_id):
         "date": m.created_at.isoformat(),
         "hanchan_count": len(hanchans),
         "is_deleted": m.is_deleted,
+        "chip_scores": m.chip_scores or {},
         "hanchans": hanchan_list,
     })

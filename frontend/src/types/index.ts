@@ -24,6 +24,7 @@ export interface Match {
   date: string
   hanchan_count: number
   is_deleted: boolean
+  chip_scores?: Record<string, number>
 }
 
 export interface Hanchan {
