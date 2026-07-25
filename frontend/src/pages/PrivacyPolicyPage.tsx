@@ -19,7 +19,7 @@ export function PrivacyPolicyPage() {
             <li>LINE ユーザー ID・表示名（友達追加時に LINE API から取得）</li>
             <li>LINE グループ ID・グループ名・グループアイコン画像 URL（Bot がグループに参加した際に取得）</li>
             <li>対戦スコアデータ（ユーザーが入力した素点・計算結果・チップ枚数など）</li>
-            <li>Google アカウント情報（Web UI ログイン時に取得。メールアドレスは保存しません）</li>
+            <li>LINE アカウント情報（Web UI ログイン時に LINE Login 経由で取得。メールアドレスは保存しません）</li>
             <li>ランキング画像（生成した画像を Google Cloud Storage に一時保存）</li>
           </ul>
         </section>
@@ -81,6 +81,10 @@ export function PrivacyPolicyPage() {
             本ポリシーは必要に応じて更新することがあります。重要な変更がある場合は本ページの「最終更新日」を更新します。
           </p>
         </section>
+
+        <p className="text-sm text-muted-foreground">
+          関連ページ: <a href="/terms" className="text-primary underline">利用規約</a>
+        </p>
       </div>
     </div>
   )
