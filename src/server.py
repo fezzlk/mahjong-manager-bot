@@ -61,7 +61,7 @@ from oauth_client import oauth
 
 oauth.init_app(app)
 
-from extensions import limiter  # noqa: E402
+from extensions import limiter
 
 limiter.init_app(app)
 
