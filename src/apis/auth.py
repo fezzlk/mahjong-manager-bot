@@ -14,6 +14,7 @@ from flask_jwt_extended import create_access_token
 from linebot.v3.webhook import WebhookHandler
 
 import env_var
+from extensions import limiter
 from oauth_client import oauth
 from repositories import user_repository, web_user_repository
 
@@ -22,8 +23,9 @@ auth_blueprint = Blueprint("auth_blueprint", __name__, url_prefix="/auth")
 
 
 @auth_blueprint.route("/login", methods=["POST"])
+@limiter.limit("10/minute")
 def api_login():
-    # 本番環境ではパスワード認証なし /auth/login を無効化（Google OAuth のみ使用）
+    # 本番環境ではパスワード認証なし /auth/login を無効化（LINE Login のみ使用）
     if env_var.FLASK_ENV == "production":
         abort(404)
     body = request.get_json(silent=True) or {}
@@ -45,6 +47,7 @@ def authenticate(line_user_id: str) -> str:
 
 
 @auth_blueprint.route("/line/login")
+@limiter.limit("10/minute")
 def line_login():
     line = oauth.create_client("line")
     redirect_uri = url_for("auth_blueprint.line_authorize", _external=True)
@@ -52,6 +55,7 @@ def line_login():
 
 
 @auth_blueprint.route("/line/authorize")
+@limiter.limit("10/minute")
 def line_authorize():
     line = oauth.create_client("line")
     token = line.authorize_access_token()
