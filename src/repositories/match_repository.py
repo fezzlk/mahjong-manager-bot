@@ -1,6 +1,6 @@
 import copy
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from pymongo import ASCENDING
 
@@ -63,6 +63,33 @@ class MatchRepository(IMatchRepository):
         filter_query = {**(query or {}), "is_deleted": {"$ne": True}}
         records = matches_collection.find(filter=filter_query).sort(sort).limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
+
+    def update_field(
+        self,
+        query: Dict[str, any],
+        set_values: Dict[str, any] = None,
+        unset_fields: List[str] = None,
+    ) -> Optional[Match]:
+        """指定フィールドのみをアトミックに$set/$unset更新し、更新後のレコードを返す。
+
+        update()は対象フィールド全体を読み込み→メモリ上で変更→丸ごと書き戻すため、
+        同時実行時に他の更新を上書きして消してしまう(read-modify-write競合)。
+        chip_scores.<line_user_id>のようなフィールドパス単位で更新することでこれを避ける。
+        """
+        filter_query = {**query, "is_deleted": {"$ne": True}}
+        update_ops: Dict[str, any] = {}
+        values = dict(set_values or {})
+        values["updated_at"] = datetime.now()
+        update_ops["$set"] = values
+        if unset_fields:
+            update_ops["$unset"] = dict.fromkeys(unset_fields, "")
+
+        result = matches_collection.update_one(filter_query, update_ops)
+        if result.matched_count == 0:
+            return None
+
+        records = self.find(query)
+        return records[0] if records else None
 
     def delete(
         self,

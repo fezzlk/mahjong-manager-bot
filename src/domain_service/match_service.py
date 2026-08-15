@@ -22,25 +22,20 @@ class MatchService(IMatchService):
         if line_user_id is None:
             raise ValueError("fail to add_or_drop_chip_score: line_user_id is required")
 
-        matches = match_repository.find(
-            {
-                "_id": match_id,
-            },
-        )
-
-        if len(matches) == 0:
-            raise ValueError("Not found match")
-
-        target = matches[0]
-        chip_scores = target.chip_scores
-
+        field = f"chip_scores.{line_user_id}"
         if chip_score is None:
-            chip_scores.pop(line_user_id, None)
+            target = match_repository.update_field(
+                {"_id": match_id},
+                unset_fields=[field],
+            )
         else:
-            chip_scores[line_user_id] = chip_score
+            target = match_repository.update_field(
+                {"_id": match_id},
+                set_values={field: chip_score},
+            )
 
-        target.chip_scores = chip_scores
-        self.update(target)
+        if target is None:
+            raise ValueError("Not found match")
 
         return target
 
