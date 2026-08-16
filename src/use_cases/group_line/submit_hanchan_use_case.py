@@ -108,6 +108,13 @@ class SubmitHanchanUseCase:
             tobashita_player_id=tobashita_player_id,
         )
 
+        # この半荘の確定処理の所有権をアトミックに確定する。
+        # 4人分の得点がほぼ同時に揃うと複数リクエストがここまで並行して到達しうるため、
+        # 先に active_hanchan_id をクリアできた1件のみが後続の精算処理を行う。
+        if not match_service.try_clear_active_hanchan(active_match._id, active_hanchan._id):
+            return
+        active_match.active_hanchan_id = None
+
         try:
             # その半荘の結果を更新
             active_hanchan.converted_scores = calculate_result

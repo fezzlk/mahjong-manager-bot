@@ -11,6 +11,7 @@ from domain_model.entities.match import Match
 from domain_model.entities.user import User, UserMode
 from domain_model.entities.user_hanchan import UserHanchanResult
 from domain_model.entities.user_match import UserMatch
+from domain_service import match_service
 from repositories import (
     group_repository,
     hanchan_repository,
@@ -549,6 +550,43 @@ def test_fail_no_active_match():
     assert len(um) == 0
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "計算対象の試合が見つかりません。"
+    groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
+    assert groups[0].mode == GroupMode.input.value
+
+    reply_service.reset()
+
+
+def test_success_aborts_when_already_claimed_by_concurrent_request(mocker):
+    """4人分の得点がほぼ同時に揃い、複数リクエストが並行して確定処理に到達した場合、
+    所有権(active_hanchan_idのクリア)を得られなかった側は精算・メッセージ送信を
+    一切行わずに中断することを確認する(FEZ-49)
+    """
+    # Arrange
+    use_case = SubmitHanchanUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    hanchan_repository.create(dummy_active_hanchan)
+    dummy_match.active_hanchan_id = dummy_active_hanchan._id
+    match_repository.create(dummy_match)
+
+    mocker.patch.object(match_service, "try_clear_active_hanchan", return_value=False)
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    hanchan = hanchan_repository.find()[0]
+    assert len(hanchan.converted_scores) == 0
+    um = user_match_repository.find(
+        {"user_id": {"$in": [1, 2, 3, 4]}},
+    )
+    assert len(um) == 0
+    assert len(reply_service.texts) == 0
+    assert len(reply_service.buttons) == 0
+    matches = match_repository.find({"_id": 1})
+    assert matches[0].active_hanchan_id == dummy_active_hanchan._id
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
 

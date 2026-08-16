@@ -45,3 +45,11 @@ class IMatchService(metaclass=ABCMeta):
     @abstractmethod
     def find_all_archived_by_line_group_id(self, line_group_id: str) -> List[Match]:
         pass
+
+    @abstractmethod
+    def try_clear_active_hanchan(
+        self,
+        match_id: ObjectId,
+        hanchan_id: ObjectId,
+    ) -> bool:
+        pass

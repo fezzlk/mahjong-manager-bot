@@ -39,6 +39,23 @@ class MatchService(IMatchService):
 
         return target
 
+    def try_clear_active_hanchan(
+        self,
+        match_id: ObjectId,
+        hanchan_id: ObjectId,
+    ) -> bool:
+        """指定した hanchan が現在も active_hanchan である場合のみアトミックにクリアする(CAS)。
+
+        4人分の得点がほぼ同時に揃うと、複数リクエストが並行して半荘確定処理
+        (SubmitHanchanUseCase)に入りうる。この所有権確定を通った1件だけが後続の
+        精算・UserGroup/UserMatch作成・完了メッセージ送信を行うことで、重複実行を防ぐ。
+        """
+        target = match_repository.update_field(
+            {"_id": match_id, "active_hanchan_id": hanchan_id},
+            set_values={"active_hanchan_id": None},
+        )
+        return target is not None
+
     def find_one_by_id(self, _id: ObjectId) -> Optional[Match]:
         matches = match_repository.find(
             {"_id": _id},
