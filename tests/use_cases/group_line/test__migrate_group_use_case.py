@@ -74,6 +74,9 @@ def test_confirm_sets_merged_into():
     """_migrate_confirm?to=<id> で merged_into がセットされ確認メッセージが返る。"""
     group_repository.create(_SRC_GROUP)
     dst = group_repository.create(_DST_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_DST_GROUP.line_group_id),
+    )
     _setup_request(
         group_id=_SRC_GROUP.line_group_id,
         params={"to": _DST_GROUP.line_group_id},
@@ -102,6 +105,25 @@ def test_confirm_invalid_to():
 
     assert len(reply_service.texts) == 1
     assert "存在しません" in reply_service.texts[0].text
+
+
+def test_confirm_rejects_non_member_destination():
+    """統合先グループのメンバーでない場合、merged_into はセットされずエラーメッセージが返る（FEZ-50）。"""
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    # _USER は _DST_GROUP に所属していない (user_group_repository にレコードなし)
+    _setup_request(
+        group_id=_SRC_GROUP.line_group_id,
+        params={"to": _DST_GROUP.line_group_id},
+    )
+
+    MigrateGroupUseCase().confirm()
+
+    result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
+    assert result[0].merged_into is None
+
+    assert len(reply_service.texts) == 1
+    assert "メンバーではない" in reply_service.texts[0].text
 
 
 # --- 個人DM フロー ---
@@ -171,6 +193,9 @@ def test_execute_personal_step3_confirms():
     """個人DM: src=<id>&to=<id> → merged_into がセットされる。"""
     group_repository.create(_SRC_GROUP)
     group_repository.create(_DST_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_DST_GROUP.line_group_id),
+    )
     _setup_personal_request(params={
         "src": _SRC_GROUP.line_group_id,
         "to": _DST_GROUP.line_group_id,
@@ -181,3 +206,20 @@ def test_execute_personal_step3_confirms():
     result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
     assert result[0].merged_into == _DST_GROUP.line_group_id
     assert "統合しました" in reply_service.texts[0].text
+
+
+def test_execute_personal_step3_rejects_non_member_destination():
+    """個人DM: 統合先グループのメンバーでない場合、merged_into はセットされない（FEZ-50）。"""
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    # _USER は _DST_GROUP に所属していない (user_group_repository にレコードなし)
+    _setup_personal_request(params={
+        "src": _SRC_GROUP.line_group_id,
+        "to": _DST_GROUP.line_group_id,
+    })
+
+    MigrateGroupUseCase().execute_personal()
+
+    result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
+    assert result[0].merged_into is None
+    assert "メンバーではない" in reply_service.texts[0].text
