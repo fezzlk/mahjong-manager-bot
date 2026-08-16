@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from flask import jsonify, make_response
 
+from domain_service import group_service
 from repositories import (
     group_repository,
     hanchan_repository,
@@ -33,7 +34,8 @@ def get_ranking(web_user, group_id):
     if err:
         return err
 
-    matches = match_repository.find({"line_group_id": line_group_id})
+    effective_ids = group_service.get_effective_line_group_ids(line_group_id)
+    matches = match_repository.find({"line_group_id": {"$in": effective_ids}})
 
     # 全半荘の user_hanchan を収集
     stats = defaultdict(lambda: {
@@ -102,8 +104,9 @@ def get_group_stats(web_user, group_id):
     if err:
         return err
 
+    effective_ids = group_service.get_effective_line_group_ids(line_group_id)
     matches = match_repository.find(
-        {"line_group_id": line_group_id},
+        {"line_group_id": {"$in": effective_ids}},
         sort=[("created_at", 1)],
     )
 

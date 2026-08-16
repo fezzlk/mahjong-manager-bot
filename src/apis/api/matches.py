@@ -1,5 +1,6 @@
 from flask import jsonify, make_response
 
+from domain_service import group_service
 from repositories import (
     group_repository,
     hanchan_repository,
@@ -31,8 +32,9 @@ def get_matches(web_user, group_id):
     if err:
         return err
 
+    effective_ids = group_service.get_effective_line_group_ids(line_group_id)
     matches = match_repository.find(
-        {"line_group_id": line_group_id},
+        {"line_group_id": {"$in": effective_ids}},
         sort=[("created_at", -1)],
     )
 
