@@ -99,8 +99,22 @@ class GroupService(IGroupService):
         )
 
     def get_effective_line_group_ids(self, line_group_id: str) -> List[str]:
-        merged = group_repository.find({"merged_into": line_group_id})
-        return [line_group_id] + [g.line_group_id for g in merged]
+        """指定グループへ直接・間接を問わず統合されたグループを含む実効ID一覧を返す。
+
+        A→B、B→C のように統合が連鎖した場合、Cを起点にすると1階層先のBしか
+        拾えずAが漏れてしまうため、統合チェーンを世代ごとに再帰的に辿る。
+        """
+        effective_ids = [line_group_id]
+        frontier = [line_group_id]
+        while frontier:
+            merged = group_repository.find({"merged_into": {"$in": frontier}})
+            frontier = [
+                g.line_group_id
+                for g in merged
+                if g.line_group_id not in effective_ids
+            ]
+            effective_ids.extend(frontier)
+        return effective_ids
 
     def delete_by_line_group_id(self, line_group_id: str) -> None:
         group_repository.delete(
