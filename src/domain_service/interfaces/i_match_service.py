@@ -53,3 +53,11 @@ class IMatchService(metaclass=ABCMeta):
         hanchan_id: ObjectId,
     ) -> bool:
         pass
+
+    @abstractmethod
+    def restore_active_hanchan(
+        self,
+        match_id: ObjectId,
+        hanchan_id: ObjectId,
+    ) -> None:
+        pass

@@ -183,6 +183,8 @@ class SubmitHanchanUseCase:
 
         except pymongo.errors.PyMongoError as err:
             logger.exception("submit_hanchan: DB書き込み中にエラーが発生しました")
+            # 所有権クレームで消したactive_hanchan_idを復元し、この半荘を再試行可能にする
+            match_service.restore_active_hanchan(active_match._id, active_hanchan._id)
             import env_var  # noqa: PLC0415
             from application_service import reply_service as rs  # noqa: PLC0415
             rs.reset()

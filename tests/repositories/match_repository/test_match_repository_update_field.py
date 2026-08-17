@@ -55,6 +55,31 @@ def test_no_match_returns_none():
     assert result is None
 
 
+def test_returns_updated_document_when_query_targets_the_changed_field():
+    """queryのフィルタ条件自体がこのupdateで変更するフィールドである場合(CAS操作)でも、
+    更新後の内容を正しく返すことを確認する(FEZ-49、Codex review指摘)
+    """
+    # Arrange
+    hanchan_id = ObjectId()
+    match = Match(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        active_hanchan_id=hanchan_id,
+    )
+    match_repository.create(match)
+
+    # Act: active_hanchan_idが現在の値と一致することを条件に、同じフィールドをクリアする
+    result = match_repository.update_field(
+        {"_id": match._id, "active_hanchan_id": hanchan_id},
+        set_values={"active_hanchan_id": None},
+    )
+
+    # Assert
+    assert result is not None
+    assert result.active_hanchan_id is None
+    record_on_db = match_repository.find({"_id": match._id})[0]
+    assert record_on_db.active_hanchan_id is None
+
+
 def test_concurrent_writes_do_not_overwrite_each_other():
     """4人がほぼ同時にチップを入力しても全員分のデータが欠落なく保存されることを確認する(FEZ-49)"""
     # Arrange

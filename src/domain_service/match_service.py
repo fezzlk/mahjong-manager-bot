@@ -56,6 +56,21 @@ class MatchService(IMatchService):
         )
         return target is not None
 
+    def restore_active_hanchan(
+        self,
+        match_id: ObjectId,
+        hanchan_id: ObjectId,
+    ) -> None:
+        """try_clear_active_hanchan()後にDBエラーが起きた場合、半荘を再試行可能な状態へ戻す。
+
+        クリアしたまま復元しないと、対局はactive_hanchanを失ったまま宙に浮き、
+        次の得点入力を受け付けられなくなってしまう。
+        """
+        match_repository.update_field(
+            {"_id": match_id},
+            set_values={"active_hanchan_id": hanchan_id},
+        )
+
     def find_one_by_id(self, _id: ObjectId) -> Optional[Match]:
         matches = match_repository.find(
             {"_id": _id},

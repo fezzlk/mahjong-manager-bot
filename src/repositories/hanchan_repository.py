@@ -2,7 +2,7 @@ import copy
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
-from pymongo import ASCENDING
+from pymongo import ASCENDING, ReturnDocument
 
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.user_hanchan import UserHanchanResult
@@ -63,12 +63,17 @@ class HanchanRepository(IHanchanRepository):
         if unset_fields:
             update_ops["$unset"] = dict.fromkeys(unset_fields, "")
 
-        result = hanchans_collection.update_one(filter_query, update_ops)
-        if result.matched_count == 0:
+        # update_one() + find(query) の二段構えだと、queryに含めたフィールド自体を
+        # このupdateで書き換える場合、更新後のfind(query)がもう一致せずNoneを返して
+        # しまう。find_one_and_update()で更新後のドキュメントを直接受け取ることで避ける。
+        result = hanchans_collection.find_one_and_update(
+            filter_query,
+            update_ops,
+            return_document=ReturnDocument.AFTER,
+        )
+        if result is None:
             return None
-
-        records = self.find(query)
-        return records[0] if records else None
+        return self._mapping_record_to_domain(result)
 
     def update_many(
         self,

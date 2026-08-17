@@ -1,5 +1,7 @@
 from copy import deepcopy
 
+import pymongo.errors
+
 from application_service import (
     calculate_service,
     reply_service,
@@ -11,7 +13,7 @@ from domain_model.entities.match import Match
 from domain_model.entities.user import User, UserMode
 from domain_model.entities.user_hanchan import UserHanchanResult
 from domain_model.entities.user_match import UserMatch
-from domain_service import match_service
+from domain_service import hanchan_service, match_service
 from repositories import (
     group_repository,
     hanchan_repository,
@@ -589,6 +591,43 @@ def test_success_aborts_when_already_claimed_by_concurrent_request(mocker):
     assert matches[0].active_hanchan_id == dummy_active_hanchan._id
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
+
+    reply_service.reset()
+
+
+def test_success_restores_active_hanchan_on_db_error(mocker):
+    """精算処理中にDBエラーが発生した場合、所有権クレームで消したactive_hanchan_idを
+    復元し、その半荘を再試行可能な状態に戻すことを確認する(FEZ-49、Codex review指摘)
+    """
+    # Arrange
+    use_case = SubmitHanchanUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    hanchan_repository.create(dummy_active_hanchan)
+    dummy_match.active_hanchan_id = dummy_active_hanchan._id
+    match_repository.create(dummy_match)
+
+    mocker.patch.object(
+        hanchan_service,
+        "update",
+        side_effect=pymongo.errors.PyMongoError("boom"),
+    )
+    mock_push = mocker.patch.object(reply_service, "push_a_message")
+
+    # Act
+    use_case.execute()
+
+    # Assert
+    matches = match_repository.find({"_id": 1})
+    assert matches[0].active_hanchan_id == dummy_active_hanchan._id
+    assert mock_push.call_count == 1
+    assert len(reply_service.texts) == 1
+    assert (
+        reply_service.texts[0].text
+        == "半荘結果の保存中にエラーが発生しました。管理者に連絡してください。"
+    )
 
     reply_service.reset()
 
