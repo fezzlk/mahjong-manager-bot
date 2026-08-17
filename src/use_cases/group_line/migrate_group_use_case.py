@@ -37,6 +37,7 @@ class MigrateGroupUseCase:
     def confirm(self) -> None:
         """_migrate_confirm?to=<line_group_id>: 統合を確定する。"""
         src_group_id = request_info_service.req_line_group_id
+        req_line_user_id = request_info_service.req_line_user_id
         to_group_id = request_info_service.params.get("to")
 
         if not to_group_id:
@@ -46,6 +47,14 @@ class MigrateGroupUseCase:
         targets = group_repository.find({"line_group_id": to_group_id})
         if not targets:
             reply_service.add_message("統合先グループが存在しません。")
+            return
+
+        membership = user_group_repository.find({
+            "line_user_id": req_line_user_id,
+            "line_group_id": to_group_id,
+        })
+        if not membership:
+            reply_service.add_message("統合先グループのメンバーではないため統合できません。")
             return
 
         group_service.set_merged_into(src_group_id, to_group_id)
@@ -67,7 +76,7 @@ class MigrateGroupUseCase:
         to_param = request_info_service.params.get("to")
 
         if src_param and to_param:
-            self._personal_confirm(src_param, to_param)
+            self._personal_confirm(req_line_user_id, src_param, to_param)
         elif src_param:
             self._personal_select_dest(req_line_user_id, src_param)
         else:
@@ -108,10 +117,18 @@ class MigrateGroupUseCase:
         reply_service.add_message(f"「{src_name}」の統合先を選んでください。")
         reply_service.add_personal_migrate_dest_quick_reply(dests, src_group_id)
 
-    def _personal_confirm(self, src_group_id: str, to_group_id: str) -> None:
+    def _personal_confirm(self, line_user_id: str, src_group_id: str, to_group_id: str) -> None:
         targets = group_repository.find({"line_group_id": to_group_id})
         if not targets:
             reply_service.add_message("統合先グループが存在しません。")
+            return
+
+        membership = user_group_repository.find({
+            "line_user_id": line_user_id,
+            "line_group_id": to_group_id,
+        })
+        if not membership:
+            reply_service.add_message("統合先グループのメンバーではないため統合できません。")
             return
 
         group_service.set_merged_into(src_group_id, to_group_id)
