@@ -64,10 +64,13 @@ class MatchService(IMatchService):
         """try_clear_active_hanchan()後にDBエラーが起きた場合、半荘を再試行可能な状態へ戻す。
 
         クリアしたまま復元しないと、対局はactive_hanchanを失ったまま宙に浮き、
-        次の得点入力を受け付けられなくなってしまう。
+        次の得点入力を受け付けられなくなってしまう。ただし、復元は
+        active_hanchan_idが依然Noneのまま(他の処理が割り込んでいない)場合の
+        みに限定するCAS操作とし、その間に別の対局が新たに開始されていた場合は
+        その状態を上書きしないようにする(ベストエフォート)。
         """
         match_repository.update_field(
-            {"_id": match_id},
+            {"_id": match_id, "active_hanchan_id": None},
             set_values={"active_hanchan_id": hanchan_id},
         )
 

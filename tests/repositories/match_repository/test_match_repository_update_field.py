@@ -44,6 +44,29 @@ def test_unset_field_path():
     assert result.chip_scores == {"U2": 20}
 
 
+def test_self_heals_null_parent_field_before_dotted_update():
+    """chip_scoresが明示的にnullな既存ドキュメントでも、ドット区切り更新が
+    PathNotViableエラーにならず{}へ自己修復した上で更新されることを確認する
+    (FEZ-49、Codex review指摘)
+    """
+    # Arrange
+    match = Match(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        chip_scores={"U1": 10},
+    )
+    match_repository.create(match)
+    match_repository.update({"_id": match._id}, {"chip_scores": None})
+
+    # Act
+    result = match_repository.update_field(
+        {"_id": match._id},
+        set_values={"chip_scores.U2": 20},
+    )
+
+    # Assert
+    assert result.chip_scores == {"U2": 20}
+
+
 def test_no_match_returns_none():
     # Act
     result = match_repository.update_field(

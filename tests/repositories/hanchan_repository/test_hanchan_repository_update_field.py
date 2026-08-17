@@ -46,6 +46,30 @@ def test_unset_field_path():
     assert result.raw_scores == {"U2": 20000}
 
 
+def test_self_heals_null_parent_field_before_dotted_update():
+    """raw_scoresが明示的にnullな既存ドキュメントでも、ドット区切り更新が
+    PathNotViableエラーにならず{}へ自己修復した上で更新されることを確認する
+    (FEZ-49、Codex review指摘)
+    """
+    # Arrange
+    hanchan = Hanchan(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        match_id=ObjectId(),
+        raw_scores={"U1": 10000},
+    )
+    hanchan_repository.create(hanchan)
+    hanchan_repository.update({"_id": hanchan._id}, {"raw_scores": None})
+
+    # Act
+    result = hanchan_repository.update_field(
+        {"_id": hanchan._id},
+        set_values={"raw_scores.U2": 20000},
+    )
+
+    # Assert
+    assert result.raw_scores == {"U2": 20000}
+
+
 def test_no_match_returns_none():
     # Act
     result = hanchan_repository.update_field(

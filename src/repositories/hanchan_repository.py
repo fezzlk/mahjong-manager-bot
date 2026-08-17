@@ -63,6 +63,17 @@ class HanchanRepository(IHanchanRepository):
         if unset_fields:
             update_ops["$unset"] = dict.fromkeys(unset_fields, "")
 
+        # ドット区切りパス(例: raw_scores.<uid>)の親フィールドがnullの場合、
+        # MongoDBはnullの子要素を作成できずエラーになる。事前にnullなら{}へ
+        # 自己修復しておく(通常は親が既にdictなので何もマッチせず無視される)。
+        dotted_paths = list(values.keys()) + list(unset_fields or [])
+        parent_fields = {p.split(".", 1)[0] for p in dotted_paths if "." in p}
+        for parent in parent_fields:
+            hanchans_collection.update_one(
+                {**filter_query, parent: None},
+                {"$set": {parent: {}}},
+            )
+
         # update_one() + find(query) の二段構えだと、queryに含めたフィールド自体を
         # このupdateで書き換える場合、更新後のfind(query)がもう一致せずNoneを返して
         # しまう。find_one_and_update()で更新後のドキュメントを直接受け取ることで避ける。
