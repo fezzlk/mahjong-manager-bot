@@ -15,7 +15,7 @@ from repositories import (
 )
 
 from . import api_blueprint
-from ._auth import assert_group_member, require_web_user
+from ._auth import assert_group_member_via_merge_chain, require_web_user
 
 
 def _recalc_sum_scores(match_id):
@@ -53,7 +53,7 @@ def delete_hanchan(web_user, hanchan_id):
         return make_response(jsonify({"error": "Not found"}), 404)
     hanchan = hanchans[0]
 
-    err = assert_group_member(web_user, hanchan.line_group_id)
+    err = assert_group_member_via_merge_chain(web_user, hanchan.line_group_id)
     if err:
         return err
 
@@ -91,7 +91,7 @@ def update_hanchan_scores(web_user, hanchan_id):
         return make_response(jsonify({"error": "Not found"}), 404)
     hanchan = hanchans[0]
 
-    err = assert_group_member(web_user, hanchan.line_group_id)
+    err = assert_group_member_via_merge_chain(web_user, hanchan.line_group_id)
     if err:
         return err
 
@@ -181,7 +181,7 @@ def delete_match(web_user, match_id):
         return make_response(jsonify({"error": "Not found"}), 404)
     match = matches[0]
 
-    err = assert_group_member(web_user, match.line_group_id)
+    err = assert_group_member_via_merge_chain(web_user, match.line_group_id)
     if err:
         return err
 
@@ -214,7 +214,7 @@ def update_match_chips(web_user, match_id):
         return make_response(jsonify({"error": "Not found"}), 404)
     match = matches[0]
 
-    err = assert_group_member(web_user, match.line_group_id)
+    err = assert_group_member_via_merge_chain(web_user, match.line_group_id)
     if err:
         return err
 

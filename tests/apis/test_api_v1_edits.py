@@ -72,6 +72,34 @@ def test_delete_hanchan_returns_403_when_not_member(jwt_authenticated_client, mo
     assert resp.status_code == 403
 
 
+def test_delete_hanchan_allows_destination_group_member_after_merge(
+    jwt_authenticated_client, mocker,
+):
+    """グループ統合(merged_into)後、統合先グループのメンバーは統合元グループ由来の
+    半荘も削除できることを確認する(FEZ-58、Codex review指摘)
+    """
+    mocker.patch.object(line_bot_api, "push_message", return_value=None)
+    client, token, _web_user, line_user = jwt_authenticated_client
+    source_group_id = "G_edits_merge_src_hanchan_0001"
+    destination_group_id = "G_edits_merge_dst_hanchan_0001"
+    group_repository.create(Group(line_group_id=source_group_id))
+    group_repository.create(
+        Group(line_group_id=destination_group_id, merged_into=None),
+    )
+    group_repository.update(
+        {"line_group_id": source_group_id},
+        {"merged_into": destination_group_id},
+    )
+    # line_userは統合先グループにのみ所属(統合元へのメンバーシップは引き継がれない)
+    user_group_repository.create(
+        UserGroup(line_user_id=line_user.line_user_id, line_group_id=destination_group_id),
+    )
+    _match, hanchan = _make_match_with_hanchan(source_group_id)
+
+    resp = client.delete(f"/api/v1/hanchans/{hanchan._id}", headers=_auth(token))
+    assert resp.status_code == 200
+
+
 def test_delete_hanchan_marks_deleted_and_recalculates_sum(jwt_authenticated_client, mocker):
     mock_push = mocker.patch.object(line_bot_api, "push_message", return_value=None)
     client, token, _web_user, line_user = jwt_authenticated_client
@@ -165,6 +193,37 @@ def test_delete_match_returns_404_for_invalid_id(jwt_authenticated_client):
     client, token, _web_user, _line_user = jwt_authenticated_client
     resp = client.delete("/api/v1/matches/not-an-object-id", headers=_auth(token))
     assert resp.status_code == 404
+
+
+def test_delete_match_allows_destination_group_member_after_merge(
+    jwt_authenticated_client, mocker,
+):
+    """グループ統合(merged_into)後、統合先グループのメンバーは統合元グループ由来の
+    対戦も削除できることを確認する(FEZ-58、Codex review指摘)
+    """
+    mocker.patch.object(line_bot_api, "push_message", return_value=None)
+    client, token, _web_user, line_user = jwt_authenticated_client
+    source_group_id = "G_edits_merge_src_match_00001"
+    destination_group_id = "G_edits_merge_dst_match_00001"
+    group_repository.create(Group(line_group_id=source_group_id))
+    group_repository.create(
+        Group(line_group_id=destination_group_id, merged_into=None),
+    )
+    group_repository.update(
+        {"line_group_id": source_group_id},
+        {"merged_into": destination_group_id},
+    )
+    # line_userは統合先グループにのみ所属(統合元へのメンバーシップは引き継がれない)
+    user_group_repository.create(
+        UserGroup(line_user_id=line_user.line_user_id, line_group_id=destination_group_id),
+    )
+    match, hanchan = _make_match_with_hanchan(source_group_id)
+
+    resp = client.delete(f"/api/v1/matches/{match._id}", headers=_auth(token))
+    assert resp.status_code == 200
+
+    assert match_repository.find({"_id": match._id}) == []
+    assert hanchan_repository.find({"_id": hanchan._id}) == []
 
 
 def test_delete_match_marks_match_and_hanchans_deleted(jwt_authenticated_client, mocker):

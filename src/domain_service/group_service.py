@@ -98,9 +98,39 @@ class GroupService(IGroupService):
             {"merged_into": merged_into},
         )
 
+    def get_final_merge_destination(self, line_group_id: str) -> str:
+        """指定グループが最終的に統合された先のグループIDを返す。
+
+        A→B→C と連鎖統合されている場合、Aを起点にすると最終到達点のCを返す。
+        統合されていなければ自分自身を返す。データ不整合による循環がある場合も
+        無限ループしないようガードする。
+        """
+        current = line_group_id
+        seen = {current}
+        while True:
+            group = self.find_one_by_line_group_id(current)
+            if group is None or not group.merged_into or group.merged_into in seen:
+                return current
+            current = group.merged_into
+            seen.add(current)
+
     def get_effective_line_group_ids(self, line_group_id: str) -> List[str]:
-        merged = group_repository.find({"merged_into": line_group_id})
-        return [line_group_id] + [g.line_group_id for g in merged]
+        """指定グループへ直接・間接を問わず統合されたグループを含む実効ID一覧を返す。
+
+        A→B、B→C のように統合が連鎖した場合、Cを起点にすると1階層先のBしか
+        拾えずAが漏れてしまうため、統合チェーンを世代ごとに再帰的に辿る。
+        """
+        effective_ids = [line_group_id]
+        frontier = [line_group_id]
+        while frontier:
+            merged = group_repository.find({"merged_into": {"$in": frontier}})
+            frontier = [
+                g.line_group_id
+                for g in merged
+                if g.line_group_id not in effective_ids
+            ]
+            effective_ids.extend(frontier)
+        return effective_ids
 
     def delete_by_line_group_id(self, line_group_id: str) -> None:
         group_repository.delete(
