@@ -566,6 +566,7 @@ def test_success_aborts_when_already_claimed_by_concurrent_request(mocker):
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
+    dummy_group.active_match_id = dummy_match._id
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -602,6 +603,7 @@ def test_success_restores_active_hanchan_on_db_error(mocker):
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
+    dummy_group.active_match_id = dummy_match._id
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
