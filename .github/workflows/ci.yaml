@@ -141,6 +141,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # requirements.txt には pytest 等のテスト専用パッケージが含まれないため、
+          # requirements-dev.in からテストに必要な分だけ個別にインストールする
+          pip install $(grep -E '^(pytest|pytest-cov|pytest-mock|coverage(\[toml\])?)==' requirements-dev.in)
       # テスト用 DB
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.7.0
@@ -158,4 +161,7 @@ jobs:
           FLASK_SECRET_KEY: ci-test-secret
           JWT_SECRET_KEY: ci-test-jwt-secret
         run: |
+          # pipefail 未設定だと `pytest | tail` で pytest 側の失敗(コマンド未検出含む)が
+          # tail の終了コード(常に0)に隠れてジョブが誤ってpassする。それを防ぐ。
+          set -o pipefail
           pytest --cov=src tests/ -v --tb=short 2>&1 | tail -100
