@@ -67,6 +67,26 @@ def test_self_heals_null_parent_field_before_dotted_update():
     assert result.chip_scores == {"U2": 20}
 
 
+def test_sum_scores_round_trips_through_list_serialization():
+    """sum_scoresをupdate_field()経由で更新しても、update()同様list形式で
+    永続化され、find()で正しくdictへ復元されることを確認する
+    """
+    # Arrange
+    match = Match(line_group_id="G0123456789abcdefghijklmnopqrstu1")
+    match_repository.create(match)
+
+    # Act
+    result = match_repository.update_field(
+        {"_id": match._id},
+        set_values={"sum_scores": {"U1": 50, "U2": -50}},
+    )
+
+    # Assert
+    assert result.sum_scores == {"U1": 50, "U2": -50}
+    record_on_db = match_repository.find({"_id": match._id})[0]
+    assert record_on_db.sum_scores == {"U1": 50, "U2": -50}
+
+
 def test_no_match_returns_none():
     # Act
     result = match_repository.update_field(

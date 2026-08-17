@@ -163,9 +163,10 @@ class SubmitHanchanUseCase:
                     sum_scores[line_user_id] += converted_score
 
             # 一半荘の結果をアーカイブ
-            active_match.active_hanchan_id = None
-            active_match.sum_scores = sum_scores
-            match_service.update(active_match)
+            # (active_hanchan_idは既にtry_clear_active_hanchan()でクリア済みのため
+            # ここでは触れない。Matchエンティティ全体をupdate()すると、確定処理中に
+            # 別の対局が新たに開始されていた場合にその状態を上書きしてしまう)
+            match_service.update_sum_scores(active_match._id, sum_scores)
 
             # hanchan.results に結果を embedded 保存
             sorted_points: list[tuple[str, int]] = sorted(

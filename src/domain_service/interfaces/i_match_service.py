@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from bson.objectid import ObjectId
 
@@ -59,5 +59,13 @@ class IMatchService(metaclass=ABCMeta):
         self,
         match_id: ObjectId,
         hanchan_id: ObjectId,
+    ) -> None:
+        pass
+
+    @abstractmethod
+    def update_sum_scores(
+        self,
+        match_id: ObjectId,
+        sum_scores: Dict[str, int],
     ) -> None:
         pass

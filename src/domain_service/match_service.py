@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from bson.objectid import ObjectId
 from pymongo import ASCENDING, DESCENDING
@@ -72,6 +72,24 @@ class MatchService(IMatchService):
         match_repository.update_field(
             {"_id": match_id, "active_hanchan_id": None},
             set_values={"active_hanchan_id": hanchan_id},
+        )
+
+    def update_sum_scores(
+        self,
+        match_id: ObjectId,
+        sum_scores: Dict[str, int],
+    ) -> None:
+        """半荘確定処理の完了時、対局全体の累計スコアのみを更新する。
+
+        この時点でactive_hanchan_idは既にtry_clear_active_hanchan()で
+        クリア済み。ここでMatchエンティティ全体をupdate()すると、確定処理の
+        実行中に別の対局(_sim等)が新たにactive_hanchan_idを割り当てていた
+        場合、その状態を古いローカルの値(None)で上書きし孤立させてしまう。
+        sum_scoresのみをフィールド単位で更新することでこれを避ける。
+        """
+        match_repository.update_field(
+            {"_id": match_id},
+            set_values={"sum_scores": sum_scores},
         )
 
     def find_one_by_id(self, _id: ObjectId) -> Optional[Match]:

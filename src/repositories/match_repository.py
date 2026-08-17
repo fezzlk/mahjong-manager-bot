@@ -79,6 +79,8 @@ class MatchRepository(IMatchRepository):
         filter_query = {**query, "is_deleted": {"$ne": True}}
         update_ops: Dict[str, any] = {}
         values = dict(set_values or {})
+        if "sum_scores" in values:
+            values["sum_scores"] = _sum_scores_to_list(values["sum_scores"])
         values["updated_at"] = datetime.now()
         update_ops["$set"] = values
         if unset_fields:
