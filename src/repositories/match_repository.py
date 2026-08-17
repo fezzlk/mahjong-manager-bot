@@ -1,8 +1,8 @@
 import copy
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
-from pymongo import ASCENDING
+from pymongo import ASCENDING, ReturnDocument
 
 from domain_model.entities.match import Match
 from domain_model.i_repositories.i_match_repository import IMatchRepository
@@ -63,6 +63,52 @@ class MatchRepository(IMatchRepository):
         filter_query = {**(query or {}), "is_deleted": {"$ne": True}}
         records = matches_collection.find(filter=filter_query).sort(sort).limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
+
+    def update_field(
+        self,
+        query: Dict[str, any],
+        set_values: Dict[str, any] = None,
+        unset_fields: List[str] = None,
+    ) -> Optional[Match]:
+        """指定フィールドのみをアトミックに$set/$unset更新し、更新後のレコードを返す。
+
+        update()は対象フィールド全体を読み込み→メモリ上で変更→丸ごと書き戻すため、
+        同時実行時に他の更新を上書きして消してしまう(read-modify-write競合)。
+        chip_scores.<line_user_id>のようなフィールドパス単位で更新することでこれを避ける。
+        """
+        filter_query = {**query, "is_deleted": {"$ne": True}}
+        update_ops: Dict[str, any] = {}
+        values = dict(set_values or {})
+        if "sum_scores" in values:
+            values["sum_scores"] = _sum_scores_to_list(values["sum_scores"])
+        values["updated_at"] = datetime.now()
+        update_ops["$set"] = values
+        if unset_fields:
+            update_ops["$unset"] = dict.fromkeys(unset_fields, "")
+
+        # ドット区切りパス(例: chip_scores.<uid>)の親フィールドがnullの場合、
+        # MongoDBはnullの子要素を作成できずエラーになる。事前にnullなら{}へ
+        # 自己修復しておく(通常は親が既にdictなので何もマッチせず無視される)。
+        dotted_paths = list(values.keys()) + list(unset_fields or [])
+        parent_fields = {p.split(".", 1)[0] for p in dotted_paths if "." in p}
+        for parent in parent_fields:
+            matches_collection.update_one(
+                {**filter_query, parent: None},
+                {"$set": {parent: {}}},
+            )
+
+        # update_one() + find(query) の二段構えだと、queryに含めたフィールド自体を
+        # このupdateで書き換える場合(例: active_hanchan_idを条件にして同じ値をクリアする
+        # CAS操作)、更新後のfind(query)がもう一致せずNoneを返してしまう。
+        # find_one_and_update()で更新後のドキュメントを直接受け取ることでこれを避ける。
+        result = matches_collection.find_one_and_update(
+            filter_query,
+            update_ops,
+            return_document=ReturnDocument.AFTER,
+        )
+        if result is None:
+            return None
+        return self._mapping_record_to_domain(result)
 
     def delete(
         self,

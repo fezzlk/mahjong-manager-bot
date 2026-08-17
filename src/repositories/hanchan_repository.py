@@ -1,8 +1,8 @@
 import copy
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
-from pymongo import ASCENDING
+from pymongo import ASCENDING, ReturnDocument
 
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.user_hanchan import UserHanchanResult
@@ -42,6 +42,49 @@ class HanchanRepository(IHanchanRepository):
             new_values["results"] = _results_to_list(new_values["results"])
         result = hanchans_collection.update_one(filter_query, {"$set": new_values})
         return result.matched_count
+
+    def update_field(
+        self,
+        query: Dict[str, any],
+        set_values: Dict[str, any] = None,
+        unset_fields: List[str] = None,
+    ) -> Optional[Hanchan]:
+        """指定フィールドのみをアトミックに$set/$unset更新し、更新後のレコードを返す。
+
+        update()は対象フィールド全体を読み込み→メモリ上で変更→丸ごと書き戻すため、
+        同時実行時に他の更新を上書きして消してしまう(read-modify-write競合)。
+        raw_scores.<line_user_id>のようなフィールドパス単位で更新することでこれを避ける。
+        """
+        filter_query = {**query, "is_deleted": {"$ne": True}}
+        update_ops: Dict[str, any] = {}
+        values = dict(set_values or {})
+        values["updated_at"] = datetime.now()
+        update_ops["$set"] = values
+        if unset_fields:
+            update_ops["$unset"] = dict.fromkeys(unset_fields, "")
+
+        # ドット区切りパス(例: raw_scores.<uid>)の親フィールドがnullの場合、
+        # MongoDBはnullの子要素を作成できずエラーになる。事前にnullなら{}へ
+        # 自己修復しておく(通常は親が既にdictなので何もマッチせず無視される)。
+        dotted_paths = list(values.keys()) + list(unset_fields or [])
+        parent_fields = {p.split(".", 1)[0] for p in dotted_paths if "." in p}
+        for parent in parent_fields:
+            hanchans_collection.update_one(
+                {**filter_query, parent: None},
+                {"$set": {parent: {}}},
+            )
+
+        # update_one() + find(query) の二段構えだと、queryに含めたフィールド自体を
+        # このupdateで書き換える場合、更新後のfind(query)がもう一致せずNoneを返して
+        # しまう。find_one_and_update()で更新後のドキュメントを直接受け取ることで避ける。
+        result = hanchans_collection.find_one_and_update(
+            filter_query,
+            update_ops,
+            return_document=ReturnDocument.AFTER,
+        )
+        if result is None:
+            return None
+        return self._mapping_record_to_domain(result)
 
     def update_many(
         self,

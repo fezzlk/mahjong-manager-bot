@@ -108,6 +108,13 @@ class SubmitHanchanUseCase:
             tobashita_player_id=tobashita_player_id,
         )
 
+        # この半荘の確定処理の所有権をアトミックに確定する。
+        # 4人分の得点がほぼ同時に揃うと複数リクエストがここまで並行して到達しうるため、
+        # 先に active_hanchan_id をクリアできた1件のみが後続の精算処理を行う。
+        if not match_service.try_clear_active_hanchan(active_match._id, active_hanchan._id):
+            return
+        active_match.active_hanchan_id = None
+
         try:
             # その半荘の結果を更新
             active_hanchan.converted_scores = calculate_result
@@ -156,9 +163,10 @@ class SubmitHanchanUseCase:
                     sum_scores[line_user_id] += converted_score
 
             # 一半荘の結果をアーカイブ
-            active_match.active_hanchan_id = None
-            active_match.sum_scores = sum_scores
-            match_service.update(active_match)
+            # (active_hanchan_idは既にtry_clear_active_hanchan()でクリア済みのため
+            # ここでは触れない。Matchエンティティ全体をupdate()すると、確定処理中に
+            # 別の対局が新たに開始されていた場合にその状態を上書きしてしまう)
+            match_service.update_sum_scores(active_match._id, sum_scores)
 
             # hanchan.results に結果を embedded 保存
             sorted_points: list[tuple[str, int]] = sorted(
@@ -176,6 +184,8 @@ class SubmitHanchanUseCase:
 
         except pymongo.errors.PyMongoError as err:
             logger.exception("submit_hanchan: DB書き込み中にエラーが発生しました")
+            # 所有権クレームで消したactive_hanchan_idを復元し、この半荘を再試行可能にする
+            match_service.restore_active_hanchan(active_match._id, active_hanchan._id)
             import env_var  # noqa: PLC0415
             from application_service import reply_service as rs  # noqa: PLC0415
             rs.reset()

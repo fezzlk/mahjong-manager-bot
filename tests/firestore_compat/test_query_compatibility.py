@@ -157,6 +157,65 @@ class TestUpdateOperators:
         result = collection.insert_many(docs, ordered=False)
         assert len(result.inserted_ids) == 5
 
+    def test_dotted_path_set_on_nested_field(self, collection):
+        """hanchan_repository/match_repository.update_field() uses dotted field
+        paths (e.g. "raw_scores.<line_user_id>") to update a single map entry
+        atomically without reading/writing the whole map (FEZ-49).
+        """
+        _id = collection.insert_one({"raw_scores": {"U1": 1000}}).inserted_id
+
+        collection.update_one(
+            {"_id": _id},
+            {"$set": {"raw_scores.U2": 2000}},
+        )
+
+        doc = collection.find_one({"_id": _id})
+        assert doc["raw_scores"] == {"U1": 1000, "U2": 2000}
+
+    def test_dotted_path_unset_on_nested_field(self, collection):
+        """update_field() uses a dotted $unset to drop a single map entry
+        (e.g. score correction) without touching sibling entries (FEZ-49).
+        """
+        _id = collection.insert_one({
+            "raw_scores": {"U1": 1000, "U2": 2000},
+        }).inserted_id
+
+        collection.update_one(
+            {"_id": _id},
+            {"$unset": {"raw_scores.U1": ""}},
+        )
+
+        doc = collection.find_one({"_id": _id})
+        assert doc["raw_scores"] == {"U2": 2000}
+
+    def test_concurrent_dotted_path_sets_do_not_overwrite_each_other(self, collection):
+        """Two concurrent single-field $set updates on different map keys
+        of the same document must both survive (the bug FEZ-49 fixes).
+        """
+        import threading
+
+        _id = collection.insert_one({"raw_scores": {}}).inserted_id
+        barrier = threading.Barrier(2)
+
+        def submit(line_user_id, score):
+            barrier.wait()
+            collection.update_one(
+                {"_id": _id},
+                {"$set": {f"raw_scores.{line_user_id}": score}},
+            )
+
+        threads = [
+            threading.Thread(target=submit, args=("U1", 1000)),
+            threading.Thread(target=submit, args=("U2", 2000)),
+        ]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+        doc = collection.find_one({"_id": _id})
+        assert doc["raw_scores"] == {"U1": 1000, "U2": 2000}
+
 
 class TestIndexOperations:
     """Index creation (used by setup_indexes.py).

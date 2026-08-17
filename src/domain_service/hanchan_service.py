@@ -24,24 +24,21 @@ class HanchanService(IHanchanService):
         if line_user_id is None:
             raise ValueError("fail to add_or_drop_raw_score: line_user_id is required")
 
-        target = self.find_one_by_id(hanchan_id)
+        field = f"raw_scores.{line_user_id}"
+        if raw_score is None:
+            target = hanchan_repository.update_field(
+                {"_id": hanchan_id},
+                unset_fields=[field],
+            )
+        else:
+            target = hanchan_repository.update_field(
+                {"_id": hanchan_id},
+                set_values={field: raw_score},
+            )
 
         if target is None:
             raise ValueError("fail to add_or_drop_raw_score: Not found hanchan")
 
-        raw_scores = target.raw_scores
-
-        if raw_score is None:
-            raw_scores.pop(line_user_id, None)
-        else:
-            raw_scores[line_user_id] = raw_score
-
-        hanchan_repository.update(
-            {"_id": target._id},
-            {"raw_scores": raw_scores},
-        )
-
-        target.raw_scores = raw_scores
         return target
 
     def find_one_by_id(self, _id: ObjectId) -> Optional[Hanchan]:

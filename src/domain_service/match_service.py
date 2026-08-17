@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from bson.objectid import ObjectId
 from pymongo import ASCENDING, DESCENDING
@@ -22,27 +22,75 @@ class MatchService(IMatchService):
         if line_user_id is None:
             raise ValueError("fail to add_or_drop_chip_score: line_user_id is required")
 
-        matches = match_repository.find(
-            {
-                "_id": match_id,
-            },
-        )
+        field = f"chip_scores.{line_user_id}"
+        if chip_score is None:
+            target = match_repository.update_field(
+                {"_id": match_id},
+                unset_fields=[field],
+            )
+        else:
+            target = match_repository.update_field(
+                {"_id": match_id},
+                set_values={field: chip_score},
+            )
 
-        if len(matches) == 0:
+        if target is None:
             raise ValueError("Not found match")
 
-        target = matches[0]
-        chip_scores = target.chip_scores
-
-        if chip_score is None:
-            chip_scores.pop(line_user_id, None)
-        else:
-            chip_scores[line_user_id] = chip_score
-
-        target.chip_scores = chip_scores
-        self.update(target)
-
         return target
+
+    def try_clear_active_hanchan(
+        self,
+        match_id: ObjectId,
+        hanchan_id: ObjectId,
+    ) -> bool:
+        """指定した hanchan が現在も active_hanchan である場合のみアトミックにクリアする(CAS)。
+
+        4人分の得点がほぼ同時に揃うと、複数リクエストが並行して半荘確定処理
+        (SubmitHanchanUseCase)に入りうる。この所有権確定を通った1件だけが後続の
+        精算・UserGroup/UserMatch作成・完了メッセージ送信を行うことで、重複実行を防ぐ。
+        """
+        target = match_repository.update_field(
+            {"_id": match_id, "active_hanchan_id": hanchan_id},
+            set_values={"active_hanchan_id": None},
+        )
+        return target is not None
+
+    def restore_active_hanchan(
+        self,
+        match_id: ObjectId,
+        hanchan_id: ObjectId,
+    ) -> None:
+        """try_clear_active_hanchan()後にDBエラーが起きた場合、半荘を再試行可能な状態へ戻す。
+
+        クリアしたまま復元しないと、対局はactive_hanchanを失ったまま宙に浮き、
+        次の得点入力を受け付けられなくなってしまう。ただし、復元は
+        active_hanchan_idが依然Noneのまま(他の処理が割り込んでいない)場合の
+        みに限定するCAS操作とし、その間に別の対局が新たに開始されていた場合は
+        その状態を上書きしないようにする(ベストエフォート)。
+        """
+        match_repository.update_field(
+            {"_id": match_id, "active_hanchan_id": None},
+            set_values={"active_hanchan_id": hanchan_id},
+        )
+
+    def update_sum_scores(
+        self,
+        match_id: ObjectId,
+        sum_scores: Dict[str, int],
+    ) -> None:
+        """半荘確定処理の完了時、対局全体の累計スコアのみを更新する。
+
+        この時点でactive_hanchan_idは既にtry_clear_active_hanchan()で
+        クリア済み。ここでMatchエンティティ全体をupdate()すると、確定処理の
+        実行中に別の対局(_sim等)が新たにactive_hanchan_idを割り当てていた
+        場合、その状態を古いローカルの値(None)で上書きし孤立させてしまう。
+        sum_scoresのみをフィールド単位で更新することでこれを避ける。
+        """
+        match_repository.update_field(
+            {"_id": match_id},
+            set_values={"sum_scores": sum_scores},
+        )
 
     def find_one_by_id(self, _id: ObjectId) -> Optional[Match]:
         matches = match_repository.find(

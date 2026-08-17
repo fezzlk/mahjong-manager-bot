@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from bson.objectid import ObjectId
 
@@ -44,4 +44,28 @@ class IMatchService(metaclass=ABCMeta):
 
     @abstractmethod
     def find_all_archived_by_line_group_id(self, line_group_id: str) -> List[Match]:
+        pass
+
+    @abstractmethod
+    def try_clear_active_hanchan(
+        self,
+        match_id: ObjectId,
+        hanchan_id: ObjectId,
+    ) -> bool:
+        pass
+
+    @abstractmethod
+    def restore_active_hanchan(
+        self,
+        match_id: ObjectId,
+        hanchan_id: ObjectId,
+    ) -> None:
+        pass
+
+    @abstractmethod
+    def update_sum_scores(
+        self,
+        match_id: ObjectId,
+        sum_scores: Dict[str, int],
+    ) -> None:
         pass
