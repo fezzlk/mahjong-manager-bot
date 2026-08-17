@@ -155,6 +155,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           YOUR_CHANNEL_ACCESS_TOKEN: ci-dummy-token
           YOUR_CHANNEL_SECRET: ci-dummy-secret
+          SERVER_ADMIN_LINE_USER_ID: ci-dummy-admin-line-id
           DATABASE_URL: mongodb://localhost:27017/?authSource=admin
           DATABASE_NAME: test
           SERVER_URL: http://localhost:5000/
