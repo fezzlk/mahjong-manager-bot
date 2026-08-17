@@ -98,6 +98,22 @@ class GroupService(IGroupService):
             {"merged_into": merged_into},
         )
 
+    def get_final_merge_destination(self, line_group_id: str) -> str:
+        """指定グループが最終的に統合された先のグループIDを返す。
+
+        A→B→C と連鎖統合されている場合、Aを起点にすると最終到達点のCを返す。
+        統合されていなければ自分自身を返す。データ不整合による循環がある場合も
+        無限ループしないようガードする。
+        """
+        current = line_group_id
+        seen = {current}
+        while True:
+            group = self.find_one_by_line_group_id(current)
+            if group is None or not group.merged_into or group.merged_into in seen:
+                return current
+            current = group.merged_into
+            seen.add(current)
+
     def get_effective_line_group_ids(self, line_group_id: str) -> List[str]:
         """指定グループへ直接・間接を問わず統合されたグループを含む実効ID一覧を返す。
 

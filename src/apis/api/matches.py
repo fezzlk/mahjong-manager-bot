@@ -10,7 +10,11 @@ from repositories import (
 )
 
 from . import api_blueprint
-from ._auth import assert_group_member, require_web_user
+from ._auth import (
+    assert_group_member,
+    assert_group_member_via_merge_chain,
+    require_web_user,
+)
 
 
 @api_blueprint.route("/groups/<group_id>/matches", methods=["GET"])
@@ -69,7 +73,7 @@ def get_match(web_user, match_id):
         return make_response(jsonify({"error": "Not found"}), 404)
 
     m = matches[0]
-    err = assert_group_member(web_user, m.line_group_id)
+    err = assert_group_member_via_merge_chain(web_user, m.line_group_id)
     if err:
         return err
 

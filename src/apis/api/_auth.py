@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 from flask import jsonify, make_response
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
 
+from domain_service import group_service
 from repositories import user_group_repository, web_user_repository
 
 logger = logging.getLogger(__name__)
@@ -50,6 +51,25 @@ def assert_group_member(web_user, line_group_id: str):
     if not line_user_id:
         return make_response(jsonify({"error": "Forbidden"}), 403)
     members = user_group_repository.find({"line_group_id": line_group_id})
+    if not any(m.line_user_id == line_user_id for m in members):
+        return make_response(jsonify({"error": "Forbidden"}), 403)
+    return None
+
+
+def assert_group_member_via_merge_chain(web_user, line_group_id: str):
+    """web_user が line_group_id、またはその統合チェーン上のグループのメンバーか確認する。
+
+    グループ統合(merged_into)はメンバーシップ(UserGroup)を引き継がないため、
+    統合先グループのメンバーが、一覧には表示される統合元グループ由来の対戦の
+    詳細・編集にアクセスできず403になってしまうケースがある。統合先を解決し、
+    その統合系列全体のいずれかのグループのメンバーであれば許可する。
+    """
+    line_user_id = web_user.linked_line_user_id
+    if not line_user_id:
+        return make_response(jsonify({"error": "Forbidden"}), 403)
+    destination = group_service.get_final_merge_destination(line_group_id)
+    effective_ids = group_service.get_effective_line_group_ids(destination)
+    members = user_group_repository.find({"line_group_id": {"$in": effective_ids}})
     if not any(m.line_user_id == line_user_id for m in members):
         return make_response(jsonify({"error": "Forbidden"}), 403)
     return None
