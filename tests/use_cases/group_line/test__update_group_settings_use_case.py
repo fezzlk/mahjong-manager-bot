@@ -1,5 +1,4 @@
 import pytest
-
 from application_service import (
     reply_service,
     request_info_service,
@@ -25,7 +24,7 @@ dummy_event = Event(
 
 dummy_initial_settings = EmbeddedGroupSettings(
     rate=0,
-    ranking_prize=[20, 10, -10, -20],
+    ranking_prize_4=[20, 10, -10, -20],
     chip_rate=0,
     tobi_prize=10,
     num_of_players=4,
@@ -136,11 +135,61 @@ def test_execute_num_of_players():
     assert reply_service.texts[0].text == "[人数]を[3人]に変更しました。"
     s = _get_settings()
     assert s.rate == 0
-    assert s.ranking_prize == [20, 10, -10, -20]
+    # 人数を3人に切り替えると、順位点は3人麻雀用のデフォルトが使われる(FEZ-126)。
+    # 4人麻雀側の値(ranking_prize_4)は変更されず保持されたままであること。
+    assert s.ranking_prize == [30, 0, -30]
+    assert s.ranking_prize_4 == [20, 10, -10, -20]
     assert s.chip_rate == 0
     assert s.tobi_prize == 10
     assert s.num_of_players == 3
     assert s.rounding_method == 0
+
+
+def test_execute_starting_points():
+    # 目的: 持ち点を変更したとき settings.starting_points_4 が更新され、
+    #       返し点が自動算出されること
+    request_info_service.set_req_info(event=dummy_event)
+    _setup()
+    use_case = UpdateGroupSettingsUseCase()
+
+    use_case.execute("持ち点", "30000")
+
+    assert len(reply_service.texts) == 1
+    assert (
+        reply_service.texts[0].text
+        == "[持ち点]を[30000点（返し点 35000点）]に変更しました。"
+    )
+    s = _get_settings()
+    assert s.starting_points == 30000
+    assert s.return_points == 35000
+    # 4人麻雀のまま変更したので3人麻雀側の持ち点はデフォルトのまま
+    assert s.starting_points_3 == 35000
+
+
+def test_execute_num_of_players_keeps_each_ranking_prize():
+    # 目的: 人数を4→3に切り替えても、それぞれの人数用の順位点・持ち点が
+    #       独立して保持されること(切替による自動リセット・上書きがないこと)
+    request_info_service.set_req_info(event=dummy_event)
+    _setup()
+    use_case = UpdateGroupSettingsUseCase()
+
+    # 4人麻雀のまま順位点をカスタマイズしておく
+    use_case.execute("順位点", "30,10,-10,-30")
+    # 3人麻雀に切り替える
+    use_case.execute("人数", "3")
+
+    s = _get_settings()
+    assert s.num_of_players == 3
+    # 3人麻雀側はデフォルトのまま
+    assert s.ranking_prize == [30, 0, -30]
+    assert s.starting_points == 35000
+    # 4人麻雀側でカスタマイズした値は消えていない
+    assert s.ranking_prize_4 == [30, 10, -10, -30]
+
+    # 4人麻雀に戻すとカスタマイズした値がそのまま復元される
+    use_case.execute("人数", "4")
+    s = _get_settings()
+    assert s.ranking_prize == [30, 10, -10, -30]
 
 
 def test_execute_rounding_method():
@@ -187,8 +236,9 @@ def test_execute_invalid_key():
 @pytest.fixture(
     params=[
         ("レート", "6", "[レート]を[6]に変更できません"),
-        ("順位点", "10,20,30", "[順位点]を[10,20,30]に変更できません"),
-        ("順位点", "10,20,30,40,50", "[順位点]を[10,20,30,40,50]に変更できません"),
+        ("順位点", "10,20,30", "[順位点]を[10,20,30]に変更できません（現在4人麻雀設定のため4個の値が必要です）"),
+        ("順位点", "10,20,30,40,50", "[順位点]を[10,20,30,40,50]に変更できません（現在4人麻雀設定のため4個の値が必要です）"),
+        ("持ち点", "0", "[持ち点]を[0]に変更できません"),
         ("チップ", "2", "[チップ]を[2]に変更できません"),
         ("飛び賞", "1", "[飛び賞]を[1]に変更できません"),
         ("人数", "2", "[人数]を[2]に変更できません"),

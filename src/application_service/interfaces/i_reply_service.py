@@ -1,9 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List
 
-from linebot.v3.webhooks import Event
-
 from domain_model.entities.user import User
+from linebot.v3.webhooks import Event
 
 
 class IReplyService(metaclass=ABCMeta):
@@ -28,7 +27,7 @@ class IReplyService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_settings_menu(self, key: str = "") -> None:
+    def add_settings_menu(self, key: str = "", num_of_players: int = 4) -> None:
         pass
 
     @abstractmethod

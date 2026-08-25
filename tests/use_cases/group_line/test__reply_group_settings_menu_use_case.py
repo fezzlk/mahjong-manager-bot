@@ -1,8 +1,6 @@
 from typing import Tuple
 
 import pytest
-from linebot.v3.messaging import TemplateMessage
-
 from application_service import (
     reply_service,
     request_info_service,
@@ -10,6 +8,7 @@ from application_service import (
 from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.group_setting import EmbeddedGroupSettings
 from line_models.event import Event
+from linebot.v3.messaging import TemplateMessage
 from repositories import group_repository
 from use_cases.group_line.reply_group_settings_menu_use_case import (
     ReplyGroupSettingsMenuUseCase,
@@ -40,7 +39,7 @@ def test_execute():
     group_repository.create(Group(line_group_id=dummy_line_group_id, mode=GroupMode.wait.value))
     group_repository.update_settings(
         dummy_line_group_id,
-        EmbeddedGroupSettings(rate=3, ranking_prize=[20, 10, -10, -20], chip_rate=1, tobi_prize=10, num_of_players=4, rounding_method=0),
+        EmbeddedGroupSettings(rate=3, ranking_prize_4=[20, 10, -10, -20], chip_rate=1, tobi_prize=10, num_of_players=4, rounding_method=0),
     )
 
     # Act
@@ -50,7 +49,7 @@ def test_execute():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "[設定]\n4人麻雀\nレート: 点3\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: あり(1枚=1点)\n計算方法: 3万点以下切り上げ/以上切り捨て\n単位: pt"
+        == "[設定]\n4人麻雀\n持ち点: 25000点（返し点 30000点）\nレート: 点3\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: あり(1枚=1点)\n計算方法: 3万点以下切り上げ/以上切り捨て\n単位: pt"
     )
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateMessage)
@@ -74,7 +73,7 @@ def test_execute_no_settings():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "[設定]\n4人麻雀\nレート: 点0\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: なし\n計算方法: 五捨六入\n単位: pt"
+        == "[設定]\n4人麻雀\n持ち点: 25000点（返し点 30000点）\nレート: 点0\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: なし\n計算方法: 五捨六入\n単位: pt"
     )
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateMessage)

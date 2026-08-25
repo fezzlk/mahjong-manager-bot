@@ -21,6 +21,8 @@ def test_success_menu2():
 
     # Assert
     assert len(reply_service.buttons) == 1
+    # LINE ButtonsTemplate は最大4アクションのため、追加した「持ち点」込みで4件に収まること
+    assert len(reply_service.buttons[0].template.actions) == 4
 
 
 def test_success_key_rate():
@@ -57,6 +59,45 @@ def test_success_key_ranking_point():
 
     # Assert
     assert len(reply_service.buttons) == 1
+    # 4人麻雀用の2パターンが選択肢になっていること
+    actions = reply_service.buttons[0].template.actions
+    assert len(actions) == 2
+    assert actions[0].data == "_update_config 順位点 20,10,-10,-20"
+
+
+def test_success_key_ranking_point_three_players():
+    """num_of_players=3 を渡すと3人麻雀用の順位点パターンが選択肢になること(FEZ-126)。"""
+    # Arrange
+    reply_service = ReplyService()
+
+    # Act
+    reply_service.add_settings_menu("順位点", num_of_players=3)
+
+    # Assert
+    assert len(reply_service.buttons) == 1
+    actions = reply_service.buttons[0].template.actions
+    assert len(actions) == 2
+    assert actions[0].data == "_update_config 順位点 30,0,-30"
+    assert actions[1].data == "_update_config 順位点 15,0,-15"
+
+
+def test_success_key_starting_points():
+    """持ち点設定のクイックリプライ/ボタンが返ること(FEZ-126)。"""
+    # Arrange
+    reply_service = ReplyService()
+
+    # Act
+    reply_service.add_settings_menu("持ち点")
+
+    # Assert
+    assert len(reply_service.buttons) == 1
+    actions = reply_service.buttons[0].template.actions
+    assert [a.data for a in actions] == [
+        "_update_config 持ち点 25000",
+        "_update_config 持ち点 30000",
+        "_update_config 持ち点 35000",
+        "_update_config 持ち点 40000",
+    ]
 
 
 def test_success_key_tobi_bonus():

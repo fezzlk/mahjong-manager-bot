@@ -3,6 +3,13 @@ import logging
 import threading
 from typing import Dict, List
 
+import env_var
+from domain_model.constants import (
+    RANKING_PRIZE_LIST_3,
+    RANKING_PRIZE_LIST_4,
+    ROUNDING_METHOD_LIST,
+)
+from domain_model.entities.user import User
 from linebot.v3.messaging import (
     ButtonsTemplate,
     FlexBox,
@@ -22,10 +29,6 @@ from linebot.v3.messaging import (
 )
 from linebot.v3.messaging.exceptions import ApiException
 from linebot.v3.webhooks import Event
-
-import env_var
-from domain_model.constants import ROUNDING_METHOD_LIST
-from domain_model.entities.user import User
 from messaging_api_setting import line_bot_api
 
 from .interfaces.i_reply_service import IReplyService
@@ -145,7 +148,7 @@ class ReplyService(IReplyService):
             ),
         )
 
-    def add_settings_menu(self, key: str = "") -> None:
+    def add_settings_menu(self, key: str = "", num_of_players: int = 4) -> None:
         if key in {"", "メニュー1"}:
             self.buttons.append(
                 TemplateMessage(
@@ -197,6 +200,11 @@ class ReplyService(IReplyService):
                                 data="_setting 端数計算方法",
                             ),
                             PostbackAction(
+                                label="持ち点",
+                                display_text="持ち点",
+                                data="_setting 持ち点",
+                            ),
+                            PostbackAction(
                                 label="レート、順位点、チップ",
                                 display_text="レート、順位点、チップ",
                                 data="_setting メニュー1",
@@ -233,6 +241,9 @@ class ReplyService(IReplyService):
                 ),
             )
         elif key == "順位点":
+            ranking_prize_options = (
+                RANKING_PRIZE_LIST_3 if num_of_players == 3 else RANKING_PRIZE_LIST_4
+            )
             self.buttons.append(
                 TemplateMessage(
                     alt_text="順位点設定",
@@ -245,10 +256,25 @@ class ReplyService(IReplyService):
                                 display_text="/".join(i),
                                 data=f"_update_config 順位点 {','.join(i)}",
                             )
-                            for i in [
-                                ["20", "10", "-10", "-20"],
-                                ["30", "10", "-10", "-30"],
-                            ]
+                            for i in ranking_prize_options
+                        ],
+                    ),
+                ),
+            )
+        elif key == "持ち点":
+            self.buttons.append(
+                TemplateMessage(
+                    alt_text="持ち点設定",
+                    template=ButtonsTemplate(
+                        title="持ち点変更",
+                        text="いくらにしますか？（返し点は持ち点+5,000点で自動的に決まります）",
+                        actions=[
+                            PostbackAction(
+                                label=f"{i}点",
+                                display_text=f"{i}点",
+                                data=f"_update_config 持ち点 {i}",
+                            )
+                            for i in [25000, 30000, 35000, 40000]
                         ],
                     ),
                 ),

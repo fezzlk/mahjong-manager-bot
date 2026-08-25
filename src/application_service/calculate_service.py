@@ -13,6 +13,7 @@ class CalculateService(ICalculateService):
         tobi_prize: int = 0,
         rounding_method: int = None,
         tobashita_player_id: str = None,
+        return_points: int = 30000,
     ) -> Dict[str, int]:
         sorted_points: list[tuple[str, int]] = sorted(
             points.items(), key=lambda x: x[1], reverse=True,
@@ -25,6 +26,7 @@ class CalculateService(ICalculateService):
         result, tobasare_players = self.convert_raw_score(
             sorted_points,
             rounding_method=rounding_method,
+            return_points=return_points,
         )
         is_tobi = not (tobashita_player_id is None or tobashita_player_id == "")
 
@@ -45,6 +47,7 @@ class CalculateService(ICalculateService):
         self,
         sorted_points: List[Tuple[str, int]],
         rounding_method: int = None,
+        return_points: int = 30000,
     ) -> Tuple[Dict[str, int], List[str]]:
         converted_score = {}
         tobasare_players = []
@@ -52,7 +55,10 @@ class CalculateService(ICalculateService):
         # 計算方法に合わせて点数調整用の adjuster(丸めの境界値の調整) と padding(端数調整) を設定
         # rounding_method は ROUNDING_METHOD_LIST のインデックス(int)
         padding = 0
-        adjuster = 100000
+        # 丸め計算を正の数域で行うための安全オフセット(実装都合の定数で、持ち点・返し点の
+        # 慣習には依存しない。以下の計算式で必ず打ち消されるため値そのものに意味はない)
+        safety_offset = 1_000_000
+        adjuster = safety_offset
         # 五捨六入 (index=1)
         if rounding_method == RoundingMethod.go_san_roku:
             padding = 400
@@ -65,11 +71,11 @@ class CalculateService(ICalculateService):
         # 切り上げ (index=4)
         elif rounding_method == RoundingMethod.ceil:
             padding = 999
-        # 3万点以下切り上げ/以上切り捨て (index=0 or デフォルト)
+        # 返し点以下切り上げ/以上切り捨て (index=0 or デフォルト)
         else:
-            adjuster = -30000
+            adjuster = -return_points
 
-        # 2~4位
+        # 2位以下(3人麻雀なら2~3位、4人麻雀なら2~4位)
         for t in sorted_points[1:]:
             player = t[0]
             point = t[1]
@@ -77,11 +83,13 @@ class CalculateService(ICalculateService):
             if point < 0:
                 tobasare_players.append(player)
 
-            # 3万点切り上げ切り捨ての場合、一時的に30000点を引き、int の丸めを利用する
+            # 返し点以下切り上げ/切り捨ての場合、一時的に return_points 点を引き、int の丸めを利用する
             # ex. 切り上げ: int(-10100/1000) -> -10000, 切り捨て: int(10100/1000) -> 10000
-            # その他の場合、マイナス点の場合の丸め方をプラスの丸め方に合わせるため、一時的に100000足す
+            # その他の場合、マイナス点の場合の丸め方をプラスの丸め方に合わせるため、一時的に safety_offset 足す
             converted_score[player] = (
-                int((point + adjuster + padding) / 1000) - 30 - (adjuster // 1000)
+                int((point + adjuster + padding) / 1000)
+                - (return_points // 1000)
+                - (adjuster // 1000)
             )
 
         # 1位(他プレイヤーの点数合計×(-1))

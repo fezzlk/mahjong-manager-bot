@@ -3,7 +3,10 @@ from typing import Optional
 from domain_model.entities.group_setting import EmbeddedGroupSettings
 from repositories import group_repository
 
-_SETTINGS_FIELDS = ("rate", "ranking_prize", "chip_rate", "tobi_prize", "num_of_players", "rounding_method")
+_SETTINGS_FIELDS = (
+    "rate", "ranking_prize", "starting_points", "return_points",
+    "chip_rate", "tobi_prize", "num_of_players", "rounding_method",
+)
 
 
 class GetConfigForWebUseCase:

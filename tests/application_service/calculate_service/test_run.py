@@ -1,7 +1,6 @@
 from typing import Dict
 
 import pytest
-
 from application_service import (
     calculate_service,
 )
@@ -159,4 +158,29 @@ def test_ok_with_tobi(text_case2):
     assert result["line_user_id2"] == text_case2[3]["line_user_id2"]
     assert result["line_user_id3"] == text_case2[3]["line_user_id3"]
     assert result["line_user_id4"] == text_case2[3]["line_user_id4"]
+
+
+def test_ok_three_players_with_return_points():
+    """3人麻雀(持ち点35,000/返し点40,000/ウマ+30-0-30)での精算(FEZ-126)。"""
+    # Act
+    result = calculate_service.run(
+        points={
+            "line_user_id1": 55000,
+            "line_user_id2": 35000,
+            "line_user_id3": 15000,
+        },
+        ranking_prize=[30, 0, -30],
+        tobi_prize=10,
+        rounding_method="五捨六入",
+        tobashita_player_id=None,
+        return_points=40000,
+    )
+
+    # Assert
+    assert isinstance(result, Dict)
+    assert len(result) == 3
+    assert result["line_user_id1"] == 60
+    assert result["line_user_id2"] == -5
+    assert result["line_user_id3"] == -55
+    assert sum(result.values()) == 0
 

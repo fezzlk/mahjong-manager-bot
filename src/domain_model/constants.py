@@ -5,10 +5,16 @@ from enum import IntEnum
 RATE_LIST = [0, 1, 2, 3, 4, 5, 10]
 CHIP_RATE_LIST = [0, 1]
 NUM_OF_PLAYERS_LIST = [3, 4]
-RANKING_PRIZE_LIST = [
+RANKING_PRIZE_LIST_4 = [
     ["20", "10", "-10", "-20"],
     ["30", "10", "-10", "-30"],
 ]
+RANKING_PRIZE_LIST_3 = [
+    ["30", "0", "-30"],
+    ["15", "0", "-15"],
+]
+# 後方互換用: 既存コードから参照されていた4人麻雀用の一覧
+RANKING_PRIZE_LIST = RANKING_PRIZE_LIST_4
 ROUNDING_METHOD_LIST = [
     "3万点以下切り上げ/以上切り捨て",
     "五捨六入",

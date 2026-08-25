@@ -4,6 +4,7 @@ from application_service import (
 )
 from domain_service import (
     group_service,
+    group_setting_service,
     hanchan_service,
     match_service,
     user_service,
@@ -53,11 +54,12 @@ class AddPointByTextUseCase:
 
         reply_service.add_message("\n".join(res))
 
-        if len(raw_scores) == 4:
+        num_of_players = group_setting_service.find_or_create(line_group_id).num_of_players
+        if len(raw_scores) == num_of_players:
             SubmitHanchanUseCase().execute()
-        elif len(raw_scores) > 4:
+        elif len(raw_scores) > num_of_players:
             reply_service.add_message(
-                "5人以上入力されています。@[ユーザー名] で不要な入力を消してください。",
+                f"{num_of_players + 1}人以上入力されています。@[ユーザー名] で不要な入力を消してください。",
             )
 
         return

@@ -2,8 +2,11 @@ from application_service import (
     reply_service,
     request_info_service,
 )
-from domain_model.entities.group_setting import ROUNDING_METHOD_LIST
-from domain_service import group_service
+from domain_model.entities.group_setting import (
+    RETURN_POINTS_MARGIN,
+    ROUNDING_METHOD_LIST,
+)
+from domain_service import group_service, group_setting_service
 
 
 class UpdateGroupSettingsUseCase:
@@ -26,12 +29,27 @@ class UpdateGroupSettingsUseCase:
                     return
                 display_value = "点" + value
             elif key == "順位点":
-                column = "ranking_prize"
+                current_settings = group_setting_service.find_or_create(target_id)
+                num_of_players = current_settings.num_of_players
+                column = "ranking_prize_3" if num_of_players == 3 else "ranking_prize_4"
                 db_value = list(map(int, value.split(",")))
-                if len(db_value) != 4:
+                if len(db_value) != num_of_players:
+                    reply_service.add_message(
+                        f"[{key}]を[{value}]に変更できません（現在{num_of_players}人麻雀設定のため{num_of_players}個の値が必要です）",
+                    )
+                    return
+                display_value = "/".join(
+                    f"{i + 1}着 {v}" for i, v in enumerate(db_value)
+                )
+            elif key == "持ち点":
+                current_settings = group_setting_service.find_or_create(target_id)
+                num_of_players = current_settings.num_of_players
+                column = "starting_points_3" if num_of_players == 3 else "starting_points_4"
+                db_value = _parse_int(value)
+                if db_value <= 0:
                     reply_service.add_message(f"[{key}]を[{value}]に変更できません")
                     return
-                display_value = f"1着 {db_value[0]}/2着 {db_value[1]}/3着 {db_value[2]}/4着 {db_value[3]}"
+                display_value = f"{db_value}点（返し点 {db_value + RETURN_POINTS_MARGIN}点）"
             elif key == "チップ":
                 column = "chip_rate"
                 db_value = _parse_int(value)

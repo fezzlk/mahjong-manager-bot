@@ -1,13 +1,13 @@
 from copy import deepcopy
 
 import pymongo.errors
-
 from application_service import (
     calculate_service,
     reply_service,
     request_info_service,
 )
 from domain_model.entities.group import Group, GroupMode
+from domain_model.entities.group_setting import EmbeddedGroupSettings
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.match import Match
 from domain_model.entities.user import User, UserMode
@@ -395,7 +395,7 @@ def test_success_does_not_have_4_points():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
+        == "4人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value
@@ -664,5 +664,95 @@ def test_fail_no_group():
         reply_service.texts[0].text
         == "グループが登録されていません。招待し直してください。"
     )
+
+
+def test_success_three_players():
+    """3人麻雀設定(num_of_players=3)のグループでの精算を確認する。
+
+    3人分の点数が揃うと、正しい人数・持ち点・ウマで精算されること(FEZ-126)。
+    """
+    three_player_group = Group(
+        line_group_id="G0123456789abcdefghijklmnopqrstu3p",
+        mode=GroupMode.input.value,
+        active_match_id=2,
+        _id=2,
+    )
+    match = Match(line_group_id=three_player_group.line_group_id, _id=2)
+    active_hanchan = Hanchan(
+        line_group_id=three_player_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 55000,
+            dummy_users[1].line_user_id: 35000,
+            dummy_users[2].line_user_id: 15000,
+        },
+        converted_scores={},
+        match_id=2,
+        _id=99,
+    )
+
+    use_case = SubmitHanchanUseCase()
+    request_info_service.req_line_group_id = three_player_group.line_group_id
+    group_repository.create(three_player_group)
+    group_repository.update_settings(
+        three_player_group.line_group_id,
+        EmbeddedGroupSettings(num_of_players=3),
+    )
+    for dummy_user in dummy_users[:3]:
+        user_repository.create(dummy_user)
+    hanchan_repository.create(active_hanchan)
+    match.active_hanchan_id = active_hanchan._id
+    match_repository.create(match)
+
+    use_case.execute()
+
+    hanchan = hanchan_repository.find({"_id": active_hanchan._id})[0]
+    # 持ち点35,000(デフォルト)・返し点40,000・ウマ+30/0/-30 での精算結果
+    assert hanchan.converted_scores[dummy_users[0].line_user_id] == 60
+    assert hanchan.converted_scores[dummy_users[1].line_user_id] == -5
+    assert hanchan.converted_scores[dummy_users[2].line_user_id] == -55
+
+    reply_service.reset()
+
+
+def test_success_three_players_does_not_wait_for_fourth():
+    """3人麻雀設定では3人分そろった時点で精算され、4人目を待たないこと(FEZ-126)。"""
+    three_player_group = Group(
+        line_group_id="G0123456789abcdefghijklmnopqrstu3p2",
+        mode=GroupMode.input.value,
+        active_match_id=3,
+        _id=3,
+    )
+    match = Match(line_group_id=three_player_group.line_group_id, _id=3)
+    active_hanchan = Hanchan(
+        line_group_id=three_player_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 45000,
+            dummy_users[1].line_user_id: 35000,
+            dummy_users[2].line_user_id: 25000,
+        },
+        converted_scores={},
+        match_id=3,
+        _id=100,
+    )
+
+    use_case = SubmitHanchanUseCase()
+    request_info_service.req_line_group_id = three_player_group.line_group_id
+    group_repository.create(three_player_group)
+    group_repository.update_settings(
+        three_player_group.line_group_id,
+        EmbeddedGroupSettings(num_of_players=3),
+    )
+    for dummy_user in dummy_users[:3]:
+        user_repository.create(dummy_user)
+    hanchan_repository.create(active_hanchan)
+    match.active_hanchan_id = active_hanchan._id
+    match_repository.create(match)
+
+    use_case.execute()
+
+    hanchan = hanchan_repository.find({"_id": active_hanchan._id})[0]
+    assert len(hanchan.converted_scores) == 3
+
+    reply_service.reset()
 
     reply_service.reset()

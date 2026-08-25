@@ -7,7 +7,6 @@ from flask import (
     request,
     url_for,
 )
-
 from use_cases.web.delete_configs_for_web_use_case import DeleteConfigsForWebUseCase
 from use_cases.web.get_config_for_web_use_case import GetConfigForWebUseCase
 from use_cases.web.get_configs_for_web_use_case import GetConfigsForWebUseCase
@@ -23,8 +22,8 @@ config_blueprint = Blueprint(
 @config_blueprint.route("/")
 def get_configs():
     data = GetConfigsForWebUseCase().execute()
-    keys = ["_id", "rate", "ranking_prize", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
-    input_keys = ["rate", "ranking_prize", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
+    keys = ["_id", "rate", "ranking_prize", "starting_points", "return_points", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
+    input_keys = ["rate", "ranking_prize", "starting_points", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
     return render_template(
         "model.html",
         title="configs",
@@ -40,7 +39,7 @@ def configs_detail(_id):
     data = GetConfigForWebUseCase().execute(_id)
     if data is None:
         raise NotFoundErr()
-    input_keys = ["line_group_id", "rate", "ranking_prize", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
+    input_keys = ["line_group_id", "rate", "ranking_prize", "starting_points", "chip_rate", "tobi_prize", "num_of_players", "rounding_method"]
     return render_template(
         "detail.html",
         title="configs",

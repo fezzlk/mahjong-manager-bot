@@ -12,5 +12,6 @@ class ICalculateService(metaclass=ABCMeta):
         tobi_prize: int = 0,
         rounding_method: str = None,
         tobashita_player_id: str = None,
+        return_points: int = 30000,
     ) -> Dict[str, int]:
         pass

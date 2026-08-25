@@ -1,12 +1,11 @@
 from datetime import datetime
 
-from bson.objectid import ObjectId
-from flask import jsonify, make_response, request
-
 from application_service import calculate_service, reply_service
+from bson.objectid import ObjectId
 from domain_model.entities.user_hanchan import UserHanchanResult
 from domain_service import group_setting_service, hanchan_service
 from extensions import limiter
+from flask import jsonify, make_response, request
 from mongo_client import audit_logs_collection
 from repositories import (
     hanchan_repository,
@@ -101,15 +100,18 @@ def update_hanchan_scores(web_user, hanchan_id):
     except (ValueError, TypeError):
         return make_response(jsonify({"error": "素点は整数で指定してください"}), 400)
 
-    if len(new_raw_scores) != 4:
-        return make_response(jsonify({"error": "4人分の素点が必要です"}), 400)
+    setting = group_setting_service.find_or_create(hanchan.line_group_id)
+    num_of_players = setting.num_of_players
+    total_points = setting.starting_points * num_of_players
+
+    if len(new_raw_scores) != num_of_players:
+        return make_response(jsonify({"error": f"{num_of_players}人分の素点が必要です"}), 400)
     total = sum(new_raw_scores.values())
-    if not (100000 <= total <= 100099):
+    if not (total_points <= total <= total_points + 99):
         return make_response(jsonify({"error": f"素点の合計が不正です: {total}"}), 400)
-    if len(set(new_raw_scores.values())) != 4:
+    if len(set(new_raw_scores.values())) != num_of_players:
         return make_response(jsonify({"error": "同点は許可されていません"}), 400)
 
-    setting = group_setting_service.find_or_create(hanchan.line_group_id)
     tobashita_id = None
     if any(v < 0 for v in new_raw_scores.values()):
         tobashita_id = max(
@@ -123,6 +125,7 @@ def update_hanchan_scores(web_user, hanchan_id):
         tobi_prize=setting.tobi_prize,
         rounding_method=setting.rounding_method,
         tobashita_player_id=tobashita_id,
+        return_points=setting.return_points,
     )
 
     sorted_items = sorted(new_raw_scores.items(), key=lambda x: x[1], reverse=True)

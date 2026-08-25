@@ -16,15 +16,17 @@ class ReplyGroupSettingsMenuUseCase:
 
         if body == "":
             r = settings.ranking_prize
+            ranking_display = "/".join(f"{i + 1}着{v}" for i, v in enumerate(r))
 
             s = ["[設定]"]
             s.append(f"{settings.num_of_players}人麻雀")
+            s.append(f"持ち点: {settings.starting_points}点（返し点 {settings.return_points}点）")
             s.append(f"レート: 点{settings.rate}")
-            s.append(f"順位点: 1着{r[0]}/2着{r[1]}/3着{r[2]}/4着{r[3]}")
+            s.append(f"順位点: {ranking_display}")
             s.append(f"飛び賞: {settings.tobi_prize}点")
             chip_display = "なし" if settings.chip_rate == 0 else "あり(1枚=1点)"
             s.append(f"チップ: {chip_display}")
             s.append(f"計算方法: {ROUNDING_METHOD_LIST[settings.rounding_method]}")
             s.append(f"単位: {settings.unit}")
             reply_service.add_message("\n".join(s))
-        reply_service.add_settings_menu(body)
+        reply_service.add_settings_menu(body, settings.num_of_players)

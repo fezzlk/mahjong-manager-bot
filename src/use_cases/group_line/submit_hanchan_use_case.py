@@ -2,7 +2,6 @@ import logging
 from typing import Dict, Optional
 
 import pymongo.errors
-
 from application_service import (
     calculate_service,
     message_service,
@@ -59,23 +58,28 @@ class SubmitHanchanUseCase:
             return
         points = active_hanchan.raw_scores
 
+        # config の取得(人数・点数合計の判定に num_of_players / starting_points を使うため先に取得する)
+        setting = group_setting_service.find_or_create(line_group_id)
+        num_of_players = setting.num_of_players
+        total_points = setting.starting_points * num_of_players
+
         # 計算可能な points かチェック
-        # 4人分の点数がない、または超えている場合中断する
-        if len(points) != 4:
+        # 規定人数分の点数がない、または超えている場合中断する
+        if len(points) != num_of_players:
             reply_service.add_message(
-                "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。",
+                f"{num_of_players}人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。",
             )
             return
 
-        # 点数合計が 100000~100099 の範囲になければ中断する
-        if int(sum(points.values()) / 100) != 1000:
+        # 点数合計が total_points~total_points+99 の範囲になければ中断する
+        if not (total_points <= sum(points.values()) <= total_points + 99):
             reply_service.add_message(
-                f"点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。",
+                f"点数の合計が{sum(points.values())}点です。合計{total_points}点+αになるように修正してください。",
             )
             return
 
         # 点数が全て異なっているかチェックし、同点があったら中断する
-        if len(set(points.values())) != 4:
+        if len(set(points.values())) != num_of_players:
             reply_service.add_message(
                 "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。",
             )
@@ -96,9 +100,6 @@ class SubmitHanchanUseCase:
             )
             return
 
-        # config の取得
-        setting = group_setting_service.find_or_create(line_group_id)
-
         # 計算の実行
         calculate_result = calculate_service.run(
             points=points,
@@ -106,6 +107,7 @@ class SubmitHanchanUseCase:
             tobi_prize=setting.tobi_prize,
             rounding_method=setting.rounding_method,
             tobashita_player_id=tobashita_player_id,
+            return_points=setting.return_points,
         )
 
         # この半荘の確定処理の所有権をアトミックに確定する。
