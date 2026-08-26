@@ -201,7 +201,7 @@ def routing_for_group_by_command(command):
         RCommands.start.name: lambda: ReplyStartMenuUseCase().execute(),
         RCommands.mode.name: lambda: ReplyGroupModeUseCase().execute(),
         RCommands.exit.name: lambda: ExitUseCase().execute(),
-        RCommands.help.name: lambda: ReplyGroupHelpUseCase().execute(RCommands),
+        RCommands.help.name: lambda: ReplyGroupHelpUseCase().execute(list(dispatch.keys())),
         RCommands.setting.name: lambda: ReplyGroupSettingsMenuUseCase().execute(body),
         RCommands.match.name: lambda: ReplyMatchByIndexUseCase().execute(body),
         RCommands.drop.name: lambda: DropHanchanByIndexUseCase().execute(body),
