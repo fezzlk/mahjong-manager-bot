@@ -6,7 +6,9 @@
 
 ## 現状の方針
 
-**自動バックアップ・Point-in-Time Recovery (PITR) は現時点では有効化していない**（継続課金が発生するため）。まずは無料の手動エクスポート手順を整備し、必要になった時点で自動化を検討する。将来 PITR や定期エクスポートを自動化する場合は、GCP公式料金ページで最新の単価を確認したうえで概算費用を提示し、判断してから有効化する。
+2026-08-27、**Firestoreネイティブの「スケジュールバックアップ」機能を有効化済み**（本番DBのみ、週次・SUNDAY・保持期間28日）。PITR（継続的ポイントインタイム復旧）ではなくスケジュールバックアップを採用した理由: ストレージ単価がPITRの約1/5、かつCloud Scheduler/Cloud Functions等の追加インフラが不要なため。本サービスの利用規模（少人数・週1回程度）ではストレージ費用は月額数円未満の見込み。詳細は下記「自動スケジュールバックアップ」を参照。
+
+これとは別に、一括編集操作の直前など任意タイミングでの手動エクスポート手順も引き続き以下に残す（スケジュールバックアップの粒度（週次）では拾えない直前状態を保存したい場合に使う）。
 
 ## 前提
 
@@ -62,9 +64,23 @@ gcloud storage buckets create gs://mahjang-manager-firestore-backup \
 - 月次（手動）を目安とする
 - 加えて、`update_hanchan_scores` / `delete_match` 等の一括編集操作（FEZ-30 で追加した Web 編集機能）をまとめて行う前など、リスクの高い操作の直前に取得する
 
-## 将来の自動化について
+## 自動スケジュールバックアップ
 
-自動バックアップ・PITR を有効化する場合は、以下を GCP 公式料金ページで確認したうえで、費用をユーザーに提示してから実施する:
+2026-08-27に設定。設定内容:
 
-- PITR: 有効化すると読み取り・書き込み課金に加えてバージョン保持のためのストレージ課金が発生する
-- 定期エクスポートの Cloud Scheduler + Cloud Functions/Run 化: 実行自体はほぼ無料枠内だが、エクスポート先ストレージの継続課金は上記と同様
+```bash
+gcloud firestore backups schedules create \
+  --project=mahjang-manager \
+  --database=mahjong-manager \
+  --recurrence=weekly \
+  --day-of-week=SUN \
+  --retention=28d
+```
+
+- 対象は本番DB（`mahjong-manager`）のみ。`mahjong-manager-test` には設定していない
+- 毎週日曜に自動作成、作成から28日後に自動削除（世代管理不要）
+- 料金体系: バックアップのストレージサイズ × 保持日数の按分 × 単価（$0.00004〜0.00007/GiB・月程度、東京リージョン）で計算される。データ量が小さいうちは月額数円未満
+- 設定確認: `gcloud firestore backups schedules list --project=mahjang-manager --database=mahjong-manager`
+- バックアップ一覧確認: `gcloud firestore backups list --project=mahjang-manager --location=asia-northeast1`
+- リストア: `gcloud firestore databases restore --source-backup=<backup name> --destination-database=<復元先DB> --project=mahjang-manager`（既存DBには直接復元できず、新規または別DBへの復元となる点に注意。本番へ反映する場合は復元後にデータ移行の追加作業が必要）
+- 単価・仕様変更の可能性があるため、保持期間や頻度を変更する場合は [Firestore Enterprise pricing](https://cloud.google.com/firestore/enterprise/pricing) で最新値を確認してから変更する
