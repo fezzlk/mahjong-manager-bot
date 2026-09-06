@@ -31,7 +31,7 @@ class ReopenMatchUseCase:
             )
             return
 
-        if group.active_match_id is not None:
+        if group.active_match_id is not None or group.mode == GroupMode.sim.value:
             reply_service.add_message(
                 "現在進行中の試合があります。先に「_finish」で清算するか「_exit」で中断してください。",
             )
@@ -60,7 +60,7 @@ class ReopenMatchUseCase:
             )
             return
 
-        if group.active_match_id is not None:
+        if group.active_match_id is not None or group.mode == GroupMode.sim.value:
             reply_service.add_message(
                 "現在進行中の試合があります。先に「_finish」で清算するか「_exit」で中断してください。",
             )

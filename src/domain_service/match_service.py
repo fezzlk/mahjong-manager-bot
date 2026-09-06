@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 from pymongo import ASCENDING, DESCENDING
 
 from domain_model.entities.group_setting import EmbeddedGroupSettings
-from domain_model.entities.match import Match
+from domain_model.entities.match import Match, MatchStatus
 from repositories import match_repository
 
 from .interfaces.i_match_service import IMatchService
@@ -158,8 +158,12 @@ class MatchService(IMatchService):
         )
 
     def find_latest_one(self, line_group_id: str) -> Optional[Match]:
+        # _sim専用サンドボックス(status=sim)は実対戦ではないため除外する
         matches = match_repository.find(
-            query={"line_group_id": line_group_id},
+            query={
+                "line_group_id": line_group_id,
+                "status": {"$ne": MatchStatus.sim.value},
+            },
             sort=[("created_at", DESCENDING)],
         )
         if len(matches) == 0:

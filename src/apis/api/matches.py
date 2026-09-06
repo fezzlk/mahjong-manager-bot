@@ -1,5 +1,6 @@
 from flask import jsonify, make_response
 
+from domain_model.entities.match import MatchStatus
 from domain_service import group_service
 from repositories import (
     group_repository,
@@ -37,8 +38,12 @@ def get_matches(web_user, group_id):
         return err
 
     effective_ids = group_service.get_effective_line_group_ids(line_group_id)
+    # _sim専用サンドボックス(status=sim)は実対戦ではないため除外する
     matches = match_repository.find(
-        {"line_group_id": {"$in": effective_ids}},
+        {
+            "line_group_id": {"$in": effective_ids},
+            "status": {"$ne": MatchStatus.sim.value},
+        },
         sort=[("created_at", -1)],
     )
 

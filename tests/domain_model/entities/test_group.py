@@ -13,6 +13,7 @@ def test_success():
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
         mode=GroupMode.input.value,
         active_match_id=2,
+        sim_match_id=3,
         _id=1,
         created_at=datetime(2022, 1, 2, 3, 4, 5),
         updated_at=datetime(2023, 1, 2, 3, 4, 5),
@@ -23,6 +24,7 @@ def test_success():
     assert group.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
     assert group.mode == GroupMode.input.value
     assert group.active_match_id == 2
+    assert group.sim_match_id == 3
     assert group.created_at == datetime(2022, 1, 2, 3, 4, 5)
     assert group.updated_at == datetime(2023, 1, 2, 3, 4, 5)
 
@@ -39,6 +41,7 @@ def test_success_default():
     assert group.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
     assert group.mode == GroupMode.wait.value
     assert group.active_match_id is None
+    assert group.sim_match_id is None
     assert group.created_at.date() == datetime.now().date()
     assert group.updated_at.date() == datetime.now().date()
 

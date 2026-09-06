@@ -21,22 +21,26 @@ class ExitUseCase:
             )
             return
 
+        # simモード中断時はsim専用サンドボックス、それ以外は実系列の
+        # active_match_idを対象にクリーンアップする(両者は独立している)。
+        was_sim = group.mode == GroupMode.sim.value
+
         group.mode = GroupMode.wait.value
         group_service.update(group)
 
         reply_service.add_message(
             "始める時は「_start」と入力してください。")
 
-        # group の Active な試合を取得
-        active_match = match_service.find_one_by_id(group.active_match_id)
+        target_match_id = group.sim_match_id if was_sim else group.active_match_id
+        target_match = match_service.find_one_by_id(target_match_id)
 
-        if active_match is None:
+        if target_match is None:
             return
 
         # Active な半荘がある場合は削除
-        active_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
-        active_match.active_hanchan_id = None
-        match_service.update(active_match)
+        active_hanchan = hanchan_service.find_one_by_id(target_match.active_hanchan_id)
+        target_match.active_hanchan_id = None
+        match_service.update(target_match)
 
         if active_hanchan is None:
             return

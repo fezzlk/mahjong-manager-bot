@@ -62,13 +62,17 @@ class StartInputUseCase:
 
     @staticmethod
     def _cleanup_sim_hanchan(group) -> None:
-        """Sim モードの半荘を削除し、active_hanchan_id をリセットする。"""
-        active_match = match_service.find_one_by_id(group.active_match_id)
-        if active_match is None:
+        """Simモード専用サンドボックス(sim_match_id)の半荘を削除し、active_hanchan_idをリセットする。
+
+        sim_match_idは実系列のactive_match_idとは独立しているため、ここで
+        実系列のデータに触れることはない。
+        """
+        sim_match = match_service.find_one_by_id(group.sim_match_id)
+        if sim_match is None:
             return
-        sim_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
+        sim_hanchan = hanchan_service.find_one_by_id(sim_match.active_hanchan_id)
         if sim_hanchan is not None:
             sim_hanchan.is_deleted = True
             hanchan_service.update(sim_hanchan)
-        active_match.active_hanchan_id = None
-        match_service.update(active_match)
+        sim_match.active_hanchan_id = None
+        match_service.update(sim_match)

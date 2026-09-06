@@ -122,6 +122,54 @@ def test_execute_with_active_hanchan():
     assert len(hanchans) == 0
 
 
+def test_execute_during_sim_cleans_up_sim_match_not_real_match():
+    """simモード中の_exitは、sim_match_id側の半荘を破棄し、実系列(active_match_id)には触れない。"""
+    real_match = Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", _id=10)
+    match_repository.create(real_match)
+    real_hanchan = Hanchan(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        match_id=10,
+        raw_scores={"U001": 1000},
+        _id=10,
+    )
+    hanchan_repository.create(real_hanchan)
+    real_match.active_hanchan_id = 10
+    match_repository.update({"_id": 10}, {"active_hanchan_id": 10})
+
+    sim_match = Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", _id=20)
+    match_repository.create(sim_match)
+    sim_hanchan = Hanchan(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        match_id=20,
+        raw_scores={"U001": 500},
+        _id=20,
+    )
+    hanchan_repository.create(sim_hanchan)
+    match_repository.update({"_id": 20}, {"active_hanchan_id": 20})
+
+    group = Group(
+        line_group_id="G0123456789abcdefghijklmnopqrstu1",
+        mode=GroupMode.sim.value,
+        active_match_id=10,
+        sim_match_id=20,
+        _id=1,
+    )
+    group_repository.create(group)
+    request_info_service.set_req_info(event=dummy_event)
+
+    ExitUseCase().execute()
+
+    # 実系列(active_match_id=10)の半荘は影響を受けない
+    real_matches = match_repository.find({"_id": 10})
+    assert real_matches[0].active_hanchan_id == 10
+    assert len(hanchan_repository.find({"_id": 10})) == 1
+
+    # sim側(sim_match_id=20)の半荘は破棄される
+    sim_matches = match_repository.find({"_id": 20})
+    assert sim_matches[0].active_hanchan_id is None
+    assert len(hanchan_repository.find({"_id": 20})) == 0
+
+
 def test_execute_without_active_hanchan():
     # 目的: test_execute_without_active_hanchan の挙動を検証する。
     # 入力: なし

@@ -80,6 +80,7 @@ class GroupRepository(IGroupRepository):
             line_group_id=record.get("line_group_id"),
             mode=record.get("mode"),
             active_match_id=record.get("active_match_id"),
+            sim_match_id=record.get("sim_match_id"),
             settings=settings,
             last_command=record.get("last_command"),
             group_name=record.get("group_name"),

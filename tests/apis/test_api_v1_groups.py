@@ -6,9 +6,15 @@ from flask_jwt_extended import create_access_token
 
 import server as srv
 from domain_model.entities.group import Group
+from domain_model.entities.match import Match, MatchStatus
 from domain_model.entities.user_group import UserGroup
 from domain_model.entities.web_user import WebUser
-from repositories import group_repository, user_group_repository, web_user_repository
+from repositories import (
+    group_repository,
+    match_repository,
+    user_group_repository,
+    web_user_repository,
+)
 
 
 def _auth(token):
@@ -135,6 +141,28 @@ def test_get_matches_returns_empty_when_no_matches(jwt_authenticated_client):
     resp = client.get(f"/api/v1/groups/{group._id}/matches", headers=_auth(token))
     assert resp.status_code == 200
     assert resp.get_json() == []
+
+
+def test_get_matches_excludes_sim_sandbox(jwt_authenticated_client):
+    """_sim専用サンドボックス(status=sim)は一覧に表示されない(FEZ-66 Phase C、Codex review指摘)。"""
+    client, token, _web_user, line_user = jwt_authenticated_client
+    line_group_id = "G_api_v1_matches_sim_001_abcde"
+
+    group = group_repository.create(Group(line_group_id=line_group_id))
+    user_group_repository.create(
+        UserGroup(line_user_id=line_user.line_user_id, line_group_id=line_group_id),
+    )
+    match_repository.create(
+        Match(line_group_id=line_group_id, status=MatchStatus.settled.value),
+    )
+    match_repository.create(
+        Match(line_group_id=line_group_id, status=MatchStatus.sim.value),
+    )
+
+    resp = client.get(f"/api/v1/groups/{group._id}/matches", headers=_auth(token))
+    assert resp.status_code == 200
+    body = resp.get_json()
+    assert len(body) == 1
 
 
 # ─── /api/v1/groups/<group_id>/ranking ────────────────────────

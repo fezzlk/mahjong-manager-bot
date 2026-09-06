@@ -169,12 +169,13 @@ def test_execute_new_hanchan():
 
 
 def test_mode_updated_before_match_creation():
-    """mode が active_match_id より先に input に更新されることを確認する。
+    """Mode が active_match_id より先に input に更新されることを確認する。
 
     レース条件対策として group.mode = input を先に DB へ書き込むため、
     match 作成後も group.mode と active_match_id が両方保存されている。
     """
     from unittest.mock import patch
+
     from domain_service import group_service as gs
 
     request_info_service.set_req_info(event=dummy_event)
