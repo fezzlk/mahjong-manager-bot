@@ -1,6 +1,7 @@
 from .command_alias_repository import CommandAliasRepository
 from .group_repository import GroupRepository
 from .group_setting_repository import GroupSettingRepository
+from .guest_repository import GuestRepository
 from .hanchan_repository import HanchanRepository
 from .history_session_repository import HistorySessionRepository
 from .match_repository import MatchRepository
@@ -13,6 +14,7 @@ from .yakuman_user_repository import YakumanUserRepository
 
 command_alias_repository = CommandAliasRepository()
 group_setting_repository = GroupSettingRepository()
+guest_repository = GuestRepository()
 user_repository = UserRepository()
 web_user_repository = WebUserRepository()
 hanchan_repository = HanchanRepository()

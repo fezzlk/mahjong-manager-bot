@@ -5,14 +5,24 @@ from application_service import (
 from domain_model.entities.group_setting import ROUNDING_METHOD_LIST
 from domain_service import (
     group_setting_service,
+    guest_service,
 )
 
 
 class ReplyGroupSettingsMenuUseCase:
     def execute(self, body) -> None:
-        settings = group_setting_service.find_or_create(
-            request_info_service.req_line_group_id,
-        )
+        line_group_id = request_info_service.req_line_group_id
+
+        if body == "ゲスト":
+            reply_service.add_guest_menu(guest_service.list_by_group(line_group_id))
+            return
+        if body == "ゲスト削除":
+            reply_service.add_guest_remove_quick_reply(
+                guest_service.list_by_group(line_group_id),
+            )
+            return
+
+        settings = group_setting_service.find_or_create(line_group_id)
 
         if body == "":
             r = settings.ranking_prize
