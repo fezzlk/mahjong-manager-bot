@@ -4,7 +4,7 @@ from application_service import (
 )
 from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.hanchan import Hanchan
-from domain_model.entities.match import Match
+from domain_model.entities.match import Match, MatchStatus
 from line_models.event import Event
 from repositories import (
     group_repository,
@@ -67,6 +67,7 @@ def test_new_sim_match_and_hanchan():
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is not None
+    assert matches[0].status == MatchStatus.sim.value
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 1
 

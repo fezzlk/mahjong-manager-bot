@@ -11,6 +11,9 @@ from domain_model.entities.group_setting import EmbeddedGroupSettings
 class MatchStatus(Enum):
     open = "open"
     settled = "settled"
+    # _sim専用の使い捨てサンドボックス。実対戦の一覧・最新対戦検索からは
+    # 常に除外する(FEZ-66 Phase C)。
+    sim = "sim"
 
 
 @dataclass

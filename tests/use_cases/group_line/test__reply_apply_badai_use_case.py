@@ -4,7 +4,7 @@ from application_service import (
     reply_service,
     request_info_service,
 )
-from domain_model.entities.match import Match
+from domain_model.entities.match import Match, MatchStatus
 from domain_model.entities.user import User
 from line_models.event import Event
 from repositories import (
@@ -252,6 +252,33 @@ def test_execute_with_progress_match():
         reply_service.texts[0].text
         == "現在進行中の対戦があります。対戦を終了するには「_finish」と送信してください。"
     )
+
+
+def test_execute_ignores_sim_sandbox():
+    """_sim専用サンドボックス(status=sim)がより新しくても、最新の実対戦を対象にする
+    (FEZ-66 Phase C、Codex review指摘)。
+    """
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    # dummy_matches[1](_id=2)より新しいsimサンドボックスを作成
+    match_repository.create(
+        Match(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            status=MatchStatus.sim.value,
+            created_at=datetime(2010, 1, 1, 1, 1, 9),
+        ),
+    )
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyApplyBadaiUseCase()
+
+    # Act
+    use_case.execute("3,000")
+
+    # Assert: simサンドボックスではなく実対戦(_id=2)の結果が使われる
+    assert len(reply_service.texts) == 2
+    assert reply_service.texts[0].text == "直前の対戦の最終会計を表示します。"
 
 
 def test_execute_with_progress_match2():
