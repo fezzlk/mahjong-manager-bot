@@ -7,6 +7,7 @@ from application_service import (
     request_info_service,
 )
 from domain_model.entities.group import GroupMode
+from domain_model.entities.match import MatchStatus
 from domain_service import (
     group_service,
     group_setting_service,
@@ -76,6 +77,7 @@ class FinishMatchUseCase:
         active_match.chip_prices = {}
         active_match.sum_prices = sum_prices
         active_match.sum_prices_with_chip = sum_prices_with_chip
+        active_match.status = MatchStatus.settled.value
         match_service.update(active_match)
         group.mode = GroupMode.wait.value
         group.active_match_id = None

@@ -1,10 +1,12 @@
 import copy
 import logging
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 
 from bson.objectid import ObjectId
 from pymongo import ASCENDING, DESCENDING
 
+from domain_model.entities.group_setting import EmbeddedGroupSettings
 from domain_model.entities.match import Match
 from repositories import match_repository
 
@@ -100,14 +102,38 @@ class MatchService(IMatchService):
             return None
         return matches[0]
 
-    def create_with_line_group_id(self, line_group_id: str) -> Match:
+    def create_with_line_group_id(
+        self,
+        line_group_id: str,
+        settings: Optional[EmbeddedGroupSettings] = None,
+    ) -> Match:
         new_match = Match(
             line_group_id=line_group_id,
+            name=self._default_match_name(line_group_id),
+            settings=settings,
         )
         match_repository.create(new_match)
 
         logger.info('create match: group "%s"', line_group_id)
         return new_match
+
+    def _default_match_name(self, line_group_id: str) -> str:
+        """当日その他数のMatchが既に作成済みなら連番サフィックスを付ける(例: "9/6 (2)")。"""
+        now = datetime.now()
+        start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_of_day = start_of_day + timedelta(days=1)
+        todays_count = len(
+            match_repository.find(
+                query={
+                    "line_group_id": line_group_id,
+                    "created_at": {"$gte": start_of_day, "$lt": end_of_day},
+                },
+            ),
+        )
+        base_name = f"{now.month}/{now.day}"
+        if todays_count == 0:
+            return base_name
+        return f"{base_name} ({todays_count + 1})"
 
     def update(self, target: Match) -> None:
         # UC-11: use copy to avoid mutating entity.__dict__ during dict comprehension
