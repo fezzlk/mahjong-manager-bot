@@ -1,4 +1,3 @@
-import json
 import logging
 import threading
 from typing import Dict, List
@@ -389,29 +388,6 @@ class ReplyService(IReplyService):
                             label="入力完了",
                             display_text="入力完了",
                             data="_chip_ok",
-                        ),
-                    ],
-                ),
-            ),
-        )
-
-    def add_submit_results_by_ocr_menu(self, results: Dict[str, int]) -> None:
-        self.buttons.append(
-            TemplateMessage(
-                alt_text="画像読み込み実行",
-                template=ButtonsTemplate(
-                    title="画像読み込み完了",
-                    text="内容があっているか確認してください。",
-                    actions=[
-                        PostbackAction(
-                            label="この結果で計算する",
-                            display_text="この結果で計算する",
-                            data="_add_result " + json.dumps(results),
-                        ),
-                        PostbackAction(
-                            label="手入力する",
-                            display_text="手入力する",
-                            data="_input",
                         ),
                     ],
                 ),
