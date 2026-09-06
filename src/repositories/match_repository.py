@@ -4,7 +4,8 @@ from typing import Dict, List, Optional, Tuple
 
 from pymongo import ASCENDING, ReturnDocument
 
-from domain_model.entities.match import Match
+from domain_model.entities.group_setting import EmbeddedGroupSettings
+from domain_model.entities.match import Match, MatchStatus
 from domain_model.i_repositories.i_match_repository import IMatchRepository
 from mongo_client import matches_collection
 
@@ -37,6 +38,8 @@ class MatchRepository(IMatchRepository):
         # sum_scores を list 形式で保存
         if "sum_scores" in new_dict:
             new_dict["sum_scores"] = _sum_scores_to_list(new_dict["sum_scores"])
+        if new_dict.get("settings") is not None:
+            new_dict["settings"] = new_dict["settings"].to_dict()
         result = matches_collection.insert_one(new_dict)
         new_record._id = result.inserted_id
         return new_record
@@ -51,6 +54,8 @@ class MatchRepository(IMatchRepository):
         # sum_scores を list 形式で保存
         if "sum_scores" in new_values:
             new_values["sum_scores"] = _sum_scores_to_list(new_values["sum_scores"])
+        if new_values.get("settings") is not None:
+            new_values["settings"] = new_values["settings"].to_dict()
         result = matches_collection.update_one(filter_query, {"$set": new_values})
         return result.matched_count
 
@@ -120,9 +125,18 @@ class MatchRepository(IMatchRepository):
         return result.deleted_count
 
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> Match:
+        raw_settings = record.get("settings")
+        settings = EmbeddedGroupSettings.from_dict(raw_settings) if raw_settings else None
         return Match(
             line_group_id=record.get("line_group_id"),
             is_deleted=record.get("is_deleted", False),
+            # 未マイグレーションの既存レコードは大半が精算済みのため、
+            # status欠落時は安全側(settled)にフォールバックする。
+            # 新規作成時は常に明示的にopenを書き込むため、この既定値は
+            # 未マイグレーションの古いレコードを読んだ時にのみ効く。
+            status=record.get("status", MatchStatus.settled.value),
+            name=record.get("name"),
+            settings=settings,
             created_at=record.get("created_at"),
             updated_at=record.get("updated_at"),
             chip_scores=record.get("chip_scores"),

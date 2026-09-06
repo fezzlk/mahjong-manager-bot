@@ -556,6 +556,26 @@ class ReplyService(IReplyService):
             ),
         )
 
+    def add_reopen_target_quick_reply(self, matches) -> None:
+        items = []
+        for m in matches[:13]:
+            label = (m.name or str(m._id))[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_reopen_confirm?to={m._id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どの対戦を再オープンしますか？（直近5件の精算済み対戦）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
     def add_personal_migrate_source_quick_reply(self, groups) -> None:
         """個人DM: 統合元 (旧グループ) 選択 QR"""
         items = []

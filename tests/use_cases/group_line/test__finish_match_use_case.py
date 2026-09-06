@@ -5,7 +5,7 @@ from application_service import (
 from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.group_setting import EmbeddedGroupSettings
 from domain_model.entities.hanchan import Hanchan
-from domain_model.entities.match import Match
+from domain_model.entities.match import Match, MatchStatus
 from domain_model.entities.user import User, UserMode
 from repositories import (
     group_repository,
@@ -229,6 +229,7 @@ def test_success():
 
     matches = match_repository.find({"_id": 1})
     assert not matches[0].is_deleted
+    assert matches[0].status == MatchStatus.settled.value
     assert matches[0].chip_prices == {}
     assert len(matches[0].sum_scores) == 5
     assert matches[0].sum_scores["U0123456789abcdefghijklmnopqrstu1"] == 100

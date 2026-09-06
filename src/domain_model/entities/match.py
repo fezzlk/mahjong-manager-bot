@@ -1,14 +1,25 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+from enum import Enum
 from typing import Dict, Optional
 
 from bson.objectid import ObjectId
+
+from domain_model.entities.group_setting import EmbeddedGroupSettings
+
+
+class MatchStatus(Enum):
+    open = "open"
+    settled = "settled"
 
 
 @dataclass
 class Match:
     line_group_id: str
     is_deleted: bool = False
+    status: str = MatchStatus.open.value
+    name: Optional[str] = None
+    settings: Optional[EmbeddedGroupSettings] = None
     chip_scores: Dict[str, int] = field(default_factory=dict)
     chip_prices: Dict[str, int] = field(default_factory=dict)
     sum_scores: Dict[str, int] = field(default_factory=dict)

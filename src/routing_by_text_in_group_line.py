@@ -100,6 +100,7 @@ class RCommands(Enum):
     rank_detail = "rank_detail"
     ranking = "ranking"
     reopen = "reopen"
+    reopen_confirm = "reopen_confirm"
     sim = "sim"
     migrate = "migrate"
     migrate_confirm = "migrate_confirm"
@@ -225,6 +226,7 @@ def routing_for_group_by_command(command):
         RCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
         RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
         RCommands.reopen.name: lambda: ReopenMatchUseCase().execute(),
+        RCommands.reopen_confirm.name: lambda: ReopenMatchUseCase().confirm(),
         RCommands.sim.name: lambda: StartSimUseCase().execute(),
         RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
         RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),

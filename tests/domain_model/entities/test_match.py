@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from domain_model.entities.match import Match
+from domain_model.entities.group_setting import EmbeddedGroupSettings
+from domain_model.entities.match import Match, MatchStatus
 
 
 def test_success():
@@ -10,6 +11,9 @@ def test_success():
     match = Match(
         line_group_id="G0123456789abcdefghijklmnopqrstu2",
         is_deleted=True,
+        status=MatchStatus.settled.value,
+        name="9/6 (2)",
+        settings=EmbeddedGroupSettings(rate=1),
         created_at=datetime(2022, 1, 2, 3, 4, 5),
         updated_at=datetime(2023, 1, 2, 3, 4, 5),
         chip_prices={"a": 1},
@@ -26,6 +30,9 @@ def test_success():
     assert match._id == 1
     assert match.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
     assert match.is_deleted
+    assert match.status == MatchStatus.settled.value
+    assert match.name == "9/6 (2)"
+    assert match.settings == EmbeddedGroupSettings(rate=1)
     assert match.chip_prices == {"a": 1}
     assert match.chip_scores == {"a": 2}
     assert match.sum_prices == {"a": 3}
@@ -49,6 +56,9 @@ def test_success_default():
     assert match._id is None
     assert match.line_group_id == "G0123456789abcdefghijklmnopqrstu2"
     assert not match.is_deleted
+    assert match.status == MatchStatus.open.value
+    assert match.name is None
+    assert match.settings is None
     assert match.chip_prices == {}
     assert match.chip_scores == {}
     assert match.sum_prices == {}
