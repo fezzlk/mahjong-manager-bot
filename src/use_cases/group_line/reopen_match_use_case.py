@@ -1,3 +1,4 @@
+from bson.errors import InvalidId
 from bson.objectid import ObjectId
 from pymongo import DESCENDING
 
@@ -69,7 +70,10 @@ class ReopenMatchUseCase:
             reply_service.add_message("再オープンする対戦が指定されていません。")
             return
 
-        target_match = match_service.find_one_by_id(ObjectId(match_id))
+        try:
+            target_match = match_service.find_one_by_id(ObjectId(match_id))
+        except InvalidId:
+            target_match = None
         if target_match is None or target_match.line_group_id != line_group_id:
             reply_service.add_message("指定された対戦が見つかりません。")
             return

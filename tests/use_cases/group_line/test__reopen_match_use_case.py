@@ -110,6 +110,17 @@ def test_confirm_invalid_match_id():
     assert "見つかりません" in reply_service.texts[0].text
 
 
+def test_confirm_malformed_match_id():
+    """不正な形式のmatch_idを指定した場合、例外を投げずエラーメッセージが返る。"""
+    group_repository.create(Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.wait.value))
+    _setup_request(params={"to": "not-a-valid-object-id"})
+
+    ReopenMatchUseCase().confirm()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
+
+
 def test_confirm_blocked_while_active_match_exists():
     """確定時点でも進行中の対戦があればガードする。"""
     group_repository.create(
