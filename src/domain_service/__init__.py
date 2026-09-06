@@ -1,6 +1,7 @@
 """services"""
 from .group_service import GroupService
 from .group_setting_service import GroupSettingService
+from .guest_service import GuestService
 from .hanchan_service import HanchanService
 from .match_service import MatchService
 from .user_group_service import UserGroupService
@@ -16,3 +17,4 @@ group_service = GroupService()
 group_setting_service = GroupSettingService()
 match_service = MatchService()
 hanchan_service = HanchanService()
+guest_service = GuestService()

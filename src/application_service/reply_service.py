@@ -201,6 +201,11 @@ class ReplyService(IReplyService):
                                 display_text="レート、順位点、チップ",
                                 data="_setting メニュー1",
                             ),
+                            PostbackAction(
+                                label="ゲスト",
+                                display_text="ゲスト",
+                                data="_setting ゲスト",
+                            ),
                         ],
                     ),
                 ),
@@ -572,6 +577,64 @@ class ReplyService(IReplyService):
         self.texts.append(
             TextMessage(
                 text="どの対戦を再オープンしますか？（直近5件の精算済み対戦）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_guest_menu(self, guests) -> None:
+        if guests:
+            names = "\n".join(f"ゲスト{g.guest_number}" for g in guests)
+            text = f"登録済みのゲスト:\n{names}"
+        else:
+            text = "登録済みのゲストはいません。"
+
+        actions = [
+            PostbackAction(
+                label="追加",
+                display_text="ゲストを追加",
+                data="_guest_add",
+            ),
+        ]
+        if guests:
+            actions.append(
+                PostbackAction(
+                    label="削除",
+                    display_text="ゲストを削除",
+                    data="_setting ゲスト削除",
+                ),
+            )
+
+        self.buttons.append(
+            TemplateMessage(
+                alt_text="ゲスト管理",
+                template=ButtonsTemplate(
+                    title="ゲスト管理",
+                    text=text,
+                    actions=actions,
+                ),
+            ),
+        )
+
+    def add_guest_remove_quick_reply(self, guests) -> None:
+        if not guests:
+            self.texts.append(TextMessage(text="削除できるゲストがいません。"))
+            return
+
+        items = []
+        for g in guests[:13]:
+            label = f"ゲスト{g.guest_number}"
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_guest_remove_confirm?number={g.guest_number}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="削除するゲストを選んでください。",
                 quick_reply=QuickReply(items=items),
             ),
         )

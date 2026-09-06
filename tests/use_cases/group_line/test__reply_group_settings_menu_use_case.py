@@ -9,6 +9,7 @@ from application_service import (
 )
 from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.group_setting import EmbeddedGroupSettings
+from domain_service import guest_service
 from line_models.event import Event
 from repositories import group_repository
 from use_cases.group_line.reply_group_settings_menu_use_case import (
@@ -119,3 +120,61 @@ def test_execute_rate():
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].quick_reply is not None
     assert len(reply_service.buttons) == 0
+
+
+def test_execute_guest_menu_no_guests():
+    """ゲスト未登録時は「追加」ボタンのみのButtonsTemplateが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyGroupSettingsMenuUseCase()
+
+    use_case.execute("ゲスト")
+
+    assert len(reply_service.texts) == 0
+    assert len(reply_service.buttons) == 1
+    button = reply_service.buttons[0]
+    assert isinstance(button, TemplateMessage)
+    assert len(button.template.actions) == 1
+    assert button.template.actions[0].label == "追加"
+
+
+def test_execute_guest_menu_with_guests():
+    """ゲスト登録済みなら一覧表示＋「追加」「削除」ボタンが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    guest_service.register_next(dummy_line_group_id)
+    use_case = ReplyGroupSettingsMenuUseCase()
+
+    use_case.execute("ゲスト")
+
+    assert len(reply_service.buttons) == 1
+    button = reply_service.buttons[0]
+    assert "ゲスト1" in button.template.text
+    labels = {a.label for a in button.template.actions}
+    assert labels == {"追加", "削除"}
+
+
+def test_execute_guest_remove_menu_no_guests():
+    """削除できるゲストがいなければメッセージのみ返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyGroupSettingsMenuUseCase()
+
+    use_case.execute("ゲスト削除")
+
+    assert len(reply_service.texts) == 1
+    assert "いません" in reply_service.texts[0].text
+    assert len(reply_service.buttons) == 0
+
+
+def test_execute_guest_remove_menu_with_guests():
+    """登録済みゲストがQuick Replyの選択肢として提示される。"""
+    request_info_service.set_req_info(event=dummy_event)
+    guest_service.register_next(dummy_line_group_id)
+    guest_service.register_next(dummy_line_group_id)
+    use_case = ReplyGroupSettingsMenuUseCase()
+
+    use_case.execute("ゲスト削除")
+
+    assert len(reply_service.texts) == 1
+    quick_reply = reply_service.texts[0].quick_reply
+    assert quick_reply is not None
+    assert len(quick_reply.items) == 2
+    assert quick_reply.items[0].action.data == "_guest_remove_confirm?number=1"

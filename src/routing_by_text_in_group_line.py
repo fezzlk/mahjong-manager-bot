@@ -29,6 +29,10 @@ from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.exit_use_case import ExitUseCase
 from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
+from use_cases.group_line.guest_add_use_case import GuestAddUseCase
+from use_cases.group_line.guest_remove_confirm_use_case import (
+    GuestRemoveConfirmUseCase,
+)
 from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
 from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
 from use_cases.group_line.reply_apply_badai_use_case import ReplyApplyBadaiUseCase
@@ -101,6 +105,8 @@ class RCommands(Enum):
     ranking = "ranking"
     reopen = "reopen"
     reopen_confirm = "reopen_confirm"
+    guest_add = "guest_add"
+    guest_remove_confirm = "guest_remove_confirm"
     sim = "sim"
     migrate = "migrate"
     migrate_confirm = "migrate_confirm"
@@ -227,6 +233,8 @@ def routing_for_group_by_command(command):
         RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
         RCommands.reopen.name: lambda: ReopenMatchUseCase().execute(),
         RCommands.reopen_confirm.name: lambda: ReopenMatchUseCase().confirm(),
+        RCommands.guest_add.name: lambda: GuestAddUseCase().execute(),
+        RCommands.guest_remove_confirm.name: lambda: GuestRemoveConfirmUseCase().execute(),
         RCommands.sim.name: lambda: StartSimUseCase().execute(),
         RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
         RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),
