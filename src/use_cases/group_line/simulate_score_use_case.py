@@ -30,11 +30,11 @@ class SimulateScoreUseCase:
         if group is None:
             reply_service.add_message("グループが登録されていません。招待し直してください。")
             return
-        active_match = match_service.find_one_by_id(group.active_match_id)
-        if active_match is None or active_match.active_hanchan_id is None:
+        sim_match = match_service.find_one_by_id(group.sim_match_id)
+        if sim_match is None or sim_match.active_hanchan_id is None:
             return
         hanchan = hanchan_service.add_or_drop_raw_score(
-            hanchan_id=active_match.active_hanchan_id,
+            hanchan_id=sim_match.active_hanchan_id,
             line_user_id=target_line_user_id,
             raw_score=point,
         )
@@ -54,13 +54,13 @@ class SimulateScoreUseCase:
         reply_service.add_message("\n".join(res))
 
         if len(raw_scores) == 4:
-            self._calculate_and_show(line_group_id, raw_scores, hanchan._id, active_match)
+            self._calculate_and_show(line_group_id, raw_scores, hanchan._id, sim_match)
         elif len(raw_scores) > 4:
             reply_service.add_message(
                 "5人以上入力されています。@[ユーザー名] で不要な入力を消してください。",
             )
 
-    def _calculate_and_show(self, line_group_id, raw_scores, hanchan_id, active_match):
+    def _calculate_and_show(self, line_group_id, raw_scores, hanchan_id, sim_match):
         """4人分の点数でシミュレーション計算し、結果表示後にクリーンアップする。"""
         points = raw_scores
 
@@ -114,8 +114,8 @@ class SimulateScoreUseCase:
         if hanchan is not None:
             hanchan.is_deleted = True
             hanchan_service.update(hanchan)
-        active_match.active_hanchan_id = None
-        match_service.update(active_match)
+        sim_match.active_hanchan_id = None
+        match_service.update(sim_match)
         group = group_service.find_one_by_line_group_id(line_group_id)
         group.mode = GroupMode.wait.value
         group_service.update(group)

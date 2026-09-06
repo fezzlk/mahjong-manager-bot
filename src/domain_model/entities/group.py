@@ -21,6 +21,9 @@ class Group:
     line_group_id: str
     mode: str = GroupMode.wait.value
     active_match_id: ObjectId = field(default=None)
+    # _sim専用の使い捨てサンドボックスMatch。active_match_idとは独立に保持し、
+    # 実系列の入力中データを_simが上書きしないようにする(FEZ-66 Phase C)。
+    sim_match_id: ObjectId = field(default=None)
     settings: Optional[EmbeddedGroupSettings] = field(default=None)
     last_command: str = field(default=None)
     group_name: Optional[str] = field(default=None)

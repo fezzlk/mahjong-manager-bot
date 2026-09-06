@@ -1,6 +1,7 @@
 """sim モードと input モード間のモード遷移テスト。
 
-sim モードの途中入力データが input モードに漏れないことを検証する。
+sim モードの途中入力データが input モードに漏れず、また sim が実系列
+(active_match_id)のデータを一切変更しないことを検証する(FEZ-66 Phase C)。
 """
 from application_service import (
     reply_service,
@@ -83,13 +84,13 @@ def _setup_group_with_match_and_hanchan(mode=GroupMode.wait.value):
 
 
 def test_sim_to_input_cleans_up_sim_hanchan():
-    """Sim → input 切り替え時に sim 用半荘が削除され、
+    """Sim → input 切り替え時に sim 用半荘(sim_match_id側)が削除され、
     新しい空の半荘で input モードが開始される。
     """
     _setup_users()
     request_info_service.set_req_info(event=sim_event)
 
-    # wait → sim: 新しいマッチ＆半荘が作成される
+    # wait → sim: sim専用のMatch＆半荘が作成される
     group_repository.create(
         Group(line_group_id=LINE_GROUP_ID, _id=1),
     )
@@ -99,8 +100,9 @@ def test_sim_to_input_cleans_up_sim_hanchan():
     # sim モードで点数を1人分入力
     groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
     assert groups[0].mode == GroupMode.sim.value
-    matches = match_repository.find()
-    sim_hanchan_id = matches[0].active_hanchan_id
+    sim_match_id = groups[0].sim_match_id
+    sim_matches = match_repository.find({"_id": sim_match_id})
+    sim_hanchan_id = sim_matches[0].active_hanchan_id
     score_event = Event(
         type="message",
         source_type="group",
@@ -122,19 +124,21 @@ def test_sim_to_input_cleans_up_sim_hanchan():
     sim_hanchans = hanchan_repository.find({"_id": sim_hanchan_id})
     assert len(sim_hanchans) == 0
 
-    # input 用に新しい空の半荘が作成されている
+    # input 用に(sim_match_idとは別の)新しいMatch・空の半荘が作成されている
     groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
     assert groups[0].mode == GroupMode.input.value
-    matches = match_repository.find()
-    new_hanchan_id = matches[0].active_hanchan_id
+    assert groups[0].active_match_id is not None
+    assert groups[0].active_match_id != sim_match_id
+    new_matches = match_repository.find({"_id": groups[0].active_match_id})
+    new_hanchan_id = new_matches[0].active_hanchan_id
     assert new_hanchan_id != sim_hanchan_id
     new_hanchans = hanchan_repository.find({"_id": new_hanchan_id})
     assert len(new_hanchans) == 1
     assert new_hanchans[0].raw_scores == {}
 
 
-def test_input_to_sim_does_not_reuse_input_hanchan():
-    """Input → sim 切り替え時に、input の途中データが sim に混入しない。"""
+def test_input_to_sim_does_not_touch_real_match():
+    """Input → sim 切り替え時に、実系列(active_match_id)のMatch・半荘は一切変更されない。"""
     _setup_users()
     _setup_group_with_match_and_hanchan(mode=GroupMode.input.value)
 
@@ -146,17 +150,24 @@ def test_input_to_sim_does_not_reuse_input_hanchan():
     request_info_service.set_req_info(event=sim_event)
     StartSimUseCase().execute()
 
-    # sim 用に新しい半荘が作成され、空の raw_scores
-    matches = match_repository.find({"_id": 1})
-    sim_hanchan_id = matches[0].active_hanchan_id
-    assert sim_hanchan_id != 1  # 元の input 半荘ではない
-    sim_hanchans = hanchan_repository.find({"_id": sim_hanchan_id})
+    # 実系列(_id=1)のMatch・半荘は変更されない
+    real_matches = match_repository.find({"_id": 1})
+    assert real_matches[0].active_hanchan_id == 1
+    real_hanchans = hanchan_repository.find({"_id": 1})
+    assert real_hanchans[0].raw_scores == {USER_IDS[0]: 35000, USER_IDS[1]: 25000}
+
+    # sim専用に別のMatch・空の半荘が作成され、group.sim_match_idが指す
+    groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
+    assert groups[0].sim_match_id is not None
+    assert groups[0].sim_match_id != 1
+    sim_matches = match_repository.find({"_id": groups[0].sim_match_id})
+    sim_hanchans = hanchan_repository.find({"_id": sim_matches[0].active_hanchan_id})
     assert len(sim_hanchans) == 1
     assert sim_hanchans[0].raw_scores == {}
 
 
 def test_input_to_sim_to_input_no_data_leak():
-    """Input → sim → input の往復で、sim のデータが input に漏れない。"""
+    """Input → sim → input の往復で、実系列の途中データが保持され、simのデータも漏れない。"""
     _setup_users()
     _setup_group_with_match_and_hanchan(mode=GroupMode.input.value)
 
@@ -166,8 +177,10 @@ def test_input_to_sim_to_input_no_data_leak():
     reply_service.reset()
 
     # sim で点数入力
-    matches = match_repository.find({"_id": 1})
-    sim_hanchan_id = matches[0].active_hanchan_id
+    groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
+    sim_match_id = groups[0].sim_match_id
+    sim_matches = match_repository.find({"_id": sim_match_id})
+    sim_hanchan_id = sim_matches[0].active_hanchan_id
     score_event = Event(
         type="message",
         source_type="group",
@@ -188,12 +201,11 @@ def test_input_to_sim_to_input_no_data_leak():
     sim_hanchans = hanchan_repository.find({"_id": sim_hanchan_id})
     assert len(sim_hanchans) == 0
 
-    # input 用に新しい空の半荘が作成されている（sim データなし）
+    # 実系列(_id=1)は_input再開時も元の途中データを保持したまま
     groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
     assert groups[0].mode == GroupMode.input.value
-    matches = match_repository.find({"_id": 1})
-    new_hanchan_id = matches[0].active_hanchan_id
-    assert new_hanchan_id != sim_hanchan_id
-    new_hanchans = hanchan_repository.find({"_id": new_hanchan_id})
-    assert len(new_hanchans) == 1
-    assert new_hanchans[0].raw_scores == {}
+    assert groups[0].active_match_id == 1
+    real_matches = match_repository.find({"_id": 1})
+    assert real_matches[0].active_hanchan_id == 1
+    real_hanchans = hanchan_repository.find({"_id": 1})
+    assert real_hanchans[0].raw_scores == {USER_IDS[0]: 35000, USER_IDS[1]: 25000}
