@@ -25,8 +25,15 @@ class StartInputUseCase:
             reply_service.add_message("すでに入力モードです。")
             return
 
+        original_mode = group.mode
+
+        # レース条件対策: 点数入力が _input コマンドと同時に送られた場合でも
+        # 並行ワーカーが input モードを認識できるよう、最初に mode を更新する
+        group.mode = GroupMode.input.value
+        group_service.update(group)
+
         # sim モードからの切り替え時は sim 用半荘をクリーンアップ
-        if group.mode == GroupMode.sim.value:
+        if original_mode == GroupMode.sim.value:
             self._cleanup_sim_hanchan(group)
 
         # group の active match を取得、なければ作成
@@ -34,6 +41,7 @@ class StartInputUseCase:
         if active_match is None:
             active_match = match_service.create_with_line_group_id(group.line_group_id)
             group.active_match_id = active_match._id
+            group_service.update(group)
 
         # match の active hanchan を取得、なければ作成
         active_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
@@ -43,9 +51,6 @@ class StartInputUseCase:
             )
             active_match.active_hanchan_id = active_hanchan._id
             match_service.update(active_match)
-
-        group.mode = GroupMode.input.value
-        group_service.update(group)
 
         hanchans = hanchan_service.find_all_archived_by_match_id(active_match._id)
         reply_service.add_message(

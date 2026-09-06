@@ -31,7 +31,7 @@ class AddPointByTextUseCase:
             reply_service.add_message("グループが登録されていません。招待し直してください。")
             return
         active_match = match_service.find_one_by_id(group.active_match_id)
-        if active_match.active_hanchan_id is None:
+        if active_match is None or active_match.active_hanchan_id is None:
             return
         hanchan = hanchan_service.add_or_drop_raw_score(
             hanchan_id=active_match.active_hanchan_id,

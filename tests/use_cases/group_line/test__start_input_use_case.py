@@ -168,6 +168,38 @@ def test_execute_new_hanchan():
     assert len(hanchans) == 1
 
 
+def test_mode_updated_before_match_creation():
+    """mode が active_match_id より先に input に更新されることを確認する。
+
+    レース条件対策として group.mode = input を先に DB へ書き込むため、
+    match 作成後も group.mode と active_match_id が両方保存されている。
+    """
+    from unittest.mock import patch
+    from domain_service import group_service as gs
+
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = StartInputUseCase()
+    for dummy_group in dummy_groups:
+        group_repository.create(dummy_group)
+
+    update_calls = []
+    original_update = gs.update
+
+    def tracking_update(group):
+        update_calls.append(group.mode)
+        return original_update(group)
+
+    with patch.object(gs, "update", side_effect=tracking_update):
+        use_case.execute()
+
+    # 1回目の update で mode が input に変わっていること
+    assert update_calls[0] == GroupMode.input.value
+    # 最終的に active_match_id も保存されていること
+    groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
+    assert groups[0].mode == GroupMode.input.value
+    assert groups[0].active_match_id is not None
+
+
 def test_execute_with_hanchan():
     # 目的: test_execute_with_hanchan の挙動を検証する。
     # 入力: なし
