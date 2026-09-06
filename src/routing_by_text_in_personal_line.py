@@ -36,7 +36,6 @@ class UCommands(Enum):
     fortune_yaku = "fortune_yaku"
     history = "history"
     help = "help"
-    setting = "setting"
     github = "github"
     token = "token"
     url = "url"
@@ -96,7 +95,6 @@ def routing_by_command(command: str):
         UCommands.fortune.name: lambda: ReplyFortuneUseCase().execute(),
         UCommands.fortune_yaku.name: lambda: ReplyFortuneYakuUseCase().execute(),
         UCommands.history.name: lambda: ReplyHistoryUseCase().execute(),
-        UCommands.setting.name: lambda: reply_service.add_message("個人設定機能は開発中です。"),
         UCommands.help.name: lambda: ReplyUserHelpUseCase().execute(),
         UCommands.github.name: lambda: ReplyGitHubUrlUseCase().execute(),
         UCommands.token.name: lambda: ReplyTokenUseCase().execute(),

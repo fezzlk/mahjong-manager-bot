@@ -89,7 +89,6 @@ class RCommands(Enum):
     update_config = "update_config"
     # sum_matches is defined but not yet implemented (ReplySumMatchesByIdsUseCase pending)
     sum_matches = "sum_matches"
-    my_results = "my_results"
     history = "history"
     history_start = "history_start"
     history_target = "history_target"
@@ -98,8 +97,6 @@ class RCommands(Enum):
     history_exec = "history_exec"
     chip_ok = "chip_ok"
     badai = "badai"
-    # entry is defined but not yet implemented (LinkUserToGroupUseCase pending)
-    entry = "entry"
     rank = "rank"
     rank_detail = "rank_detail"
     ranking = "ranking"
@@ -238,9 +235,9 @@ def routing_for_group_by_command(command):
         RCommands.sim.name: lambda: StartSimUseCase().execute(),
         RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
         RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),
-        # drop_m (DisableMatchUseCase), entry (LinkUserToGroupUseCase),
-        # sum_matches (ReplySumMatchesByIdsUseCase), add_result, my_results:
-        # intentionally not yet implemented — stub commands reserved for future use
+        # drop_m (DisableMatchUseCase), sum_matches (ReplySumMatchesByIdsUseCase),
+        # add_result: intentionally not yet implemented — stub commands reserved
+        # for future use (FEZ-66 Phase C)
     }
 
     action = dispatch.get(command)
