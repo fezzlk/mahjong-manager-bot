@@ -103,7 +103,7 @@ def test_execute():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = 3
+    dummy_group.current_input_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -139,7 +139,7 @@ def test_execute_not_int_point():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = 3
+    dummy_group.current_input_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -169,7 +169,7 @@ def test_execute_with_mention():
     request_info_service.mention_line_ids = ["U0123456789abcdefghijklmnopqrstu1"]
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = 3
+    dummy_group.current_input_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -209,7 +209,7 @@ def test_execute_multi_mentions():
     ]
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = 3
+    dummy_group.current_input_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -246,7 +246,7 @@ def test_execute_not_registered_user():
     request_info_service.mention_line_ids = ["dummy_line_id"]
     for dummy_match in dummy_matches:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = 3
+    dummy_group.current_input_match_id = 3
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -294,7 +294,7 @@ def test_execute_update():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches2:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = 1
+    dummy_group.current_input_match_id = 1
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -333,7 +333,7 @@ def test_execute_delete():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches2:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = 1
+    dummy_group.current_input_match_id = 1
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -382,7 +382,7 @@ def test_execute_delete_last_one():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches3:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = 1
+    dummy_group.current_input_match_id = 1
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -418,7 +418,7 @@ def test_execute_no_active_match():
     request_info_service.req_line_user_id = dummy_users[0].line_user_id
     for dummy_match in dummy_matches3:
         match_repository.create(dummy_match)
-    dummy_group.active_match_id = None
+    dummy_group.current_input_match_id = None
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)

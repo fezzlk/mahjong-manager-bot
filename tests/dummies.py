@@ -120,7 +120,7 @@ def generate_dummy_group_list() -> List[Group]:
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu1",
             mode=GroupMode.wait.value,
-            active_match_id=ObjectId("644c838186bbd9e20a91b785"),
+            current_input_match_id=ObjectId("644c838186bbd9e20a91b785"),
         ),
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu2",

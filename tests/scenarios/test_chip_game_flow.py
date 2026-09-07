@@ -39,7 +39,7 @@ def test_chip_game_flow():
 
     最終 DB 状態:
     - group.mode = "wait"
-    - group.active_match_id = None (マッチ終了)
+    - group.current_input_match_id = None (マッチ終了)
     - match.chip_scores にチップ情報が保存されている
     - match.sum_scores に集計結果が入っている
     """
@@ -56,7 +56,7 @@ def test_chip_game_flow():
 
     groups = group_repository.find({"line_group_id": GROUP_ID})
     assert groups[0].mode == GroupMode.input.value
-    match_id = groups[0].active_match_id
+    match_id = groups[0].current_input_match_id
     assert match_id is not None
 
     # === Step 3: 4人分の点数入力 ===
@@ -68,10 +68,10 @@ def test_chip_game_flow():
     _set_group_request()
     SubmitHanchanUseCase().execute()
 
-    # 半荘確定後: グループは wait モードに戻るが active_match_id は残る
+    # 半荘確定後: グループは wait モードに戻るが current_input_match_id は残る
     groups = group_repository.find({"line_group_id": GROUP_ID})
     assert groups[0].mode == GroupMode.wait.value
-    assert groups[0].active_match_id == match_id
+    assert groups[0].current_input_match_id == match_id
 
     # === Step 5: チップ入力 (合計 = 0) ===
     for user_id, chip in zip(USER_IDS, CHIP_SCORES):
@@ -92,9 +92,9 @@ def test_chip_game_flow():
     ):
         FinishInputChipUseCase().execute()
 
-    # グループの active_match_id がクリア、モードが wait に戻る
+    # グループの current_input_match_id がクリア、モードが wait に戻る
     groups = group_repository.find({"line_group_id": GROUP_ID})
-    assert groups[0].active_match_id is None
+    assert groups[0].current_input_match_id is None
     assert groups[0].mode == GroupMode.wait.value
 
     # マッチの sum_scores に集計結果が入っている
@@ -131,6 +131,6 @@ def test_chip_game_flow_fails_when_chip_sum_not_zero():
 
     # エラーメッセージが出て、マッチは終了しない
     groups = group_repository.find({"line_group_id": GROUP_ID})
-    assert groups[0].active_match_id is not None  # まだ active
+    assert groups[0].current_input_match_id is not None  # まだ active
     error_texts = [t.text for t in reply_service.texts]
     assert any("0" in t for t in error_texts)

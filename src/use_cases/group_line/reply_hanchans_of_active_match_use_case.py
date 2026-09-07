@@ -23,13 +23,13 @@ class ReplyHanchansOfActiveMatchUseCase:
                 "トークルームが登録されていません。招待し直してください。",
             )
             return
-        if group.active_match_id is None:
+        if group.current_input_match_id is None:
             reply_service.add_message(
                 "現在進行中の対戦がありません。",
             )
             return
 
-        archived_hanchans = hanchan_service.find_all_archived_by_match_id(match_id=group.active_match_id)
+        archived_hanchans = hanchan_service.find_all_archived_by_match_id(match_id=group.current_input_match_id)
 
         if len(archived_hanchans) == 0:
             reply_service.add_message(

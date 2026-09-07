@@ -19,7 +19,7 @@ class FinishInputChipUseCase:
                 "グループが登録されていません。招待し直してください。",
             )
             return
-        active_match = match_service.find_one_by_id(group.active_match_id)
+        active_match = match_service.find_one_by_id(group.current_input_match_id)
         if active_match is None:
             reply_service.add_message(
                 "計算対象の試合が見つかりません。",

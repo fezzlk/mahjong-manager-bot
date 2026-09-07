@@ -25,16 +25,16 @@ class DropHanchanByIndexUseCase:
                 "トークルームが登録されていません。招待し直してください。",
             )
             return
-        if group.active_match_id is None:
+        if group.current_input_match_id is None:
             reply_service.add_message(
                 "現在進行中の対戦がありません。",
             )
             return
 
-        active_match = match_service.find_one_by_id(group.active_match_id)
+        active_match = match_service.find_one_by_id(group.current_input_match_id)
         if active_match is None:
             raise RuntimeError(
-                f"DropHanchanByIndexUseCase: 対戦結果の取得失敗: match_id: {group.active_match_id}",
+                f"DropHanchanByIndexUseCase: 対戦結果の取得失敗: match_id: {group.current_input_match_id}",
             )
 
         archived_hanchans = hanchan_service.find_all_archived_by_match_id(

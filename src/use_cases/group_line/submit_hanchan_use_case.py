@@ -45,7 +45,7 @@ class SubmitHanchanUseCase:
                 "グループが登録されていません。招待し直してください。",
             )
             return
-        active_match = match_service.find_one_by_id(group.active_match_id)
+        active_match = match_service.find_one_by_id(group.current_input_match_id)
         if active_match is None:
             reply_service.add_message(
                 "計算対象の試合が見つかりません。",
@@ -96,8 +96,11 @@ class SubmitHanchanUseCase:
             )
             return
 
-        # config の取得
-        setting = group_setting_service.find_or_create(line_group_id)
+        # config の取得: 対戦作成時の設定を優先する(異なるレート等の対戦が
+        # 同時に進行していても、それぞれ自分自身の設定でスコア計算されるように
+        # するため。FEZ-66 Phase D)。settings未設定(旧データ)はグループの
+        # 現在の設定にフォールバックする。
+        setting = active_match.settings or group_setting_service.find_or_create(line_group_id)
 
         # 計算の実行
         calculate_result = calculate_service.run(

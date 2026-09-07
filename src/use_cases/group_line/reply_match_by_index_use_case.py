@@ -31,7 +31,10 @@ class ReplyMatchByIndexUseCase:
             return
 
         match = archived_matches[index-1]
-        setting = group_setting_service.find_or_create(line_group_id)
+        # 精算された時点の設定を優先する(グループの現在の設定ではなく)。
+        # settings未設定(旧データ)はグループの現在の設定にフォールバックする。
+        # FEZ-66 Phase D
+        setting = match.settings or group_setting_service.find_or_create(line_group_id)
         result = message_service.create_show_match_result(match=match, unit=setting.unit)
 
         reply_service.add_message(f'第{index}回\n{match.created_at.strftime("%Y年%m月%d日")}\n{result}')

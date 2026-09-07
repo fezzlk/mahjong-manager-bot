@@ -22,7 +22,7 @@ class ExitUseCase:
             return
 
         # simモード中断時はsim専用サンドボックス、それ以外は実系列の
-        # active_match_idを対象にクリーンアップする(両者は独立している)。
+        # current_input_match_idを対象にクリーンアップする(両者は独立している)。
         was_sim = group.mode == GroupMode.sim.value
 
         group.mode = GroupMode.wait.value
@@ -31,7 +31,7 @@ class ExitUseCase:
         reply_service.add_message(
             "始める時は「_start」と入力してください。")
 
-        target_match_id = group.sim_match_id if was_sim else group.active_match_id
+        target_match_id = group.sim_match_id if was_sim else group.current_input_match_id
         target_match = match_service.find_one_by_id(target_match_id)
 
         if target_match is None:

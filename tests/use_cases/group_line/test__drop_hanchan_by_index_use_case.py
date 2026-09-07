@@ -29,7 +29,7 @@ dummy_event = Event(
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     mode=GroupMode.input.value,
-    active_match_id=1,
+    current_input_match_id=1,
     _id=1,
 )
 

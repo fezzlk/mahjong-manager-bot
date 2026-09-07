@@ -38,7 +38,7 @@ def test_full_game_flow():
 
     最終 DB 状態:
     - group.mode = "wait"
-    - group.active_match_id = None
+    - group.current_input_match_id = None
     - 半荘に converted_scores が設定されている
     - user_hanchan レコードが 4 件作成されている
     """
@@ -56,7 +56,7 @@ def test_full_game_flow():
 
     groups = group_repository.find({"line_group_id": GROUP_ID})
     assert groups[0].mode == GroupMode.input.value
-    match_id = groups[0].active_match_id
+    match_id = groups[0].current_input_match_id
     assert match_id is not None
 
     matches = match_repository.find({"_id": match_id})
@@ -90,9 +90,9 @@ def test_full_game_flow():
     assert len(hanchans_with_results[0].results) == 4
 
     # === Step 5: 対局終了 (グラフ生成は無視) ===
-    # match.active_match_id はリセットされているのでグループに再設定して確認
+    # match.current_input_match_id はリセットされているのでグループに再設定して確認
     groups = group_repository.find({"line_group_id": GROUP_ID})
-    assert groups[0].active_match_id is not None  # FinishMatch 前はまだ active
+    assert groups[0].current_input_match_id is not None  # FinishMatch 前はまだ active
 
     _set_group_request()
     with patch(
@@ -101,9 +101,9 @@ def test_full_game_flow():
     ):
         FinishMatchUseCase().execute()
 
-    # グループの active_match_id がクリアされている
+    # グループの current_input_match_id がクリアされている
     groups = group_repository.find({"line_group_id": GROUP_ID})
-    assert groups[0].active_match_id is None
+    assert groups[0].current_input_match_id is None
     assert groups[0].mode == GroupMode.wait.value
 
     # マッチに sum_prices が設定されている

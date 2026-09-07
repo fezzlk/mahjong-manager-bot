@@ -89,7 +89,7 @@ def test_execute_new_match():
     # 目的: test_execute_new_match の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups の件数が 1 件 / groups[0].active_match_id is not None / matches の件数が 1 件 / matches[0].active_hanchan_id is not None / hanchans の件数が 1 件
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups の件数が 1 件 / groups[0].current_input_match_id is not None / matches の件数が 1 件 / matches[0].active_hanchan_id is not None / hanchans の件数が 1 件
     # reply_service: texts
     # DB操作: group_repository.create(dummy_group); groups = group_repository.find(; matches = match_repository.find(); hanchans = hanchan_repository.find()
     # Arrange
@@ -111,7 +111,7 @@ def test_execute_new_match():
         {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
     )
     assert len(groups) == 1
-    assert groups[0].active_match_id is not None
+    assert groups[0].current_input_match_id is not None
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is not None
@@ -123,7 +123,7 @@ def test_execute_new_hanchan():
     # 目的: test_execute_new_hanchan の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups の件数が 1 件 / groups[0].active_match_id is not None / matches の件数が 1 件 / matches[0].active_hanchan_id is not None / hanchans の件数が 1 件
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups の件数が 1 件 / groups[0].current_input_match_id is not None / matches の件数が 1 件 / matches[0].active_hanchan_id is not None / hanchans の件数が 1 件
     # reply_service: texts
     # DB操作: group_repository.create(dummy_group); match_repository.create(; groups = group_repository.find(; matches = match_repository.find(); hanchans = hanchan_repository.find()
     # Arrange
@@ -132,7 +132,7 @@ def test_execute_new_hanchan():
     dummy_groups2 = [
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu1",
-            active_match_id=1,
+            current_input_match_id=1,
         ),
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu2",
@@ -160,7 +160,7 @@ def test_execute_new_hanchan():
         {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
     )
     assert len(groups) == 1
-    assert groups[0].active_match_id is not None
+    assert groups[0].current_input_match_id is not None
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is not None
@@ -169,10 +169,10 @@ def test_execute_new_hanchan():
 
 
 def test_mode_updated_before_match_creation():
-    """Mode が active_match_id より先に input に更新されることを確認する。
+    """Mode が current_input_match_id より先に input に更新されることを確認する。
 
     レース条件対策として group.mode = input を先に DB へ書き込むため、
-    match 作成後も group.mode と active_match_id が両方保存されている。
+    match 作成後も group.mode と current_input_match_id が両方保存されている。
     """
     from unittest.mock import patch
 
@@ -195,17 +195,17 @@ def test_mode_updated_before_match_creation():
 
     # 1回目の update で mode が input に変わっていること
     assert update_calls[0] == GroupMode.input.value
-    # 最終的に active_match_id も保存されていること
+    # 最終的に current_input_match_id も保存されていること
     groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
     assert groups[0].mode == GroupMode.input.value
-    assert groups[0].active_match_id is not None
+    assert groups[0].current_input_match_id is not None
 
 
 def test_execute_with_hanchan():
     # 目的: test_execute_with_hanchan の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups の件数が 1 件 / groups[0].active_match_id is not None / matches の件数が 1 件 / matches[0].active_hanchan_id is not None / hanchans の件数が 1 件
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups の件数が 1 件 / groups[0].current_input_match_id is not None / matches の件数が 1 件 / matches[0].active_hanchan_id is not None / hanchans の件数が 1 件
     # reply_service: texts
     # DB操作: group_repository.create(dummy_group); match_repository.create(; hanchan_repository.create(; groups = group_repository.find(; matches = match_repository.find(); hanchans = hanchan_repository.find()
     # Arrange
@@ -214,7 +214,7 @@ def test_execute_with_hanchan():
     dummy_groups2 = [
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu1",
-            active_match_id=1,
+            current_input_match_id=1,
         ),
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu2",
@@ -250,7 +250,7 @@ def test_execute_with_hanchan():
         {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
     )
     assert len(groups) == 1
-    assert groups[0].active_match_id is not None
+    assert groups[0].current_input_match_id is not None
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is not None
