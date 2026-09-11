@@ -1,5 +1,8 @@
 from typing import Dict
 
+from bson.errors import InvalidId
+from bson.objectid import ObjectId
+
 import env_var
 from application_service import (
     graph_service,
@@ -7,15 +10,24 @@ from application_service import (
     reply_service,
     request_info_service,
 )
+from domain_model.entities.match import MatchStatus
 from domain_service import (
     group_service,
     hanchan_service,
+    match_service,
     user_service,
 )
 
 
 class ReplyHanchansOfActiveMatchUseCase:
+    """進行中の対戦の途中経過を表示する。
+
+    グループは複数の対戦を同時にopenで持てる(FEZ-66 Phase E)ため、open対戦が
+    2件以上ならピッカーで対象を選ばせ、1件なら従来通り即座に表示する。
+    """
+
     def execute(self) -> None:
+        """_active_match: open対戦数に応じて即表示 or ピッカー提示。"""
         line_group_id = request_info_service.req_line_group_id
         group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
         if group is None:
@@ -23,13 +35,44 @@ class ReplyHanchansOfActiveMatchUseCase:
                 "トークルームが登録されていません。招待し直してください。",
             )
             return
-        if group.current_input_match_id is None:
+
+        open_matches = match_service.find_all_open_by_line_group_id(line_group_id)
+        if len(open_matches) == 0:
             reply_service.add_message(
                 "現在進行中の対戦がありません。",
             )
             return
+        if len(open_matches) == 1:
+            self._show(line_group_id, open_matches[0]._id)
+            return
 
-        archived_hanchans = hanchan_service.find_all_archived_by_match_id(match_id=group.current_input_match_id)
+        reply_service.add_active_match_target_quick_reply(open_matches)
+
+    def select(self) -> None:
+        """_active_match_select?to=<match_id>: ピッカーで選択された対戦を表示する。"""
+        line_group_id = request_info_service.req_line_group_id
+        match_id = request_info_service.params.get("to")
+
+        if not match_id:
+            reply_service.add_message("表示する対戦が指定されていません。")
+            return
+
+        try:
+            target_match = match_service.find_one_by_id(ObjectId(match_id))
+        except InvalidId:
+            target_match = None
+        if (
+            target_match is None
+            or target_match.line_group_id != line_group_id
+            or target_match.status != MatchStatus.open.value
+        ):
+            reply_service.add_message("指定された対戦が見つかりません。")
+            return
+
+        self._show(line_group_id, target_match._id)
+
+    def _show(self, line_group_id: str, match_id) -> None:
+        archived_hanchans = hanchan_service.find_all_archived_by_match_id(match_id=match_id)
 
         if len(archived_hanchans) == 0:
             reply_service.add_message(

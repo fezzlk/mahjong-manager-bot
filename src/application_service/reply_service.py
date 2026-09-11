@@ -557,6 +557,46 @@ class ReplyService(IReplyService):
             ),
         )
 
+    def add_finish_target_quick_reply(self, matches) -> None:
+        items = []
+        for m in matches[:13]:
+            label = (m.name or str(m._id))[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_finish_select?to={m._id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どの対戦を精算しますか？",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_active_match_target_quick_reply(self, matches) -> None:
+        items = []
+        for m in matches[:13]:
+            label = (m.name or str(m._id))[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_active_match_select?to={m._id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どの対戦の途中経過を確認しますか？",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
     def add_guest_menu(self, guests) -> None:
         if guests:
             names = "\n".join(f"ゲスト{g.guest_number}" for g in guests)

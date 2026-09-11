@@ -36,4 +36,4 @@ class FinishInputChipUseCase:
             return
 
         group_service.chmod(line_group_id, GroupMode.chip_ok)
-        FinishMatchUseCase().execute()
+        FinishMatchUseCase().finish_pending_chip()
