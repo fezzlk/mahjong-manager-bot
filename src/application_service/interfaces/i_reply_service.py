@@ -20,10 +20,6 @@ class IReplyService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_submit_results_by_ocr_menu(self, results: Dict[str, int]) -> None:
-        pass
-
-    @abstractmethod
     def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
         pass
 
