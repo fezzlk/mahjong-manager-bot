@@ -6,7 +6,6 @@ from application_service import (
     reply_service,
     request_info_service,
 )
-from domain_model.entities.group import GroupMode
 from domain_model.entities.match import MatchStatus
 from domain_service import (
     group_service,
@@ -18,7 +17,9 @@ from repositories import match_repository
 class ReopenMatchUseCase:
     """清算済みの対戦を選び直して再アクティブにする。
 
-    レート変更後の再清算を可能にする。
+    レート変更後の再清算を可能にする。グループは複数の対戦を同時にopenで
+    持てる(FEZ-66 Phase D)ため、reopenは「openな対戦のプールに戻す」だけで、
+    グループの入力セッション状態(current_input_match_id/mode)には触れない。
     """
 
     def execute(self) -> None:
@@ -28,12 +29,6 @@ class ReopenMatchUseCase:
         if group is None:
             reply_service.add_message(
                 "グループが登録されていません。招待し直してください。",
-            )
-            return
-
-        if group.active_match_id is not None or group.mode == GroupMode.sim.value:
-            reply_service.add_message(
-                "現在進行中の試合があります。先に「_finish」で清算するか「_exit」で中断してください。",
             )
             return
 
@@ -60,12 +55,6 @@ class ReopenMatchUseCase:
             )
             return
 
-        if group.active_match_id is not None or group.mode == GroupMode.sim.value:
-            reply_service.add_message(
-                "現在進行中の試合があります。先に「_finish」で清算するか「_exit」で中断してください。",
-            )
-            return
-
         if not match_id:
             reply_service.add_message("再オープンする対戦が指定されていません。")
             return
@@ -85,12 +74,7 @@ class ReopenMatchUseCase:
         target_match.status = MatchStatus.open.value
         match_service.update(target_match)
 
-        # グループに再設定
-        group.active_match_id = target_match._id
-        group.mode = GroupMode.wait.value
-        group_service.update(group)
-
         reply_service.add_message(
             f"「{target_match.name or target_match._id}」を再オープンしました。\n"
-            "レートを変更する場合は「_setting」、再度清算する場合は「_finish」と入力してください。",
+            "入力を始めるには「_input」と入力してください。",
         )

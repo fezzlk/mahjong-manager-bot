@@ -28,7 +28,7 @@ class StartSimUseCase:
             return
 
         # sim専用の使い捨てサンドボックスを取得、なければ作成。
-        # 実系列のactive_match_idとは独立させることで、実対戦の入力中に
+        # 実系列のcurrent_input_match_idとは独立させることで、実対戦の入力中に
         # _simを実行しても実データを上書きしないようにする。status=sim
         # を明示することで、find_latest_one等の実対戦検索から常に除外される。
         sim_match = match_service.find_one_by_id(group.sim_match_id)

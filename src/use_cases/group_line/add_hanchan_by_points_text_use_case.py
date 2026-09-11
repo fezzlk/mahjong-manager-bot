@@ -30,13 +30,13 @@ class AddHanchanByPointsTextUseCase:
                 "グループが登録されていません。招待し直してください。",
             )
             return
-        active_match = match_service.find_one_by_id(group.active_match_id)
+        active_match = match_service.find_one_by_id(group.current_input_match_id)
         if active_match is None:
             active_match = match_service.create_with_line_group_id(
                 line_group_id,
                 settings=group_service.get_settings_or_create(line_group_id),
             )
-            group.active_match_id = active_match._id
+            group.current_input_match_id = active_match._id
             group_service.update(group)
 
         new_hanchan = Hanchan(

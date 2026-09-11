@@ -19,7 +19,7 @@ class GroupRepository(IGroupRepository):
         if len(self.find(query={"line_group_id": new_record.line_group_id})) != 0:
             raise Exception(f"LINE Group ID: {new_record.line_group_id} のGroupはすでに存在しています。")
 
-        new_dict = copy.deepcopy(new_record.__dict__)
+        new_dict = self.domain_dict_to_mongo(copy.deepcopy(new_record.__dict__))
         if new_record._id is None:
             new_dict.pop("_id")
         result = groups_collection.insert_one(new_dict)
@@ -28,7 +28,9 @@ class GroupRepository(IGroupRepository):
 
     def find_or_create(self, new_record: Group) -> Group:
         """TOCTOU レースフリーな upsert による find-or-create"""
-        new_dict = {k: v for k, v in new_record.__dict__.items() if k != "_id"}
+        new_dict = self.domain_dict_to_mongo(
+            {k: v for k, v in new_record.__dict__.items() if k != "_id"},
+        )
         result = groups_collection.find_one_and_update(
             filter={"line_group_id": new_record.line_group_id},
             update={"$setOnInsert": new_dict},
@@ -36,6 +38,18 @@ class GroupRepository(IGroupRepository):
             return_document=ReturnDocument.AFTER,
         )
         return self._mapping_record_to_domain(result)
+
+    @staticmethod
+    def domain_dict_to_mongo(d: Dict[str, any]) -> Dict[str, any]:
+        """current_input_match_id属性をMongoの既存フィールド名active_match_idへ戻す。
+
+        Python属性名とMongoフィールド名を意図的に乖離させている(FEZ-66 Phase D、
+        データマイグレーション不要にするため)ので、Group.__dict__由来の書き込みは
+        すべてこの変換を経由する必要がある(group_service.update()からも呼ばれる)。
+        """
+        if "current_input_match_id" in d:
+            d["active_match_id"] = d.pop("current_input_match_id")
+        return d
 
     def update(
         self,
@@ -79,7 +93,9 @@ class GroupRepository(IGroupRepository):
         return Group(
             line_group_id=record.get("line_group_id"),
             mode=record.get("mode"),
-            active_match_id=record.get("active_match_id"),
+            # Mongoのフィールド名はactive_match_idのまま(FEZ-66 Phase Dでの意図的な
+            # 命名乖離、詳細はGroupエンティティのコメント参照)。
+            current_input_match_id=record.get("active_match_id"),
             sim_match_id=record.get("sim_match_id"),
             settings=settings,
             last_command=record.get("last_command"),

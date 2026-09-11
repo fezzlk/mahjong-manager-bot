@@ -20,8 +20,13 @@ class GroupMode(Enum):
 class Group:
     line_group_id: str
     mode: str = GroupMode.wait.value
-    active_match_id: ObjectId = field(default=None)
-    # _sim専用の使い捨てサンドボックスMatch。active_match_idとは独立に保持し、
+    # 「今テキスト入力を受け付けているMatch」を指す一時的なセッションポインタ。
+    # 「どの対戦が進行中(open)か」の正本ではない(それはMatch.status、FEZ-66 Phase D)。
+    # 複数対戦が同時にopenでありうるため、このポインタはそのうちの高々1つ(現在の
+    # 入力対象)しか指さない。Mongo上のフィールド名は歴史的経緯によりactive_match_id
+    # のまま(データマイグレーション不要にするための意図的な命名乖離、group_repository参照)。
+    current_input_match_id: ObjectId = field(default=None)
+    # _sim専用の使い捨てサンドボックスMatch。current_input_match_idとは独立に保持し、
     # 実系列の入力中データを_simが上書きしないようにする(FEZ-66 Phase C)。
     sim_match_id: ObjectId = field(default=None)
     settings: Optional[EmbeddedGroupSettings] = field(default=None)

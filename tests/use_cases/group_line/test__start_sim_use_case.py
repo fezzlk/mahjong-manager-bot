@@ -49,7 +49,7 @@ def test_already_sim_mode():
 def test_new_sim_match_and_hanchan():
     """sim用のMatchもhanchanもない場合、両方新規作成してsimモードになる。
 
-    sim専用のsim_match_idに紐付き、実系列のactive_match_idは変化しない。
+    sim専用のsim_match_idに紐付き、実系列のcurrent_input_match_idは変化しない。
     """
     request_info_service.set_req_info(event=dummy_event)
     group_repository.create(
@@ -63,7 +63,7 @@ def test_new_sim_match_and_hanchan():
     groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
     assert groups[0].mode == GroupMode.sim.value
     assert groups[0].sim_match_id is not None
-    assert groups[0].active_match_id is None
+    assert groups[0].current_input_match_id is None
     matches = match_repository.find()
     assert len(matches) == 1
     assert matches[0].active_hanchan_id is not None
@@ -75,7 +75,7 @@ def test_new_sim_match_and_hanchan():
 def test_does_not_touch_real_active_match():
     """実系列(_input中)の対戦・半荘は、_sim実行後も一切変更されない(FEZ-66 Phase C)。
 
-    以前は sim が active_match_id を流用しており、_input で入力中の実対戦の
+    以前は sim が current_input_match_id を流用しており、_input で入力中の実対戦の
     active_hanchan_id を sim 用半荘で上書きしてしまうデータ破損バグがあった。
     """
     request_info_service.set_req_info(event=dummy_event)
@@ -97,7 +97,7 @@ def test_does_not_touch_real_active_match():
         Group(
             line_group_id="G0123456789abcdefghijklmnopqrstu1",
             mode=GroupMode.input.value,
-            active_match_id=1,
+            current_input_match_id=1,
             _id=1,
         ),
     )

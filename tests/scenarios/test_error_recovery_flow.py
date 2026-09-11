@@ -47,7 +47,7 @@ def test_error_recovery_flow():
 
     from repositories import group_repository
     groups = group_repository.find({"line_group_id": GROUP_ID})
-    match_id = groups[0].active_match_id
+    match_id = groups[0].current_input_match_id
 
     # 第1半荘の点数入力
     for user_id, score in zip(USER_IDS, FIRST_SCORES):

@@ -37,13 +37,13 @@ class StartInputUseCase:
             self._cleanup_sim_hanchan(group)
 
         # group の active match を取得、なければ作成
-        active_match = match_service.find_one_by_id(group.active_match_id)
+        active_match = match_service.find_one_by_id(group.current_input_match_id)
         if active_match is None:
             active_match = match_service.create_with_line_group_id(
                 group.line_group_id,
                 settings=group_service.get_settings_or_create(group.line_group_id),
             )
-            group.active_match_id = active_match._id
+            group.current_input_match_id = active_match._id
             group_service.update(group)
 
         # match の active hanchan を取得、なければ作成
@@ -64,7 +64,7 @@ class StartInputUseCase:
     def _cleanup_sim_hanchan(group) -> None:
         """Simモード専用サンドボックス(sim_match_id)の半荘を削除し、active_hanchan_idをリセットする。
 
-        sim_match_idは実系列のactive_match_idとは独立しているため、ここで
+        sim_match_idは実系列のcurrent_input_match_idとは独立しているため、ここで
         実系列のデータに触れることはない。
         """
         sim_match = match_service.find_one_by_id(group.sim_match_id)

@@ -37,7 +37,7 @@ def _play_one_match(raw_scores):
     StartInputUseCase().execute()
 
     groups = group_repository.find({"line_group_id": GROUP_ID})
-    match_id = groups[0].active_match_id
+    match_id = groups[0].current_input_match_id
 
     for user_id, score in zip(USER_IDS, raw_scores):
         set_group_request(GROUP_ID, user_id)
@@ -70,7 +70,7 @@ def test_match_history_flow():
 
     # マッチ 1 が終了していることを確認
     groups = group_repository.find({"line_group_id": GROUP_ID})
-    assert groups[0].active_match_id is None
+    assert groups[0].current_input_match_id is None
     assert groups[0].mode == GroupMode.wait.value
 
     # === マッチ 2 ===

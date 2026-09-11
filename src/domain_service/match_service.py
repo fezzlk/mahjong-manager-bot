@@ -170,6 +170,21 @@ class MatchService(IMatchService):
             return None
         return matches[0]
 
+    def find_all_open_by_line_group_id(self, line_group_id: str) -> List[Match]:
+        """グループの進行中(status=open)対戦を全て返す(FEZ-66 Phase D)。
+
+        「どの対戦が進行中か」の正本クエリ。_sim専用サンドボックス(status=sim)は
+        実対戦ではないため除外する。ピッカーでの表示順を安定させるため
+        created_at昇順で返す。
+        """
+        return match_repository.find(
+            query={
+                "line_group_id": line_group_id,
+                "status": MatchStatus.open.value,
+            },
+            sort=[("created_at", ASCENDING)],
+        )
+
     def find_all_archived_by_line_group_id(self, line_group_id: str) -> List[Match]:
         # 将来的にはGroupに含まれるメンバーの半荘のみを対象とする
         return match_repository.find(

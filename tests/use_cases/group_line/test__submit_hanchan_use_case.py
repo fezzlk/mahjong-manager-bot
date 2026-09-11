@@ -64,7 +64,7 @@ dummy_users = [
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     mode=GroupMode.input.value,
-    active_match_id=1,
+    current_input_match_id=1,
     _id=1,
 )
 
@@ -181,6 +181,44 @@ dummy_active_hanchan_has_minus_point = Hanchan(
     converted_scores={},
     match_id=1,
 )
+
+
+def test_success_uses_match_settings_snapshot_over_group_settings():
+    """スコア計算はMatch自身が持つsettingsスナップショットのranking_prizeを使い、
+    グループの現在の設定は使わない(FEZ-66 Phase D)。異なる設定の対戦が同時に
+    進行していても、それぞれ自分自身の設定で正しく計算されることを保証する。
+    """
+    from domain_model.entities.group_setting import EmbeddedGroupSettings
+
+    # Arrange
+    use_case = SubmitHanchanUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    # グループの「現在の」順位点はデフォルト[20,10,-10,-20]だが、
+    # 対戦自身の順位点は[30,10,-10,-30]
+    match = Match(
+        line_group_id=dummy_group.line_group_id,
+        settings=EmbeddedGroupSettings(ranking_prize=[30, 10, -10, -30]),
+        _id=1,
+    )
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    hanchan_repository.create(dummy_active_hanchan)
+    match.active_hanchan_id = dummy_active_hanchan._id
+    match_repository.create(match)
+
+    # Act
+    use_case.execute()
+
+    # Assert: 対戦自身のranking_prize[30,10,-10,-30]で計算されている
+    # (グループの現在の設定[20,10,-10,-20]なら50/10/-20/-40になるところ)
+    hanchan = hanchan_repository.find()[0]
+    assert hanchan.converted_scores[dummy_users[0].line_user_id] == 60
+    assert hanchan.converted_scores[dummy_users[1].line_user_id] == 10
+    assert hanchan.converted_scores[dummy_users[2].line_user_id] == -20
+    assert hanchan.converted_scores[dummy_users[3].line_user_id] == -50
+
+    reply_service.reset()
 
 
 def test_success():
@@ -533,7 +571,7 @@ def test_fail_no_active_match():
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
-    dummy_group.active_match_id = None
+    dummy_group.current_input_match_id = None
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -566,7 +604,7 @@ def test_success_aborts_when_already_claimed_by_concurrent_request(mocker):
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
-    dummy_group.active_match_id = dummy_match._id
+    dummy_group.current_input_match_id = dummy_match._id
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
@@ -603,7 +641,7 @@ def test_success_restores_active_hanchan_on_db_error(mocker):
     # Arrange
     use_case = SubmitHanchanUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
-    dummy_group.active_match_id = dummy_match._id
+    dummy_group.current_input_match_id = dummy_match._id
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)

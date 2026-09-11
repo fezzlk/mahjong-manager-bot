@@ -1,7 +1,7 @@
 """sim モードと input モード間のモード遷移テスト。
 
 sim モードの途中入力データが input モードに漏れず、また sim が実系列
-(active_match_id)のデータを一切変更しないことを検証する(FEZ-66 Phase C)。
+(current_input_match_id)のデータを一切変更しないことを検証する(FEZ-66 Phase C)。
 """
 from application_service import (
     reply_service,
@@ -77,7 +77,7 @@ def _setup_group_with_match_and_hanchan(mode=GroupMode.wait.value):
         Group(
             line_group_id=LINE_GROUP_ID,
             mode=mode,
-            active_match_id=1,
+            current_input_match_id=1,
             _id=1,
         ),
     )
@@ -127,9 +127,9 @@ def test_sim_to_input_cleans_up_sim_hanchan():
     # input 用に(sim_match_idとは別の)新しいMatch・空の半荘が作成されている
     groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
     assert groups[0].mode == GroupMode.input.value
-    assert groups[0].active_match_id is not None
-    assert groups[0].active_match_id != sim_match_id
-    new_matches = match_repository.find({"_id": groups[0].active_match_id})
+    assert groups[0].current_input_match_id is not None
+    assert groups[0].current_input_match_id != sim_match_id
+    new_matches = match_repository.find({"_id": groups[0].current_input_match_id})
     new_hanchan_id = new_matches[0].active_hanchan_id
     assert new_hanchan_id != sim_hanchan_id
     new_hanchans = hanchan_repository.find({"_id": new_hanchan_id})
@@ -138,7 +138,7 @@ def test_sim_to_input_cleans_up_sim_hanchan():
 
 
 def test_input_to_sim_does_not_touch_real_match():
-    """Input → sim 切り替え時に、実系列(active_match_id)のMatch・半荘は一切変更されない。"""
+    """Input → sim 切り替え時に、実系列(current_input_match_id)のMatch・半荘は一切変更されない。"""
     _setup_users()
     _setup_group_with_match_and_hanchan(mode=GroupMode.input.value)
 
@@ -204,7 +204,7 @@ def test_input_to_sim_to_input_no_data_leak():
     # 実系列(_id=1)は_input再開時も元の途中データを保持したまま
     groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
     assert groups[0].mode == GroupMode.input.value
-    assert groups[0].active_match_id == 1
+    assert groups[0].current_input_match_id == 1
     real_matches = match_repository.find({"_id": 1})
     assert real_matches[0].active_hanchan_id == 1
     real_hanchans = hanchan_repository.find({"_id": 1})

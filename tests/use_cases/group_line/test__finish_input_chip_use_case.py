@@ -57,7 +57,7 @@ dummy_users = [
 dummy_group = Group(
     line_group_id="G0123456789abcdefghijklmnopqrstu1",
     mode=GroupMode.chip_input.value,
-    active_match_id=1,
+    current_input_match_id=1,
     _id=1,
 )
 
@@ -194,7 +194,7 @@ def test_fail_no_match():
     # 目的: test_fail_no_match の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "計算対象の試合が見つかりません。" である / groups[0].mode が GroupMode.chip_input.value である / groups[0].active_match_id が 1 である
+    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "計算対象の試合が見つかりません。" である / groups[0].mode が GroupMode.chip_input.value である / groups[0].current_input_match_id が 1 である
     # reply_service: texts
     # DB操作: group_repository.create(dummy_group); group_setting_repository.create(dummy_group_setting); user_repository.create(dummy_user); hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     # Arrange
@@ -217,14 +217,14 @@ def test_fail_no_match():
     assert reply_service.texts[0].text == "計算対象の試合が見つかりません。"
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.chip_input.value
-    assert groups[0].active_match_id == 1
+    assert groups[0].current_input_match_id == 1
 
 
 def test_fail_chip_sum_mismatch():
     # 目的: test_fail_chip_sum_mismatch の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.chip_input.value である / groups[0].active_match_id が 1 である
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.chip_input.value である / groups[0].current_input_match_id が 1 である
     # reply_service: texts
     # DB操作: group_repository.create(dummy_group); group_setting_repository.create(dummy_group_setting); user_repository.create(dummy_user); match_repository.create(; hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     # Arrange
@@ -260,14 +260,14 @@ def test_fail_chip_sum_mismatch():
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.chip_input.value
-    assert groups[0].active_match_id == 1
+    assert groups[0].current_input_match_id == 1
 
 
 def test_success():
     # 目的: test_success の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.value である / groups[0].active_match_id is None
+    # 想定出力: reply_service.texts の件数が 1 件 / ( / groups[0].mode が GroupMode.wait.value である / groups[0].current_input_match_id is None
     # reply_service: texts
     # DB操作: group_repository.create(dummy_group); group_setting_repository.create(dummy_group_setting); user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan); groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     # Arrange
@@ -295,4 +295,4 @@ def test_success():
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
-    assert groups[0].active_match_id is None
+    assert groups[0].current_input_match_id is None

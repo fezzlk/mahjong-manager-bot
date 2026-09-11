@@ -21,33 +21,22 @@ def _setup_request(params=None):
         request_info_service.params = params
 
 
-def test_execute_blocked_while_active_match_exists():
-    """進行中の対戦がある間は選択肢を出さずガードする。"""
-    group_repository.create(
-        Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.wait.value, active_match_id="dummy"),
-    )
-    _setup_request()
-
-    ReopenMatchUseCase().execute()
-
-    assert len(reply_service.texts) == 1
-    assert "先に" in reply_service.texts[0].text
-
-
-def test_execute_blocked_while_sim_mode_active():
-    """simモード実行中(active_match_idはNoneのまま)も_reopenをブロックする
-    (FEZ-66 Phase C、Codex review指摘)。放置するとsim_match_idのセッションが
-    _reopen_confirmで無警告に破棄され孤立する。
+def test_execute_shows_picker_even_while_another_match_is_open():
+    """複数対戦の同時openを許容するため(FEZ-66 Phase D)、他に進行中の対戦や
+    simモード中でも_reopenの選択肢提示自体はブロックしない。
     """
     group_repository.create(
-        Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.sim.value, sim_match_id="dummy"),
+        Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.input.value, current_input_match_id="dummy"),
+    )
+    match_repository.create(
+        Match(line_group_id=_LINE_GROUP_ID, status=MatchStatus.settled.value, name="settled"),
     )
     _setup_request()
 
     ReopenMatchUseCase().execute()
 
     assert len(reply_service.texts) == 1
-    assert "先に" in reply_service.texts[0].text
+    assert reply_service.texts[0].quick_reply is not None
 
 
 def test_execute_no_settled_matches():
@@ -85,8 +74,18 @@ def test_execute_shows_only_settled_matches_up_to_five():
 
 
 def test_confirm_reopens_target_match():
-    """_reopen_confirm?to=<id> で対象Matchがopenへ戻り、グループに再設定される。"""
-    group_repository.create(Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.wait.value))
+    """_reopen_confirm?to=<id> で対象Matchがopenへ戻る。
+
+    reopenは「openな対戦のプールに戻す」だけで、グループの入力セッション状態
+    (current_input_match_id/mode)には触れない(FEZ-66 Phase D)。
+    """
+    group_repository.create(
+        Group(
+            line_group_id=_LINE_GROUP_ID,
+            mode=GroupMode.input.value,
+            current_input_match_id="other_match",
+        ),
+    )
     target = match_repository.create(
         Match(
             line_group_id=_LINE_GROUP_ID,
@@ -107,9 +106,10 @@ def test_confirm_reopens_target_match():
     assert reopened.chip_prices == {}
     assert reopened.sum_prices_with_chip == {}
 
+    # 他の対戦の入力セッション状態は変化しない
     groups = group_repository.find({"line_group_id": _LINE_GROUP_ID})
-    assert groups[0].active_match_id == target._id
-    assert groups[0].mode == GroupMode.wait.value
+    assert groups[0].current_input_match_id == "other_match"
+    assert groups[0].mode == GroupMode.input.value
 
     assert len(reply_service.texts) == 1
     assert "再オープンしました" in reply_service.texts[0].text
@@ -137,24 +137,10 @@ def test_confirm_malformed_match_id():
     assert "見つかりません" in reply_service.texts[0].text
 
 
-def test_confirm_blocked_while_active_match_exists():
-    """確定時点でも進行中の対戦があればガードする。"""
-    group_repository.create(
-        Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.wait.value, active_match_id="dummy"),
-    )
-    target = match_repository.create(
-        Match(line_group_id=_LINE_GROUP_ID, status=MatchStatus.settled.value, name="9/1"),
-    )
-    _setup_request(params={"to": str(target._id)})
-
-    ReopenMatchUseCase().confirm()
-
-    assert len(reply_service.texts) == 1
-    assert "先に" in reply_service.texts[0].text
-
-
-def test_confirm_blocked_while_sim_mode_active():
-    """確定時点でもsimモード実行中ならガードする(FEZ-66 Phase C)。"""
+def test_confirm_succeeds_while_another_match_is_open():
+    """確定時点で他に進行中の対戦やsimモード実行中でもブロックしない
+    (FEZ-66 Phase D、複数対戦の同時open許容)。
+    """
     group_repository.create(
         Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.sim.value, sim_match_id="dummy"),
     )
@@ -165,5 +151,7 @@ def test_confirm_blocked_while_sim_mode_active():
 
     ReopenMatchUseCase().confirm()
 
+    reopened = match_repository.find({"_id": target._id})[0]
+    assert reopened.status == MatchStatus.open.value
     assert len(reply_service.texts) == 1
-    assert "先に" in reply_service.texts[0].text
+    assert "再オープンしました" in reply_service.texts[0].text

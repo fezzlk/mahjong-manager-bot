@@ -90,7 +90,7 @@ def test_execute_with_active_hanchan():
     # 目的: test_execute_with_active_hanchan の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: result の件数が 1 件 / result[0].line_group_id が dummy_group.line_group_id である / result[0].mode が "wait" である / result[0].active_match_id が dummy_match._id である / reply_service.texts の件数が 1 件 / reply_service.texts[0] が TextSendMessage 型 / reply_service.texts[0].text が "始める時は「_start」と入力してください。" である / matches の件数が 1 件 / matches[0].active_hanchan_id is None / matches[0].status が dummy_match.status である / hanchans の件数が 0 件
+    # 想定出力: result の件数が 1 件 / result[0].line_group_id が dummy_group.line_group_id である / result[0].mode が "wait" である / result[0].current_input_match_id が dummy_match._id である / reply_service.texts の件数が 1 件 / reply_service.texts[0] が TextSendMessage 型 / reply_service.texts[0].text が "始める時は「_start」と入力してください。" である / matches の件数が 1 件 / matches[0].active_hanchan_id is None / matches[0].status が dummy_match.status である / hanchans の件数が 0 件
     # reply_service: texts
     # DB操作: hanchan_repository.create(dummy_hanchan); match_repository.create(dummy_match); group_repository.create(dummy_group); result = group_repository.find(); matches = match_repository.find(); hanchans = hanchan_repository.find()
     # Arrange
@@ -99,7 +99,7 @@ def test_execute_with_active_hanchan():
     hanchan_repository.create(dummy_hanchan)
     dummy_match.active_hanchan_id = dummy_hanchan._id
     match_repository.create(dummy_match)
-    dummy_group.active_match_id = dummy_match._id
+    dummy_group.current_input_match_id = dummy_match._id
     group_repository.create(dummy_group)
 
     # Act
@@ -110,7 +110,7 @@ def test_execute_with_active_hanchan():
     assert len(result) == 1
     assert result[0].line_group_id == dummy_group.line_group_id
     assert result[0].mode == "wait"
-    assert result[0].active_match_id == dummy_match._id
+    assert result[0].current_input_match_id == dummy_match._id
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextMessage)
     assert reply_service.texts[0].text == "始める時は「_start」と入力してください。"
@@ -123,7 +123,7 @@ def test_execute_with_active_hanchan():
 
 
 def test_execute_during_sim_cleans_up_sim_match_not_real_match():
-    """simモード中の_exitは、sim_match_id側の半荘を破棄し、実系列(active_match_id)には触れない。"""
+    """simモード中の_exitは、sim_match_id側の半荘を破棄し、実系列(current_input_match_id)には触れない。"""
     real_match = Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", _id=10)
     match_repository.create(real_match)
     real_hanchan = Hanchan(
@@ -150,7 +150,7 @@ def test_execute_during_sim_cleans_up_sim_match_not_real_match():
     group = Group(
         line_group_id="G0123456789abcdefghijklmnopqrstu1",
         mode=GroupMode.sim.value,
-        active_match_id=10,
+        current_input_match_id=10,
         sim_match_id=20,
         _id=1,
     )
@@ -159,7 +159,7 @@ def test_execute_during_sim_cleans_up_sim_match_not_real_match():
 
     ExitUseCase().execute()
 
-    # 実系列(active_match_id=10)の半荘は影響を受けない
+    # 実系列(current_input_match_id=10)の半荘は影響を受けない
     real_matches = match_repository.find({"_id": 10})
     assert real_matches[0].active_hanchan_id == 10
     assert len(hanchan_repository.find({"_id": 10})) == 1
@@ -174,14 +174,14 @@ def test_execute_without_active_hanchan():
     # 目的: test_execute_without_active_hanchan の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: result の件数が 1 件 / result[0].line_group_id が dummy_group.line_group_id である / result[0].mode が "wait" である / result[0].active_match_id が dummy_match._id である / reply_service.texts の件数が 1 件 / reply_service.texts[0] が TextSendMessage 型 / reply_service.texts[0].text が "始める時は「_start」と入力してください。" である / matches の件数が 1 件 / matches[0].active_hanchan_id is None / matches[0].status が dummy_match.status である / hanchans の件数が 0 件
+    # 想定出力: result の件数が 1 件 / result[0].line_group_id が dummy_group.line_group_id である / result[0].mode が "wait" である / result[0].current_input_match_id が dummy_match._id である / reply_service.texts の件数が 1 件 / reply_service.texts[0] が TextSendMessage 型 / reply_service.texts[0].text が "始める時は「_start」と入力してください。" である / matches の件数が 1 件 / matches[0].active_hanchan_id is None / matches[0].status が dummy_match.status である / hanchans の件数が 0 件
     # reply_service: texts
     # DB操作: match_repository.create(dummy_match); group_repository.create(dummy_group); result = group_repository.find(); matches = match_repository.find(); hanchans = hanchan_repository.find()
     # Arrange
     use_case = ExitUseCase()
     request_info_service.set_req_info(event=dummy_event)
     match_repository.create(dummy_match)
-    dummy_group.active_match_id = dummy_match._id
+    dummy_group.current_input_match_id = dummy_match._id
     group_repository.create(dummy_group)
 
     # Act
@@ -192,7 +192,7 @@ def test_execute_without_active_hanchan():
     assert len(result) == 1
     assert result[0].line_group_id == dummy_group.line_group_id
     assert result[0].mode == "wait"
-    assert result[0].active_match_id == dummy_match._id
+    assert result[0].current_input_match_id == dummy_match._id
     assert len(reply_service.texts) == 1
     assert isinstance(reply_service.texts[0], TextMessage)
     assert reply_service.texts[0].text == "始める時は「_start」と入力してください。"

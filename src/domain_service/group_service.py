@@ -61,6 +61,9 @@ class GroupService(IGroupService):
         # EmbeddedGroupSettings を dict にシリアライズ
         if "settings" in values and values["settings"] is not None:
             values["settings"] = values["settings"].to_dict()
+        # current_input_match_id -> Mongoの既存フィールド名active_match_idへ変換
+        # (FEZ-66 Phase D、詳細はgroup_repository.domain_dict_to_mongoのコメント参照)
+        values = group_repository.domain_dict_to_mongo(values)
         group_repository.update({"_id": target._id}, values)
 
     def get_settings_or_create(self, line_group_id: str) -> EmbeddedGroupSettings:

@@ -47,6 +47,10 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def find_all_open_by_line_group_id(self, line_group_id: str) -> List[Match]:
+        pass
+
+    @abstractmethod
     def try_clear_active_hanchan(
         self,
         match_id: ObjectId,
