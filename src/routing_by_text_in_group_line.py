@@ -75,8 +75,10 @@ class RCommands(Enum):
     help = "help"
     setting = "setting"
     active_match = "active_match"
+    active_match_select = "active_match_select"
     finish = "finish"
     finish_confirm = "finish_confirm"
+    finish_select = "finish_select"
     fortune = "fortune"
     others = "others"
     matches = "matches"
@@ -211,9 +213,11 @@ def routing_for_group_by_command(command):
         RCommands.drop.name: lambda: DropHanchanByIndexUseCase().execute(body),
         RCommands.finish.name: lambda: FinishMatchUseCase().execute(),
         RCommands.finish_confirm.name: lambda: ReplyFinishConfirmUseCase().execute(),
+        RCommands.finish_select.name: lambda: FinishMatchUseCase().select(),
         RCommands.fortune.name: lambda: ReplyFortuneUseCase().execute(),
         RCommands.others.name: lambda: ReplyOthersMenuUseCase().execute(),
         RCommands.active_match.name: lambda: ReplyHanchansOfActiveMatchUseCase().execute(),
+        RCommands.active_match_select.name: lambda: ReplyHanchansOfActiveMatchUseCase().select(),
         RCommands.matches.name: lambda: ReplyMatchesUseCase().execute(),
         RCommands.tobi.name: _tobi,
         RCommands.update_config.name: _update_config,

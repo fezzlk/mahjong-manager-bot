@@ -7,7 +7,7 @@ from application_service import (
 )
 from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.hanchan import Hanchan
-from domain_model.entities.match import Match
+from domain_model.entities.match import Match, MatchStatus
 from domain_model.entities.user import User, UserMode
 from repositories import (
     group_repository,
@@ -350,12 +350,11 @@ def test_success_no_group():
 
 
 def test_success_no_match():
-    # 目的: test_success_no_match の挙動を検証する。
-    # 入力: なし
-    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "現在進行中の対戦がありません。" である
-    # reply_service: texts
-    # DB操作: user_repository.create(dummy_user); group_repository.create(no_match_group); hanchan_repository.create(dummy_archived_hanchans[0]); hanchan_repository.create(dummy_disabled_hanchan); hanchan_repository.create(dummy_active_hanchan); match_repository.create(dummy_match)
+    """openな対戦が1件もなければ「進行中の対戦がありません」を返す。
+
+    「どの対戦が進行中か」の正本はMatch.statusであり(FEZ-66 Phase D/E)、
+    group.current_input_match_idが未設定かどうかとは無関係。
+    """
     # Arrange
     use_case = ReplyHanchansOfActiveMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
@@ -370,8 +369,7 @@ def test_success_no_match():
     hanchan_repository.create(dummy_archived_hanchans[0])
     hanchan_repository.create(dummy_disabled_hanchan)
     hanchan_repository.create(dummy_active_hanchan)
-    dummy_match.active_hanchan_id = dummy_active_hanchan._id
-    match_repository.create(dummy_match)
+    # openな対戦を作らず、Matchを一切作成しない。
 
     # Act
     use_case.execute()
@@ -379,6 +377,81 @@ def test_success_no_match():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "現在進行中の対戦がありません。"
+
+
+def test_execute_shows_picker_when_multiple_open_matches():
+    """openな対戦が2件以上ならピッカーを表示する(FEZ-66 Phase E)。"""
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦A", status=MatchStatus.open.value),
+    )
+    match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦B", status=MatchStatus.open.value),
+    )
+    request_info_service.req_line_group_id = line_group_id
+
+    ReplyHanchansOfActiveMatchUseCase().execute()
+
+    assert len(reply_service.texts) == 1
+    msg = reply_service.texts[0]
+    assert msg.quick_reply is not None
+    labels = {item.action.label for item in msg.quick_reply.items}
+    assert labels == {"対戦A", "対戦B"}
+
+
+def test_select_shows_the_chosen_match(mocker):
+    fig, ax = plt.subplots()
+    mocker.patch.object(plt, "subplots", return_value=(fig, ax))
+    mocker.patch.object(fig, "savefig")
+
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    target = match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦A", status=MatchStatus.open.value),
+    )
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    hanchan_repository.create(
+        Hanchan(
+            line_group_id=line_group_id,
+            raw_scores={},
+            converted_scores={dummy_users[0].line_user_id: 50},
+            match_id=target._id,
+        ),
+    )
+    request_info_service.req_line_group_id = line_group_id
+    request_info_service.params = {"to": str(target._id)}
+
+    ReplyHanchansOfActiveMatchUseCase().select()
+
+    assert len(reply_service.texts) == 2
+    assert reply_service.texts[0].text == "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。"
+    reply_service.reset()
+
+
+def test_select_invalid_match_id():
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    request_info_service.req_line_group_id = line_group_id
+    request_info_service.params = {"to": "644c838186bbd9e20a91b785"}
+
+    ReplyHanchansOfActiveMatchUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "指定された対戦が見つかりません。"
+
+
+def test_select_malformed_match_id():
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    request_info_service.req_line_group_id = line_group_id
+    request_info_service.params = {"to": "not-a-valid-object-id"}
+
+    ReplyHanchansOfActiveMatchUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "指定された対戦が見つかりません。"
 
 
 def test_success_no_hanchans():

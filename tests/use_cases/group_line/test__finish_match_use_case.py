@@ -72,8 +72,12 @@ dummy_matches = [
         },
         _id=1,
     ),
+    # ノイズ用の無関係な他対戦(常にsettled固定): open対戦数のカウントに
+    # 混入させないため(FEZ-66 Phase E、find_all_open_by_line_group_idで
+    # 対戦を数えるようになった)。
     Match(
         line_group_id=dummy_group.line_group_id,
+        status=MatchStatus.settled.value,
         _id=2,
     ),
 ]
@@ -421,18 +425,19 @@ def test_success_with_chip():
 
 
 def test_success_without_active_match():
-    # 目的: test_success_without_active_match の挙動を検証する。
-    # 入力: なし
-    # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.texts の件数が 1 件 / reply_service.texts[0].text が "計算対象の試合が見つかりません。" である
-    # reply_service: texts
-    # DB操作: group_repository.create(dummy_group); user_repository.create(dummy_user); match_repository.create(dummy_match); hanchan_repository.create(dummy_hanchan)
+    """openな対戦が1件もなければ「見つかりません」を返す。
+
+    「どの対戦が進行中か」の正本はMatch.statusであり(FEZ-66 Phase D/E)、
+    group.current_input_match_idが何を指しているかとは無関係。
+    """
     # Arrange
     use_case = FinishMatchUseCase()
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
     for dummy_user in dummy_users:
         user_repository.create(dummy_user)
+    # dummy_matches[1]はsettled固定のノイズ用データのみ作成し、openな対戦は
+    # 1件も存在しない状態にする。
     for dummy_match in dummy_matches[1:]:
         match_repository.create(dummy_match)
     for dummy_hanchan in dummy_hanchans:
@@ -470,6 +475,146 @@ def test_success_without_hanchan():
     # Assert
     assert len(reply_service.texts) == 1
     assert reply_service.texts[0].text == "まだ対戦結果がありません。"
+
+
+def test_execute_shows_picker_when_multiple_open_matches():
+    """openな対戦が2件以上ならピッカーを表示し、どちらも精算しない
+    (FEZ-66 Phase E)。
+    """
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    group_repository.create(
+        Group(line_group_id=line_group_id, mode=GroupMode.wait.value, _id=200),
+    )
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    match_a = match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦A", status=MatchStatus.open.value),
+    )
+    match_b = match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦B", status=MatchStatus.open.value),
+    )
+    request_info_service.req_line_group_id = line_group_id
+
+    FinishMatchUseCase().execute()
+
+    assert len(reply_service.texts) == 1
+    msg = reply_service.texts[0]
+    assert msg.quick_reply is not None
+    labels = {item.action.label for item in msg.quick_reply.items}
+    assert labels == {"対戦A", "対戦B"}
+    assert match_repository.find({"_id": match_a._id})[0].status == MatchStatus.open.value
+    assert match_repository.find({"_id": match_b._id})[0].status == MatchStatus.open.value
+
+
+def test_select_settles_only_the_chosen_match():
+    """_finish_select?to=<id>で選択した対戦のみ精算し、他の進行中対戦には
+    一切影響しない(FEZ-66 Phase E、複数系列同時進行の核心要件)。
+    """
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    group_repository.create(
+        Group(line_group_id=line_group_id, mode=GroupMode.wait.value, _id=201),
+    )
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    target = match_repository.create(
+        Match(
+            line_group_id=line_group_id,
+            name="精算対象",
+            status=MatchStatus.open.value,
+            sum_scores={"U0123456789abcdefghijklmnopqrstu1": 100},
+        ),
+    )
+    other = match_repository.create(
+        Match(
+            line_group_id=line_group_id,
+            name="他の対戦",
+            status=MatchStatus.open.value,
+            sum_scores={"U0123456789abcdefghijklmnopqrstu2": 999},
+        ),
+    )
+    hanchan_repository.create(
+        Hanchan(
+            line_group_id=line_group_id,
+            raw_scores={},
+            converted_scores={"U0123456789abcdefghijklmnopqrstu1": 100},
+            match_id=target._id,
+        ),
+    )
+    request_info_service.req_line_group_id = line_group_id
+    request_info_service.params = {"to": str(target._id)}
+
+    FinishMatchUseCase().select()
+
+    settled = match_repository.find({"_id": target._id})[0]
+    untouched = match_repository.find({"_id": other._id})[0]
+    assert settled.status == MatchStatus.settled.value
+    assert untouched.status == MatchStatus.open.value
+    assert untouched.sum_scores == {"U0123456789abcdefghijklmnopqrstu2": 999}
+
+
+def test_select_invalid_match_id():
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    request_info_service.req_line_group_id = line_group_id
+    request_info_service.params = {"to": "644c838186bbd9e20a91b785"}
+
+    FinishMatchUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "指定された対戦が見つかりません。"
+
+
+def test_select_malformed_match_id():
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    request_info_service.req_line_group_id = line_group_id
+    request_info_service.params = {"to": "not-a-valid-object-id"}
+
+    FinishMatchUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "指定された対戦が見つかりません。"
+
+
+def test_select_blocked_while_another_match_is_mid_input():
+    """他の対戦が入力セッション中(mode=input)なら、その対戦を選ばない限り
+    精算をブロックする(FEZ-66 Phase E、他対戦のセッション破壊防止)。
+    """
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    in_progress = match_repository.create(
+        Match(line_group_id=line_group_id, name="入力中の対戦", status=MatchStatus.open.value),
+    )
+    group_repository.create(
+        Group(
+            line_group_id=line_group_id,
+            mode=GroupMode.input.value,
+            current_input_match_id=in_progress._id,
+        ),
+    )
+    target = match_repository.create(
+        Match(
+            line_group_id=line_group_id,
+            name="精算したい対戦",
+            status=MatchStatus.open.value,
+            sum_scores={"U0123456789abcdefghijklmnopqrstu1": 100},
+        ),
+    )
+    hanchan_repository.create(
+        Hanchan(
+            line_group_id=line_group_id,
+            raw_scores={},
+            converted_scores={"U0123456789abcdefghijklmnopqrstu1": 100},
+            match_id=target._id,
+        ),
+    )
+    request_info_service.req_line_group_id = line_group_id
+    request_info_service.params = {"to": str(target._id)}
+
+    FinishMatchUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "入力中の対戦" in reply_service.texts[0].text
+    assert match_repository.find({"_id": target._id})[0].status == MatchStatus.open.value
 
 
 def test_ng_no_group():
