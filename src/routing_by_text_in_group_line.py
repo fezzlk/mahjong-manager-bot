@@ -34,6 +34,7 @@ from use_cases.group_line.guest_remove_confirm_use_case import (
     GuestRemoveConfirmUseCase,
 )
 from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
+from use_cases.group_line.new_match_use_case import NewMatchUseCase
 from use_cases.group_line.reopen_match_use_case import ReopenMatchUseCase
 from use_cases.group_line.reply_apply_badai_use_case import ReplyApplyBadaiUseCase
 from use_cases.group_line.reply_finish_confirm_use_case import ReplyFinishConfirmUseCase
@@ -71,6 +72,9 @@ class RCommands(Enum):
     start = "start"
     exit = "exit"  # danger(入力中の半荘データが disabled になる)
     input = "input"
+    input_select = "input_select"
+    new_match = "new_match"
+    new_match_confirm = "new_match_confirm"
     mode = "mode"
     help = "help"
     setting = "setting"
@@ -204,6 +208,9 @@ def routing_for_group_by_command(command):
 
     dispatch = {
         RCommands.input.name: lambda: StartInputUseCase().execute(),
+        RCommands.input_select.name: lambda: StartInputUseCase().select(),
+        RCommands.new_match.name: lambda: NewMatchUseCase().execute(),
+        RCommands.new_match_confirm.name: lambda: NewMatchUseCase().confirm(),
         RCommands.start.name: lambda: ReplyStartMenuUseCase().execute(),
         RCommands.mode.name: lambda: ReplyGroupModeUseCase().execute(),
         RCommands.exit.name: lambda: ExitUseCase().execute(),

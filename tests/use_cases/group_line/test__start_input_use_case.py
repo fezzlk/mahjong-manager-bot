@@ -4,7 +4,7 @@ from application_service import (
 )
 from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.hanchan import Hanchan
-from domain_model.entities.match import Match
+from domain_model.entities.match import Match, MatchStatus
 from line_models.event import Event
 from repositories import (
     group_repository,
@@ -166,6 +166,99 @@ def test_execute_new_hanchan():
     assert matches[0].active_hanchan_id is not None
     hanchans = hanchan_repository.find()
     assert len(hanchans) == 1
+
+
+def test_execute_shows_picker_when_multiple_open_matches():
+    """openな対戦が2件以上ならピッカーを提示し、どちらにも入力を開始しない
+    (FEZ-66 Phase E)。ピッカーには既存対戦に加えて「新しい対戦を始める」
+    項目(_new_matchへのpostback)が含まれる。
+    """
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦A", status=MatchStatus.open.value),
+    )
+    match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦B", status=MatchStatus.open.value),
+    )
+
+    StartInputUseCase().execute()
+
+    assert len(reply_service.texts) == 1
+    msg = reply_service.texts[0]
+    assert msg.quick_reply is not None
+    labels = {item.action.label for item in msg.quick_reply.items}
+    assert labels == {"対戦A", "対戦B", "新しい対戦を始める"}
+    new_match_item = next(
+        item for item in msg.quick_reply.items if item.action.label == "新しい対戦を始める"
+    )
+    assert new_match_item.action.data == "_new_match"
+    groups = group_repository.find({"line_group_id": line_group_id})
+    assert groups[0].mode == GroupMode.wait.value
+
+
+def test_select_enters_the_chosen_match():
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    target = match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦A", status=MatchStatus.open.value),
+    )
+    request_info_service.params = {"to": str(target._id)}
+
+    StartInputUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert (
+        reply_service.texts[0].text
+        == "第1回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)"
+    )
+    groups = group_repository.find({"line_group_id": line_group_id})
+    assert groups[0].mode == GroupMode.input.value
+    assert groups[0].current_input_match_id == target._id
+
+
+def test_select_invalid_match_id():
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    request_info_service.params = {"to": "644c838186bbd9e20a91b785"}
+
+    StartInputUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "指定された対戦が見つかりません。"
+
+
+def test_select_malformed_match_id():
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.wait.value))
+    request_info_service.params = {"to": "not-a-valid-object-id"}
+
+    StartInputUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "指定された対戦が見つかりません。"
+
+
+def test_select_blocked_while_already_in_input_mode():
+    """ピッカーが古くなり、選択時点で既に別対戦の入力が始まっていた場合は
+    ブロックする(stale postback対策)。
+    """
+    line_group_id = "G0123456789abcdefghijklmnopqrstu1"
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(Group(line_group_id=line_group_id, mode=GroupMode.input.value))
+    target = match_repository.create(
+        Match(line_group_id=line_group_id, name="対戦A", status=MatchStatus.open.value),
+    )
+    request_info_service.params = {"to": str(target._id)}
+
+    StartInputUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "すでに入力モードです。"
 
 
 def test_mode_updated_before_match_creation():

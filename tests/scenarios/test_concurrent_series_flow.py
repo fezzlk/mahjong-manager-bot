@@ -1,13 +1,9 @@
 """シナリオテスト: 複数対戦系列の同時進行 (FEZ-66 Phase E)
 
-グループが異なるレートの対戦を2件同時にopenで持つ状態を作り、`_finish`・
+グループが異なるレートの対戦を2件同時にopenで持つ状態を作り、`_input`の
+新規対戦開始経路(`_new_match`/`_new_match_confirm`)、および`_finish`・
 `_active_match`のピッカー/select経路が、一方の対戦への操作をもう一方に
 一切波及させないことをエンドツーエンドで検証する。
-
-`_input`側の複数系列ピッカー(2件目以降の対戦を`_new_match`で開始する経路)
-はこの時点では未実装(次フェーズ)のため、2件目の対戦はテスト側で直接
-作成し、group.current_input_match_idを手動で付け替えることでセッションの
-切り替えを模している。
 """
 from unittest.mock import patch
 
@@ -16,12 +12,13 @@ from scenario_helpers import set_group_request
 from application_service import reply_service, request_info_service
 from domain_model.entities.group import GroupMode
 from domain_model.entities.group_setting import EmbeddedGroupSettings
-from domain_model.entities.match import Match, MatchStatus
-from domain_service import group_service, hanchan_service, match_service
-from repositories import match_repository
+from domain_model.entities.match import MatchStatus
+from domain_service import group_service, match_service
+from repositories import group_repository, match_repository
 from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
 from use_cases.group_line.finish_match_use_case import FinishMatchUseCase
 from use_cases.group_line.join_group_use_case import JoinGroupUseCase
+from use_cases.group_line.new_match_use_case import NewMatchUseCase
 from use_cases.group_line.reply_hanchans_of_active_match_use_case import (
     ReplyHanchansOfActiveMatchUseCase,
 )
@@ -72,23 +69,25 @@ def test_concurrent_series_settle_independently():
     group = group_service.find_one_by_line_group_id(GROUP_ID)
     assert group.mode == GroupMode.wait.value
 
-    # 系列B: `_new_match`未実装のため、StartInputUseCaseが行うのと同じ
-    # 手順(Match作成+専用Hanchan作成+active_hanchan_id設定)を直接再現し、
-    # セッションポインタを手動で付け替える(実装済みなのは_finish/_active_match側)
-    match_b = match_repository.create(
-        Match(
-            line_group_id=GROUP_ID,
-            name="系列B",
-            status=MatchStatus.open.value,
-            settings=EmbeddedGroupSettings(rate=7),
-        ),
-    )
-    hanchan_b = hanchan_service.create_with_line_group_id_and_match_id(GROUP_ID, match_b._id)
-    match_b.active_hanchan_id = hanchan_b._id
-    match_service.update(match_b)
-    group.current_input_match_id = match_b._id
-    group.mode = GroupMode.input.value
-    group_service.update(group)
+    # 系列B: 実際の_new_match/_new_match_confirmコマンドフロー経由で開始する。
+    # 確定時に「グループの現在の設定」がコピーされる仕様のため、確定前に
+    # レートを変更しておく。
+    reply_service.reset()
+    _set_group_request()
+    NewMatchUseCase().execute()
+    assert len(reply_service.buttons) == 1
+    group_repository.update_settings(GROUP_ID, EmbeddedGroupSettings(rate=7))
+    reply_service.reset()
+    _set_group_request()
+    NewMatchUseCase().confirm()
+
+    group = group_service.find_one_by_line_group_id(GROUP_ID)
+    match_b_id = group.current_input_match_id
+    assert match_b_id != match_a_id
+    match_b = match_repository.find({"_id": match_b_id})[0]
+    assert match_b.status == MatchStatus.open.value
+    assert match_b.settings.rate == 7
+
     _play_hanchan_on_current_match(RAW_SCORES_SERIES_B)
 
     # ここでグループはopen対戦2件(系列A: wait、系列B: 入力後にwaitへ戻っている)
