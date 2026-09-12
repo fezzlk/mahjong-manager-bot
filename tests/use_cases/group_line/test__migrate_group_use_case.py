@@ -10,9 +10,11 @@ from application_service import (
     reply_service,
     request_info_service,
 )
+from domain_model.entities.match import Match, MatchStatus
 from domain_model.entities.user_group import UserGroup
 from repositories import (
     group_repository,
+    match_repository,
     user_group_repository,
 )
 from use_cases.group_line.migrate_group_use_case import MigrateGroupUseCase
@@ -126,6 +128,73 @@ def test_confirm_rejects_non_member_destination():
     assert "メンバーではない" in reply_service.texts[0].text
 
 
+def test_confirm_blocked_while_src_has_open_match():
+    """統合元に進行中対戦があれば統合をブロックする(FEZ-66 Phase F)。"""
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_DST_GROUP.line_group_id),
+    )
+    match_repository.create(
+        Match(line_group_id=_SRC_GROUP.line_group_id, status=MatchStatus.open.value),
+    )
+    _setup_request(
+        group_id=_SRC_GROUP.line_group_id,
+        params={"to": _DST_GROUP.line_group_id},
+    )
+
+    MigrateGroupUseCase().confirm()
+
+    result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
+    assert result[0].merged_into is None
+    assert len(reply_service.texts) == 1
+    assert "進行中の対戦" in reply_service.texts[0].text
+
+
+def test_confirm_blocked_while_dest_has_open_match():
+    """統合先に進行中対戦があれば統合をブロックする(FEZ-66 Phase F)。"""
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_DST_GROUP.line_group_id),
+    )
+    match_repository.create(
+        Match(line_group_id=_DST_GROUP.line_group_id, status=MatchStatus.open.value),
+    )
+    _setup_request(
+        group_id=_SRC_GROUP.line_group_id,
+        params={"to": _DST_GROUP.line_group_id},
+    )
+
+    MigrateGroupUseCase().confirm()
+
+    result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
+    assert result[0].merged_into is None
+    assert len(reply_service.texts) == 1
+    assert "進行中の対戦" in reply_service.texts[0].text
+
+
+def test_confirm_allows_merge_when_only_settled_matches_exist():
+    """精算済み対戦のみなら統合をブロックしない(open判定の正しさの裏取り)。"""
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_DST_GROUP.line_group_id),
+    )
+    match_repository.create(
+        Match(line_group_id=_SRC_GROUP.line_group_id, status=MatchStatus.settled.value),
+    )
+    _setup_request(
+        group_id=_SRC_GROUP.line_group_id,
+        params={"to": _DST_GROUP.line_group_id},
+    )
+
+    MigrateGroupUseCase().confirm()
+
+    result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
+    assert result[0].merged_into == _DST_GROUP.line_group_id
+
+
 # --- 個人DM フロー ---
 
 def _setup_personal_request(params=None):
@@ -206,6 +275,30 @@ def test_execute_personal_step3_confirms():
     result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
     assert result[0].merged_into == _DST_GROUP.line_group_id
     assert "統合しました" in reply_service.texts[0].text
+
+
+def test_execute_personal_step3_blocked_while_open_match_exists():
+    """個人DM: 統合元・先いずれかに進行中対戦があれば統合をブロックする
+    (FEZ-66 Phase F)。
+    """
+    group_repository.create(_SRC_GROUP)
+    group_repository.create(_DST_GROUP)
+    user_group_repository.create(
+        UserGroup(line_user_id=_USER.line_user_id, line_group_id=_DST_GROUP.line_group_id),
+    )
+    match_repository.create(
+        Match(line_group_id=_SRC_GROUP.line_group_id, status=MatchStatus.open.value),
+    )
+    _setup_personal_request(params={
+        "src": _SRC_GROUP.line_group_id,
+        "to": _DST_GROUP.line_group_id,
+    })
+
+    MigrateGroupUseCase().execute_personal()
+
+    result = group_repository.find({"line_group_id": _SRC_GROUP.line_group_id})
+    assert result[0].merged_into is None
+    assert "進行中の対戦" in reply_service.texts[0].text
 
 
 def test_execute_personal_step3_rejects_non_member_destination():

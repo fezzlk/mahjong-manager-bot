@@ -170,6 +170,18 @@ class MatchService(IMatchService):
             return None
         return matches[0]
 
+    def count_non_sim_by_line_group_id(self, line_group_id: str) -> int:
+        """グループが実際に持つ(sim用サンドボックスを除く)対戦の総数を返す。
+
+        「このグループは複数系列を実際に使ったことがあるか(件数>1)」の判定に
+        使う(FEZ-66 Phase F、対戦名表示の条件化)。open/settledいずれも
+        含めて数える。
+        """
+        return match_repository.count({
+            "line_group_id": line_group_id,
+            "status": {"$ne": MatchStatus.sim.value},
+        })
+
     def find_all_open_by_line_group_id(self, line_group_id: str) -> List[Match]:
         """グループの進行中(status=open)対戦を全て返す(FEZ-66 Phase D)。
 

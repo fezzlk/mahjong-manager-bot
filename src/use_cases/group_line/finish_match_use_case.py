@@ -189,10 +189,15 @@ class FinishMatchUseCase:
             line_group_id, active_match._id, len(hanchans),
         )
 
-        # 応答メッセージ作成
+        # 応答メッセージ作成: 複数系列を実際に使ったことがあるグループのみ
+        # 対戦名を表示する(単一系列グループでは無用な表示になるため。
+        # FEZ-66 Phase F)
+        show_name = match_service.count_non_sim_by_line_group_id(line_group_id) > 1
         reply_service.add_message(
             "【対戦結果】 \n"
-            + message_service.create_show_match_result(match=active_match, unit=settings.unit),
+            + message_service.create_show_match_result(
+                match=active_match, unit=settings.unit, show_name=show_name,
+            ),
         )
 
         image_url = CreateMatchDetailGraphUseCase().execute(active_match._id)

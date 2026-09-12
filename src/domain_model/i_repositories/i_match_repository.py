@@ -24,6 +24,10 @@ class IMatchRepository(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def count(self, query: Dict[str, any] = {}) -> int:
+        pass
+
+    @abstractmethod
     def delete(
         self,
         query: Dict[str, any] = {},

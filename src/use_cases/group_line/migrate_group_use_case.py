@@ -2,7 +2,7 @@ from application_service import (
     reply_service,
     request_info_service,
 )
-from domain_service import group_service
+from domain_service import group_service, match_service
 from repositories import (
     group_repository,
     user_group_repository,
@@ -55,6 +55,13 @@ class MigrateGroupUseCase:
         })
         if not membership:
             reply_service.add_message("統合先グループのメンバーではないため統合できません。")
+            return
+
+        if self._has_open_match(src_group_id) or self._has_open_match(to_group_id):
+            reply_service.add_message(
+                "統合元・統合先のいずれかに進行中の対戦があるため統合できません。"
+                "先に精算するか「_exit」で中断してください。",
+            )
             return
 
         group_service.set_merged_into(src_group_id, to_group_id)
@@ -131,9 +138,27 @@ class MigrateGroupUseCase:
             reply_service.add_message("統合先グループのメンバーではないため統合できません。")
             return
 
+        if self._has_open_match(src_group_id) or self._has_open_match(to_group_id):
+            reply_service.add_message(
+                "統合元・統合先のいずれかに進行中の対戦があるため統合できません。"
+                "先に精算するか「_exit」で中断してください。",
+            )
+            return
+
         group_service.set_merged_into(src_group_id, to_group_id)
         dest_name = targets[0].group_name or to_group_id
         reply_service.add_message(
             f"統合しました。\n"
             f"今後「{dest_name}」でまとめて成績を確認できます。",
         )
+
+    @staticmethod
+    def _has_open_match(line_group_id: str) -> bool:
+        """指定グループに進行中(status=open)の対戦が1件でもあるか判定する。
+
+        グループ統合は成績データを丸ごと付け替える操作のため、進行中対戦が
+        あるまま統合すると入力セッション(current_input_match_id等)が
+        宙に浮く。複数対戦同時open対応(FEZ-66 Phase D以降)により統合元・
+        統合先どちらも複数対戦を持ちうるため、1件でもopenならブロックする。
+        """
+        return len(match_service.find_all_open_by_line_group_id(line_group_id)) > 0
