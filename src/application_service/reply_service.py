@@ -557,6 +557,57 @@ class ReplyService(IReplyService):
             ),
         )
 
+    def add_input_target_quick_reply(self, matches) -> None:
+        items = []
+        for m in matches[:12]:
+            label = (m.name or str(m._id))[:20]
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_input_select?to={m._id}",
+                    ),
+                ),
+            )
+        items.append(
+            QuickReplyItem(
+                action=PostbackAction(
+                    label="新しい対戦を始める",
+                    display_text="新しい対戦を始める",
+                    data="_new_match",
+                ),
+            ),
+        )
+        self.texts.append(
+            TextMessage(
+                text="どの対戦の入力を始めますか？",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_new_match_confirm_menu(self, settings) -> None:
+        # LINE ButtonsTemplateのtextは60文字程度が上限のため、詳細設定は
+        # 「_setting」で別途確認できる前提で簡潔な文言に留める。
+        chip_display = "なし" if settings.chip_rate == 0 else "あり"
+        text = f"現在の設定(点{settings.rate}/チップ{chip_display})で新しい対戦を始めます。"
+        self.buttons.append(
+            TemplateMessage(
+                alt_text="新しい対戦の開始確認",
+                template=ButtonsTemplate(
+                    title="新しい対戦",
+                    text=text,
+                    actions=[
+                        PostbackAction(
+                            label="作成する",
+                            display_text="作成する",
+                            data="_new_match_confirm",
+                        ),
+                    ],
+                ),
+            ),
+        )
+
     def add_finish_target_quick_reply(self, matches) -> None:
         items = []
         for m in matches[:13]:
