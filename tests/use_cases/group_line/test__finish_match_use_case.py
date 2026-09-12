@@ -178,9 +178,11 @@ def test_success_with_default_settings():
 
     # Assert
     assert len(reply_service.texts) == 1
+    # dummy_matchesが2件(このグループでは対戦名表示の閾値>1を超える)ため、
+    # 対戦名「1」(name未設定なので_idにフォールバック)が先頭に付く(FEZ-66 Phase F)
     assert (
         reply_service.texts[0].text
-        == "【対戦結果】 \ntest_user1: 0pt (+100)\ntest_user2: 0pt (+20)\ntest_user3: 0pt (-40)\ntest_user4: 0pt (-40)\ntest_user5: 0pt (-40)"
+        == "【対戦結果】 \n「1」\ntest_user1: 0pt (+100)\ntest_user2: 0pt (+20)\ntest_user3: 0pt (-40)\ntest_user4: 0pt (-40)\ntest_user5: 0pt (-40)"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.wait.value
@@ -222,9 +224,11 @@ def test_success():
 
     # Assert
     assert len(reply_service.texts) == 1
+    # dummy_matchesが2件(このグループでは対戦名表示の閾値>1を超える)ため、
+    # 対戦名「1」(name未設定なので_idにフォールバック)が先頭に付く(FEZ-66 Phase F)
     assert (
         reply_service.texts[0].text
-        == "【対戦結果】 \ntest_user1: 5000pt (+100)\ntest_user2: 1000pt (+20)\n"
+        == "【対戦結果】 \n「1」\ntest_user1: 5000pt (+100)\ntest_user2: 1000pt (+20)\n"
         + "test_user3: -2000pt (-40)\ntest_user4: -2000pt (-40)\ntest_user5: -2000pt (-40)"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})

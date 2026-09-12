@@ -126,12 +126,14 @@ class MessageService(IMessageService):
     def get_finish_hanchan_message(self) -> str:
         return random.choice(finish_hanchan_messages)
 
-    def create_show_match_result(self, match: Match, unit: str = "pt") -> str:
+    def create_show_match_result(self, match: Match, unit: str = "pt", show_name: bool = False) -> str:
         sum_prices_with_chip = match.sum_prices_with_chip
         chip_scores = match.chip_scores
         sum_scores = match.sum_scores
 
         show_prize_money_list = []
+        if show_name:
+            show_prize_money_list.append(f"「{match.name or match._id}」")
         has_chip = any(v != 0 for v in chip_scores.values()) if chip_scores else False
         for line_user_id, score in sum_scores.items():
             name = user_service.get_name_by_line_user_id(line_user_id) or "友達未登録"

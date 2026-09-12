@@ -69,6 +69,14 @@ class MatchRepository(IMatchRepository):
         records = matches_collection.find(filter=filter_query).sort(sort).limit(limit)
         return [self._mapping_record_to_domain(record) for record in records]
 
+    def count(self, query: Dict[str, any] = None) -> int:
+        """条件に一致する件数のみを返す。
+
+        件数が閾値を超えるかの判定用に、find()して長さを取るより安価。
+        """
+        filter_query = {**(query or {}), "is_deleted": {"$ne": True}}
+        return matches_collection.count_documents(filter_query)
+
     def update_field(
         self,
         query: Dict[str, any],

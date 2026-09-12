@@ -162,10 +162,13 @@ def test_execute():
     use_case.execute("2")
 
     # Assert
+    # このグループにはmatch1・match2の2件(is_deleted除く)があり、対戦名表示の
+    # 閾値>1を超えるため「2」(name未設定なので_idにフォールバック)が
+    # 先頭に付く(FEZ-66 Phase F)
     assert len(reply_service.texts) == 2
     assert (
         reply_service.texts[0].text
-        == "第2回\n2010年01月01日\ntest_user1: 1000pt (+30 / チップ+10枚)\ntest_user2: 1800pt (+60 / チップ0枚)\ntest_user3: -1800pt (-60 / チップ0枚)\ntest_user4: -400pt (-10 / チップ-10枚)\ntest_user5: -300pt (-10 / チップ0枚)\n友達未登録: -300pt (-10 / チップ0枚)"
+        == "第2回\n2010年01月01日\n「2」\ntest_user1: 1000pt (+30 / チップ+10枚)\ntest_user2: 1800pt (+60 / チップ0枚)\ntest_user3: -1800pt (-60 / チップ0枚)\ntest_user4: -400pt (-10 / チップ-10枚)\ntest_user5: -300pt (-10 / チップ0枚)\n友達未登録: -300pt (-10 / チップ0枚)"
     )
     assert (
         reply_service.texts[1].text

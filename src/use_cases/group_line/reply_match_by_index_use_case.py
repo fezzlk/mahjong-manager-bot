@@ -35,7 +35,12 @@ class ReplyMatchByIndexUseCase:
         # settings未設定(旧データ)はグループの現在の設定にフォールバックする。
         # FEZ-66 Phase D
         setting = match.settings or group_setting_service.find_or_create(line_group_id)
-        result = message_service.create_show_match_result(match=match, unit=setting.unit)
+        # 複数系列を実際に使ったことがあるグループのみ対戦名を表示する
+        # (単一系列グループでは無用な表示になるため。FEZ-66 Phase F)
+        show_name = match_service.count_non_sim_by_line_group_id(line_group_id) > 1
+        result = message_service.create_show_match_result(
+            match=match, unit=setting.unit, show_name=show_name,
+        )
 
         reply_service.add_message(f'第{index}回\n{match.created_at.strftime("%Y年%m月%d日")}\n{result}')
 

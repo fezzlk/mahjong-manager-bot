@@ -76,3 +76,43 @@ def test_success(mocker):
         result
         == "test_user1: 3100pt (+100 / チップ+10枚)\ntest_user2: 600pt (+20 / チップ0枚)\ntest_user3: -1300pt (-40 / チップ-10枚)\ntest_user4: -1200pt (-40 / チップ0枚)\ntest_user5: -1200pt (-40 / チップ0枚)"
     )
+
+
+def test_show_name_false_omits_match_name(mocker):
+    """show_name未指定(デフォルトFalse)では対戦名を表示しない(FEZ-66 Phase F)。"""
+    mocker.patch.object(user_service, "get_name_by_line_user_id", return_value=None)
+    message_service = MessageService()
+
+    result = message_service.create_show_match_result(dummy_match)
+
+    assert not result.startswith("「")
+
+
+def test_show_name_true_includes_match_name(mocker):
+    """show_name=Trueなら対戦名が先頭行に表示される(FEZ-66 Phase F)。"""
+    mocker.patch.object(user_service, "get_name_by_line_user_id", return_value=None)
+    message_service = MessageService()
+
+    result = message_service.create_show_match_result(dummy_match, show_name=True)
+
+    lines = result.split("\n")
+    assert lines[0] == "「1」"
+    assert lines[1].startswith("友達未登録: 3100pt")
+
+
+def test_show_name_true_uses_match_name_when_set(mocker):
+    """対戦にnameが設定されていれば_idではなくnameを表示する(FEZ-66 Phase F)。"""
+    mocker.patch.object(user_service, "get_name_by_line_user_id", return_value=None)
+    named_match = Match(
+        line_group_id=dummy_match.line_group_id,
+        sum_scores=dummy_match.sum_scores,
+        sum_prices_with_chip=dummy_match.sum_prices_with_chip,
+        chip_scores=dummy_match.chip_scores,
+        name="系列A",
+        _id=1,
+    )
+    message_service = MessageService()
+
+    result = message_service.create_show_match_result(named_match, show_name=True)
+
+    assert result.split("\n")[0] == "「系列A」"

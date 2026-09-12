@@ -51,6 +51,10 @@ class IMatchService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def count_non_sim_by_line_group_id(self, line_group_id: str) -> int:
+        pass
+
+    @abstractmethod
     def try_clear_active_hanchan(
         self,
         match_id: ObjectId,

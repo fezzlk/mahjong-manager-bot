@@ -107,7 +107,10 @@ def test_execute():
         reply_service.texts[0].text
         == "このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。"
     )
-    assert reply_service.texts[1].text == "第1回 2010-01-01\n第2回 2010-01-01"
+    # このグループにはmatch1・match2の2件(is_deleted除く)があり、対戦名表示の
+    # 閾値>1を超えるため各対戦名(未設定なので_idにフォールバック)が
+    # 付く(FEZ-66 Phase F)
+    assert reply_service.texts[1].text == "第1回 2010-01-01「1」\n第2回 2010-01-01「2」"
 
 
 def test_execute_no_match():
