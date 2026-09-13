@@ -30,8 +30,6 @@ class UCommands(Enum):
 
     exit = "exit"
     mode = "mode"
-    payment = "payment"
-    analysis = "analysis"
     fortune = "fortune"
     fortune_yaku = "fortune_yaku"
     history = "history"
@@ -90,8 +88,6 @@ def routing_by_command(command: str):
     dispatch = {
         UCommands.mode.name: lambda: ReplyUserModeUseCase().execute(),
         UCommands.exit.name: lambda: UserExitCommandUseCase().execute(req_line_user_id),
-        UCommands.payment.name: lambda: reply_service.add_message("支払い機能は開発中です。"),
-        UCommands.analysis.name: lambda: reply_service.add_message("分析機能は開発中です。"),
         UCommands.fortune.name: lambda: ReplyFortuneUseCase().execute(),
         UCommands.fortune_yaku.name: lambda: ReplyFortuneYakuUseCase().execute(),
         UCommands.history.name: lambda: ReplyHistoryUseCase().execute(),
