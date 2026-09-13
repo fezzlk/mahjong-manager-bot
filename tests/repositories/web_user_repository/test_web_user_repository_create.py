@@ -24,7 +24,6 @@ def test_success():
     assert result.name == dummy_web_user.name
     assert result.email == dummy_web_user.email
     assert result.linked_line_user_id == dummy_web_user.linked_line_user_id
-    assert result.is_approved_line_user == dummy_web_user.is_approved_line_user
     assert result.created_at == dummy_web_user.created_at
     assert result.updated_at == dummy_web_user.updated_at
 
@@ -34,7 +33,6 @@ def test_success():
     assert record_on_db[0].name == dummy_web_user.name
     assert record_on_db[0].email == dummy_web_user.email
     assert record_on_db[0].linked_line_user_id == dummy_web_user.linked_line_user_id
-    assert record_on_db[0].is_approved_line_user == dummy_web_user.is_approved_line_user
 
 
 def test_success_with_id():
@@ -44,7 +42,6 @@ def test_success_with_id():
         name="name1",
         email="email1",
         linked_line_user_id=None,
-        is_approved_line_user=False,
         created_at=datetime(2022, 1, 1, 12, 0, 0),
         updated_at=datetime(2022, 1, 1, 12, 0, 0),
         _id=ObjectId("644c838186bbd9e20a91b783"),
@@ -62,7 +59,6 @@ def test_success_with_id():
     assert result.name == dummy_web_user.name
     assert result.email == dummy_web_user.email
     assert result.linked_line_user_id == dummy_web_user.linked_line_user_id
-    assert result.is_approved_line_user == dummy_web_user.is_approved_line_user
     assert result.created_at == dummy_web_user.created_at
     assert result.updated_at == dummy_web_user.updated_at
 
@@ -73,7 +69,6 @@ def test_success_with_id():
     assert record_on_db[0].name == dummy_web_user.name
     assert record_on_db[0].email == dummy_web_user.email
     assert record_on_db[0].linked_line_user_id == dummy_web_user.linked_line_user_id
-    assert record_on_db[0].is_approved_line_user == dummy_web_user.is_approved_line_user
 
 
 def test_error_duplicate_line_group_id():
@@ -85,7 +80,6 @@ def test_error_duplicate_line_group_id():
                 name="name1",
                 email="email1",
                 linked_line_user_id=None,
-                is_approved_line_user=False,
                 created_at=datetime(2022, 1, 1, 12, 0, 0),
                 updated_at=datetime(2022, 1, 1, 12, 0, 0),
             ),
@@ -94,7 +88,6 @@ def test_error_duplicate_line_group_id():
                 name="name2",
                 email="email2",
                 linked_line_user_id=None,
-                is_approved_line_user=False,
                 created_at=datetime(2022, 1, 1, 12, 0, 0),
                 updated_at=datetime(2022, 1, 1, 12, 0, 0),
             ),

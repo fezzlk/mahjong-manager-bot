@@ -28,6 +28,25 @@ def test_execute_sets_form_defaults():
     assert form.email.data == "a@example.com"
 
 
+def test_execute_without_login_email_does_not_raise():
+    # 目的: LINE OAuth経由の新規ユーザーはsession["login_email"]が未設定のため、
+    #       KeyErrorを起こさずemail欄が空のフォームを返すことを確認する。
+    # Arrange
+    app = create_app()
+    use_case = ViewRegisterUseCase()
+
+    session_data = {"login_name": "Dave"}
+
+    # Act
+    with request_context(app, session_data=session_data):
+        page_contents = PageContents(session=session_data, request=None, data_class=RegisterFormData)
+        result, form = use_case.execute(page_contents)
+
+    # Assert
+    assert form.name.data == "Dave"
+    assert form.email.data == ""
+
+
 def test_execute_returns_form_instance():
     # 目的: test_execute_returns_form_instance の挙動を検証する。
     # 入力: なし

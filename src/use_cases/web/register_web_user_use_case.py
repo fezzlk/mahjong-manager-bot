@@ -19,6 +19,7 @@ class RegisterWebUserUseCase:
             user_code=form.email.data,
             email=form.email.data,
             name=form.name.data,
+            linked_line_user_id=page_contents.session.get("login_line_user_id"),
         )
 
         web_user_repository.create(

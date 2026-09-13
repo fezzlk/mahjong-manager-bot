@@ -28,7 +28,6 @@ def jwt_authenticated_client(client):
             name="JWT API User",
             email="jwt_api@example.com",
             linked_line_user_id=line_user.line_user_id,
-            is_approved_line_user=True,
         ),
     )
     with server.app.app_context():

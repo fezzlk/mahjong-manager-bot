@@ -8,7 +8,6 @@ before = WebUser(
     name="name1",
     email="email1",
     linked_line_user_id=None,
-    is_approved_line_user=False,
     created_at=datetime(2022, 1, 1, 12, 0, 0),
     updated_at=datetime(2022, 1, 1, 12, 0, 0),
 )
@@ -16,8 +15,7 @@ after = WebUser(
     user_code="code",
     name="name2",
     email="email2",
-    linked_line_user_id=None,
-    is_approved_line_user=True,
+    linked_line_user_id="U1",
     created_at=datetime(2022, 1, 1, 12, 0, 0),
     updated_at=datetime(2022, 1, 1, 12, 0, 0),
 )
@@ -35,7 +33,7 @@ def test_hit_1_record():
         new_values={
             "name": after.name,
             "email": after.email,
-            "is_approved_line_user": after.is_approved_line_user,
+            "linked_line_user_id": after.linked_line_user_id,
         },
     )
 
@@ -46,4 +44,3 @@ def test_hit_1_record():
     assert result.name == after.name
     assert result.email == after.email
     assert result.linked_line_user_id == after.linked_line_user_id
-    assert result.is_approved_line_user == after.is_approved_line_user

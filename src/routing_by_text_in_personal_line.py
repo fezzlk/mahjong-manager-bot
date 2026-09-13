@@ -19,9 +19,6 @@ from use_cases.personal_line.reply_token_use_case import ReplyTokenUseCase
 from use_cases.personal_line.reply_url_use_case import ReplyUrlUseCase
 from use_cases.personal_line.reply_user_help_use_case import ReplyUserHelpUseCase
 from use_cases.personal_line.reply_user_mode_use_case import ReplyUserModeUseCase
-from use_cases.personal_line.request_link_line_web_use_case import (
-    RequestLinkLineWebUseCase,
-)
 from use_cases.personal_line.user_exit_command_use_case import UserExitCommandUseCase
 
 
@@ -72,11 +69,6 @@ def routing_by_text_in_personal_line():
 
     """routing by text on each mode"""
     """wait mode"""
-
-    parts = request_info_service.message.split()
-    if parts and parts[0] == "アカウント連携":
-        RequestLinkLineWebUseCase().execute()
-        return
 
     reply_service.add_message(
         message_service.get_wait_massage(),

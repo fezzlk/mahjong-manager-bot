@@ -69,23 +69,6 @@ class WebUserRepository(IWebUserRepository):
             new_values={"linked_line_user_id": line_user_id},
         )
 
-    def reset_line(self, _id) -> int:
-        return self.update(
-            query={"_id": _id},
-            new_values={
-                "linked_line_user_id": "",
-                "is_approved_line_user": False,
-            },
-        )
-
-    def approve_line(self, _id) -> int:
-        return self.update(
-            query={"_id": _id},
-            new_values={
-                "is_approved_line_user": True,
-            },
-        )
-
     def _mapping_record_to_domain(self, record: Dict[str, any]) -> WebUser:
         return WebUser(
             _id=record.get("_id"),
@@ -93,7 +76,6 @@ class WebUserRepository(IWebUserRepository):
             name=record.get("name"),
             email=record.get("email"),
             linked_line_user_id=record.get("linked_line_user_id"),
-            is_approved_line_user=record.get("is_approved_line_user"),
             created_at=record.get("created_at"),
             updated_at=record.get("updated_at"),
         )

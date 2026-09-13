@@ -35,6 +35,34 @@ def test_execute_creates_web_user():
     assert records[0].name == "Alice"
 
 
+def test_execute_links_line_user_id_from_session():
+    # 目的: LINE OAuthログインで得たlogin_line_user_idが新規WebUserにそのまま
+    #       linked_line_user_idとして引き継がれる(自動リンク)ことを確認する。
+    # Arrange
+    app = create_app()
+    use_case = RegisterWebUserUseCase()
+
+    form = {
+        "name": "Carol",
+        "email": "carol@example.com",
+    }
+
+    # Act
+    with request_context(app, form_data=form):
+        from flask import request
+        page_contents = PageContents(
+            session={"login_line_user_id": "U_oauth_test_001"},
+            request=request,
+        )
+        page_contents.request = request
+        use_case.execute(page_contents)
+
+    # Assert
+    records = web_user_repository.find({"user_code": "carol@example.com"})
+    assert len(records) == 1
+    assert records[0].linked_line_user_id == "U_oauth_test_001"
+
+
 def test_execute_raises_for_invalid_form():
     # 目的: test_execute_raises_for_invalid_form の挙動を検証する。
     # 入力: なし

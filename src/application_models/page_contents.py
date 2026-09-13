@@ -18,7 +18,7 @@ class RegisterFormData:
         session: SessionMixin,
     ):
         self.login_name = session["login_name"]
-        self.login_email = session["login_email"]
+        self.login_email = session.get("login_email", "")
 
 
 @dataclass()

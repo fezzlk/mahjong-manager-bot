@@ -28,7 +28,6 @@ def test_hit_1_record():
         assert _item.name == dummy_web_users[i].name
         assert _item.email == dummy_web_users[i].email
         assert _item.linked_line_user_id == dummy_web_users[i].linked_line_user_id
-        assert _item.is_approved_line_user == dummy_web_users[i].is_approved_line_user
 
 
 def test_hit_0_record():
@@ -56,4 +55,3 @@ def test_hit_0_record():
         assert _item.name == dummy_web_users[i].name
         assert _item.email == dummy_web_users[i].email
         assert _item.linked_line_user_id == dummy_web_users[i].linked_line_user_id
-        assert _item.is_approved_line_user == dummy_web_users[i].is_approved_line_user
