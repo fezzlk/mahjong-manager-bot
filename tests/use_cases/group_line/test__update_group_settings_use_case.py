@@ -25,7 +25,7 @@ dummy_event = Event(
 
 dummy_initial_settings = EmbeddedGroupSettings(
     rate=0,
-    ranking_prize=[20, 10, -10, -20],
+    ranking_prize_4=[20, 10, -10, -20],
     chip_rate=0,
     tobi_prize=10,
     num_of_players=4,
@@ -86,6 +86,28 @@ def test_execute_ranking_prize():
     assert s.rounding_method == 0
 
 
+def test_execute_ranking_prize_for_three_players():
+    # 目的: 3人麻雀設定のグループで順位点を3要素で変更できること
+    request_info_service.set_req_info(event=dummy_event)
+    _setup()
+    group_repository.update_settings(
+        dummy_line_group_id,
+        EmbeddedGroupSettings(num_of_players=3),
+    )
+    use_case = UpdateGroupSettingsUseCase()
+
+    use_case.execute("順位点", "30,0,-30")
+
+    assert len(reply_service.texts) == 1
+    assert (
+        reply_service.texts[0].text
+        == "[順位点]を[1着 30/2着 0/3着 -30]に変更しました。"
+    )
+    s = _get_settings()
+    assert s.ranking_prize == [30, 0, -30]
+    assert s.num_of_players == 3
+
+
 def test_execute_chip_rate():
     # 目的: チップを変更したとき settings.chip_rate が更新されること
     request_info_service.set_req_info(event=dummy_event)
@@ -125,7 +147,9 @@ def test_execute_tobi_prize():
 
 
 def test_execute_num_of_players():
-    # 目的: 人数を変更したとき settings.num_of_players が更新されること
+    # 目的: 人数を変更したとき settings.num_of_players が更新されること。
+    #       ranking_prizeは人数ごとに独立して保持されるため、3人切替後は
+    #       3人麻雀用のデフォルト順位点が返る(4人用の値は保持されたまま)。
     request_info_service.set_req_info(event=dummy_event)
     _setup()
     use_case = UpdateGroupSettingsUseCase()
@@ -136,7 +160,8 @@ def test_execute_num_of_players():
     assert reply_service.texts[0].text == "[人数]を[3人]に変更しました。"
     s = _get_settings()
     assert s.rate == 0
-    assert s.ranking_prize == [20, 10, -10, -20]
+    assert s.ranking_prize == [30, 0, -30]
+    assert s.ranking_prize_4 == [20, 10, -10, -20]
     assert s.chip_rate == 0
     assert s.tobi_prize == 10
     assert s.num_of_players == 3

@@ -198,7 +198,7 @@ def test_success_uses_match_settings_snapshot_over_group_settings():
     # 対戦自身の順位点は[30,10,-10,-30]
     match = Match(
         line_group_id=dummy_group.line_group_id,
-        settings=EmbeddedGroupSettings(ranking_prize=[30, 10, -10, -30]),
+        settings=EmbeddedGroupSettings(ranking_prize_4=[30, 10, -10, -30]),
         _id=1,
     )
     for dummy_user in dummy_users:
@@ -217,6 +217,51 @@ def test_success_uses_match_settings_snapshot_over_group_settings():
     assert hanchan.converted_scores[dummy_users[1].line_user_id] == 10
     assert hanchan.converted_scores[dummy_users[2].line_user_id] == -20
     assert hanchan.converted_scores[dummy_users[3].line_user_id] == -50
+
+    reply_service.reset()
+
+
+def test_success_three_players():
+    """3人麻雀設定(num_of_players=3)のグループでは、3人分の点数が揃った
+    時点で半荘が確定し、3人麻雀用の開始点(35000)・順位点で計算されること。
+    """
+    from domain_model.entities.group_setting import EmbeddedGroupSettings
+
+    # Arrange
+    use_case = SubmitHanchanUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    match = Match(
+        line_group_id=dummy_group.line_group_id,
+        settings=EmbeddedGroupSettings(num_of_players=3),
+        _id=1,
+    )
+    for dummy_user in dummy_users[:3]:
+        user_repository.create(dummy_user)
+    three_player_hanchan = Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 40000,
+            dummy_users[1].line_user_id: 35000,
+            dummy_users[2].line_user_id: 30000,
+        },
+        converted_scores={},
+        match_id=1,
+        _id=1,
+    )
+    hanchan_repository.create(three_player_hanchan)
+    match.active_hanchan_id = three_player_hanchan._id
+    match_repository.create(match)
+
+    # Act
+    use_case.execute()
+
+    # Assert: 3人麻雀用の順位点[30,0,-30]・返し点40000で計算されている
+    hanchan = hanchan_repository.find()[0]
+    assert len(hanchan.converted_scores) == 3
+    assert hanchan.converted_scores[dummy_users[0].line_user_id] == 45
+    assert hanchan.converted_scores[dummy_users[1].line_user_id] == -5
+    assert hanchan.converted_scores[dummy_users[2].line_user_id] == -40
 
     reply_service.reset()
 
@@ -433,7 +478,7 @@ def test_success_does_not_have_4_points():
     assert len(reply_service.texts) == 1
     assert (
         reply_service.texts[0].text
-        == "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
+        == "4人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。"
     )
     groups = group_repository.find({"line_group_id": dummy_group.line_group_id})
     assert groups[0].mode == GroupMode.input.value

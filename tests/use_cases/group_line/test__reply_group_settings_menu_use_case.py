@@ -41,7 +41,7 @@ def test_execute():
     group_repository.create(Group(line_group_id=dummy_line_group_id, mode=GroupMode.wait.value))
     group_repository.update_settings(
         dummy_line_group_id,
-        EmbeddedGroupSettings(rate=3, ranking_prize=[20, 10, -10, -20], chip_rate=1, tobi_prize=10, num_of_players=4, rounding_method=0),
+        EmbeddedGroupSettings(rate=3, ranking_prize_4=[20, 10, -10, -20], chip_rate=1, tobi_prize=10, num_of_players=4, rounding_method=0),
     )
 
     # Act
@@ -55,6 +55,28 @@ def test_execute():
     )
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateMessage)
+
+
+def test_execute_three_players():
+    # 目的: num_of_players=3のグループでは、3要素の順位点が表示されること
+    # Arrange
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyGroupSettingsMenuUseCase()
+    group_repository.create(Group(line_group_id=dummy_line_group_id, mode=GroupMode.wait.value))
+    group_repository.update_settings(
+        dummy_line_group_id,
+        EmbeddedGroupSettings(num_of_players=3),
+    )
+
+    # Act
+    use_case.execute("")
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert (
+        reply_service.texts[0].text
+        == "[設定]\n3人麻雀\nレート: 点0\n順位点: 1着30/2着0/3着-30\n飛び賞: 10点\nチップ: なし\n計算方法: 五捨六入\n単位: pt"
+    )
 
 
 def test_execute_no_settings():

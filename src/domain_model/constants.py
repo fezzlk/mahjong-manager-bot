@@ -5,6 +5,8 @@ from enum import IntEnum
 RATE_LIST = [0, 1, 2, 3, 4, 5, 10]
 CHIP_RATE_LIST = [0, 1]
 NUM_OF_PLAYERS_LIST = [3, 4]
+DEFAULT_STARTING_POINTS_BY_PLAYERS = {3: 35000, 4: 25000}
+RETURN_POINTS_MARGIN = 5000
 RANKING_PRIZE_LIST = [
     ["20", "10", "-10", "-20"],
     ["30", "10", "-10", "-30"],

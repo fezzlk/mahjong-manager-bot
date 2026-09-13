@@ -7,6 +7,7 @@ from application_service import (
     request_info_service,
 )
 from domain_model.entities.group import Group, GroupMode
+from domain_model.entities.group_setting import EmbeddedGroupSettings
 from domain_model.entities.hanchan import Hanchan
 from domain_model.entities.match import Match
 from domain_model.entities.user import User, UserMode
@@ -452,6 +453,43 @@ def test_execute_delete():
     assert len(hanchans[0].raw_scores) == len(expected_raw_scores)
     for k, v in expected_raw_scores.items():
         assert hanchans[0].raw_scores[k] == v
+
+
+def test_execute_third_input_submits_for_three_player_group():
+    # 目的: num_of_players=3のグループでは、3人分揃った時点で
+    #       (4人目を待たずに)半荘が確定すること
+    # Arrange
+    use_case = AddPointByTextUseCase()
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    request_info_service.req_line_user_id = dummy_users[2].line_user_id
+    three_player_hanchan = Hanchan(
+        line_group_id=dummy_group.line_group_id,
+        raw_scores={
+            dummy_users[0].line_user_id: 40000,
+            dummy_users[1].line_user_id: 35000,
+        },
+        converted_scores={},
+        match_id=1,
+        _id=1,
+    )
+    hanchan_repository.create(three_player_hanchan)
+    three_player_match = Match(
+        line_group_id=dummy_group.line_group_id,
+        settings=EmbeddedGroupSettings(num_of_players=3),
+        active_hanchan_id=three_player_hanchan._id,
+        _id=1,
+    )
+    match_repository.create(three_player_match)
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+
+    # Act
+    use_case.execute(text="30000")
+
+    # Assert: SubmitHanchanUseCaseが呼ばれ、半荘が確定している
+    hanchans = hanchan_repository.find({"_id": three_player_hanchan._id})
+    assert len(hanchans[0].converted_scores) == 3
 
 
 def test_execute_delete_last_one():

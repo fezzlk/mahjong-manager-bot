@@ -6,9 +6,11 @@ from bson.objectid import ObjectId
 
 from domain_model.constants import (
     CHIP_RATE_LIST,
+    DEFAULT_STARTING_POINTS_BY_PLAYERS,
     NUM_OF_PLAYERS_LIST,
     RANKING_PRIZE_LIST,
     RATE_LIST,
+    RETURN_POINTS_MARGIN,
     ROUNDING_METHOD_LIST,
     RoundingMethod,
 )
@@ -27,39 +29,86 @@ __all__ = [
 
 @dataclass
 class EmbeddedGroupSettings:
-    """Group に embedded される設定(_id・line_group_id なし)"""
+    """Group に embedded される設定(_id・line_group_id なし)
+
+    順位点(ranking_prize)・持ち点(starting_points)は3人麻雀・4人麻雀で使う値が
+    まったく異なるため、num_of_playersを切り替えても互いの設定を失わないよう
+    人数ごとに別フィールド(ranking_prize_3/4, starting_points_3/4)で保持する。
+    呼び出し側は従来どおりranking_prize/starting_points/return_pointsを
+    参照すればよい(現在のnum_of_playersに応じたほうを自動的に返す)。
+    """
 
     rate: int = 0
-    ranking_prize: List[int] = field(default=None)
+    ranking_prize_3: List[int] = field(default=None)
+    ranking_prize_4: List[int] = field(default=None)
     chip_rate: int = 0
     tobi_prize: int = 10
     num_of_players: int = 4
+    starting_points_3: int = None
+    starting_points_4: int = None
     rounding_method: int = RoundingMethod.go_san_roku
     unit: str = "pt"
 
     def __post_init__(self):  # noqa: D105
-        if self.ranking_prize is None:
-            self.ranking_prize = [20, 10, -10, -20]
+        if self.ranking_prize_4 is None:
+            self.ranking_prize_4 = [20, 10, -10, -20]
+        if self.ranking_prize_3 is None:
+            self.ranking_prize_3 = [30, 0, -30]
+        if self.starting_points_4 is None:
+            self.starting_points_4 = DEFAULT_STARTING_POINTS_BY_PLAYERS[4]
+        if self.starting_points_3 is None:
+            self.starting_points_3 = DEFAULT_STARTING_POINTS_BY_PLAYERS[3]
+
+    @property
+    def ranking_prize(self) -> List[int]:
+        """現在のnum_of_playersに対応する順位点。"""
+        return self.ranking_prize_3 if self.num_of_players == 3 else self.ranking_prize_4
+
+    @ranking_prize.setter
+    def ranking_prize(self, value: List[int]) -> None:
+        if self.num_of_players == 3:
+            self.ranking_prize_3 = value
+        else:
+            self.ranking_prize_4 = value
+
+    @property
+    def starting_points(self) -> int:
+        """現在のnum_of_playersに対応する持ち点。"""
+        return self.starting_points_3 if self.num_of_players == 3 else self.starting_points_4
+
+    @property
+    def return_points(self) -> int:
+        """持ち点+RETURN_POINTS_MARGINで算出する返し点。"""
+        return self.starting_points + RETURN_POINTS_MARGIN
 
     def to_dict(self) -> dict:
         return {
             "rate": self.rate,
-            "ranking_prize": self.ranking_prize,
+            "ranking_prize_3": self.ranking_prize_3,
+            "ranking_prize_4": self.ranking_prize_4,
             "chip_rate": self.chip_rate,
             "tobi_prize": self.tobi_prize,
             "num_of_players": self.num_of_players,
+            "starting_points_3": self.starting_points_3,
+            "starting_points_4": self.starting_points_4,
             "rounding_method": self.rounding_method,
             "unit": self.unit,
         }
 
     @classmethod
     def from_dict(cls, d: dict) -> "EmbeddedGroupSettings":
+        # 旧スキーマ(人数非依存の単一ranking_prize)からの読み替え。
+        # 既存グループは実質すべて4人麻雀運用だったためranking_prize_4として引き継ぐ。
+        legacy_ranking_prize = d.get("ranking_prize")
         return cls(
             rate=d.get("rate", 0),
-            ranking_prize=d.get("ranking_prize"),
+            ranking_prize_3=d.get("ranking_prize_3"),
+            ranking_prize_4=d.get("ranking_prize_4", legacy_ranking_prize),
             chip_rate=d.get("chip_rate", 0),
             tobi_prize=d.get("tobi_prize", 10),
             num_of_players=d.get("num_of_players", 4),
+            starting_points_3=d.get("starting_points_3"),
+            starting_points_4=d.get("starting_points_4"),
             rounding_method=d.get("rounding_method", RoundingMethod.go_san_roku),
             unit=d.get("unit", "pt"),
         )
