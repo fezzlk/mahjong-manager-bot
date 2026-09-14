@@ -101,15 +101,22 @@ def update_hanchan_scores(web_user, hanchan_id):
     except (ValueError, TypeError):
         return make_response(jsonify({"error": "素点は整数で指定してください"}), 400)
 
-    if len(new_raw_scores) != 4:
-        return make_response(jsonify({"error": "4人分の素点が必要です"}), 400)
+    # config の取得: 対戦作成時の設定を優先する(submit_hanchan_use_case.pyと同様。
+    # FEZ-66 Phase D)。settings未設定(旧データ)はグループの現在の設定にフォールバックする。
+    matches = match_repository.find({"_id": hanchan.match_id})
+    match_settings = matches[0].settings if matches else None
+    setting = match_settings or group_setting_service.find_or_create(hanchan.line_group_id)
+    num_of_players = setting.num_of_players
+
+    if len(new_raw_scores) != num_of_players:
+        return make_response(jsonify({"error": f"{num_of_players}人分の素点が必要です"}), 400)
     total = sum(new_raw_scores.values())
-    if not (100000 <= total <= 100099):
+    expected_total = setting.starting_points * num_of_players
+    if not (expected_total <= total <= expected_total + 99):
         return make_response(jsonify({"error": f"素点の合計が不正です: {total}"}), 400)
-    if len(set(new_raw_scores.values())) != 4:
+    if len(set(new_raw_scores.values())) != num_of_players:
         return make_response(jsonify({"error": "同点は許可されていません"}), 400)
 
-    setting = group_setting_service.find_or_create(hanchan.line_group_id)
     tobashita_id = None
     if any(v < 0 for v in new_raw_scores.values()):
         tobashita_id = max(
@@ -123,6 +130,7 @@ def update_hanchan_scores(web_user, hanchan_id):
         tobi_prize=setting.tobi_prize,
         rounding_method=setting.rounding_method,
         tobashita_player_id=tobashita_id,
+        return_points=setting.return_points,
     )
 
     sorted_items = sorted(new_raw_scores.items(), key=lambda x: x[1], reverse=True)

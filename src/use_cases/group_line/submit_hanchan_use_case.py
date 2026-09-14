@@ -59,23 +59,31 @@ class SubmitHanchanUseCase:
             return
         points = active_hanchan.raw_scores
 
+        # config の取得: 対戦作成時の設定を優先する(異なるレート等の対戦が
+        # 同時に進行していても、それぞれ自分自身の設定でスコア計算されるように
+        # するため。FEZ-66 Phase D)。settings未設定(旧データ)はグループの
+        # 現在の設定にフォールバックする。
+        setting = active_match.settings or group_setting_service.find_or_create(line_group_id)
+        num_of_players = setting.num_of_players
+
         # 計算可能な points かチェック
-        # 4人分の点数がない、または超えている場合中断する
-        if len(points) != 4:
+        # 設定人数分の点数がない、または超えている場合中断する
+        if len(points) != num_of_players:
             reply_service.add_message(
-                "四人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。",
+                f"{num_of_players}人分の点数を入力してください。点数を取り消したい場合は @[ユーザー名] と送ってください。",
             )
             return
 
-        # 点数合計が 100000~100099 の範囲になければ中断する
-        if int(sum(points.values()) / 100) != 1000:
+        # 点数合計が 開始点×人数~+99 の範囲になければ中断する
+        expected_total = setting.starting_points * num_of_players
+        if not (expected_total <= sum(points.values()) <= expected_total + 99):
             reply_service.add_message(
-                f"点数の合計が{sum(points.values())}点です。合計100000点+αになるように修正してください。",
+                f"点数の合計が{sum(points.values())}点です。合計{expected_total}点+αになるように修正してください。",
             )
             return
 
         # 点数が全て異なっているかチェックし、同点があったら中断する
-        if len(set(points.values())) != 4:
+        if len(set(points.values())) != num_of_players:
             reply_service.add_message(
                 "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。",
             )
@@ -96,12 +104,6 @@ class SubmitHanchanUseCase:
             )
             return
 
-        # config の取得: 対戦作成時の設定を優先する(異なるレート等の対戦が
-        # 同時に進行していても、それぞれ自分自身の設定でスコア計算されるように
-        # するため。FEZ-66 Phase D)。settings未設定(旧データ)はグループの
-        # 現在の設定にフォールバックする。
-        setting = active_match.settings or group_setting_service.find_or_create(line_group_id)
-
         # 計算の実行
         calculate_result = calculate_service.run(
             points=points,
@@ -109,6 +111,7 @@ class SubmitHanchanUseCase:
             tobi_prize=setting.tobi_prize,
             rounding_method=setting.rounding_method,
             tobashita_player_id=tobashita_player_id,
+            return_points=setting.return_points,
         )
 
         # この半荘の確定処理の所有権をアトミックに確定する。

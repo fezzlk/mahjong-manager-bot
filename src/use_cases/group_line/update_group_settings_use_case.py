@@ -3,7 +3,7 @@ from application_service import (
     request_info_service,
 )
 from domain_model.entities.group_setting import ROUNDING_METHOD_LIST
-from domain_service import group_service
+from domain_service import group_service, group_setting_service
 
 
 class UpdateGroupSettingsUseCase:
@@ -28,10 +28,13 @@ class UpdateGroupSettingsUseCase:
             elif key == "順位点":
                 column = "ranking_prize"
                 db_value = list(map(int, value.split(",")))
-                if len(db_value) != 4:
+                current_num_of_players = group_setting_service.find_or_create(target_id).num_of_players
+                if len(db_value) != current_num_of_players:
                     reply_service.add_message(f"[{key}]を[{value}]に変更できません")
                     return
-                display_value = f"1着 {db_value[0]}/2着 {db_value[1]}/3着 {db_value[2]}/4着 {db_value[3]}"
+                display_value = "/".join(
+                    f"{i + 1}着 {v}" for i, v in enumerate(db_value)
+                )
             elif key == "チップ":
                 column = "chip_rate"
                 db_value = _parse_int(value)

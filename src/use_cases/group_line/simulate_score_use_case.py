@@ -15,7 +15,7 @@ from use_cases.utility.input_point_use_case import InputPointUseCase
 
 
 class SimulateScoreUseCase:
-    """sim モードで点数を収集し、4人揃ったらシミュレーション結果を表示する。"""
+    """sim モードで点数を収集し、設定人数分揃ったらシミュレーション結果を表示する。"""
 
     def execute(self, text: str) -> None:
         line_group_id = request_info_service.req_line_group_id
@@ -53,34 +53,38 @@ class SimulateScoreUseCase:
 
         reply_service.add_message("\n".join(res))
 
-        if len(raw_scores) == 4:
-            self._calculate_and_show(line_group_id, raw_scores, hanchan._id, sim_match)
-        elif len(raw_scores) > 4:
+        setting = group_setting_service.find_or_create(line_group_id)
+        num_of_players = setting.num_of_players
+
+        if len(raw_scores) == num_of_players:
+            self._calculate_and_show(
+                line_group_id, raw_scores, hanchan._id, sim_match, setting,
+            )
+        elif len(raw_scores) > num_of_players:
             reply_service.add_message(
-                "5人以上入力されています。@[ユーザー名] で不要な入力を消してください。",
+                f"{num_of_players + 1}人以上入力されています。@[ユーザー名] で不要な入力を消してください。",
             )
 
-    def _calculate_and_show(self, line_group_id, raw_scores, hanchan_id, sim_match):
-        """4人分の点数でシミュレーション計算し、結果表示後にクリーンアップする。"""
+    def _calculate_and_show(self, line_group_id, raw_scores, hanchan_id, sim_match, setting):
+        """設定人数分の点数でシミュレーション計算し、結果表示後にクリーンアップする。"""
         points = raw_scores
+        num_of_players = setting.num_of_players
 
         # 合計チェック
         total = sum(points.values())
-        if int(total / 100) != 1000:
+        expected_total = setting.starting_points * num_of_players
+        if not (expected_total <= total <= expected_total + 99):
             reply_service.add_message(
-                f"点数の合計が{total}点です。合計100000点+αになるように修正してください。",
+                f"点数の合計が{total}点です。合計{expected_total}点+αになるように修正してください。",
             )
             return
 
         # 同点チェック
-        if len(set(points.values())) != 4:
+        if len(set(points.values())) != num_of_players:
             reply_service.add_message(
                 "同点のユーザーがいます。上家が1点でも高くなるよう修正してください。",
             )
             return
-
-        # グループ設定を取得して計算
-        setting = group_setting_service.find_or_create(line_group_id)
 
         # シミュレーションでは飛び賞を省略（tobashita_player_id を渡さない）
         has_tobi = setting.tobi_prize and any(v < 0 for v in points.values())
@@ -90,6 +94,7 @@ class SimulateScoreUseCase:
             ranking_prize=setting.ranking_prize,
             tobi_prize=setting.tobi_prize,
             rounding_method=setting.rounding_method,
+            return_points=setting.return_points,
         )
 
         # 結果を順位順に表示

@@ -30,7 +30,7 @@ class ReplyGroupSettingsMenuUseCase:
             s = ["[設定]"]
             s.append(f"{settings.num_of_players}人麻雀")
             s.append(f"レート: 点{settings.rate}")
-            s.append(f"順位点: 1着{r[0]}/2着{r[1]}/3着{r[2]}/4着{r[3]}")
+            s.append("順位点: " + "/".join(f"{i + 1}着{v}" for i, v in enumerate(r)))
             s.append(f"飛び賞: {settings.tobi_prize}点")
             chip_display = "なし" if settings.chip_rate == 0 else "あり(1枚=1点)"
             s.append(f"チップ: {chip_display}")
