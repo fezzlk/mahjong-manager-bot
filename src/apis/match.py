@@ -34,9 +34,6 @@
 #             session=db_session, _id=request_user_id
 #         )
 
-#         if request_user.is_approved_line_user is False:
-#             return '失敗: LINEアカウント連携が完了していません。'
-
 #         line_groups = user_group_repository.find_by_line_user_id(
 #             session=db_session, line_user_id=request_user.linked_line_user_id
 #         )

@@ -21,7 +21,7 @@ class ViewUserInfoUseCase:
             page_contents.data.user_name = login_user.name
             page_contents.data.user_email = login_user.email
             line_name = "未連携"
-            if login_user.is_approved_line_user:
+            if login_user.linked_line_user_id:
                 profile = line_bot_api.get_profile(
                     login_user.linked_line_user_id,
                 )

@@ -77,10 +77,6 @@ from apis.api import api_blueprint
 
 app.register_blueprint(api_blueprint)
 
-from apis.line import line_blueprint
-
-app.register_blueprint(line_blueprint)
-
 from apis.group import group_blueprint
 
 app.register_blueprint(group_blueprint)

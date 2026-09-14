@@ -28,12 +28,6 @@ def test_login_page_renders(page, live_server_url):
     assert len(page.content()) > 0
 
 
-def test_unauthenticated_access_redirects_to_login(page, live_server_url):
-    """GET /line/approve (未ログイン) → /legacy/login にリダイレクトされる"""
-    page.goto(f"{live_server_url}/line/approve")
-    assert "/legacy/login" in page.url
-
-
 def test_unauthenticated_group_page_redirects(page, live_server_url):
     """GET /group/ (未ログイン) → ログインページへリダイレクト"""
     page.goto(f"{live_server_url}/group/")
@@ -63,13 +57,6 @@ def test_authenticated_group_page(authenticated_page, live_server_url):
     authenticated_page.goto(f"{live_server_url}/group/")
     assert authenticated_page.url.startswith(live_server_url)
     # ログインページに飛ばされていないことを確認
-    assert "login" not in authenticated_page.url
-    assert len(authenticated_page.content()) > 0
-
-
-def test_authenticated_line_approve_page(authenticated_page, live_server_url):
-    """ログイン済みで /line/approve → LINE連携ページが 200 で描画される"""
-    authenticated_page.goto(f"{live_server_url}/line/approve")
     assert "login" not in authenticated_page.url
     assert len(authenticated_page.content()) > 0
 

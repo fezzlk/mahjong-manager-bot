@@ -37,10 +37,10 @@ def test_execute_sets_profile_with_line_link(mocker):
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
     # 想定出力: result.data.line_name が "LineName" である
     # reply_service: なし
-    # DB操作: created = web_user_repository.create(WebUser(user_code="c2", name="Bob", email="b@example.com", linked_line_user_id="U1", is_approved_line_user=True))
+    # DB操作: created = web_user_repository.create(WebUser(user_code="c2", name="Bob", email="b@example.com", linked_line_user_id="U1"))
     # Arrange
     app = create_app()
-    created = web_user_repository.create(WebUser(user_code="c2", name="Bob", email="b@example.com", linked_line_user_id="U1", is_approved_line_user=True))
+    created = web_user_repository.create(WebUser(user_code="c2", name="Bob", email="b@example.com", linked_line_user_id="U1"))
     use_case = ViewUserInfoUseCase()
 
     # mock external API

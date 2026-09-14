@@ -10,6 +10,5 @@ class RegisterWebUserForm(Form):
     email = StringField(
         label="メールアドレス*",
         validators=[validators.DataRequired(message="メールアドレスは必須です")],
-        render_kw={"readonly": ""},
     )
     submit = SubmitField("登録")
