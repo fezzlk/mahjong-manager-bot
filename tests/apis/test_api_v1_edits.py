@@ -188,6 +188,51 @@ def test_update_scores_updates_hanchan_and_match_sum(jwt_authenticated_client, m
     assert audit_logs_collection.count_documents({"action": "update_hanchan_scores"}) == 1
 
 
+def test_update_scores_uses_match_settings_snapshot_over_group_settings(
+    jwt_authenticated_client, mocker,
+):
+    """半荘編集はMatch自身が持つsettingsスナップショット(num_of_players等)を
+    使い、グループの現在の設定は使わないことを確認する(FEZ-66 Phase Dと
+    同じ方針)。3人麻雀だった当時の対戦を、グループが後から4人麻雀に
+    変更された後でも正しく編集できる必要がある。
+    """
+    mock_push = mocker.patch.object(line_bot_api, "push_message", return_value=None)
+    client, token, _web_user, line_user = jwt_authenticated_client
+    line_group_id = "G_edits_update_scores_snapshot_0001"
+    _make_group_and_membership(line_group_id, line_user.line_user_id)
+    # グループの「現在の」設定は4人麻雀
+    group_repository.update_settings(
+        line_group_id, EmbeddedGroupSettings(num_of_players=4),
+    )
+    # 対戦自身は3人麻雀だった時点のスナップショットを持つ
+    match = match_repository.create(
+        Match(
+            line_group_id=line_group_id,
+            settings=EmbeddedGroupSettings(num_of_players=3),
+        ),
+    )
+    hanchan = hanchan_repository.create(
+        Hanchan(
+            line_group_id=line_group_id,
+            match_id=match._id,
+            raw_scores={"U1": 40000, "U2": 35000, "U3": 30000},
+        ),
+    )
+
+    new_scores = {"U1": 45000, "U2": 35000, "U3": 25000}
+    resp = client.put(
+        f"/api/v1/hanchans/{hanchan._id}/scores",
+        json={"raw_scores": new_scores},
+        headers=_auth(token),
+    )
+    assert resp.status_code == 200
+
+    updated_hanchan = hanchan_repository.find({"_id": hanchan._id})[0]
+    assert updated_hanchan.raw_scores == new_scores
+    assert len(updated_hanchan.converted_scores) == 3
+    assert mock_push.call_count == 1
+
+
 def test_update_scores_accepts_three_player_group(jwt_authenticated_client, mocker):
     """num_of_players=3のグループでは、3人分の素点(合計105000)で更新できること"""
     mock_push = mocker.patch.object(line_bot_api, "push_message", return_value=None)

@@ -12,7 +12,7 @@ RANKING_PRIZE_LIST = [
     ["30", "10", "-10", "-30"],
 ]
 ROUNDING_METHOD_LIST = [
-    "3万点以下切り上げ/以上切り捨て",
+    "返し点以下切り上げ/以上切り捨て",
     "五捨六入",
     "四捨五入",
     "切り捨て",
@@ -23,7 +23,7 @@ ROUNDING_METHOD_LIST = [
 class RoundingMethod(IntEnum):
     """端数計算方法を表す列挙型。整数インデックスと互換性を持つ。"""
 
-    special_rule = 0   # 3万点以下切り上げ/以上切り捨て
+    special_rule = 0   # 返し点以下切り上げ/以上切り捨て
     go_san_roku = 1    # 五捨六入
     go_sha_go_nyu = 2  # 四捨五入
     floor = 3          # 切り捨て

@@ -101,7 +101,11 @@ def update_hanchan_scores(web_user, hanchan_id):
     except (ValueError, TypeError):
         return make_response(jsonify({"error": "素点は整数で指定してください"}), 400)
 
-    setting = group_setting_service.find_or_create(hanchan.line_group_id)
+    # config の取得: 対戦作成時の設定を優先する(submit_hanchan_use_case.pyと同様。
+    # FEZ-66 Phase D)。settings未設定(旧データ)はグループの現在の設定にフォールバックする。
+    matches = match_repository.find({"_id": hanchan.match_id})
+    match_settings = matches[0].settings if matches else None
+    setting = match_settings or group_setting_service.find_or_create(hanchan.line_group_id)
     num_of_players = setting.num_of_players
 
     if len(new_raw_scores) != num_of_players:
