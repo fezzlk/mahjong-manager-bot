@@ -5,12 +5,10 @@ from .message_service import MessageService
 from .ranking_table_image_builder import RankingTableImageBuilder
 from .reply_service import ReplyService
 from .request_info_service import RequestInfoService
-from .rich_menu_service import RichMenuService
 
 request_info_service = RequestInfoService()
 message_service = MessageService()
 graph_service = GraphService()
 reply_service = ReplyService()
-rich_menu_service = RichMenuService()
 calculate_service = CalculateService()
 ranking_table_image_builder = RankingTableImageBuilder()

@@ -3,7 +3,6 @@ import logging
 from application_service import (
     reply_service,
     request_info_service,
-    rich_menu_service,
 )
 from domain_service import (
     user_service,
@@ -24,6 +23,3 @@ class FollowUseCase:
         logger.info("follow: user=%s (%s)", user.line_user_id, user.line_user_name)
         reply_service.add_message(
             f"こんにちは。\n麻雀対戦結果管理アカウントである Mahjong Manager は {user.line_user_name} さんの快適な麻雀生活をサポートします。")
-        rich_menu_service.create_and_link(
-            request_info_service.req_line_user_id,
-        )
