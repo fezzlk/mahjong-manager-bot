@@ -18,6 +18,9 @@ from use_cases.common_line.reply_rank_histogram_use_case import (
 )
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
 from use_cases.group_line.add_chip_by_text_use_case import AddChipByTextUseCase
+from use_cases.group_line.add_hanchan_by_points_text_use_case import (
+    AddHanchanByPointsTextUseCase,
+)
 from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
 from use_cases.group_line.confirm_history_selection_use_case import (
     ConfirmHistorySelectionUseCase,
@@ -124,6 +127,10 @@ def routing_by_text_in_group_line():
 
     """routing by text"""
     command = request_info_service.command
+    # Recognize the complete reply before interpreting names as commands.
+    if AddHanchanByPointsTextUseCase.parse_reply(request_info_service.message) is not None:
+        AddHanchanByPointsTextUseCase().execute(request_info_service.message)
+        return
     if command is not None:
         if command in _VALID_COMMANDS:
             _save_last_command(command)
