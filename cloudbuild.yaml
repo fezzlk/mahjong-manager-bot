@@ -1,3 +1,10 @@
+# ============================================================
+# Cloud Build 設定
+# ============================================================
+# デプロイは このファイル + Cloud Build トリガー (mahjong-manager-bot-deploy) 経由のみ。
+# GCP Console の「Cloud Run にデプロイ」機能で別トリガーを作成しないこと。
+# ============================================================
+
 steps:
   # Dockerイメージをビルド (React ビルドはマルチステージ Dockerfile 内で実行)
   - name: "gcr.io/cloud-builders/docker"
@@ -41,6 +48,7 @@ steps:
       - "10"
       - "--timeout"
       - "300"
+      - "--no-cpu-boost"
       - "--health-check-http-path=/health"
       - "--set-env-vars"
       - "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=mahjong-manager,SERVER_URL=https://mahjong-manager.fezzlk.com,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,PORT=8080,GCS_BUCKET_NAME=mahjong-manager-images"
