@@ -52,7 +52,7 @@ steps:
       - "300"
       - "--no-cpu-boost"
       - "--set-env-vars"
-      - "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=mahjong-manager-verification,SERVER_URL=https://mahjong-manager-bot-verification.invalid/,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,GCS_BUCKET_NAME=mahjong-manager-verification-images"
+      - "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=mahjong-manager-verification,SERVER_URL=https://mahjong-manager-bot-verification-i2eyckm5dq-an.a.run.app/,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,GCS_BUCKET_NAME=mahjong-manager-verification-images"
       - "--set-secrets"
       - "DATABASE_URL=DATABASE_URL_VERIFICATION:latest,YOUR_CHANNEL_ACCESS_TOKEN=TEST_CHANNEL_ACCESS_TOKEN:latest,YOUR_CHANNEL_SECRET=TEST_CHANNEL_SECRET:latest,SERVER_ADMIN_LINE_USER_ID=SERVER_ADMIN_LINE_USER_ID:latest,FLASK_SECRET_KEY=FLASK_SECRET_KEY:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest,LINE_LOGIN_CHANNEL_ID=LINE_LOGIN_CHANNEL_ID:latest,LINE_LOGIN_CHANNEL_SECRET=LINE_LOGIN_CHANNEL_SECRET:latest"
       # 独自サービスアカウントを使う場合は以下2行のコメントを外す
