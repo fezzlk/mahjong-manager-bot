@@ -18,10 +18,13 @@
 注意:
     - この script は idempotent(何度実行しても安全)。既に status が
       設定済みの Match はスキップする。
+    - created_at が(古いレガシーデータで)文字列型のレコードは ISO 形式として
+      パースする。パース不能な場合はスキップし、created_at なしと同様にログ出力する。
 """
 import os
 import sys
 from collections import defaultdict
+from datetime import datetime
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
@@ -66,6 +69,12 @@ def migrate():
         if created_at is None:
             print(f"  SKIP (created_at なし): {m['_id']}")
             continue
+        if isinstance(created_at, str):
+            try:
+                created_at = datetime.fromisoformat(created_at)
+            except ValueError:
+                print(f"  SKIP (created_at が不正な文字列): {m['_id']} = {created_at!r}")
+                continue
         key = (m["line_group_id"], created_at.date())
         seen_counts[key] += 1
         seq = seen_counts[key]
