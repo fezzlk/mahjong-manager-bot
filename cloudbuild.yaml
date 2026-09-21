@@ -11,21 +11,21 @@ steps:
     args:
       - "build"
       - "-t"
-      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot:$COMMIT_SHA"
       - "-t"
-      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:latest"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot:latest"
       - "."
 
   # Artifact Registry にプッシュ
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot:$COMMIT_SHA"
 
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
-      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:latest"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot:latest"
 
   # Cloud Runにデプロイ
   - name: "gcr.io/cloud-builders/gcloud"
@@ -34,7 +34,7 @@ steps:
       - "deploy"
       - "mahjong-manager-bot"
       - "--image"
-      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot:$COMMIT_SHA"
       - "--region"
       - "asia-northeast1"
       - "--platform"
@@ -59,8 +59,8 @@ steps:
       # - "mahjong-bot-sa@$PROJECT_ID.iam.gserviceaccount.com"
 
 images:
-  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
-  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:latest"
+  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot:$COMMIT_SHA"
+  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot:latest"
 
 options:
   logging: CLOUD_LOGGING_ONLY
