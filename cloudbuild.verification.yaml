@@ -1,0 +1,67 @@
+# ============================================================
+# Cloud Build 設定 (verification環境)
+# ============================================================
+# 本番(cloudbuild.yaml)とは完全に分離した検証環境。
+# 別Cloud Runサービス・別LINEチャンネル(TEST_CHANNEL_*)・別Firestore DBを使う。
+# デプロイは このファイル + Cloud Build トリガー (mahjong-manager-bot-verification-deploy)
+# 経由のみ。GCP Console の「Cloud Run にデプロイ」機能で別トリガーを作成しないこと。
+# ============================================================
+
+steps:
+  # Dockerイメージをビルド (React ビルドはマルチステージ Dockerfile 内で実行)
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot-verification:$COMMIT_SHA"
+      - "-t"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot-verification:latest"
+      - "."
+
+  # Artifact Registry にプッシュ
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot-verification:$COMMIT_SHA"
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot-verification:latest"
+
+  # Cloud Runにデプロイ
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      - "run"
+      - "deploy"
+      - "mahjong-manager-bot-verification"
+      - "--image"
+      - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot-verification:$COMMIT_SHA"
+      - "--region"
+      - "asia-northeast1"
+      - "--platform"
+      - "managed"
+      - "--allow-unauthenticated"
+      - "--memory"
+      - "1Gi"
+      - "--cpu"
+      - "1"
+      - "--max-instances"
+      - "10"
+      - "--timeout"
+      - "300"
+      - "--no-cpu-boost"
+      - "--set-env-vars"
+      - "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=mahjong-manager-verification,SERVER_URL=https://mahjong-manager-bot-verification.invalid/,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,GCS_BUCKET_NAME=mahjong-manager-verification-images"
+      - "--set-secrets"
+      - "DATABASE_URL=DATABASE_URL_VERIFICATION:latest,YOUR_CHANNEL_ACCESS_TOKEN=TEST_CHANNEL_ACCESS_TOKEN:latest,YOUR_CHANNEL_SECRET=TEST_CHANNEL_SECRET:latest,SERVER_ADMIN_LINE_USER_ID=SERVER_ADMIN_LINE_USER_ID:latest,FLASK_SECRET_KEY=FLASK_SECRET_KEY:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest,LINE_LOGIN_CHANNEL_ID=LINE_LOGIN_CHANNEL_ID:latest,LINE_LOGIN_CHANNEL_SECRET=LINE_LOGIN_CHANNEL_SECRET:latest"
+      # 独自サービスアカウントを使う場合は以下2行のコメントを外す
+      # - "--service-account"
+      # - "mahjong-bot-sa@$PROJECT_ID.iam.gserviceaccount.com"
+
+images:
+  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot-verification:$COMMIT_SHA"
+  - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mahjong-manager-bot-verification:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
