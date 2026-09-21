@@ -61,3 +61,6 @@ steps:
 images:
   - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:$COMMIT_SHA"
   - "asia-northeast1-docker.pkg.dev/$PROJECT_ID/mahjong-manager/mahjong-manager-bot:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
