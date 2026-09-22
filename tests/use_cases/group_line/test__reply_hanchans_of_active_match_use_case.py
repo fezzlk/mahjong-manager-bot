@@ -191,6 +191,11 @@ def test_success_single_hanchan(mocker):
     assert reply_service.texts[0].text == "途中経過を表示します。"
     assert reply_service.texts[1].text == "第1回\ntest_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
     assert len(reply_service.images) == 1
+    # 削除ボタンのQuick Replyは最後に送信される画像メッセージに付与される
+    # (LINEは複数メッセージ送信時、最後のメッセージのQuick Replyのみ表示するため)
+    quick_reply = reply_service.images[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == f"_drop_select?to={dummy_archived_hanchans[0]._id}"
     reply_service.reset()
 
 def test_success_contain_unknown_user(mocker):
