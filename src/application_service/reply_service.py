@@ -115,8 +115,8 @@ class ReplyService(IReplyService):
                 ),
                 # ButtonsTemplateのactionsは最大4件のため、5件目の「新しい対戦を
                 # 始める」はQuick Replyとして同じメッセージに付与する(open対戦が
-                # 既に1件以上あるときのみ表示。0/1件は_inputが黙って続行するため
-                # 不要)。
+                # 既に1件以上あるときのみ表示。open対戦が0件のときは「結果を入力」
+                # (_input)が新規対戦を黙って開始するため、このボタンは不要)。
                 quick_reply=QuickReply(
                     items=[
                         QuickReplyItem(

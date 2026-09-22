@@ -197,6 +197,17 @@ class MatchService(IMatchService):
             sort=[("created_at", ASCENDING)],
         )
 
+    def has_open_match(self, line_group_id: str) -> bool:
+        """グループに進行中(status=open)対戦が1件以上あるかを返す。
+
+        件数の有無だけが必要な呼び出し元向け。find_all_open_by_line_group_id
+        と違いドキュメント本体を取得しないため軽い。
+        """
+        return match_repository.count({
+            "line_group_id": line_group_id,
+            "status": MatchStatus.open.value,
+        }) > 0
+
     def find_all_archived_by_line_group_id(self, line_group_id: str) -> List[Match]:
         # 将来的にはGroupに含まれるメンバーの半荘のみを対象とする
         return match_repository.find(

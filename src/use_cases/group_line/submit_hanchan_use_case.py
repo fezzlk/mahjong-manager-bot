@@ -217,7 +217,7 @@ class SubmitHanchanUseCase:
         # ルームを待機モードにする
         group_service.chmod(line_group_id, GroupMode.wait)
 
-        has_open_match = len(match_service.find_all_open_by_line_group_id(line_group_id)) > 0
+        has_open_match = match_service.has_open_match(line_group_id)
         reply_service.add_start_menu(has_open_match=has_open_match)
 
         return
