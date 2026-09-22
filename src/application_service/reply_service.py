@@ -75,11 +75,12 @@ class ReplyService(IReplyService):
     ) -> None:
         self.texts.append(TextMessage(text=text))
 
-    def add_image(self, image_url: str) -> None:
+    def add_image(self, image_url: str, quick_reply=None) -> None:
         self.images.append(
             ImageMessage(
                 original_content_url=image_url,
                 preview_image_url=image_url,
+                quick_reply=quick_reply,
             ),
         )
 
@@ -582,11 +583,16 @@ class ReplyService(IReplyService):
             ),
         )
 
-    def add_drop_target_quick_reply(self, hanchans, start_index: int) -> None:
-        """半荘削除選択用のQuick Replyを追加する。
+    def build_drop_target_quick_reply(self, hanchans, start_index: int) -> QuickReply:
+        """半荘削除選択用のQuick Replyを構築して返す。
 
         hanchansは対象対戦の全アーカイブ済み半荘(古い順)のうち末尾10件相当を
         渡す想定。start_indexは全体リスト内でのhanchans[0]の「第N回」番号(1始まり)。
+
+        戻り値は呼び出し元がadd_image(quick_reply=...)等、実際に送信される
+        メッセージ列の最後の1件に渡すこと。reply()はtexts+buttons+imagesの
+        順で連結して送信するため、途中のテキストにQuick Replyを付けても
+        LINE側では最後のメッセージのQuick Replyしか表示されない。
         """
         items = []
         for i, h in enumerate(hanchans):
@@ -600,12 +606,7 @@ class ReplyService(IReplyService):
                     ),
                 ),
             )
-        self.texts.append(
-            TextMessage(
-                text="削除する半荘を選んでください（直近10件）",
-                quick_reply=QuickReply(items=items),
-            ),
-        )
+        return QuickReply(items=items)
 
     def add_input_target_quick_reply(self, matches) -> None:
         items = []
