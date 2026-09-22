@@ -118,7 +118,7 @@ class StartInputUseCase:
             match_service.update(match)
 
         hanchans = hanchan_service.find_all_archived_by_match_id(match._id)
-        reply_service.add_message(
+        reply_service.add_message_with_exit_button(
             f"第{len(hanchans) + 1}回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)",
         )
 

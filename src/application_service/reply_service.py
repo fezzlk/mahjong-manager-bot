@@ -75,6 +75,29 @@ class ReplyService(IReplyService):
     ) -> None:
         self.texts.append(TextMessage(text=text))
 
+    def add_message_with_exit_button(
+        self,
+        text: str,
+    ) -> None:
+        """入力・シミュレーション開始時のメッセージに、中断(_exit)ボタンを添える。"""
+        label = "中断する"
+        self.texts.append(
+            TextMessage(
+                text=text,
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label=label,
+                                display_text=label,
+                                data="_exit",
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        )
+
     def add_image(self, image_url: str) -> None:
         self.images.append(
             ImageMessage(
@@ -153,6 +176,13 @@ class ReplyService(IReplyService):
                                 data="_sum_matches",
                             ),
                         ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="使い方",
+                                display_text="使い方",
+                                data="_help",
+                            ),
+                        ),
                     ],
                 ),
             ),
@@ -218,6 +248,19 @@ class ReplyService(IReplyService):
                                 label="ゲスト",
                                 display_text="ゲスト",
                                 data="_setting ゲスト",
+                            ),
+                        ],
+                    ),
+                    # ButtonsTemplateのactionsは最大4件のため、追加機能は
+                    # 同じメッセージにQuick Replyとして付与する
+                    quick_reply=QuickReply(
+                        items=[
+                            QuickReplyItem(
+                                action=PostbackAction(
+                                    label="他グループへ統合",
+                                    display_text="他グループへ統合",
+                                    data="_migrate",
+                                ),
                             ),
                         ],
                     ),

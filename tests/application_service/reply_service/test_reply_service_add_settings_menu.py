@@ -21,6 +21,9 @@ def test_success_menu2():
 
     # Assert
     assert len(reply_service.buttons) == 1
+    quick_reply = reply_service.buttons[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == "_migrate"
 
 
 def test_success_key_rate():
