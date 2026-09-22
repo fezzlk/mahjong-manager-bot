@@ -2,7 +2,9 @@
 # Cloud Build 設定 (verification環境)
 # ============================================================
 # 本番(cloudbuild.yaml)とは完全に分離した検証環境。
-# 別Cloud Runサービス・別LINEチャンネル(TEST_CHANNEL_*)・別Firestore DBを使う。
+# 別Cloud Runサービス・別LINEチャンネル(Messaging API: TEST_CHANNEL_*、
+# LINE Login: LINE_LOGIN_CHANNEL_*_VERIFICATION、コールバックURLを1つしか
+# 登録できない制約のため専用チャンネルを新規作成)・別Firestore DBを使う。
 # デプロイは このファイル + Cloud Build トリガー (mahjong-manager-bot-verification-deploy)
 # 経由のみ。GCP Console の「Cloud Run にデプロイ」機能で別トリガーを作成しないこと。
 # ============================================================
@@ -54,7 +56,7 @@ steps:
       - "--set-env-vars"
       - "FLASK_APP=src/server,FLASK_ENV=production,DATABASE_NAME=mahjong-manager-verification,SERVER_URL=https://mahjong-manager-bot-verification-i2eyckm5dq-an.a.run.app/,JWT_AUTH_PATH=auth,FONT_FILE_PATH=/usr/share/fonts/opentype/noto/NotoSerifCJK-Medium.ttc,GCS_BUCKET_NAME=mahjong-manager-verification-images"
       - "--set-secrets"
-      - "DATABASE_URL=DATABASE_URL_VERIFICATION:latest,YOUR_CHANNEL_ACCESS_TOKEN=TEST_CHANNEL_ACCESS_TOKEN:latest,YOUR_CHANNEL_SECRET=TEST_CHANNEL_SECRET:latest,SERVER_ADMIN_LINE_USER_ID=SERVER_ADMIN_LINE_USER_ID:latest,FLASK_SECRET_KEY=FLASK_SECRET_KEY:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest,LINE_LOGIN_CHANNEL_ID=LINE_LOGIN_CHANNEL_ID:latest,LINE_LOGIN_CHANNEL_SECRET=LINE_LOGIN_CHANNEL_SECRET:latest"
+      - "DATABASE_URL=DATABASE_URL_VERIFICATION:latest,YOUR_CHANNEL_ACCESS_TOKEN=TEST_CHANNEL_ACCESS_TOKEN:latest,YOUR_CHANNEL_SECRET=TEST_CHANNEL_SECRET:latest,SERVER_ADMIN_LINE_USER_ID=SERVER_ADMIN_LINE_USER_ID:latest,FLASK_SECRET_KEY=FLASK_SECRET_KEY:latest,JWT_SECRET_KEY=JWT_SECRET_KEY:latest,LINE_LOGIN_CHANNEL_ID=LINE_LOGIN_CHANNEL_ID_VERIFICATION:latest,LINE_LOGIN_CHANNEL_SECRET=LINE_LOGIN_CHANNEL_SECRET_VERIFICATION:latest"
       # 独自サービスアカウントを使う場合は以下2行のコメントを外す
       # - "--service-account"
       # - "mahjong-bot-sa@$PROJECT_ID.iam.gserviceaccount.com"
