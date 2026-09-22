@@ -15,6 +15,7 @@ class Event:
         postback_data="dummy_postback_data",
         mode="active",
         mention_ids=[],
+        mention_self=False,
     ):
         self.type = type
         self.reply_token = "dummy_reply_token"
@@ -25,6 +26,7 @@ class Event:
         if self.type == "message":
             self.message = Message(
                 text=text, message_type=message_type, mention_ids=mention_ids,
+                mention_self=mention_self,
             )
         if self.type == "postback":
             self.postback = Postback(data=postback_data)

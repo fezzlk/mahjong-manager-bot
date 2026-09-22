@@ -158,6 +158,11 @@ def routing_by_text_in_group_line():
             AddPointByTextUseCase().execute(request_info_service.message)
         return
 
+    """wait mode でBotへのメンションのみ検知した場合、スタートメニューを再表示"""
+    if request_info_service.is_mention_self:
+        ReplyStartMenuUseCase().execute()
+        return
+
 
 def _save_last_command(command: str):
     """グループの last_command を更新 (タイムスタンプ付き)."""
