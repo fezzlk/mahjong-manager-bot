@@ -80,8 +80,7 @@ class ReplyHanchansOfActiveMatchUseCase:
             )
             return
 
-        reply_service.add_message(
-            "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。")
+        reply_service.add_message("途中経過を表示します。")
 
         results_view_list = []
         sum_scores = {}
@@ -96,6 +95,11 @@ class ReplyHanchansOfActiveMatchUseCase:
             )
 
         reply_service.add_message("\n\n".join(results_view_list))
+
+        # 直近10件は削除ボタンを付与する(位置インデックスの手打ちに依存させないため)
+        recent = archived_hanchans[-10:]
+        start_index = len(archived_hanchans) - len(recent) + 1
+        reply_service.add_drop_target_quick_reply(recent, start_index)
 
         # グラフ描画
         line_id_list, score_plot_dict = graph_service.create_users_point_plot_data(

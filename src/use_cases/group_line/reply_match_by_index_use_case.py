@@ -1,8 +1,12 @@
+from bson.errors import InvalidId
+from bson.objectid import ObjectId
+
 from application_service import (
     message_service,
     reply_service,
     request_info_service,
 )
+from domain_model.entities.match import Match, MatchStatus
 from domain_service import (
     group_setting_service,
     hanchan_service,
@@ -15,6 +19,7 @@ from use_cases.group_line.create_match_detail_graph_use_case import (
 
 class ReplyMatchByIndexUseCase:
     def execute(self, str_index: str) -> None:
+        """_match N: 位置インデックス指定(後方互換用)。"""
         line_group_id = request_info_service.req_line_group_id
         archived_matches = match_service.find_all_archived_by_line_group_id(line_group_id=line_group_id)
         if not str_index.isdigit():
@@ -30,7 +35,43 @@ class ReplyMatchByIndexUseCase:
             )
             return
 
-        match = archived_matches[index-1]
+        match = archived_matches[index - 1]
+        self._show(line_group_id, match, index)
+
+    def select(self) -> None:
+        """_match_select?to=<match_id>: ボタン選択で指定された対戦の詳細を表示する。"""
+        line_group_id = request_info_service.req_line_group_id
+        match_id = request_info_service.params.get("to")
+
+        if not match_id:
+            reply_service.add_message("表示する対戦が指定されていません。")
+            return
+
+        try:
+            target_match = match_service.find_one_by_id(ObjectId(match_id))
+        except InvalidId:
+            target_match = None
+        if (
+            target_match is None
+            or target_match.line_group_id != line_group_id
+            or target_match.status != MatchStatus.settled.value
+        ):
+            reply_service.add_message("指定された対戦が見つかりません。")
+            return
+
+        # 全件リスト内での「第N回」番号を算出する
+        archived_matches = match_service.find_all_archived_by_line_group_id(line_group_id=line_group_id)
+        index = next(
+            (i + 1 for i, m in enumerate(archived_matches) if m._id == target_match._id),
+            None,
+        )
+        if index is None:
+            reply_service.add_message("指定された対戦が見つかりません。")
+            return
+
+        self._show(line_group_id, target_match, index)
+
+    def _show(self, line_group_id: str, match: Match, index: int) -> None:
         # 精算された時点の設定を優先する(グループの現在の設定ではなく)。
         # settings未設定(旧データ)はグループの現在の設定にフォールバックする。
         # FEZ-66 Phase D

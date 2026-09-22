@@ -552,7 +552,57 @@ class ReplyService(IReplyService):
             )
         self.texts.append(
             TextMessage(
-                text="どの対戦を再オープンしますか？（直近5件の精算済み対戦）",
+                text="どの対戦を再オープンしますか？（直近10件の精算済み対戦）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_match_target_quick_reply(self, matches, start_index: int) -> None:
+        """対戦詳細選択用のQuick Replyを追加する。
+
+        matchesは全件(古い順)のうち末尾10件相当を渡す想定。start_indexは
+        全体リスト内でのmatches[0]の「第N回」番号(1始まり)。
+        """
+        items = []
+        for i, m in enumerate(matches):
+            label = f"第{start_index + i}回"
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_match_select?to={m._id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="どの対戦の詳細を見ますか？（直近10件）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_drop_target_quick_reply(self, hanchans, start_index: int) -> None:
+        """半荘削除選択用のQuick Replyを追加する。
+
+        hanchansは対象対戦の全アーカイブ済み半荘(古い順)のうち末尾10件相当を
+        渡す想定。start_indexは全体リスト内でのhanchans[0]の「第N回」番号(1始まり)。
+        """
+        items = []
+        for i, h in enumerate(hanchans):
+            label = f"第{start_index + i}回を削除"
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_drop_select?to={h._id}",
+                    ),
+                ),
+            )
+        self.texts.append(
+            TextMessage(
+                text="削除する半荘を選んでください（直近10件）",
                 quick_reply=QuickReply(items=items),
             ),
         )

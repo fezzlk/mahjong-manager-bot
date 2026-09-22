@@ -102,15 +102,21 @@ def test_execute():
     use_case.execute()
 
     # Assert
-    assert len(reply_service.texts) == 2
+    assert len(reply_service.texts) == 3
     assert (
         reply_service.texts[0].text
-        == "このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。"
+        == "このトークルームで行われた対戦一覧を表示します。"
     )
     # このグループにはmatch1・match2の2件(is_deleted除く)があり、対戦名表示の
     # 閾値>1を超えるため各対戦名(未設定なので_idにフォールバック)が
     # 付く(FEZ-66 Phase F)
     assert reply_service.texts[1].text == "第1回 2010-01-01「1」\n第2回 2010-01-01「2」"
+    # 直近10件(この場合は2件とも)に詳細表示ボタンが付与される
+    quick_reply = reply_service.texts[2].quick_reply
+    assert quick_reply is not None
+    assert len(quick_reply.items) == 2
+    assert quick_reply.items[0].action.label == "第1回"
+    assert quick_reply.items[1].action.label == "第2回"
 
 
 def test_execute_no_match():

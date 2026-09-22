@@ -90,8 +90,10 @@ class RCommands(Enum):
     others = "others"
     matches = "matches"
     match = "match"
+    match_select = "match_select"
     tobi = "tobi"
     drop = "drop"
+    drop_select = "drop_select"
     # drop_m is defined but not yet implemented (DisableMatchUseCase pending)
     drop_m = "drop_m"
     add_result = "add_result"
@@ -224,7 +226,9 @@ def routing_for_group_by_command(command):
         RCommands.help.name: lambda: ReplyGroupHelpUseCase().execute(list(dispatch.keys())),
         RCommands.setting.name: lambda: ReplyGroupSettingsMenuUseCase().execute(body),
         RCommands.match.name: lambda: ReplyMatchByIndexUseCase().execute(body),
+        RCommands.match_select.name: lambda: ReplyMatchByIndexUseCase().select(),
         RCommands.drop.name: lambda: DropHanchanByIndexUseCase().execute(body),
+        RCommands.drop_select.name: lambda: DropHanchanByIndexUseCase().select(),
         RCommands.finish.name: lambda: FinishMatchUseCase().execute(),
         RCommands.finish_confirm.name: lambda: ReplyFinishConfirmUseCase().execute(),
         RCommands.finish_select.name: lambda: FinishMatchUseCase().select(),
