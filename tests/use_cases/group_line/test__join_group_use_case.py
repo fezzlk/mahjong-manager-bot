@@ -12,7 +12,8 @@ from application_service import (
     reply_service,
     request_info_service,
 )
-from repositories import group_repository
+from domain_model.entities.match import Match, MatchStatus
+from repositories import group_repository, match_repository
 from use_cases.group_line.join_group_use_case import JoinGroupUseCase
 
 _MODULE = "use_cases.group_line.join_group_use_case"
@@ -68,6 +69,30 @@ def test_execute(mocker):
     )
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateMessage)
+    assert reply_service.buttons[0].quick_reply is None
+
+
+def test_execute_with_existing_open_match_adds_new_match_quick_reply(mocker):
+    """再招待等でopen対戦が既に存在する状態でjoinした場合も「新しい対戦を始める」導線が付与される。"""
+    dummy_event = generate_dummy_join_event()
+    match_repository.create(
+        Match(
+            line_group_id=dummy_event.source.group_id,
+            status=MatchStatus.open.value,
+            _id=1,
+        ),
+    )
+    request_info_service.set_req_info(event=dummy_event)
+    mocker.patch(
+        f"{_MODULE}.line_bot_api.get_group_summary",
+        return_value=_make_dummy_summary(),
+    )
+
+    JoinGroupUseCase().execute()
+
+    quick_reply = reply_service.buttons[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == "_new_match"
 
 
 def test_execute_group_summary_api_failure(mocker):

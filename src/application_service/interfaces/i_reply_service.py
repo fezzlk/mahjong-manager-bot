@@ -32,7 +32,7 @@ class IReplyService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_start_menu(self) -> None:
+    def add_start_menu(self, has_open_match: bool = False) -> None:
         pass
 
     @abstractmethod

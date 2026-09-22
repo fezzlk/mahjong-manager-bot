@@ -83,7 +83,7 @@ class ReplyService(IReplyService):
             ),
         )
 
-    def add_start_menu(self) -> None:
+    def add_start_menu(self, has_open_match: bool = False) -> None:
         self.buttons.append(
             TemplateMessage(
                 alt_text="スタートメニュー",
@@ -113,6 +113,21 @@ class ReplyService(IReplyService):
                         ),
                     ],
                 ),
+                # ButtonsTemplateのactionsは最大4件のため、5件目の「新しい対戦を
+                # 始める」はQuick Replyとして同じメッセージに付与する(open対戦が
+                # 既に1件以上あるときのみ表示。0/1件は_inputが黙って続行するため
+                # 不要)。
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="新しい対戦を始める",
+                                display_text="新しい対戦を始める",
+                                data="_new_match",
+                            ),
+                        ),
+                    ],
+                ) if has_open_match else None,
             ),
         )
 

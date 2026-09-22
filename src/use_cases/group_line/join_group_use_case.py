@@ -8,6 +8,7 @@ from application_service import (
 )
 from domain_service import (
     group_service,
+    match_service,
 )
 from messaging_api_setting import line_bot_api
 
@@ -39,4 +40,5 @@ class JoinGroupUseCase:
         reply_service.add_message(
             "レートや点数計算方法は「設定」で変更可能です。",
         )
-        reply_service.add_start_menu()
+        has_open_match = len(match_service.find_all_open_by_line_group_id(line_group_id)) > 0
+        reply_service.add_start_menu(has_open_match=has_open_match)

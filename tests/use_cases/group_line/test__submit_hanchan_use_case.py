@@ -303,6 +303,10 @@ def test_success():
     assert len(um) == 4
     assert len(reply_service.texts) == 3
     assert len(reply_service.buttons) == 1
+    # 半荘確定後もMatch自体はopenのままなので、「新しい対戦を始める」導線が付与される
+    quick_reply = reply_service.buttons[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == "_new_match"
     assert (
         reply_service.texts[1].text
         == "test_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
