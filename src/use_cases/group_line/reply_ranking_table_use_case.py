@@ -16,6 +16,7 @@ from application_service import (
 from domain_service import (
     hanchan_service,
     match_service,
+    user_group_service,
     user_hanchan_service,
     user_match_service,
     user_service,
@@ -36,6 +37,18 @@ class _RankingStats:
 
 
 class ReplyRankingTableUseCase:
+    def execute_all(self) -> None:
+        """_ranking_all: このグループで対戦参加歴がある全ユーザーを対象にする。
+
+        ボタンからの呼び出し用。_rankingはメンションなしだと送信者本人のみが
+        対象になり「順位表」として機能しないため、こちらはグループ全員を
+        対象にした上で既存のexecute()に委譲する。
+        """
+        line_group_id = request_info_service.req_line_group_id
+        user_groups = user_group_service.find_all_by_line_group_id(line_group_id)
+        request_info_service.mention_line_ids = [ug.line_user_id for ug in user_groups]
+        self.execute()
+
     def execute(self) -> None:
         # 1. ユーザー解決
         target_user_ids, active_user_line_ids = self._resolve_users()

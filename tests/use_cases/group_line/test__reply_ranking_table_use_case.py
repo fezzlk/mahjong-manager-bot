@@ -3,8 +3,9 @@ from unittest.mock import MagicMock
 
 from application_service import reply_service, request_info_service
 from domain_model.entities.user import User
+from domain_model.entities.user_group import UserGroup
 from line_models.event import Event
-from repositories import user_repository
+from repositories import user_group_repository, user_repository
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 
 dummy_event = Event(
@@ -40,6 +41,40 @@ def test_execute_with_invalid_date_format():
     texts = [t.text for t in reply_service.texts]
     assert "友達登録されていないユーザは表示されません。" in texts
     assert "日付は以下のフォーマットで入力してください。" in texts
+
+
+def test_execute_all_targets_group_participants():
+    """execute_all()はこのグループの対戦参加歴がある全ユーザーを対象にする。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"from": "invalid", "to": "invalid"}
+    request_info_service.mention_line_ids = []
+    request_info_service.is_mention_all = False
+
+    # 送信者(友達登録済み) + グループ内の別参加者(未登録=友達ではない)
+    user_repository.create(User(line_user_id=dummy_event.source.user_id, line_user_name="Alice"))
+    user_group_repository.create(
+        UserGroup(
+            line_group_id=dummy_event.source.group_id,
+            line_user_id=dummy_event.source.user_id,
+        ),
+    )
+    user_group_repository.create(
+        UserGroup(
+            line_group_id=dummy_event.source.group_id,
+            line_user_id="U_NOT_FRIEND_GROUP_MEMBER",
+        ),
+    )
+
+    use_case = ReplyRankingTableUseCase()
+
+    # Act
+    use_case.execute_all()
+
+    # Assert: mention_line_idsにグループ参加者(未登録ユーザー含む)が
+    # 展開され、_resolve_users()の「友達未登録」分岐に到達している
+    assert "U_NOT_FRIEND_GROUP_MEMBER" in request_info_service.mention_line_ids
+    texts = [t.text for t in reply_service.texts]
+    assert "友達登録されていないユーザは表示されません。" in texts
 
 
 def test_execute_with_mention_all_and_invalid_date():

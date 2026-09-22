@@ -10,3 +10,7 @@ def test_success():
 
     # Assert
     assert len(reply_service.buttons) == 1
+    quick_reply = reply_service.buttons[0].quick_reply
+    assert quick_reply is not None
+    data_values = [item.action.data for item in quick_reply.items]
+    assert data_values == ["_ranking_all", "_rank", "_rank_detail", "_sim"]

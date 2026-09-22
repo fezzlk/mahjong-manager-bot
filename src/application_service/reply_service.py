@@ -141,6 +141,41 @@ class ReplyService(IReplyService):
                         ),
                     ],
                 ),
+                # ButtonsTemplateのactionsは最大4件のため、追加の統計系機能は
+                # 同じメッセージにQuick Replyとして付与する(スタートメニューの
+                # 「新しい対戦を始める」と同じ手法)
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="累計成績",
+                                display_text="累計成績",
+                                data="_ranking_all",
+                            ),
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="順位推移",
+                                display_text="順位推移",
+                                data="_rank",
+                            ),
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="順位分布",
+                                display_text="順位分布",
+                                data="_rank_detail",
+                            ),
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="シミュレーション",
+                                display_text="シミュレーション",
+                                data="_sim",
+                            ),
+                        ),
+                    ],
+                ),
             ),
         )
 
