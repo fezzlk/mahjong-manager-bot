@@ -25,6 +25,9 @@ from use_cases.group_line.confirm_history_selection_use_case import (
 from use_cases.group_line.drop_hanchan_by_index_use_case import (
     DropHanchanByIndexUseCase,
 )
+from use_cases.group_line.drop_match_by_index_use_case import (
+    DropMatchByIndexUseCase,
+)
 from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.exit_use_case import ExitUseCase
 from use_cases.group_line.finish_input_chip_use_case import FinishInputChipUseCase
@@ -91,12 +94,13 @@ class RCommands(Enum):
     tobi = "tobi"
     drop = "drop"
     drop_select = "drop_select"
-    # drop_m is defined but not yet implemented (DisableMatchUseCase pending)
     drop_m = "drop_m"
+    drop_m_select = "drop_m_select"
     add_result = "add_result"
     update_config = "update_config"
-    # sum_matches is defined but not yet implemented (ReplySumMatchesByIdsUseCase pending)
     sum_matches = "sum_matches"
+    sum_matches_toggle = "sum_matches_toggle"
+    sum_matches_confirm = "sum_matches_confirm"
     history = "history"
     history_start = "history_start"
     history_target = "history_target"
@@ -250,9 +254,13 @@ def routing_for_group_by_command(command):
         RCommands.sim.name: lambda: StartSimUseCase().execute(),
         RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
         RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),
-        # drop_m (DisableMatchUseCase), sum_matches (ReplySumMatchesByIdsUseCase),
-        # add_result: intentionally not yet implemented — stub commands reserved
-        # for future use (FEZ-66 Phase C)
+        RCommands.drop_m.name: lambda: DropMatchByIndexUseCase().execute(body),
+        RCommands.drop_m_select.name: lambda: DropMatchByIndexUseCase().select(),
+        RCommands.sum_matches.name: lambda: StartSumMatchesUseCase().execute(),
+        RCommands.sum_matches_toggle.name: lambda: ToggleSumMatchUseCase().execute(),
+        RCommands.sum_matches_confirm.name: lambda: ConfirmSumMatchesUseCase().execute(),
+        # add_result: intentionally not yet implemented — pending separate design
+        # (FEZ-66 Phase C)
     }
 
     action = dispatch.get(command)

@@ -1,7 +1,11 @@
+from bson.errors import InvalidId
+from bson.objectid import ObjectId
+
 from application_service import (
     reply_service,
     request_info_service,
 )
+from domain_model.entities.match import MatchStatus
 from domain_service import (
     hanchan_service,
     match_service,
@@ -9,6 +13,34 @@ from domain_service import (
 
 
 class DropMatchByIndexUseCase:
+
+    def select(self) -> None:
+        """_drop_m_select?to=<match_id>: ボタン選択で指定された対戦を削除する。"""
+        line_group_id = request_info_service.req_line_group_id
+        match_id = request_info_service.params.get("to")
+
+        if not match_id:
+            reply_service.add_message("削除する対戦が指定されていません。")
+            return
+
+        try:
+            target_match = match_service.find_one_by_id(ObjectId(match_id))
+        except InvalidId:
+            target_match = None
+        if (
+            target_match is None
+            or target_match.line_group_id != line_group_id
+            or target_match.status != MatchStatus.settled.value
+        ):
+            reply_service.add_message("指定された対戦が見つかりません。")
+            return
+
+        hanchan_service.disable_by_match_id(match_id=target_match._id)
+        target_match.is_deleted = True
+        match_service.update(target_match)
+        reply_service.add_message(
+            f"「{target_match.name or target_match._id}」の対戦結果を削除しました。",
+        )
 
     def execute(self, str_index: str) -> None:
         line_group_id = request_info_service.req_line_group_id
