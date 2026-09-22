@@ -165,7 +165,7 @@ def test_execute():
     # このグループにはmatch1・match2の2件(is_deleted除く)があり、対戦名表示の
     # 閾値>1を超えるため「2」(name未設定なので_idにフォールバック)が
     # 先頭に付く(FEZ-66 Phase F)
-    assert len(reply_service.texts) == 2
+    assert len(reply_service.texts) == 3
     assert (
         reply_service.texts[0].text
         == "第2回\n2010年01月01日\n「2」\ntest_user1: 1000pt (+30 / チップ+10枚)\ntest_user2: 1800pt (+60 / チップ0枚)\ntest_user3: -1800pt (-60 / チップ0枚)\ntest_user4: -400pt (-10 / チップ-10枚)\ntest_user5: -300pt (-10 / チップ0枚)\n友達未登録: -300pt (-10 / チップ0枚)"
@@ -174,6 +174,10 @@ def test_execute():
         reply_service.texts[1].text
         == "【半荘情報】\n\n第1回\ntest_user2: +60 (+60)\ntest_user1: +30 (+30)\ntest_user3: -30 (-30)\ntest_user4: -60 (-60)\n\n第2回\ntest_user4: +50 (-10)\ntest_user5: -10 (-10)\n友達未登録: -10 (-10)\ntest_user3: -30 (-60)"
     )
+    # 対戦削除ボタンが末尾に付与される
+    quick_reply = reply_service.texts[2].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == f"_drop_m_select?to={dummy_matches[1]._id}"
     assert len(reply_service.images) == 1
 
 

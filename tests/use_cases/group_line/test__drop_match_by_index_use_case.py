@@ -72,3 +72,85 @@ def test_execute_drop_archived_match_by_index():
 
     updated_hanchan_docs = list(hanchans_collection.find({"match_id": match._id}))
     assert all(h["is_deleted"] for h in updated_hanchan_docs)
+
+
+def test_select_drops_the_chosen_match():
+    """_drop_m_select?to=<match_id> で指定された対戦をまとめて削除する。"""
+    from domain_model.entities.match import MatchStatus
+
+    request_info_service.set_req_info(event=dummy_event)
+    match = Match(
+        line_group_id=dummy_event.source.group_id,
+        status=MatchStatus.settled.value,
+        sum_prices_with_chip={"U1": 10},
+    )
+    match_repository.create(match)
+    hanchan = Hanchan(
+        line_group_id=dummy_event.source.group_id,
+        match_id=match._id,
+        converted_scores={"U1": 10},
+    )
+    hanchan_repository.create(hanchan)
+    request_info_service.params = {"to": str(match._id)}
+
+    DropMatchByIndexUseCase().select()
+
+    updated_match_doc = matches_collection.find_one({"_id": match._id})
+    assert updated_match_doc["is_deleted"]
+    updated_hanchan_docs = list(hanchans_collection.find({"match_id": match._id}))
+    assert all(h["is_deleted"] for h in updated_hanchan_docs)
+    assert len(reply_service.texts) == 1
+    assert "削除しました" in reply_service.texts[0].text
+
+
+def test_select_missing_param():
+    """toパラメータがない場合はエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {}
+
+    DropMatchByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "削除する対戦が指定されていません。"
+
+
+def test_select_not_found():
+    """存在しないmatch_idを指定した場合はエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": "644c838186bbd9e20a91b785"}
+
+    DropMatchByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
+
+
+def test_select_rejects_open_match():
+    """settled以外(open等)の対戦を指定した場合は拒否する。"""
+    from domain_model.entities.match import MatchStatus
+
+    request_info_service.set_req_info(event=dummy_event)
+    match = Match(
+        line_group_id=dummy_event.source.group_id,
+        status=MatchStatus.open.value,
+    )
+    match_repository.create(match)
+    request_info_service.params = {"to": str(match._id)}
+
+    DropMatchByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
+    updated_match_doc = matches_collection.find_one({"_id": match._id})
+    assert not updated_match_doc["is_deleted"]
+
+
+def test_select_malformed_match_id():
+    """不正な形式のmatch_idを指定した場合、例外を投げずエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": "not-a-valid-object-id"}
+
+    DropMatchByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text

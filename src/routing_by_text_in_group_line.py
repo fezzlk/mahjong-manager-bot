@@ -22,6 +22,9 @@ from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCas
 from use_cases.group_line.confirm_history_selection_use_case import (
     ConfirmHistorySelectionUseCase,
 )
+from use_cases.group_line.confirm_sum_matches_use_case import (
+    ConfirmSumMatchesUseCase,
+)
 from use_cases.group_line.drop_hanchan_by_index_use_case import (
     DropHanchanByIndexUseCase,
 )
@@ -62,8 +65,10 @@ from use_cases.group_line.simulate_score_use_case import SimulateScoreUseCase
 from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.start_sim_use_case import StartSimUseCase
+from use_cases.group_line.start_sum_matches_use_case import StartSumMatchesUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
 from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
+from use_cases.group_line.toggle_sum_match_use_case import ToggleSumMatchUseCase
 from use_cases.group_line.update_group_settings_use_case import (
     UpdateGroupSettingsUseCase,
 )

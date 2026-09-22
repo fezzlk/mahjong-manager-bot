@@ -5,6 +5,7 @@ from .guest_repository import GuestRepository
 from .hanchan_repository import HanchanRepository
 from .history_session_repository import HistorySessionRepository
 from .match_repository import MatchRepository
+from .match_sum_session_repository import MatchSumSessionRepository
 from .user_group_repository import UserGroupRepository
 from .user_hanchan_repository import UserHanchanRepository
 from .user_match_repository import UserMatchRepository
@@ -25,3 +26,4 @@ user_hanchan_repository = UserHanchanRepository()
 group_repository = GroupRepository()
 yakuman_user_repository = YakumanUserRepository()
 history_session_repository = HistorySessionRepository()
+match_sum_session_repository = MatchSumSessionRepository()

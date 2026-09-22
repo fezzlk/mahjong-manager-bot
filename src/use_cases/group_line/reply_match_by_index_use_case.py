@@ -103,3 +103,5 @@ class ReplyMatchByIndexUseCase:
 
         # グラフ描画
         reply_service.add_image(CreateMatchDetailGraphUseCase().execute(match._id))
+
+        reply_service.add_drop_match_quick_reply(match)
