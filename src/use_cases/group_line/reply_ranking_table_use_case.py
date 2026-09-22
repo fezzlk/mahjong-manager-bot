@@ -47,6 +47,9 @@ class ReplyRankingTableUseCase:
         line_group_id = request_info_service.req_line_group_id
         user_groups = user_group_service.find_all_by_line_group_id(line_group_id)
         request_info_service.mention_line_ids = [ug.line_user_id for ug in user_groups]
+        # @Allメンション時と同じ「グループ全員が対象」である旨の案内を
+        # _resolve_users()に出させるため、@Allと同じフラグを立てる。
+        request_info_service.is_mention_all = True
         self.execute()
 
     def execute(self) -> None:
@@ -158,7 +161,17 @@ class ReplyRankingTableUseCase:
         display_name_dict = {}
         Path("src/uploads/profile_image").mkdir(parents=True, exist_ok=True)
         for line_id in active_user_line_ids:
-            profile = line_bot_api.get_profile(line_id)
+            try:
+                profile = line_bot_api.get_profile(line_id)
+            except Exception:
+                # execute_all()経由だとグループの過去参加者全員が対象になり得るため、
+                # ブロック/友達解除済みの1人が例外を出すだけでグループ全体の
+                # 累計成績・順位表がシステムエラーになってしまう。1人分だけ
+                # スキップし処理を続行する(名前はDBフォールバックで補う)。
+                logger.warning("LINE API profile fetch failed, skipping picture: user_id=%s", line_id)
+                display_name_dict[line_id] = user_service.get_name_by_line_user_id(line_id) or line_id
+                Path(f"src/uploads/profile_image/{line_id}.jpeg").unlink(missing_ok=True)
+                continue
             display_name_dict[line_id] = profile.display_name
             if not profile.picture_url:
                 Path(f"src/uploads/profile_image/{line_id}.jpeg").unlink(missing_ok=True)

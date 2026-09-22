@@ -73,8 +73,12 @@ def test_execute_all_targets_group_participants():
     # Assert: mention_line_idsにグループ参加者(未登録ユーザー含む)が
     # 展開され、_resolve_users()の「友達未登録」分岐に到達している
     assert "U_NOT_FRIEND_GROUP_MEMBER" in request_info_service.mention_line_ids
+    # @Allメンション時と同じ「グループ全員が対象」の案内が出る
+    # (is_mention_allをセットし忘れると@All専用の案内が出ず不整合になる)
+    assert request_info_service.is_mention_all is True
     texts = [t.text for t in reply_service.texts]
     assert "友達登録されていないユーザは表示されません。" in texts
+    assert "@Allによるメンションでは、このグループでの対戦に参加したことのある全ユーザを対象とします。" in texts
 
 
 def test_execute_with_mention_all_and_invalid_date():
@@ -100,6 +104,40 @@ def test_execute_with_mention_all_and_invalid_date():
     texts = [t.text for t in reply_service.texts]
     assert "@Allによるメンションでは、このグループでの対戦に参加したことのある全ユーザを対象とします。" in texts
     assert "日付は以下のフォーマットで入力してください。" in texts
+
+
+def test_fetch_profile_images_skips_user_whose_profile_fetch_fails(mocker):
+    """1ユーザーのLINEプロフィール取得が失敗しても、グループ全体の応答は継続する。
+
+    execute_all()経由だとグループの過去参加者全員が対象になり得るため、
+    ブロック/友達解除済みの1人がget_profile()で例外を出しただけで
+    グループ全体がシステムエラーになっていたバグの回帰テスト。
+    """
+    from use_cases.group_line.reply_ranking_table_use_case import (
+        ReplyRankingTableUseCase,
+    )
+
+    def fake_get_profile(line_user_id):
+        if line_user_id == "U0123456789abcdefghijklmnopqrstu1":
+            raise Exception("blocked")
+        profile = MagicMock()
+        profile.display_name = "Bob"
+        profile.picture_url = None
+        return profile
+
+    mocker.patch(
+        "use_cases.group_line.reply_ranking_table_use_case.line_bot_api.get_profile",
+        side_effect=fake_get_profile,
+    )
+
+    use_case = ReplyRankingTableUseCase()
+    display_name_dict = use_case._fetch_profile_images(
+        ["U0123456789abcdefghijklmnopqrstu1", "U0123456789abcdefghijklmnopqrstu2"],
+    )
+
+    # 失敗したユーザーもエントリ自体は残る(DBフォールバックの名前、または見つからなければline_id)
+    assert display_name_dict["U0123456789abcdefghijklmnopqrstu1"] is not None
+    assert display_name_dict["U0123456789abcdefghijklmnopqrstu2"] == "Bob"
 
 
 def test_success_fail_savefig(mocker):
