@@ -34,6 +34,8 @@ class SubmitHanchanUseCase:
     def execute(
         self,
         tobashita_player_id: Optional[str] = None,
+        expected_match_id=None,
+        expected_hanchan_id=None,
     ) -> None:
         # 得点計算の準備および結果の格納
         line_group_id = request_info_service.req_line_group_id
@@ -52,6 +54,14 @@ class SubmitHanchanUseCase:
             )
             return
         active_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
+        if expected_match_id is not None and (
+            active_match._id != expected_match_id
+            or active_match.active_hanchan_id != expected_hanchan_id
+        ):
+            reply_service.add_message(
+                "入力対象が変わったため自動確定を中止しました。登録先の半荘を確認してください。",
+            )
+            return
         if active_hanchan is None:
             reply_service.add_message(
                 "計算対象の半荘が見つかりません。",
