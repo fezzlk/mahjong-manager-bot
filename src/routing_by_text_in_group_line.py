@@ -94,7 +94,6 @@ class RCommands(Enum):
     drop = "drop"
     # drop_m is defined but not yet implemented (DisableMatchUseCase pending)
     drop_m = "drop_m"
-    add_result = "add_result"
     update_config = "update_config"
     # sum_matches is defined but not yet implemented (ReplySumMatchesByIdsUseCase pending)
     sum_matches = "sum_matches"
@@ -253,9 +252,9 @@ def routing_for_group_by_command(command):
         RCommands.sim.name: lambda: StartSimUseCase().execute(),
         RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
         RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),
-        # drop_m (DisableMatchUseCase), sum_matches (ReplySumMatchesByIdsUseCase),
-        # add_result: intentionally not yet implemented — stub commands reserved
-        # for future use (FEZ-66 Phase C)
+        # drop_m (DisableMatchUseCase), sum_matches (ReplySumMatchesByIdsUseCase):
+        # intentionally not yet implemented — stub commands reserved for future
+        # use (FEZ-66 Phase C)
     }
 
     action = dispatch.get(command)
