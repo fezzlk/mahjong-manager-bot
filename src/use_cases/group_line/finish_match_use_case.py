@@ -193,13 +193,17 @@ class FinishMatchUseCase:
         # 対戦名を表示する(単一系列グループでは無用な表示になるため。
         # FEZ-66 Phase F)
         show_name = match_service.count_non_sim_by_line_group_id(line_group_id) > 1
+        # 「場代を入力」ボタンは最後に送信されるメッセージに付ける
+        # (reply_service.build_drop_target_quick_replyのdocstring参照)
+        badai_quick_reply = reply_service.build_badai_quick_reply(active_match)
+        image_url = CreateMatchDetailGraphUseCase().execute(active_match._id)
         reply_service.add_message(
             "【対戦結果】 \n"
             + message_service.create_show_match_result(
                 match=active_match, unit=settings.unit, show_name=show_name,
             ),
+            quick_reply=None if image_url is not None else badai_quick_reply,
         )
 
-        image_url = CreateMatchDetailGraphUseCase().execute(active_match._id)
         if image_url is not None:
-            reply_service.add_image(image_url)
+            reply_service.add_image(image_url, quick_reply=badai_quick_reply)

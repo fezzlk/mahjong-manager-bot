@@ -14,6 +14,8 @@ class GroupMode(Enum):
     sim = "sim"
     chip_input = "chip_input"
     chip_ok = "chip_ok"
+    # 精算結果の「場代を入力」から、次に送られた数字を場代として扱う(FEZ-234)
+    badai_input = "badai_input"
 
 
 @dataclass
