@@ -114,9 +114,11 @@ def test_execute():
     # 直近10件(この場合は2件とも)に詳細表示ボタンが付与される
     quick_reply = reply_service.texts[2].quick_reply
     assert quick_reply is not None
-    assert len(quick_reply.items) == 2
+    assert len(quick_reply.items) == 3
     assert quick_reply.items[0].action.label == "第1回"
     assert quick_reply.items[1].action.label == "第2回"
+    # 末尾に「まとめて精算」の入口(FEZ-234)
+    assert quick_reply.items[2].action.data == "_sum_matches"
 
 
 def test_execute_no_match():

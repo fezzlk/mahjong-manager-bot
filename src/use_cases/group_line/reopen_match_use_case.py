@@ -82,5 +82,5 @@ class ReopenMatchUseCase:
 
         reply_service.add_message(
             f"「{target_match.name or target_match._id}」を再オープンしました。\n"
-            "入力を始めるには「_input」と入力してください。",
+            "入力を始めるには、スタートメニューの「結果を入力」を押してください。",
         )

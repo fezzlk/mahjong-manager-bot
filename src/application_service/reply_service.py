@@ -75,6 +75,29 @@ class ReplyService(IReplyService):
     ) -> None:
         self.texts.append(TextMessage(text=text))
 
+    def add_message_with_exit_button(
+        self,
+        text: str,
+    ) -> None:
+        """入力・シミュレーション開始時のメッセージに、中断(_exit)ボタンを添える。"""
+        label = "中断する"
+        self.texts.append(
+            TextMessage(
+                text=text,
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label=label,
+                                display_text=label,
+                                data="_exit",
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        )
+
     def add_image(self, image_url: str, quick_reply=None) -> None:
         self.images.append(
             ImageMessage(
@@ -590,6 +613,16 @@ class ReplyService(IReplyService):
                     ),
                 ),
             )
+        # 対戦履歴一覧から複数の対戦をまとめて集計する入口(FEZ-234)
+        items.append(
+            QuickReplyItem(
+                action=PostbackAction(
+                    label="まとめて精算",
+                    display_text="まとめて精算",
+                    data="_sum_matches",
+                ),
+            ),
+        )
         self.texts.append(
             TextMessage(
                 text="どの対戦の詳細を見ますか？（直近10件）",
@@ -631,6 +664,28 @@ class ReplyService(IReplyService):
                 text="対戦をタップして選択/解除できます。選び終わったら「合計を見る」を押してください。",
                 quick_reply=QuickReply(items=items),
             ),
+        )
+
+    def build_match_detail_quick_reply(self, match) -> QuickReply:
+        """対戦詳細画面に付けるボタン(対戦の削除・再オープン)のQuick Replyを返す。
+
+        戻り値は呼び出し元が最後に送信されるメッセージ(画像)に渡すこと
+        (build_drop_target_quick_reply参照)。
+        """
+        return QuickReply(
+            items=[
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"{command}?to={match._id}",
+                    ),
+                )
+                for label, command in [
+                    ("この対戦を再オープン", "_reopen_confirm"),
+                    ("この対戦を削除", "_drop_m_select"),
+                ]
+            ],
         )
 
     def build_drop_target_quick_reply(self, hanchans, start_index: int) -> QuickReply:

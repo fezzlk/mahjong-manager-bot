@@ -10,6 +10,7 @@ from domain_service import (
     group_service,
     hanchan_service,
     match_service,
+    user_service,
 )
 
 
@@ -54,9 +55,7 @@ class DropHanchanByIndexUseCase:
         target_hanchan = archived_hanchans[index - 1]
         target_hanchan.is_deleted = True
         hanchan_service.update(target_hanchan)
-        reply_service.add_message(
-            f"現在の対戦の第{index}半荘の結果を削除しました。",
-        )
+        self._reply_dropped(index, target_hanchan)
 
     def select(self) -> None:
         """_drop_select?to=<hanchan_id>: ボタン選択で指定された半荘を削除する。"""
@@ -99,6 +98,26 @@ class DropHanchanByIndexUseCase:
 
         target_hanchan.is_deleted = True
         hanchan_service.update(target_hanchan)
+        self._reply_dropped(index, target_hanchan)
+
+    def _reply_dropped(self, index: int, hanchan) -> None:
+        """削除完了を伝え、素点一覧を貼り付け登録できる形式で添える。
+
+        AddHanchanByPointsTextUseCase.parse_replyが受け付ける「名前: 点数」形式
+        (点数入力時のBotの返信と同じ)で出すため、コピペで再登録できる。
+        """
         reply_service.add_message(
             f"現在の対戦の第{index}半荘の結果を削除しました。",
         )
+        names = {
+            line_user_id: user_service.get_name_by_line_user_id(line_user_id)
+            for line_user_id in (hanchan.raw_scores or {})
+        }
+        # 名前を解決できない人がいると貼り付けても登録できないため案内しない
+        if len(names) < 2 or None in names.values():
+            return
+        rows = [f"{names[line_user_id]}: {raw_score}" for line_user_id, raw_score in hanchan.raw_scores.items()]
+        reply_service.add_message(
+            "入力し直す場合は、次のメッセージをそのままコピーして貼り付けると再登録できます。",
+        )
+        reply_service.add_message("\n".join(rows))

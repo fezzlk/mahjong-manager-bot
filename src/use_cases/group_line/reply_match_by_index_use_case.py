@@ -101,5 +101,10 @@ class ReplyMatchByIndexUseCase:
 
         reply_service.add_message("【半荘情報】\n\n" + "\n\n".join(results_view_list))
 
-        # グラフ描画
-        reply_service.add_image(CreateMatchDetailGraphUseCase().execute(match._id))
+        # グラフ描画。再オープン・削除ボタンのQuick Replyは最後に送信される
+        # 画像メッセージへ付与する(reply_service.build_drop_target_quick_replyの
+        # docstring参照)。
+        reply_service.add_image(
+            CreateMatchDetailGraphUseCase().execute(match._id),
+            quick_reply=reply_service.build_match_detail_quick_reply(match),
+        )

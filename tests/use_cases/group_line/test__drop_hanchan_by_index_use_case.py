@@ -502,3 +502,39 @@ def test_select_malformed_hanchan_id():
 
     assert len(reply_service.texts) == 1
     assert "見つかりません" in reply_service.texts[0].text
+
+
+def test_select_replies_raw_scores_in_pasteable_format():
+    """削除完了時、素点一覧を貼り付け登録できる「名前: 点数」形式で添える。"""
+    from domain_model.entities.user import User
+    from repositories import user_repository
+    from use_cases.group_line.add_hanchan_by_points_text_use_case import (
+        AddHanchanByPointsTextUseCase,
+    )
+
+    names = ["Alice", "Bob", "Carol", "Dave"]
+    raw_scores = {f"U_paste_{i}": p for i, p in enumerate([10000, 20000, 30000, 40000])}
+    for i, name in enumerate(names):
+        user_repository.create(User(line_user_id=f"U_paste_{i}", line_user_name=name))
+    match = match_repository.create(
+        Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", status=MatchStatus.open.value),
+    )
+    target = hanchan_repository.create(
+        Hanchan(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            match_id=match._id,
+            raw_scores=raw_scores,
+            converted_scores={"U_paste_0": -40},
+        ),
+    )
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": str(target._id)}
+
+    DropHanchanByIndexUseCase().select()
+
+    texts = [t.text for t in reply_service.texts]
+    assert texts[0] == "現在の対戦の第1半荘の結果を削除しました。"
+    assert texts[2] == "Alice: 10000\nBob: 20000\nCarol: 30000\nDave: 40000"
+    assert AddHanchanByPointsTextUseCase.parse_reply(texts[2]) == [
+        ("Alice", 10000), ("Bob", 20000), ("Carol", 30000), ("Dave", 40000),
+    ]
