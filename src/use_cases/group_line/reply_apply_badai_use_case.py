@@ -68,7 +68,7 @@ class ReplyApplyBadaiUseCase:
             return
 
         group.mode = GroupMode.badai_input.value
-        group.current_input_match_id = target_match._id
+        group.badai_match_id = target_match._id
         group_service.update(group)
         reply_service.add_message_with_exit_button(
             "場代の合計金額を数字で送ってください。(例: 5000)",
@@ -89,10 +89,10 @@ class ReplyApplyBadaiUseCase:
             )
             return
 
-        target_match = match_service.find_one_by_id(group.current_input_match_id)
+        target_match = match_service.find_one_by_id(group.badai_match_id)
 
         group.mode = GroupMode.wait.value
-        group.current_input_match_id = None
+        group.badai_match_id = None
         group_service.update(group)
 
         if (

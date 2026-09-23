@@ -31,6 +31,10 @@ class Group:
     # _sim専用の使い捨てサンドボックスMatch。current_input_match_idとは独立に保持し、
     # 実系列の入力中データを_simが上書きしないようにする(FEZ-66 Phase C)。
     sim_match_id: ObjectId = field(default=None)
+    # 場代入力(badai_inputモード)の対象となる精算済みMatch。current_input_match_id
+    # は入力中の対戦を指すポインタのため流用しない(FEZ-234)。badai_inputモード中
+    # 以外は参照しない。
+    badai_match_id: ObjectId = field(default=None)
     settings: Optional[EmbeddedGroupSettings] = field(default=None)
     last_command: str = field(default=None)
     group_name: Optional[str] = field(default=None)

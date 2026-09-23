@@ -35,6 +35,7 @@ def test_ok(mocker):
             "mode": "wait",
             "active_match_id": None,
             "sim_match_id": None,
+            "badai_match_id": None,
             "settings": None,
             "last_command": None,
             "group_name": None,

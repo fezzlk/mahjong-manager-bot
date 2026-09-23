@@ -29,7 +29,7 @@ class ExitUseCase:
         group.mode = GroupMode.wait.value
         if was_badai:
             # 場代入力は精算済みの対戦を指しているだけで、破棄する半荘はない
-            group.current_input_match_id = None
+            group.badai_match_id = None
         group_service.update(group)
 
         reply_service.add_message(

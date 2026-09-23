@@ -57,7 +57,9 @@ def test_start_enters_badai_input_mode():
 
     group = _group()
     assert group.mode == GroupMode.badai_input.value
-    assert group.current_input_match_id == match._id
+    assert group.badai_match_id == match._id
+    # 入力中の対戦を指すポインタには触れない
+    assert group.current_input_match_id is None
     assert reply_service.texts[0].quick_reply.items[0].action.data == "_exit"
 
 
@@ -94,7 +96,7 @@ def test_input_shows_result_and_returns_to_wait():
     assert texts[1] == "対戦開始日: 2026年09月01日\n場代: 2000pt(1000pt×2人)\nAlice: 0pt\nBob: -2000pt"
     group = _group()
     assert group.mode == GroupMode.wait.value
-    assert group.current_input_match_id is None
+    assert group.badai_match_id is None
 
 
 def test_input_invalid_keeps_mode():
@@ -118,6 +120,6 @@ def test_exit_cancels_badai_input():
 
     group = _group()
     assert group.mode == GroupMode.wait.value
-    assert group.current_input_match_id is None
+    assert group.badai_match_id is None
     # 精算済みの対戦には触れない
     assert match_repository.find({"_id": match._id})[0].status == MatchStatus.settled.value

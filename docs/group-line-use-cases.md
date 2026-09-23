@@ -240,7 +240,7 @@ FEZ-234で上記20に統合した。`_history`は上記20のフローの起点�
 
 - **トリガー**: A。上記8の精算結果の「場代を入力」(`_badai_start?to=<match_id>`)→`Group.mode=badai_input`→金額を数字で送信。手打ちの`_badai <金額>`(直前の対戦が対象)も後方互換で残す
 - **前提条件**: 対象が`status=settled`。`Group.mode`が`wait`(他の入力中は開始不可)
-- **処理の流れ**: `_badai_start`で`Group.mode=badai_input`・`current_input_match_id=対象`にし「中断する」付きで金額を促す→次のテキストを金額として解釈(不正なら案内してモード維持)→場代を参加人数で割り、端数は1名ずつ多く負担する形で調整して各自の最終金額を表示→`Group.mode=wait`・`current_input_match_id=None`に戻す。`_exit`で中断した場合も同様に戻す
+- **処理の流れ**: `_badai_start`で`Group.mode=badai_input`・`badai_match_id=対象`(入力中の対戦を指す`current_input_match_id`とは別フィールド)にし「中断する」付きで金額を促す→次のテキストを金額として解釈(不正なら案内してモード維持)→場代を参加人数で割り、端数は1名ずつ多く負担する形で調整して各自の最終金額を表示→`Group.mode=wait`・`badai_match_id=None`に戻す。`_exit`で中断した場合も同様に戻す
 - **結果**: なし(表示のみ、DB更新なし)
 - **関連ファイル**: `src/use_cases/group_line/reply_apply_badai_use_case.py`
 
