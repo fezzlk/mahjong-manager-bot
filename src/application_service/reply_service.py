@@ -583,6 +583,42 @@ class ReplyService(IReplyService):
             ),
         )
 
+    def add_sum_matches_select_quick_reply(self, matches, start_index: int, selected_match_ids) -> None:
+        """対戦横断の合計集計(sum_matches)用の複数選択Quick Replyを追加する。
+
+        matchesは全件(古い順)のうち末尾10件相当を渡す想定。start_indexは
+        全体リスト内でのmatches[0]の「第N回」番号(1始まり)。トグルのたびに
+        選択状態を反映してこのメソッドで再送信する。
+        """
+        items = []
+        for i, m in enumerate(matches):
+            is_selected = str(m._id) in selected_match_ids
+            label = f"✓第{start_index + i}回" if is_selected else f"第{start_index + i}回"
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_sum_matches_toggle?to={m._id}",
+                    ),
+                ),
+            )
+        items.append(
+            QuickReplyItem(
+                action=PostbackAction(
+                    label=f"合計を見る({len(selected_match_ids)}件選択中)",
+                    display_text="合計を見る",
+                    data="_sum_matches_confirm",
+                ),
+            ),
+        )
+        self.texts.append(
+            TextMessage(
+                text="対戦をタップして選択/解除できます。選び終わったら「合計を見る」を押してください。",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
     def build_drop_target_quick_reply(self, hanchans, start_index: int) -> QuickReply:
         """半荘削除選択用のQuick Replyを構築して返す。
 
