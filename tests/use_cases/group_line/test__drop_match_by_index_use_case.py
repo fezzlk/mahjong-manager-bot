@@ -154,3 +154,40 @@ def test_select_malformed_match_id():
 
     assert len(reply_service.texts) == 1
     assert "見つかりません" in reply_service.texts[0].text
+
+
+def test_confirm_asks_before_deleting():
+    """対戦詳細の削除ボタン(_drop_m_confirm)は確認を出すだけで、まだ削除しない。"""
+    from domain_model.entities.match import MatchStatus
+
+    request_info_service.set_req_info(event=dummy_event)
+    match = Match(
+        line_group_id=dummy_event.source.group_id,
+        status=MatchStatus.settled.value,
+        sum_prices_with_chip={"U1": 10},
+    )
+    match_repository.create(match)
+    request_info_service.params = {"to": str(match._id)}
+
+    DropMatchByIndexUseCase().confirm()
+
+    assert not matches_collection.find_one({"_id": match._id}).get("is_deleted")
+    assert len(reply_service.texts) == 1
+    assert "削除しますか" in reply_service.texts[0].text
+    assert [i.action.data for i in reply_service.texts[0].quick_reply.items] == [
+        f"_drop_m_select?to={match._id}",
+        "_start",
+    ]
+
+
+def test_confirm_rejects_open_match():
+    from domain_model.entities.match import MatchStatus
+
+    request_info_service.set_req_info(event=dummy_event)
+    match = Match(line_group_id=dummy_event.source.group_id, status=MatchStatus.open.value)
+    match_repository.create(match)
+    request_info_service.params = {"to": str(match._id)}
+
+    DropMatchByIndexUseCase().confirm()
+
+    assert reply_service.texts[0].text == "指定された対戦が見つかりません。"

@@ -683,9 +683,35 @@ class ReplyService(IReplyService):
                 )
                 for label, command in [
                     ("この対戦を再オープン", "_reopen_confirm"),
-                    ("この対戦を削除", "_drop_m_select"),
+                    ("この対戦を削除", "_drop_m_confirm"),
                 ]
             ],
+        )
+
+    def add_drop_match_confirm_quick_reply(self, match) -> None:
+        """対戦削除の確認メッセージ(「削除する」「やめる」)を追加する。"""
+        self.texts.append(
+            TextMessage(
+                text=f"「{match.name or match._id}」の対戦結果を削除しますか？削除すると元に戻せません。",
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="削除する",
+                                display_text="削除する",
+                                data=f"_drop_m_select?to={match._id}",
+                            ),
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="やめる",
+                                display_text="やめる",
+                                data="_start",
+                            ),
+                        ),
+                    ],
+                ),
+            ),
         )
 
     def build_drop_target_quick_reply(self, hanchans, start_index: int) -> QuickReply:

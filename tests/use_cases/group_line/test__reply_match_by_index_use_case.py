@@ -180,7 +180,7 @@ def test_execute():
     quick_reply = reply_service.images[0].quick_reply
     assert [item.action.data for item in quick_reply.items] == [
         f"_reopen_confirm?to={dummy_matches[1]._id}",
-        f"_drop_m_select?to={dummy_matches[1]._id}",
+        f"_drop_m_confirm?to={dummy_matches[1]._id}",
     ]
 
 

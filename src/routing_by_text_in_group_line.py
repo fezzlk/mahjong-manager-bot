@@ -102,6 +102,7 @@ class RCommands(Enum):
     drop = "drop"
     drop_select = "drop_select"
     drop_m = "drop_m"
+    drop_m_confirm = "drop_m_confirm"
     drop_m_select = "drop_m_select"
     update_config = "update_config"
     sum_matches = "sum_matches"
@@ -271,6 +272,7 @@ def routing_for_group_by_command(command):
         RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
         RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),
         RCommands.drop_m.name: lambda: DropMatchByIndexUseCase().execute(body),
+        RCommands.drop_m_confirm.name: lambda: DropMatchByIndexUseCase().confirm(),
         RCommands.drop_m_select.name: lambda: DropMatchByIndexUseCase().select(),
         RCommands.sum_matches.name: lambda: StartSumMatchesUseCase().execute(),
         RCommands.sum_matches_toggle.name: lambda: ToggleSumMatchUseCase().execute(),
