@@ -57,7 +57,6 @@ from use_cases.group_line.reply_hanchans_of_active_match_use_case import (
 )
 from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndexUseCase
 from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
-from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
 from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
@@ -175,6 +174,11 @@ def routing_by_text_in_group_line():
             AddPointByTextUseCase().execute(request_info_service.message)
         return
 
+    """wait mode でBotへのメンションのみ検知した場合、スタートメニューを再表示"""
+    if request_info_service.is_mention_self:
+        ReplyStartMenuUseCase().execute()
+        return
+
 
 def _save_last_command(command: str):
     """グループの last_command を更新 (タイムスタンプ付き)."""
@@ -247,7 +251,8 @@ def routing_for_group_by_command(command):
         RCommands.matches.name: lambda: ReplyMatchesUseCase().execute(),
         RCommands.tobi.name: _tobi,
         RCommands.update_config.name: _update_config,
-        RCommands.history.name: lambda: ReplyMultiHistoryUseCase().execute(),
+        # _history は旧メンション指定版を_history_startのフローへ統合済み(FEZ-234)
+        RCommands.history.name: lambda: StartHistoryFlowUseCase().execute(),
         RCommands.history_start.name: lambda: StartHistoryFlowUseCase().execute(),
         RCommands.history_target.name: lambda: SelectHistoryTargetUseCase().execute(),
         RCommands.history_toggle.name: lambda: ToggleHistoryUserUseCase().execute(),

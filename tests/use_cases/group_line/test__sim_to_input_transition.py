@@ -137,8 +137,15 @@ def test_sim_to_input_cleans_up_sim_hanchan():
     assert new_hanchans[0].raw_scores == {}
 
 
-def test_input_to_sim_does_not_touch_real_match():
-    """Input → sim 切り替え時に、実系列(current_input_match_id)のMatch・半荘は一切変更されない。"""
+def test_input_to_sim_is_refused_and_does_not_touch_real_match():
+    """Input中のsim切り替えは拒否され、実系列(current_input_match_id)のMatch・半荘は一切変更されない。
+
+    group.modeはグループ全体で1つしか持てないため、以前は無条件でinput→sim
+    への切り替えを許していた(このテストはsim専用のMatch・半荘が別途作成される
+    ことを検証していた)が、他メンバーが入力中の素点がsim側へ誤って渡って
+    しまうリスクがあるため、現在はinput中のsim開始自体を拒否する
+    (StartSimUseCaseのガード)。
+    """
     _setup_users()
     _setup_group_with_match_and_hanchan(mode=GroupMode.input.value)
 
@@ -146,9 +153,11 @@ def test_input_to_sim_does_not_touch_real_match():
     hanchans = hanchan_repository.find({"_id": 1})
     assert hanchans[0].raw_scores == {USER_IDS[0]: 35000, USER_IDS[1]: 25000}
 
-    # input → sim に切り替え
+    # input → sim への切り替えは拒否される
     request_info_service.set_req_info(event=sim_event)
     StartSimUseCase().execute()
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "現在、結果入力が進行中のためシミュレーションを開始できません。入力が完了してから実行してください。"
 
     # 実系列(_id=1)のMatch・半荘は変更されない
     real_matches = match_repository.find({"_id": 1})
@@ -156,56 +165,7 @@ def test_input_to_sim_does_not_touch_real_match():
     real_hanchans = hanchan_repository.find({"_id": 1})
     assert real_hanchans[0].raw_scores == {USER_IDS[0]: 35000, USER_IDS[1]: 25000}
 
-    # sim専用に別のMatch・空の半荘が作成され、group.sim_match_idが指す
-    groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
-    assert groups[0].sim_match_id is not None
-    assert groups[0].sim_match_id != 1
-    sim_matches = match_repository.find({"_id": groups[0].sim_match_id})
-    sim_hanchans = hanchan_repository.find({"_id": sim_matches[0].active_hanchan_id})
-    assert len(sim_hanchans) == 1
-    assert sim_hanchans[0].raw_scores == {}
-
-
-def test_input_to_sim_to_input_no_data_leak():
-    """Input → sim → input の往復で、実系列の途中データが保持され、simのデータも漏れない。"""
-    _setup_users()
-    _setup_group_with_match_and_hanchan(mode=GroupMode.input.value)
-
-    # input → sim
-    request_info_service.set_req_info(event=sim_event)
-    StartSimUseCase().execute()
-    reply_service.reset()
-
-    # sim で点数入力
-    groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
-    sim_match_id = groups[0].sim_match_id
-    sim_matches = match_repository.find({"_id": sim_match_id})
-    sim_hanchan_id = sim_matches[0].active_hanchan_id
-    score_event = Event(
-        type="message",
-        source_type="group",
-        user_id=USER_IDS[0],
-        group_id=LINE_GROUP_ID,
-        message_type="text",
-        text="40000",
-    )
-    request_info_service.set_req_info(event=score_event)
-    SimulateScoreUseCase().execute(request_info_service.message)
-    reply_service.reset()
-
-    # sim → input に戻す
-    request_info_service.set_req_info(event=input_event)
-    StartInputUseCase().execute()
-
-    # sim 半荘は削除済み
-    sim_hanchans = hanchan_repository.find({"_id": sim_hanchan_id})
-    assert len(sim_hanchans) == 0
-
-    # 実系列(_id=1)は_input再開時も元の途中データを保持したまま
+    # sim用のMatchも作成されず、group.modeはinputのまま
     groups = group_repository.find({"line_group_id": LINE_GROUP_ID})
     assert groups[0].mode == GroupMode.input.value
-    assert groups[0].current_input_match_id == 1
-    real_matches = match_repository.find({"_id": 1})
-    assert real_matches[0].active_hanchan_id == 1
-    real_hanchans = hanchan_repository.find({"_id": 1})
-    assert real_hanchans[0].raw_scores == {USER_IDS[0]: 35000, USER_IDS[1]: 25000}
+    assert groups[0].sim_match_id is None

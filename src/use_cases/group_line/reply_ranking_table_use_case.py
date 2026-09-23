@@ -16,6 +16,7 @@ from application_service import (
 from domain_service import (
     hanchan_service,
     match_service,
+    user_group_service,
     user_hanchan_service,
     user_match_service,
     user_service,
@@ -94,16 +95,20 @@ class ReplyRankingTableUseCase:
             self._handle_image_save_error()
 
     def _resolve_users(self) -> Tuple[List[int], List[str]]:
-        req_line_user_id = request_info_service.req_line_user_id
-        mention_line_user_ids = request_info_service.mention_line_ids
+        """このグループで対戦参加歴がある全ユーザー(+送信者)を対象にする。
+
+        旧実装はメンションした人のみが対象で順位表として機能しなかったため、グループ全体を対象にした(FEZ-234)。
+        """
+        line_group_id = request_info_service.req_line_group_id
+        user_groups = user_group_service.find_all_by_line_group_id(line_group_id)
+        line_user_ids = {ug.line_user_id for ug in user_groups}
+        line_user_ids.add(request_info_service.req_line_user_id)
         target_user_ids: List[int] = []
         active_user_line_ids: List[str] = []
         contain_not_friend_user = False
 
-        mention_line_user_ids.append(req_line_user_id)
-
-        for mention_line_user_id in set(mention_line_user_ids):
-            user = user_service.find_one_by_line_user_id(mention_line_user_id)
+        for line_user_id in line_user_ids:
+            user = user_service.find_one_by_line_user_id(line_user_id)
             if user is None:
                 contain_not_friend_user = True
                 continue
@@ -112,11 +117,6 @@ class ReplyRankingTableUseCase:
 
         if contain_not_friend_user:
             reply_service.add_message("友達登録されていないユーザは表示されません。")
-
-        if request_info_service.is_mention_all:
-            reply_service.add_message(
-                "@Allによるメンションでは、このグループでの対戦に参加したことのある全ユーザを対象とします。",
-            )
 
         return target_user_ids, active_user_line_ids
 
@@ -145,7 +145,17 @@ class ReplyRankingTableUseCase:
         display_name_dict = {}
         Path("src/uploads/profile_image").mkdir(parents=True, exist_ok=True)
         for line_id in active_user_line_ids:
-            profile = line_bot_api.get_profile(line_id)
+            try:
+                profile = line_bot_api.get_profile(line_id)
+            except Exception:
+                # グループの過去参加者全員が対象になり得るため、
+                # ブロック/友達解除済みの1人が例外を出すだけでグループ全体の
+                # 累計成績・順位表がシステムエラーになってしまう。1人分だけ
+                # スキップし処理を続行する(名前はDBフォールバックで補う)。
+                logger.warning("LINE API profile fetch failed, skipping picture: user_id=%s", line_id)
+                display_name_dict[line_id] = user_service.get_name_by_line_user_id(line_id) or line_id
+                Path(f"src/uploads/profile_image/{line_id}.jpeg").unlink(missing_ok=True)
+                continue
             display_name_dict[line_id] = profile.display_name
             if not profile.picture_url:
                 Path(f"src/uploads/profile_image/{line_id}.jpeg").unlink(missing_ok=True)

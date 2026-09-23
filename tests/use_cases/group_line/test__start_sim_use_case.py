@@ -72,11 +72,13 @@ def test_new_sim_match_and_hanchan():
     assert len(hanchans) == 1
 
 
-def test_does_not_touch_real_active_match():
-    """実系列(_input中)の対戦・半荘は、_sim実行後も一切変更されない(FEZ-66 Phase C)。
+def test_refuses_during_real_input():
+    """実系列(_input中)の場合はsimを開始せずエラーメッセージを返す。
 
-    以前は sim が current_input_match_id を流用しており、_input で入力中の実対戦の
-    active_hanchan_id を sim 用半荘で上書きしてしまうデータ破損バグがあった。
+    group.modeはグループ全体で1つしか持てないため、入力中に無条件でsimへ
+    切り替えると他メンバーが入力中の素点がsim側へ誤って渡ってしまう
+    (実対戦の途中経過を破壊するリスク)。以前はこのガードがなくsimが開始
+    でき、group.modeがsimに上書きされていた。
     """
     request_info_service.set_req_info(event=dummy_event)
     real_hanchan = Hanchan(
@@ -104,20 +106,40 @@ def test_does_not_touch_real_active_match():
 
     StartSimUseCase().execute()
 
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "現在、結果入力が進行中のためシミュレーションを開始できません。入力が完了してから実行してください。"
+
     # 実対戦(_id=1)のactive_hanchan_idは変更されない
     real_matches = match_repository.find({"_id": 1})
     assert real_matches[0].active_hanchan_id == 1
     real_hanchans = hanchan_repository.find({"_id": 1})
     assert real_hanchans[0].raw_scores == {"U001": 35000, "U002": 25000}
 
-    # sim用に別のMatchが新規作成され、group.sim_match_idが指す
+    # group.modeはinputのまま維持され、sim用Matchも作成されない
     groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
-    assert groups[0].sim_match_id is not None
-    assert groups[0].sim_match_id != 1
-    sim_matches = match_repository.find({"_id": groups[0].sim_match_id})
-    assert len(sim_matches) == 1
-    sim_hanchans = hanchan_repository.find({"_id": sim_matches[0].active_hanchan_id})
-    assert sim_hanchans[0].raw_scores == {}
+    assert groups[0].mode == GroupMode.input.value
+    assert groups[0].sim_match_id is None
+    assert len(match_repository.find()) == 1
+
+
+def test_refuses_during_chip_input():
+    """チップ入力中(chip_input)の場合もsimを開始せずエラーメッセージを返す。"""
+    request_info_service.set_req_info(event=dummy_event)
+    group_repository.create(
+        Group(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            mode=GroupMode.chip_input.value,
+            _id=1,
+        ),
+    )
+
+    StartSimUseCase().execute()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "現在、結果入力が進行中のためシミュレーションを開始できません。入力が完了してから実行してください。"
+    groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
+    assert groups[0].mode == GroupMode.chip_input.value
+    assert groups[0].sim_match_id is None
 
 
 def test_reuses_sim_match_across_sessions():
