@@ -137,6 +137,35 @@ def test_confirm_malformed_match_id():
     assert "見つかりません" in reply_service.texts[0].text
 
 
+def test_confirm_rejects_match_not_in_settled_status():
+    """古い_reopen_confirmボタンが、既にopenへ巻き戻った(または再精算後の)対戦を
+    指すケース(FEZ-226)。statusがsettled以外なら精算結果をリセットせず弾く。
+    """
+    group_repository.create(Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.wait.value))
+    target = match_repository.create(
+        Match(
+            line_group_id=_LINE_GROUP_ID,
+            status=MatchStatus.open.value,
+            name="9/1",
+            sum_prices={"U1": 100},
+            chip_prices={"U1": 1},
+            sum_prices_with_chip={"U1": 101},
+        ),
+    )
+    _setup_request(params={"to": str(target._id)})
+
+    ReopenMatchUseCase().confirm()
+
+    unchanged = match_repository.find({"_id": target._id})[0]
+    assert unchanged.status == MatchStatus.open.value
+    assert unchanged.sum_prices == {"U1": 100}
+    assert unchanged.chip_prices == {"U1": 1}
+    assert unchanged.sum_prices_with_chip == {"U1": 101}
+
+    assert len(reply_service.texts) == 1
+    assert "既に別の状態" in reply_service.texts[0].text
+
+
 def test_confirm_succeeds_while_another_match_is_open():
     """確定時点で他に進行中の対戦やsimモード実行中でもブロックしない
     (FEZ-66 Phase D、複数対戦の同時open許容)。

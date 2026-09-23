@@ -67,6 +67,10 @@ class ReopenMatchUseCase:
             reply_service.add_message("指定された対戦が見つかりません。")
             return
 
+        if target_match.status != MatchStatus.settled.value:
+            reply_service.add_message("この対戦は既に別の状態になっています。")
+            return
+
         # 清算結果をリセット
         target_match.sum_prices = {}
         target_match.chip_prices = {}
