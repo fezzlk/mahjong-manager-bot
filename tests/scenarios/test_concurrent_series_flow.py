@@ -135,7 +135,7 @@ def test_concurrent_series_settle_independently():
         return_value=("https://example.com/dummy.png", None),
     ):
         ReplyHanchansOfActiveMatchUseCase().execute()
-    assert reply_service.texts[0].text == "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。"
+    assert reply_service.texts[0].text == "途中経過を表示します。"
 
     # 系列Bも精算し、系列Bのレート(7)が使われていることを確認
     reply_service.reset()
