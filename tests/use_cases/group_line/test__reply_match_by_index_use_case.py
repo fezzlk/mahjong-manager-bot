@@ -5,7 +5,7 @@ from application_service import (
     request_info_service,
 )
 from domain_model.entities.hanchan import Hanchan
-from domain_model.entities.match import Match
+from domain_model.entities.match import Match, MatchStatus
 from domain_model.entities.user import User
 from line_models.event import Event
 from repositories import (
@@ -226,3 +226,83 @@ def test_execute_out_of_index():
         == "このトークルームには全2回までしか登録されていないため第3回はありません。"
     )
     assert len(reply_service.images) == 0
+
+
+def test_select_shows_the_chosen_match():
+    """_match_select?to=<match_id> で指定された対戦の詳細を表示する。"""
+    match_repository.create(
+        Match(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            status=MatchStatus.settled.value,
+            created_at=datetime(2010, 1, 1, 1, 1, 1),
+            sum_prices_with_chip={"U0123456789abcdefghijklmnopqrstu1": 100},
+        ),
+    )
+    target = match_repository.create(
+        Match(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            status=MatchStatus.settled.value,
+            created_at=datetime(2010, 1, 1, 1, 1, 2),
+            sum_prices_with_chip={"U0123456789abcdefghijklmnopqrstu1": 200},
+        ),
+    )
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": str(target._id)}
+
+    ReplyMatchByIndexUseCase().select()
+
+    # 全件中2件目(第2回)として表示される
+    assert reply_service.texts[0].text.startswith("第2回")
+    assert len(reply_service.images) == 1
+
+
+def test_select_missing_param():
+    """toパラメータがない場合はエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {}
+
+    ReplyMatchByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "表示する対戦が指定されていません。"
+
+
+def test_select_not_found():
+    """存在しないmatch_idを指定した場合はエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": "644c838186bbd9e20a91b785"}
+
+    ReplyMatchByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
+
+
+def test_select_rejects_open_match():
+    """settled以外(open等)の対戦を指定した場合は拒否する(位置インデックスに
+    依存しない安全な参照のため、statusも再検証する)。
+    """
+    target = match_repository.create(
+        Match(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            status=MatchStatus.open.value,
+        ),
+    )
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": str(target._id)}
+
+    ReplyMatchByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
+
+
+def test_select_malformed_match_id():
+    """不正な形式のmatch_idを指定した場合、例外を投げずエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": "not-a-valid-object-id"}
+
+    ReplyMatchByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text

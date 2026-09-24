@@ -25,8 +25,14 @@ from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCas
 from use_cases.group_line.confirm_history_selection_use_case import (
     ConfirmHistorySelectionUseCase,
 )
+from use_cases.group_line.confirm_sum_matches_use_case import (
+    ConfirmSumMatchesUseCase,
+)
 from use_cases.group_line.drop_hanchan_by_index_use_case import (
     DropHanchanByIndexUseCase,
+)
+from use_cases.group_line.drop_match_by_index_use_case import (
+    DropMatchByIndexUseCase,
 )
 from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.exit_use_case import ExitUseCase
@@ -62,8 +68,10 @@ from use_cases.group_line.simulate_score_use_case import SimulateScoreUseCase
 from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.start_sim_use_case import StartSimUseCase
+from use_cases.group_line.start_sum_matches_use_case import StartSumMatchesUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
 from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
+from use_cases.group_line.toggle_sum_match_use_case import ToggleSumMatchUseCase
 from use_cases.group_line.update_group_settings_use_case import (
     UpdateGroupSettingsUseCase,
 )
@@ -90,14 +98,16 @@ class RCommands(Enum):
     others = "others"
     matches = "matches"
     match = "match"
+    match_select = "match_select"
     tobi = "tobi"
     drop = "drop"
-    # drop_m is defined but not yet implemented (DisableMatchUseCase pending)
+    drop_select = "drop_select"
     drop_m = "drop_m"
-    add_result = "add_result"
+    drop_m_select = "drop_m_select"
     update_config = "update_config"
-    # sum_matches is defined but not yet implemented (ReplySumMatchesByIdsUseCase pending)
     sum_matches = "sum_matches"
+    sum_matches_toggle = "sum_matches_toggle"
+    sum_matches_confirm = "sum_matches_confirm"
     history = "history"
     history_start = "history_start"
     history_target = "history_target"
@@ -224,7 +234,9 @@ def routing_for_group_by_command(command):
         RCommands.help.name: lambda: ReplyGroupHelpUseCase().execute(list(dispatch.keys())),
         RCommands.setting.name: lambda: ReplyGroupSettingsMenuUseCase().execute(body),
         RCommands.match.name: lambda: ReplyMatchByIndexUseCase().execute(body),
+        RCommands.match_select.name: lambda: ReplyMatchByIndexUseCase().select(),
         RCommands.drop.name: lambda: DropHanchanByIndexUseCase().execute(body),
+        RCommands.drop_select.name: lambda: DropHanchanByIndexUseCase().select(),
         RCommands.finish.name: lambda: FinishMatchUseCase().execute(),
         RCommands.finish_confirm.name: lambda: ReplyFinishConfirmUseCase().execute(),
         RCommands.finish_select.name: lambda: FinishMatchUseCase().select(),
@@ -253,9 +265,11 @@ def routing_for_group_by_command(command):
         RCommands.sim.name: lambda: StartSimUseCase().execute(),
         RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
         RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),
-        # drop_m (DisableMatchUseCase), sum_matches (ReplySumMatchesByIdsUseCase),
-        # add_result: intentionally not yet implemented — stub commands reserved
-        # for future use (FEZ-66 Phase C)
+        RCommands.drop_m.name: lambda: DropMatchByIndexUseCase().execute(body),
+        RCommands.drop_m_select.name: lambda: DropMatchByIndexUseCase().select(),
+        RCommands.sum_matches.name: lambda: StartSumMatchesUseCase().execute(),
+        RCommands.sum_matches_toggle.name: lambda: ToggleSumMatchUseCase().execute(),
+        RCommands.sum_matches_confirm.name: lambda: ConfirmSumMatchesUseCase().execute(),
     }
 
     action = dispatch.get(command)

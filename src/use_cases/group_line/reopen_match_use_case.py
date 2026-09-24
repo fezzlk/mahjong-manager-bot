@@ -23,7 +23,7 @@ class ReopenMatchUseCase:
     """
 
     def execute(self) -> None:
-        """_reopen: 直近5件の精算済み対戦から選択する Quick Reply を表示する。"""
+        """_reopen: 直近10件の精算済み対戦から選択する Quick Reply を表示する。"""
         line_group_id = request_info_service.req_line_group_id
         group = group_service.find_one_by_line_group_id(line_group_id=line_group_id)
         if group is None:
@@ -35,7 +35,7 @@ class ReopenMatchUseCase:
         matches = match_repository.find(
             {"line_group_id": line_group_id, "status": MatchStatus.settled.value},
             sort=[("_id", DESCENDING)],
-            limit=5,
+            limit=10,
         )
 
         if len(matches) == 0:
@@ -65,6 +65,12 @@ class ReopenMatchUseCase:
             target_match = None
         if target_match is None or target_match.line_group_id != line_group_id:
             reply_service.add_message("指定された対戦が見つかりません。")
+            return
+        if target_match.status != MatchStatus.settled.value:
+            # 古いボタンが精算済み以外の対戦(既に別経路で再オープン済み等)を
+            # 指している場合、無条件に清算結果をリセットしてしまわないよう防ぐ
+            # (FEZ-226)
+            reply_service.add_message("この対戦は既に別の状態になっています。")
             return
 
         # 清算結果をリセット

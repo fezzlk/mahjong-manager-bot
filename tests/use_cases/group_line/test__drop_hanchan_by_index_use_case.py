@@ -6,7 +6,7 @@ from application_service import (
 )
 from domain_model.entities.group import Group, GroupMode
 from domain_model.entities.hanchan import Hanchan
-from domain_model.entities.match import Match
+from domain_model.entities.match import Match, MatchStatus
 from line_models.event import Event
 from repositories import (
     group_repository,
@@ -392,3 +392,113 @@ def test_execute_out_of_index(text_case1):
         reply_service.texts[0].text
         == f"このトークルームには全4回までしか登録されていないため第{text_case1}回はありません。"
     )
+
+
+def test_select_deletes_the_chosen_hanchan():
+    """_drop_select?to=<hanchan_id> で指定された半荘を削除する。"""
+    match = match_repository.create(
+        Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", status=MatchStatus.open.value),
+    )
+    hanchan_repository.create(
+        Hanchan(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            match_id=match._id,
+            converted_scores={"U0123456789abcdefghijklmnopqrstu1": 10},
+        ),
+    )
+    target = hanchan_repository.create(
+        Hanchan(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            match_id=match._id,
+            converted_scores={"U0123456789abcdefghijklmnopqrstu1": 20},
+        ),
+    )
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": str(target._id)}
+
+    DropHanchanByIndexUseCase().select()
+
+    # find()はis_deleted=Trueを除外するため、削除後は見つからなくなる
+    assert len(hanchan_repository.find({"_id": target._id})) == 0
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "現在の対戦の第2半荘の結果を削除しました。"
+
+
+def test_select_missing_param():
+    """toパラメータがない場合はエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {}
+
+    DropHanchanByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == "削除する半荘が指定されていません。"
+
+
+def test_select_not_found():
+    """存在しないhanchan_idを指定した場合はエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": "644c838186bbd9e20a91b785"}
+
+    DropHanchanByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
+
+
+def test_select_already_deleted():
+    """既に削除済みの半荘を指定した場合はエラーメッセージが返る。"""
+    match = match_repository.create(
+        Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", status=MatchStatus.open.value),
+    )
+    target = hanchan_repository.create(
+        Hanchan(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            match_id=match._id,
+            converted_scores={"U0123456789abcdefghijklmnopqrstu1": 10},
+            is_deleted=True,
+        ),
+    )
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": str(target._id)}
+
+    DropHanchanByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
+
+
+def test_select_rejects_hanchan_of_settled_match():
+    """紐づくMatchがsettled(open以外)の場合は拒否する(表示していた対戦と
+    削除対象がずれる余地をなくすための再検証)。
+    """
+    match = match_repository.create(
+        Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", status=MatchStatus.settled.value),
+    )
+    target = hanchan_repository.create(
+        Hanchan(
+            line_group_id="G0123456789abcdefghijklmnopqrstu1",
+            match_id=match._id,
+            converted_scores={"U0123456789abcdefghijklmnopqrstu1": 10},
+        ),
+    )
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": str(target._id)}
+
+    DropHanchanByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
+    unchanged = hanchan_repository.find({"_id": target._id})[0]
+    assert unchanged.is_deleted is False
+
+
+def test_select_malformed_hanchan_id():
+    """不正な形式のhanchan_idを指定した場合、例外を投げずエラーメッセージが返る。"""
+    request_info_service.set_req_info(event=dummy_event)
+    request_info_service.params = {"to": "not-a-valid-object-id"}
+
+    DropHanchanByIndexUseCase().select()
+
+    assert len(reply_service.texts) == 1
+    assert "見つかりません" in reply_service.texts[0].text
