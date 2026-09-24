@@ -200,6 +200,13 @@ class FinishMatchUseCase:
             ),
         )
 
+        # グラフ生成に失敗した場合、CreateMatchDetailGraphUseCaseが返信を
+        # エラーメッセージに差し替えてNoneを返す。そのため結果テキストは先に積み、
+        # 「場代を入力」ボタンは最後に送信されるグラフ画像にだけ付ける
+        # (reply_service.build_drop_target_quick_replyのdocstring参照)。
         image_url = CreateMatchDetailGraphUseCase().execute(active_match._id)
         if image_url is not None:
-            reply_service.add_image(image_url)
+            reply_service.add_image(
+                image_url,
+                quick_reply=reply_service.build_badai_quick_reply(active_match),
+            )

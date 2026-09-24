@@ -24,6 +24,7 @@
 - 対戦詳細: 「この対戦を再オープン」「この対戦を削除」(Quick Reply。削除は確認を挟む)
 - 途中経過: 直近10件の半荘削除(Quick Reply)。削除完了メッセージに、素点一覧を貼り付け登録できる形式で添える
 - 結果入力・シミュレーションの開始メッセージ: 「中断する」(Quick Reply)
+- 精算結果: 「場代を入力」(Quick Reply、最後のメッセージに付与)
 
 隠しコマンド(メニューに出さない): `_fortune`、`_mode`
 
@@ -115,7 +116,7 @@
   5. `sum_scores`×レートで`sum_prices`算出、`Match.status=settled`に更新
   6. このMatchが入力セッション対象だった場合のみ`Group.mode=wait`・`current_input_match_id=None`に戻す(他対戦のセッションには触れない)
   7. 複数系列を実際に使ったことがあるグループ(`count_non_sim_by_line_group_id > 1`)のみ対戦名を結果表示に含める
-  8. 対戦detail画像(グラフ)を生成・送信
+  8. 対戦detail画像(グラフ)を生成・送信。最後のメッセージに「場代を入力」(`_badai_start?to=<match_id>`、下記24)を付ける
 - **結果**: Match.status=settled、sum_prices確定
 - **関連ファイル**: `src/use_cases/group_line/finish_match_use_case.py`、`create_match_detail_graph_use_case.py`
 
@@ -237,9 +238,9 @@ FEZ-234で上記20に統合した。`_history`は上記20のフローの起点�
 
 ## 24. 場代を精算する
 
-- **トリガー**: **C**。`_badai <金額>`。ボタン導線なし
-- **前提条件**: 直近のMatch(`find_latest_one`、simを除く)が精算済み(`sum_prices_with_chip`が存在)。未精算(進行中)の対戦がある場合は「対戦を終了するには`_finish`」と案内して中断
-- **処理の流れ**: 場代を直近対戦の参加人数で割り、端数は1名ずつ多く負担する形で調整して各自の最終金額を再計算・表示
+- **トリガー**: A。上記8の精算結果の「場代を入力」(`_badai_start?to=<match_id>`)→`Group.mode=badai_input`→金額を数字で送信。手打ちの`_badai <金額>`(直前の対戦が対象)も後方互換で残す
+- **前提条件**: 対象が`status=settled`。`Group.mode`が`wait`(他の入力中は開始不可)
+- **処理の流れ**: `_badai_start`で`Group.mode=badai_input`・`badai_match_id=対象`(入力中の対戦を指す`current_input_match_id`とは別フィールド)にし「中断する」付きで金額を促す→次のテキストを金額として解釈(不正なら案内してモード維持)→場代を参加人数で割り、端数は1名ずつ多く負担する形で調整して各自の最終金額を表示→`Group.mode=wait`・`badai_match_id=None`に戻す。`_exit`で中断した場合も同様に戻す
 - **結果**: なし(表示のみ、DB更新なし)
 - **関連ファイル**: `src/use_cases/group_line/reply_apply_badai_use_case.py`
 
@@ -255,7 +256,7 @@ FEZ-234で上記20に統合した。`_history`は上記20のフローの起点�
 
 - **トリガー**: A。対戦管理メニュー「シミュレーション」(`_sim`)→点数入力(テキスト)
 - **前提条件**: `Group.mode != sim`(既にsimモードなら「すでにシミュレーションモードです。」)。結果入力中(`input`/`chip_input`)は開始不可
-- **処理の流れ**: `Group.sim_match_id`が指す専用サンドボックスMatch(`status=sim`、実系列の`current_input_match_id`とは完全に独立)がなければ作成→新規Hanchan作成しsimモードへ→点数入力の都度Hanchan.raw_scoresへ反映→人数分揃うと合計チェック・同点チェック(飛び賞は省略)の上で結果表示→Hanchanを`is_deleted=True`にして`Group.mode=wait`に戻す(記録は残らない)
+- **処理の流れ**: `Group.sim_match_id`が指す専用サンドボックスMatch(`status=sim`、実系列の`current_input_match_id`とは完全に独立)がなければ作成→新規Hanchan作成しsimモードへ→点数入力の都度Hanchan.raw_scoresへ反映→人数分揃うと合計チェック・同点チェック(飛び賞は省略)の上で結果表示→Hanchanを`is_deleted=True`にして`Group.mode=wait`に戻し、スタートメニューを再表示(記録は残らない)
 - **結果**: 一時的なHanchan作成後、最終的に`is_deleted=True`(記録として残らない)
 - **関連ファイル**: `src/use_cases/group_line/start_sim_use_case.py`、`simulate_score_use_case.py`
 

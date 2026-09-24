@@ -12,6 +12,7 @@ class IReplyService(metaclass=ABCMeta):
     def add_message(
         self,
         text: str,
+        quick_reply=None,
     ) -> None:
         pass
 

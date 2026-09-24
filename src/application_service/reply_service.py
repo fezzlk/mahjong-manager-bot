@@ -72,8 +72,9 @@ class ReplyService(IReplyService):
     def add_message(
         self,
         text: str,
+        quick_reply=None,
     ) -> None:
-        self.texts.append(TextMessage(text=text))
+        self.texts.append(TextMessage(text=text, quick_reply=quick_reply))
 
     def add_message_with_exit_button(
         self,
@@ -712,6 +713,25 @@ class ReplyService(IReplyService):
                     ],
                 ),
             ),
+        )
+
+    def build_badai_quick_reply(self, match) -> QuickReply:
+        """精算結果に付ける「場代を入力」ボタンのQuick Replyを返す。
+
+        戻り値は呼び出し元が最後に送信されるメッセージに渡すこと
+        (build_drop_target_quick_reply参照)。
+        """
+        label = "場代を入力"
+        return QuickReply(
+            items=[
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_badai_start?to={match._id}",
+                    ),
+                ),
+            ],
         )
 
     def build_drop_target_quick_reply(self, hanchans, start_index: int) -> QuickReply:

@@ -116,6 +116,7 @@ class RCommands(Enum):
     history_exec = "history_exec"
     chip_ok = "chip_ok"
     badai = "badai"
+    badai_start = "badai_start"
     rank = "rank"
     rank_detail = "rank_detail"
     ranking = "ranking"
@@ -165,6 +166,10 @@ def routing_by_text_in_group_line():
     """chip input mode"""
     if current_mode == GroupMode.chip_input.value:
         AddChipByTextUseCase().execute(request_info_service.message)
+        return
+    """badai input mode"""
+    if current_mode == GroupMode.badai_input.value:
+        ReplyApplyBadaiUseCase().input(request_info_service.message)
         return
 
     """wait mode — レース条件対策: 直前コマンドが input なら自動でモード切替"""
@@ -261,6 +266,7 @@ def routing_for_group_by_command(command):
         RCommands.history_exec.name: lambda: ExecuteHistoryUseCase().execute(),
         RCommands.chip_ok.name: lambda: FinishInputChipUseCase().execute(),
         RCommands.badai.name: lambda: ReplyApplyBadaiUseCase().execute(body),
+        RCommands.badai_start.name: lambda: ReplyApplyBadaiUseCase().start(),
         RCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
         RCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
         RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
