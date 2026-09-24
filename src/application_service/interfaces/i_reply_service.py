@@ -24,7 +24,7 @@ class IReplyService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_settings_menu(self, key: str = "") -> None:
+    def add_settings_menu(self, key: str = "", num_of_players: int = 4) -> None:
         pass
 
     @abstractmethod

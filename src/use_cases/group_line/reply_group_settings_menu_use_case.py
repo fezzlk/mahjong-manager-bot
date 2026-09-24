@@ -37,4 +37,4 @@ class ReplyGroupSettingsMenuUseCase:
             s.append(f"計算方法: {ROUNDING_METHOD_LIST[settings.rounding_method]}")
             s.append(f"単位: {settings.unit}")
             reply_service.add_message("\n".join(s))
-        reply_service.add_settings_menu(body)
+        reply_service.add_settings_menu(body, num_of_players=settings.num_of_players)

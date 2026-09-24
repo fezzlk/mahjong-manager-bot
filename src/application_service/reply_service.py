@@ -179,67 +179,44 @@ class ReplyService(IReplyService):
             ),
         )
 
-    def add_settings_menu(self, key: str = "") -> None:
-        if key in {"", "メニュー1"}:
-            self.buttons.append(
-                TemplateMessage(
-                    alt_text="設定メニュー1",
-                    template=ButtonsTemplate(
-                        title="設定",
-                        text="変更したい項目を選んでください。",
-                        actions=[
-                            PostbackAction(
-                                label="レート",
-                                display_text="レート",
-                                data="_setting レート",
-                            ),
-                            PostbackAction(
-                                label="順位点",
-                                display_text="順位点",
-                                data="_setting 順位点",
-                            ),
-                            PostbackAction(
-                                label="チップ",
-                                display_text="チップ",
-                                data="_setting チップ",
-                            ),
-                            PostbackAction(
-                                label="飛び賞、端数計算方法",
-                                display_text="飛び賞、端数計算方法",
-                                data="_setting メニュー2",
-                            ),
-                        ],
-                    ),
-                ),
+    def add_settings_menu(self, key: str = "", num_of_players: int = 4) -> None:
+        # メニュー1/メニュー2は旧ButtonsTemplate時代のページ切替キー。
+        # 会話履歴に残った古いボタンから押された場合も同じカルーセルを返す。
+        if key in {"", "メニュー1", "メニュー2"}:
+            self._add_menu_carousel(
+                alt_text="設定メニュー",
+                sections=[
+                    ("精算ルール", [
+                        ("レート", "_setting レート"),
+                        ("順位点", "_setting 順位点"),
+                        ("チップ", "_setting チップ"),
+                        ("飛び賞", "_setting 飛び賞"),
+                        ("端数計算方法", "_setting 端数計算方法"),
+                    ]),
+                    ("メンバー", [
+                        ("人数", "_setting 人数"),
+                        ("ゲスト", "_setting ゲスト"),
+                    ]),
+                    ("その他", [
+                        ("他グループへ統合", "_migrate"),
+                        ("ヘルプ", "_help"),
+                    ]),
+                ],
             )
-        if key == "メニュー2":
-            self.buttons.append(
-                TemplateMessage(
-                    alt_text="設定メニュー2",
-                    template=ButtonsTemplate(
-                        title="設定",
-                        text="変更したい項目を選んでください。",
-                        actions=[
-                            PostbackAction(
-                                label="飛び賞",
-                                display_text="飛び賞",
-                                data="_setting 飛び賞",
-                            ),
-                            PostbackAction(
-                                label="端数計算方法",
-                                display_text="端数計算方法",
-                                data="_setting 端数計算方法",
-                            ),
-                            PostbackAction(
-                                label="レート、順位点、チップ",
-                                display_text="レート、順位点、チップ",
-                                data="_setting メニュー1",
-                            ),
-                            PostbackAction(
-                                label="ゲスト",
-                                display_text="ゲスト",
-                                data="_setting ゲスト",
-                            ),
+        elif key == "人数":
+            self.texts.append(
+                TextMessage(
+                    text="何人麻雀にしますか？",
+                    quick_reply=QuickReply(
+                        items=[
+                            QuickReplyItem(
+                                action=PostbackAction(
+                                    label=f"{n}人",
+                                    display_text=f"{n}人",
+                                    data=f"_update_config 人数 {n}",
+                                ),
+                            )
+                            for n in [4, 3]
                         ],
                     ),
                 ),
@@ -284,10 +261,13 @@ class ReplyService(IReplyService):
                                 display_text="/".join(i),
                                 data=f"_update_config 順位点 {','.join(i)}",
                             )
-                            for i in [
-                                ["20", "10", "-10", "-20"],
-                                ["30", "10", "-10", "-30"],
-                            ]
+                            # 順位点は人数分の要素数でないと更新時に弾かれるため、
+                            # 現在の人数に合わせた選択肢を出す
+                            for i in (
+                                [["30", "0", "-30"], ["20", "0", "-20"]]
+                                if num_of_players == 3
+                                else [["20", "10", "-10", "-20"], ["30", "10", "-10", "-30"]]
+                            )
                         ],
                     ),
                 ),
