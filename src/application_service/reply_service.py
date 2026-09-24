@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from linebot.v3.messaging import (
     ButtonsTemplate,
@@ -103,14 +103,14 @@ class ReplyService(IReplyService):
                             data="_finish_confirm",
                         ),
                         PostbackAction(
+                            label="対戦管理",
+                            display_text="対戦管理",
+                            data="_others",
+                        ),
+                        PostbackAction(
                             label="設定",
                             display_text="設定",
                             data="_setting",
-                        ),
-                        PostbackAction(
-                            label="その他",
-                            display_text="その他",
-                            data="_others",
                         ),
                     ],
                 ),
@@ -118,30 +118,64 @@ class ReplyService(IReplyService):
         )
 
     def add_others_menu(self) -> None:
-        self.buttons.append(
-            TemplateMessage(
-                alt_text="その他のメニュー",
-                template=ButtonsTemplate(
-                    title="その他のメニュー",
-                    text="何をしますか？",
-                    actions=[
-                        PostbackAction(
-                            label="途中経過を確認",
-                            display_text="途中経過を確認",
-                            data="_active_match",
-                        ),
-                        PostbackAction(
-                            label="対戦履歴",
-                            display_text="対戦履歴",
-                            data="_matches",
-                        ),
-                        PostbackAction(
-                            label="成績推移",
-                            display_text="成績推移",
-                            data="_history_start",
-                        ),
-                    ],
+        """対戦管理メニュー(旧「その他」)。
+
+        ButtonsTemplateの4件上限を超えるため、会話履歴に残るFlexCarouselで
+        カテゴリ別のカードに並べる。
+        """
+        self._add_menu_carousel(
+            alt_text="対戦管理メニュー",
+            sections=[
+                ("進行中の対戦", [
+                    ("途中経過を確認", "_active_match"),
+                    ("新しい対戦を始める", "_new_match"),
+                    ("シミュレーション", "_sim"),
+                ]),
+                ("戦績", [
+                    ("成績推移", "_history_start"),
+                    ("対戦履歴", "_matches"),
+                    ("累計得点表・順位表", "_ranking"),
+                    ("個人の順位推移", "_rank"),
+                    ("個人の順位分布", "_rank_detail"),
+                ]),
+            ],
+        )
+
+    def _add_menu_carousel(
+        self,
+        alt_text: str,
+        sections: List[Tuple[str, List[Tuple[str, str]]]],
+    ) -> None:
+        """(カード見出し, [(ボタンラベル, postback data), ...]) の並びからメニュー用FlexCarouselを追加する。"""
+        bubbles = []
+        for title, items in sections:
+            bubbles.append(
+                FlexBubble(
+                    body=FlexBox(
+                        layout="vertical",
+                        spacing="sm",
+                        contents=[
+                            FlexText(text=title, weight="bold", size="lg"),
+                            *[
+                                FlexButton(
+                                    action=PostbackAction(
+                                        label=label,
+                                        display_text=label,
+                                        data=data,
+                                    ),
+                                    style="secondary",
+                                    height="sm",
+                                )
+                                for label, data in items
+                            ],
+                        ],
+                    ),
                 ),
+            )
+        self.buttons.append(
+            FlexMessage(
+                alt_text=alt_text,
+                contents=FlexCarousel(contents=bubbles),
             ),
         )
 

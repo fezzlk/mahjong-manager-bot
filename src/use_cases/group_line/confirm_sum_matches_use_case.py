@@ -5,7 +5,7 @@ from application_service import reply_service, request_info_service
 from domain_service import match_service, user_service
 from repositories import match_sum_session_repository
 
-_TIMEOUT_MSG = "タイムアウトしました。その他メニューの「まとめて精算」から再度お試しください。"
+_TIMEOUT_MSG = "タイムアウトしました。「対戦履歴」の「まとめて精算」から再度お試しください。"
 
 
 class ConfirmSumMatchesUseCase:

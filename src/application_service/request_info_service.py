@@ -25,6 +25,7 @@ class RequestInfoService:
             local.params = {}
             local.body = None
             local.is_mention_all = False
+            local.is_mention_self = False
             local.initialized = True
         return local
 
@@ -92,6 +93,14 @@ class RequestInfoService:
     def is_mention_all(self, value: bool):
         self._state().is_mention_all = value
 
+    @property
+    def is_mention_self(self) -> bool:
+        return self._state().is_mention_self
+
+    @is_mention_self.setter
+    def is_mention_self(self, value: bool):
+        self._state().is_mention_self = value
+
     def set_req_info(self, event: Event) -> None:
         self.req_line_user_id = event.source.user_id
         if event.source.type == "room":
@@ -120,6 +129,8 @@ class RequestInfoService:
             if hasattr(event.message, "mention") and event.message.mention is not None:
                 mentionees = event.message.mention.mentionees
                 for mentionee in mentionees:
+                    if hasattr(mentionee, "is_self") and mentionee.is_self:
+                        self.is_mention_self = True
                     if hasattr(mentionee, "user_id") and mentionee.user_id is not None:
                         self.mention_line_ids.append(mentionee.user_id)
                     elif "@All" in self.message:
@@ -173,3 +184,4 @@ class RequestInfoService:
         state.params = {}
         state.body = None
         state.is_mention_all = False
+        state.is_mention_self = False

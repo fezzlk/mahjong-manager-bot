@@ -144,6 +144,45 @@ def test_postback_event_from_group():
     assert request_info_service.body is None
 
 
+def test_message_event_from_group_with_mention_self():
+    # Arrange
+    request_info_service = RequestInfoService()
+    message_event = Event(
+        type="message",
+        source_type="group",
+        user_id="U0123456789abcdefghijklmnopqrstu1",
+        group_id="G0123456789abcdefghijklmnopqrstu1",
+        message_type="text",
+        text="dummy_text",
+        mention_self=True,
+    )
+
+    # Act
+    request_info_service.set_req_info(message_event)
+
+    # Assert
+    assert request_info_service.is_mention_self is True
+
+
+def test_message_event_from_group_without_mention_self():
+    # Arrange
+    request_info_service = RequestInfoService()
+    message_event = Event(
+        type="message",
+        source_type="group",
+        user_id="U0123456789abcdefghijklmnopqrstu1",
+        group_id="G0123456789abcdefghijklmnopqrstu1",
+        message_type="text",
+        text="dummy_text",
+    )
+
+    # Act
+    request_info_service.set_req_info(message_event)
+
+    # Assert
+    assert request_info_service.is_mention_self is False
+
+
 # def test_message_event_from_group_with_mention():
 #     # Arrange
 #     request_info_service = RequestInfoService()
