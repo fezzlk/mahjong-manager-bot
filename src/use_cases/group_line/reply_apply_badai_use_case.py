@@ -60,7 +60,14 @@ class ReplyApplyBadaiUseCase:
             reply_service.add_message("指定された対戦が見つかりません。")
             return
 
-        # group.modeはグループ全体で1つしか持てないため、他の入力中は開始しない
+        # group.modeはグループ全体で1つしか持てないため、他の入力中は開始しない。
+        # 別の対戦の場代入力中も、黙って対象を差し替えると入力中の金額が
+        # 違う対戦に適用されてしまうため拒否する(同じ対戦なら案内し直す)。
+        if group.mode == GroupMode.badai_input.value and group.badai_match_id != target_match._id:
+            reply_service.add_message(
+                "別の対戦の場代を入力中です。金額を送るか「中断する」を押してから実行してください。",
+            )
+            return
         if group.mode not in (GroupMode.wait.value, GroupMode.badai_input.value):
             reply_service.add_message(
                 "現在、別の入力が進行中のため場代を入力できません。入力が完了してから実行してください。",

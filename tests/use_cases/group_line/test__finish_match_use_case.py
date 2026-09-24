@@ -211,11 +211,15 @@ def test_badai_button_attached_to_graph_image(mocker):
     assert reply_service.images[0].quick_reply.items[0].action.data == "_badai_start?to=1"
 
 
-def test_badai_button_attached_to_result_text_without_graph(mocker):
-    """グラフ画像が無い場合は、結果テキスト(最後のメッセージ)に「場代を入力」を付ける。"""
+def test_graph_error_replies_only_error(mocker):
+    """グラフ生成失敗時は、返信がエラーに差し替えられ、精算結果や場代ボタンが後に続かない。"""
+    def _fail(_self, _match_id):
+        reply_service.reset()
+        reply_service.add_message(text="システムエラーが発生しました。")
+
     mocker.patch(
         "use_cases.group_line.finish_match_use_case.CreateMatchDetailGraphUseCase.execute",
-        return_value=None,
+        _fail,
     )
     request_info_service.req_line_group_id = dummy_group.line_group_id
     group_repository.create(dummy_group)
@@ -228,8 +232,8 @@ def test_badai_button_attached_to_result_text_without_graph(mocker):
 
     FinishMatchUseCase().execute()
 
+    assert [t.text for t in reply_service.texts] == ["システムエラーが発生しました。"]
     assert len(reply_service.images) == 0
-    assert reply_service.texts[0].quick_reply.items[0].action.data == "_badai_start?to=1"
 
 
 def test_success():

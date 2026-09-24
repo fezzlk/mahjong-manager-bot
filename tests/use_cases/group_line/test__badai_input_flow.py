@@ -63,6 +63,28 @@ def test_start_enters_badai_input_mode():
     assert reply_service.texts[0].quick_reply.items[0].action.data == "_exit"
 
 
+def test_start_rejects_switching_target_during_badai_input():
+    """別の対戦の場代入力中に対象を差し替えない(入力中の金額が別の対戦に適用されるため)。"""
+    match = _setup()
+    other = match_repository.create(
+        Match(
+            line_group_id=_LINE_GROUP_ID,
+            status=MatchStatus.settled.value,
+            created_at=datetime(2026, 9, 2),
+            sum_prices_with_chip={"U_badai_0": 500, "U_badai_1": -500},
+        ),
+    )
+    request_info_service.params = {"to": str(match._id)}
+    ReplyApplyBadaiUseCase().start()
+    reply_service.reset()
+
+    request_info_service.params = {"to": str(other._id)}
+    ReplyApplyBadaiUseCase().start()
+
+    assert "別の対戦の場代を入力中です" in reply_service.texts[0].text
+    assert _group().badai_match_id == match._id
+
+
 def test_start_rejected_while_other_input_in_progress():
     match = _setup(mode=GroupMode.input.value)
     request_info_service.params = {"to": str(match._id)}
