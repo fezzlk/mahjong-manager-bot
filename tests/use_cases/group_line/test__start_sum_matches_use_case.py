@@ -37,7 +37,7 @@ def test_execute_creates_session_and_shows_quick_reply():
 
     StartSumMatchesUseCase().execute()
 
-    session = match_sum_session_repository.find_active_by_group_id(dummy_event.source.group_id)
+    session = match_sum_session_repository.find_active(dummy_event.source.group_id, dummy_event.source.user_id)
     assert session is not None
     assert session.selected_match_ids == []
 

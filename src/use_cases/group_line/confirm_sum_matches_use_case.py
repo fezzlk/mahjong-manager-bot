@@ -12,8 +12,9 @@ class ConfirmSumMatchesUseCase:
     def execute(self) -> None:
         """_sum_matches_confirm: 選択された対戦の合計を表示する。"""
         line_group_id = request_info_service.req_line_group_id
+        requester_line_id = request_info_service.req_line_user_id
 
-        session = match_sum_session_repository.find_active_by_group_id(line_group_id)
+        session = match_sum_session_repository.find_active(line_group_id, requester_line_id)
         if session is None:
             reply_service.add_message(_TIMEOUT_MSG)
             return
@@ -41,7 +42,7 @@ class ConfirmSumMatchesUseCase:
             for line_user_id, price in prices.items():
                 total[line_user_id] = total.get(line_user_id, 0) + price
 
-        match_sum_session_repository.delete_by_group_id(line_group_id)
+        match_sum_session_repository.delete(line_group_id, requester_line_id)
 
         if not total:
             reply_service.add_message("選択した対戦に精算結果がありません。")

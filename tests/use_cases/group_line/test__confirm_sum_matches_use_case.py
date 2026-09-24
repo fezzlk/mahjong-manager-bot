@@ -79,4 +79,4 @@ def test_execute_shows_combined_total_and_clears_session():
     assert "友達未登録: +500円" in text
     assert "友達未登録: -500円" in text
 
-    assert match_sum_session_repository.find_active_by_group_id(dummy_event.source.group_id) is None
+    assert match_sum_session_repository.find_active(dummy_event.source.group_id, dummy_event.source.user_id) is None

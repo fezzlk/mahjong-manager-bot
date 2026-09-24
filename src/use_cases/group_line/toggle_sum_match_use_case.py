@@ -9,9 +9,10 @@ class ToggleSumMatchUseCase:
     def execute(self) -> None:
         """_sum_matches_toggle?to=<match_id>: 選択状態をトグルし選択UIを再表示する。"""
         line_group_id = request_info_service.req_line_group_id
+        requester_line_id = request_info_service.req_line_user_id
         match_id = request_info_service.params.get("to", "")
 
-        session = match_sum_session_repository.find_active_by_group_id(line_group_id)
+        session = match_sum_session_repository.find_active(line_group_id, requester_line_id)
         if session is None:
             reply_service.add_message(_TIMEOUT_MSG)
             return
@@ -22,7 +23,7 @@ class ToggleSumMatchUseCase:
         else:
             selected.append(match_id)
 
-        match_sum_session_repository.update_selected_matches(line_group_id, selected)
+        match_sum_session_repository.update_selected_matches(line_group_id, requester_line_id, selected)
 
         archived_matches = match_service.find_all_archived_by_line_group_id(line_group_id=line_group_id)
         recent = archived_matches[-10:]

@@ -47,14 +47,42 @@ def test_execute_toggles_selection_on_and_off():
 
     # 1回目のトグル: 選択される
     ToggleSumMatchUseCase().execute()
-    session = match_sum_session_repository.find_active_by_group_id(dummy_event.source.group_id)
+    session = match_sum_session_repository.find_active(dummy_event.source.group_id, dummy_event.source.user_id)
     assert session.selected_match_ids == [str(match._id)]
     quick_reply = reply_service.texts[-1].quick_reply
     assert quick_reply.items[0].action.label.startswith("✓")
 
     # 2回目のトグル: 選択解除される
     ToggleSumMatchUseCase().execute()
-    session = match_sum_session_repository.find_active_by_group_id(dummy_event.source.group_id)
+    session = match_sum_session_repository.find_active(dummy_event.source.group_id, dummy_event.source.user_id)
     assert session.selected_match_ids == []
     quick_reply = reply_service.texts[-1].quick_reply
     assert not quick_reply.items[0].action.label.startswith("✓")
+
+
+def test_toggle_by_other_member_does_not_touch_requester_session():
+    """同じグループの別メンバーの操作は、開始した本人のセッションに影響しない。"""
+    request_info_service.set_req_info(event=dummy_event)
+    match = match_repository.create(
+        Match(
+            line_group_id=dummy_event.source.group_id,
+            status=MatchStatus.settled.value,
+            sum_prices_with_chip={"U1": 100},
+        ),
+    )
+    match_sum_session_repository.create(
+        MatchSumSession(
+            line_group_id=dummy_event.source.group_id,
+            requester_line_id=dummy_event.source.user_id,
+            selected_match_ids=[],
+        ),
+    )
+
+    # 別メンバーがトグルしても、その人のセッションは無いのでタイムアウト扱い
+    request_info_service.req_line_user_id = "U_other_member"
+    request_info_service.params = {"to": str(match._id)}
+    ToggleSumMatchUseCase().execute()
+
+    assert reply_service.texts[-1].text.startswith("タイムアウトしました")
+    session = match_sum_session_repository.find_active(dummy_event.source.group_id, dummy_event.source.user_id)
+    assert session.selected_match_ids == []
