@@ -179,7 +179,7 @@ class ReplyService(IReplyService):
             ),
         )
 
-    def add_settings_menu(self, key: str = "") -> None:
+    def add_settings_menu(self, key: str = "", num_of_players: int = 4) -> None:
         # メニュー1/メニュー2は旧ButtonsTemplate時代のページ切替キー。
         # 会話履歴に残った古いボタンから押された場合も同じカルーセルを返す。
         if key in {"", "メニュー1", "メニュー2"}:
@@ -261,10 +261,13 @@ class ReplyService(IReplyService):
                                 display_text="/".join(i),
                                 data=f"_update_config 順位点 {','.join(i)}",
                             )
-                            for i in [
-                                ["20", "10", "-10", "-20"],
-                                ["30", "10", "-10", "-30"],
-                            ]
+                            # 順位点は人数分の要素数でないと更新時に弾かれるため、
+                            # 現在の人数に合わせた選択肢を出す
+                            for i in (
+                                [["30", "0", "-30"], ["20", "0", "-20"]]
+                                if num_of_players == 3
+                                else [["20", "10", "-10", "-20"], ["30", "10", "-10", "-30"]]
+                            )
                         ],
                     ),
                 ),

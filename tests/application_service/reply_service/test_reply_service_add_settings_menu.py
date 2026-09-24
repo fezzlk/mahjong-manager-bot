@@ -125,3 +125,16 @@ def test_success_key_calculate_method2():
 
     # Assert
     assert len(reply_service.buttons) == 1
+
+
+def test_ranking_point_choices_follow_num_of_players():
+    """3人麻雀では3要素の順位点を選択肢に出す(4要素だと更新時に弾かれるため)。"""
+    reply_service = ReplyService()
+    reply_service.add_settings_menu("順位点", num_of_players=3)
+    datas = [a.data for a in reply_service.buttons[0].template.actions]
+    assert datas == ["_update_config 順位点 30,0,-30", "_update_config 順位点 20,0,-20"]
+
+    reply_service = ReplyService()
+    reply_service.add_settings_menu("順位点")
+    datas = [a.data for a in reply_service.buttons[0].template.actions]
+    assert datas == ["_update_config 順位点 20,10,-10,-20", "_update_config 順位点 30,10,-10,-30"]
