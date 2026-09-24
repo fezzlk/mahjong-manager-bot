@@ -58,6 +58,6 @@ class StartSimUseCase:
         group.mode = GroupMode.sim.value
         group_service.update(group)
 
-        reply_service.add_message(
+        reply_service.add_message_with_exit_button(
             "[シミュレーション] 各自点数を入力してください。\n(結果は記録されません)",
         )

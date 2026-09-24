@@ -33,3 +33,19 @@ def test_success_messages():
     for msg, expected_text in zip(reply_service.texts, dummy_texts):
         assert msg.type == "text"
         assert msg.text == expected_text
+
+
+def test_success_message_with_exit_button():
+    # Arrange
+    reply_service = ReplyService()
+    dummy_text = "dummy_text"
+
+    # Act
+    reply_service.add_message_with_exit_button(dummy_text)
+
+    # Assert
+    assert len(reply_service.texts) == 1
+    assert reply_service.texts[0].text == dummy_text
+    quick_reply = reply_service.texts[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == "_exit"

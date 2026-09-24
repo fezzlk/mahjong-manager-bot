@@ -175,6 +175,13 @@ def test_execute():
         == "【半荘情報】\n\n第1回\ntest_user2: +60 (+60)\ntest_user1: +30 (+30)\ntest_user3: -30 (-30)\ntest_user4: -60 (-60)\n\n第2回\ntest_user4: +50 (-10)\ntest_user5: -10 (-10)\n友達未登録: -10 (-10)\ntest_user3: -30 (-60)"
     )
     assert len(reply_service.images) == 1
+    # 再オープン・削除ボタンは最後に送信される画像メッセージに付与される
+    # (LINEは複数メッセージ送信時、最後のメッセージのQuick Replyのみ表示するため)
+    quick_reply = reply_service.images[0].quick_reply
+    assert [item.action.data for item in quick_reply.items] == [
+        f"_reopen_confirm?to={dummy_matches[1]._id}",
+        f"_drop_m_confirm?to={dummy_matches[1]._id}",
+    ]
 
 
 def test_execute_invalid_arg():

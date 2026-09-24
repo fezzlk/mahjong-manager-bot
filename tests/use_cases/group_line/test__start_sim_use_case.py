@@ -59,6 +59,9 @@ def test_new_sim_match_and_hanchan():
 
     assert len(reply_service.texts) == 1
     assert "シミュレーション" in reply_service.texts[0].text
+    quick_reply = reply_service.texts[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == "_exit"
 
     groups = group_repository.find({"line_group_id": "G0123456789abcdefghijklmnopqrstu1"})
     assert groups[0].mode == GroupMode.sim.value
