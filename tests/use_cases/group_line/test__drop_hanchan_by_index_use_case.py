@@ -504,20 +504,24 @@ def test_select_malformed_hanchan_id():
     assert "見つかりません" in reply_service.texts[0].text
 
 
-def test_select_replies_raw_scores_in_pasteable_format():
-    """削除完了時、素点一覧を貼り付け登録できる「名前: 点数」形式で添える。"""
+def _setup_paste_case(names, current_input_other=False):
     from domain_model.entities.user import User
     from repositories import user_repository
-    from use_cases.group_line.add_hanchan_by_points_text_use_case import (
-        AddHanchanByPointsTextUseCase,
-    )
 
-    names = ["Alice", "Bob", "Carol", "Dave"]
     raw_scores = {f"U_paste_{i}": p for i, p in enumerate([10000, 20000, 30000, 40000])}
     for i, name in enumerate(names):
         user_repository.create(User(line_user_id=f"U_paste_{i}", line_user_name=name))
     match = match_repository.create(
         Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", status=MatchStatus.open.value),
+    )
+    other_id = None
+    if current_input_other:
+        other = match_repository.create(
+            Match(line_group_id="G0123456789abcdefghijklmnopqrstu1", status=MatchStatus.open.value),
+        )
+        other_id = other._id
+    group_repository.create(
+        Group(line_group_id="G0123456789abcdefghijklmnopqrstu1", current_input_match_id=other_id),
     )
     target = hanchan_repository.create(
         Hanchan(
@@ -530,6 +534,15 @@ def test_select_replies_raw_scores_in_pasteable_format():
     request_info_service.set_req_info(event=dummy_event)
     request_info_service.params = {"to": str(target._id)}
 
+
+def test_select_replies_raw_scores_in_pasteable_format():
+    """削除完了時、素点一覧を貼り付け登録できる「名前: 点数」形式で添える。"""
+    from use_cases.group_line.add_hanchan_by_points_text_use_case import (
+        AddHanchanByPointsTextUseCase,
+    )
+
+    _setup_paste_case(["Alice", "Bob", "Carol", "Dave"])
+
     DropHanchanByIndexUseCase().select()
 
     texts = [t.text for t in reply_service.texts]
@@ -538,3 +551,21 @@ def test_select_replies_raw_scores_in_pasteable_format():
     assert AddHanchanByPointsTextUseCase.parse_reply(texts[2]) == [
         ("Alice", 10000), ("Bob", 20000), ("Carol", 30000), ("Dave", 40000),
     ]
+
+
+def test_select_no_paste_guidance_when_another_match_is_being_input():
+    """別の対戦が入力中だと貼り付けがそちらに登録されるため、案内しない。"""
+    _setup_paste_case(["Alice", "Bob", "Carol", "Dave"], current_input_other=True)
+
+    DropHanchanByIndexUseCase().select()
+
+    assert [t.text for t in reply_service.texts] == ["現在の対戦の第1半荘の結果を削除しました。"]
+
+
+def test_select_no_paste_guidance_when_names_are_ambiguous():
+    """同名の参加者がいると貼り付けても本人を特定できないため、案内しない。"""
+    _setup_paste_case(["Alice", "Alice", "Carol", "Dave"])
+
+    DropHanchanByIndexUseCase().select()
+
+    assert [t.text for t in reply_service.texts] == ["現在の対戦の第1半荘の結果を削除しました。"]
