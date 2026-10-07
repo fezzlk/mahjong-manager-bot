@@ -389,7 +389,15 @@ class ReplyService(IReplyService):
                 ),
             )
 
-    def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
+    def add_tobi_menu(
+        self,
+        player_id_and_names: List[Dict[str, str]],
+        match_id: str,
+        hanchan_id: str,
+    ) -> None:
+        # どの半荘に対するボタンかを埋め込み、押された時点で入力対象が
+        # 変わっていないかを検証できるようにする(FEZ-225)
+        target = f"_tobi?m={match_id}&h={hanchan_id}"
         self.buttons.append(
             TemplateMessage(
                 alt_text="飛び賞プレイヤー選択",
@@ -400,7 +408,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label=player_id_and_name["name"],
                             display_text=player_id_and_name["name"],
-                            data="_tobi " + player_id_and_name["_id"],
+                            data=f"{target} {player_id_and_name['_id']}",
                         )
                         for player_id_and_name in player_id_and_names
                     ]
@@ -408,7 +416,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label="誰も飛ばしていません",
                             display_text="勝手に飛びました",
-                            data="_tobi",
+                            data=target,
                         ),
                     ],
                 ),

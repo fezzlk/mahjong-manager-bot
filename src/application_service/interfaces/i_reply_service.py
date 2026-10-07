@@ -21,7 +21,12 @@ class IReplyService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
+    def add_tobi_menu(
+        self,
+        player_id_and_names: List[Dict[str, str]],
+        match_id: str,
+        hanchan_id: str,
+    ) -> None:
         pass
 
     @abstractmethod

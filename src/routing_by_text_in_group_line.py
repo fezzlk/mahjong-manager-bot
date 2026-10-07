@@ -230,9 +230,6 @@ def routing_for_group_by_command(command):
         value = parts[1] if len(parts) > 1 else ""
         UpdateGroupSettingsUseCase().execute(key, value)
 
-    def _tobi():
-        SubmitHanchanUseCase().execute(tobashita_player_id=body)
-
     dispatch = {
         RCommands.input.name: lambda: StartInputUseCase().execute(),
         RCommands.input_select.name: lambda: StartInputUseCase().select(),
@@ -255,7 +252,7 @@ def routing_for_group_by_command(command):
         RCommands.active_match.name: lambda: ReplyHanchansOfActiveMatchUseCase().execute(),
         RCommands.active_match_select.name: lambda: ReplyHanchansOfActiveMatchUseCase().select(),
         RCommands.matches.name: lambda: ReplyMatchesUseCase().execute(),
-        RCommands.tobi.name: _tobi,
+        RCommands.tobi.name: lambda: SubmitHanchanUseCase().select_tobi(),
         RCommands.update_config.name: _update_config,
         # _history は旧メンション指定版を_history_startのフローへ統合済み(FEZ-234)
         RCommands.history.name: lambda: StartHistoryFlowUseCase().execute(),
