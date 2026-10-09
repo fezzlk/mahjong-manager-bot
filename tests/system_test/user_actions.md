@@ -89,7 +89,8 @@
 
 ### ポストバック
 
-- `_tobi`
+- `_tobi?m=<match_id>&h=<hanchan_id> <player_id>`
+  - 飛び賞の受取人を指定して半荘を確定。ボタンを出した半荘が今の入力対象でない場合は確定しない
 - `_setting`
 - `_update_config`
 

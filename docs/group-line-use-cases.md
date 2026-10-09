@@ -90,11 +90,11 @@
 
 ## 6. 飛び賞受取者を指定する
 
-- **トリガー**: A(飛びが発生した半荘確定時に自動提示されるボタン、`data="_tobi " + player_id`)
+- **トリガー**: A(飛びが発生した半荘確定時に自動提示されるボタン、`data="_tobi?m=<match_id>&h=<hanchan_id> <player_id>"`。「誰も飛ばしていません」は`<player_id>`なし)
 - **前提条件**: 上記5の途中で、マイナス点のプレイヤーが存在
-- **処理の流れ**: `SubmitHanchanUseCase().execute(tobashita_player_id=body)`を再実行(飛び賞受取者を指定した状態で計算)
+- **処理の流れ**: `SubmitHanchanUseCase().select_tobi()`が、ボタンを出した対戦・半荘が今の入力対象と一致し、受取人がその半荘のプラスの参加者であることを確認してから、飛び賞受取者を指定した状態で計算する。一致しない(古いボタン、半荘IDを持たない旧形式のボタン、メニュー表示後の点数訂正)場合は確定せず案内を返す
 - **結果**: 上記5と同じ
-- **関連ファイル**: `src/routing_by_text_in_group_line.py`(`_tobi`関数)、`src/use_cases/group_line/submit_hanchan_use_case.py`
+- **関連ファイル**: `src/routing_by_text_in_group_line.py`、`src/use_cases/group_line/submit_hanchan_use_case.py`
 
 ## 7. 新しい対戦(系列)を明示的に開始する
 

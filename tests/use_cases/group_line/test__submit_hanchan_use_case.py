@@ -749,3 +749,109 @@ def test_fail_no_group():
     )
 
     reply_service.reset()
+
+
+TARGET_CHANGED_MESSAGE = (
+    "入力対象が変わったため自動確定を中止しました。登録先の半荘を確認してください。"
+)
+
+
+def _arrange_tobi_menu_shown():
+    """飛びが発生し、飛び賞メニューを出した直後の状態を作る(FEZ-225)"""
+    from domain_model.entities.group_setting import EmbeddedGroupSettings
+
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(deepcopy(dummy_group))
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    hanchan = deepcopy(dummy_active_hanchan_has_minus_point)
+    hanchan_repository.create(hanchan)
+    match = Match(
+        line_group_id=dummy_group.line_group_id,
+        active_hanchan_id=hanchan._id,
+        settings=EmbeddedGroupSettings(tobi_prize=10),
+        _id=1,
+    )
+    match_repository.create(match)
+    return match, hanchan
+
+
+def _assert_not_settled(hanchan):
+    assert reply_service.texts[0].text == TARGET_CHANGED_MESSAGE
+    assert len(hanchan_repository.find({"_id": hanchan._id})[0].converted_scores) == 0
+    assert match_repository.find({"_id": 1})[0].active_hanchan_id == hanchan._id
+
+
+def test_select_tobi_success():
+    """ボタンを出した半荘のまま受取人を押すと、飛び賞込みで確定し合計がゼロになる"""
+    # Arrange
+    match, hanchan = _arrange_tobi_menu_shown()
+    request_info_service.params = {"m": str(match._id), "h": str(hanchan._id)}
+    request_info_service.body = dummy_users[0].line_user_id
+
+    # Act
+    SubmitHanchanUseCase().select_tobi()
+
+    # Assert
+    settled = hanchan_repository.find({"_id": hanchan._id})[0]
+    assert sum(settled.converted_scores.values()) == 0
+    assert settled.converted_scores[dummy_users[3].line_user_id] == -70
+    assert match_repository.find({"_id": 1})[0].active_hanchan_id is None
+
+
+def test_select_tobi_success_nobody_tobashita():
+    """「誰も飛ばしていません」(受取人なし)は飛び賞なしで確定する"""
+    # Arrange
+    match, hanchan = _arrange_tobi_menu_shown()
+    request_info_service.params = {"m": str(match._id), "h": str(hanchan._id)}
+    request_info_service.body = ""
+
+    # Act
+    SubmitHanchanUseCase().select_tobi()
+
+    # Assert
+    settled = hanchan_repository.find({"_id": hanchan._id})[0]
+    assert sum(settled.converted_scores.values()) == 0
+    assert settled.converted_scores[dummy_users[3].line_user_id] == -60
+    assert match_repository.find({"_id": 1})[0].active_hanchan_id is None
+
+
+def test_select_tobi_rejects_button_of_other_hanchan():
+    """別の半荘で出た古いボタンを押しても確定しない"""
+    # Arrange
+    match, hanchan = _arrange_tobi_menu_shown()
+    request_info_service.params = {"m": str(match._id), "h": "644c838186bbd9e20a91b785"}
+    request_info_service.body = dummy_users[0].line_user_id
+
+    # Act
+    SubmitHanchanUseCase().select_tobi()
+
+    # Assert
+    _assert_not_settled(hanchan)
+
+
+def test_select_tobi_rejects_legacy_button_without_ids():
+    """半荘IDを持たない旧形式のボタン(`_tobi <player_id>`)は検証できないため確定しない"""
+    # Arrange
+    _, hanchan = _arrange_tobi_menu_shown()
+    request_info_service.body = dummy_users[0].line_user_id
+
+    # Act
+    SubmitHanchanUseCase().select_tobi()
+
+    # Assert
+    _assert_not_settled(hanchan)
+
+
+def test_select_tobi_rejects_receiver_not_in_plus_players():
+    """受取人が今の半荘のプラスの参加者でない(メニュー表示後に点数が訂正された等)場合は確定しない"""
+    # Arrange
+    match, hanchan = _arrange_tobi_menu_shown()
+    request_info_service.params = {"m": str(match._id), "h": str(hanchan._id)}
+    request_info_service.body = dummy_users[4].line_user_id
+
+    # Act
+    SubmitHanchanUseCase().select_tobi()
+
+    # Assert
+    _assert_not_settled(hanchan)
