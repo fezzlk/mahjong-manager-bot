@@ -190,6 +190,52 @@ def test_success_with_default_settings():
     assert not matches[0].is_deleted
 
 
+def test_badai_button_attached_to_graph_image(mocker):
+    """グラフ画像がある場合、「場代を入力」は最後に送る画像メッセージに付ける。"""
+    mocker.patch(
+        "use_cases.group_line.finish_match_use_case.CreateMatchDetailGraphUseCase.execute",
+        return_value="https://example.com/dummy.png",
+    )
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+
+    FinishMatchUseCase().execute()
+
+    assert reply_service.texts[0].quick_reply is None
+    assert reply_service.images[0].quick_reply.items[0].action.data == "_badai_start?to=1"
+
+
+def test_graph_error_replies_only_error(mocker):
+    """グラフ生成失敗時は、返信がエラーに差し替えられ、精算結果や場代ボタンが後に続かない。"""
+    def _fail(_self, _match_id):
+        reply_service.reset()
+        reply_service.add_message(text="システムエラーが発生しました。")
+
+    mocker.patch(
+        "use_cases.group_line.finish_match_use_case.CreateMatchDetailGraphUseCase.execute",
+        _fail,
+    )
+    request_info_service.req_line_group_id = dummy_group.line_group_id
+    group_repository.create(dummy_group)
+    for dummy_user in dummy_users:
+        user_repository.create(dummy_user)
+    for dummy_match in dummy_matches:
+        match_repository.create(dummy_match)
+    for dummy_hanchan in dummy_hanchans:
+        hanchan_repository.create(dummy_hanchan)
+
+    FinishMatchUseCase().execute()
+
+    assert [t.text for t in reply_service.texts] == ["システムエラーが発生しました。"]
+    assert len(reply_service.images) == 0
+
+
 def test_success():
     # 目的: test_success の挙動を検証する。
     # 入力: なし

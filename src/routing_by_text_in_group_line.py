@@ -18,12 +18,21 @@ from use_cases.common_line.reply_rank_histogram_use_case import (
 )
 from use_cases.common_line.reply_rank_history_use_case import ReplyRankHistoryUseCase
 from use_cases.group_line.add_chip_by_text_use_case import AddChipByTextUseCase
+from use_cases.group_line.add_hanchan_by_points_text_use_case import (
+    AddHanchanByPointsTextUseCase,
+)
 from use_cases.group_line.add_point_by_text_use_case import AddPointByTextUseCase
 from use_cases.group_line.confirm_history_selection_use_case import (
     ConfirmHistorySelectionUseCase,
 )
+from use_cases.group_line.confirm_sum_matches_use_case import (
+    ConfirmSumMatchesUseCase,
+)
 from use_cases.group_line.drop_hanchan_by_index_use_case import (
     DropHanchanByIndexUseCase,
+)
+from use_cases.group_line.drop_match_by_index_use_case import (
+    DropMatchByIndexUseCase,
 )
 from use_cases.group_line.execute_history_use_case import ExecuteHistoryUseCase
 from use_cases.group_line.exit_use_case import ExitUseCase
@@ -48,7 +57,6 @@ from use_cases.group_line.reply_hanchans_of_active_match_use_case import (
 )
 from use_cases.group_line.reply_match_by_index_use_case import ReplyMatchByIndexUseCase
 from use_cases.group_line.reply_matches_use_case import ReplyMatchesUseCase
-from use_cases.group_line.reply_multi_history_use_case import ReplyMultiHistoryUseCase
 from use_cases.group_line.reply_others_menu_use_case import ReplyOthersMenuUseCase
 from use_cases.group_line.reply_ranking_table_use_case import ReplyRankingTableUseCase
 from use_cases.group_line.reply_start_menu_use_case import ReplyStartMenuUseCase
@@ -59,8 +67,10 @@ from use_cases.group_line.simulate_score_use_case import SimulateScoreUseCase
 from use_cases.group_line.start_history_flow_use_case import StartHistoryFlowUseCase
 from use_cases.group_line.start_input_use_case import StartInputUseCase
 from use_cases.group_line.start_sim_use_case import StartSimUseCase
+from use_cases.group_line.start_sum_matches_use_case import StartSumMatchesUseCase
 from use_cases.group_line.submit_hanchan_use_case import SubmitHanchanUseCase
 from use_cases.group_line.toggle_history_user_use_case import ToggleHistoryUserUseCase
+from use_cases.group_line.toggle_sum_match_use_case import ToggleSumMatchUseCase
 from use_cases.group_line.update_group_settings_use_case import (
     UpdateGroupSettingsUseCase,
 )
@@ -87,14 +97,17 @@ class RCommands(Enum):
     others = "others"
     matches = "matches"
     match = "match"
+    match_select = "match_select"
     tobi = "tobi"
     drop = "drop"
-    # drop_m is defined but not yet implemented (DisableMatchUseCase pending)
+    drop_select = "drop_select"
     drop_m = "drop_m"
-    add_result = "add_result"
+    drop_m_confirm = "drop_m_confirm"
+    drop_m_select = "drop_m_select"
     update_config = "update_config"
-    # sum_matches is defined but not yet implemented (ReplySumMatchesByIdsUseCase pending)
     sum_matches = "sum_matches"
+    sum_matches_toggle = "sum_matches_toggle"
+    sum_matches_confirm = "sum_matches_confirm"
     history = "history"
     history_start = "history_start"
     history_target = "history_target"
@@ -103,6 +116,7 @@ class RCommands(Enum):
     history_exec = "history_exec"
     chip_ok = "chip_ok"
     badai = "badai"
+    badai_start = "badai_start"
     rank = "rank"
     rank_detail = "rank_detail"
     ranking = "ranking"
@@ -124,6 +138,10 @@ def routing_by_text_in_group_line():
 
     """routing by text"""
     command = request_info_service.command
+    # Recognize the complete reply before interpreting names as commands.
+    if AddHanchanByPointsTextUseCase.parse_reply(request_info_service.message) is not None:
+        AddHanchanByPointsTextUseCase().execute(request_info_service.message)
+        return
     if command is not None:
         if command in _VALID_COMMANDS:
             _save_last_command(command)
@@ -149,6 +167,10 @@ def routing_by_text_in_group_line():
     if current_mode == GroupMode.chip_input.value:
         AddChipByTextUseCase().execute(request_info_service.message)
         return
+    """badai input mode"""
+    if current_mode == GroupMode.badai_input.value:
+        ReplyApplyBadaiUseCase().input(request_info_service.message)
+        return
 
     """wait mode — レース条件対策: 直前コマンドが input なら自動でモード切替"""
     if _should_auto_start_input(group_id):
@@ -156,6 +178,11 @@ def routing_by_text_in_group_line():
         current_mode = group_service.get_mode(group_id)
         if current_mode == GroupMode.input.value:
             AddPointByTextUseCase().execute(request_info_service.message)
+        return
+
+    """wait mode でBotへのメンションのみ検知した場合、スタートメニューを再表示"""
+    if request_info_service.is_mention_self:
+        ReplyStartMenuUseCase().execute()
         return
 
 
@@ -203,9 +230,6 @@ def routing_for_group_by_command(command):
         value = parts[1] if len(parts) > 1 else ""
         UpdateGroupSettingsUseCase().execute(key, value)
 
-    def _tobi():
-        SubmitHanchanUseCase().execute(tobashita_player_id=body)
-
     dispatch = {
         RCommands.input.name: lambda: StartInputUseCase().execute(),
         RCommands.input_select.name: lambda: StartInputUseCase().select(),
@@ -217,7 +241,9 @@ def routing_for_group_by_command(command):
         RCommands.help.name: lambda: ReplyGroupHelpUseCase().execute(list(dispatch.keys())),
         RCommands.setting.name: lambda: ReplyGroupSettingsMenuUseCase().execute(body),
         RCommands.match.name: lambda: ReplyMatchByIndexUseCase().execute(body),
+        RCommands.match_select.name: lambda: ReplyMatchByIndexUseCase().select(),
         RCommands.drop.name: lambda: DropHanchanByIndexUseCase().execute(body),
+        RCommands.drop_select.name: lambda: DropHanchanByIndexUseCase().select(),
         RCommands.finish.name: lambda: FinishMatchUseCase().execute(),
         RCommands.finish_confirm.name: lambda: ReplyFinishConfirmUseCase().execute(),
         RCommands.finish_select.name: lambda: FinishMatchUseCase().select(),
@@ -226,9 +252,10 @@ def routing_for_group_by_command(command):
         RCommands.active_match.name: lambda: ReplyHanchansOfActiveMatchUseCase().execute(),
         RCommands.active_match_select.name: lambda: ReplyHanchansOfActiveMatchUseCase().select(),
         RCommands.matches.name: lambda: ReplyMatchesUseCase().execute(),
-        RCommands.tobi.name: _tobi,
+        RCommands.tobi.name: lambda: SubmitHanchanUseCase().select_tobi(),
         RCommands.update_config.name: _update_config,
-        RCommands.history.name: lambda: ReplyMultiHistoryUseCase().execute(),
+        # _history は旧メンション指定版を_history_startのフローへ統合済み(FEZ-234)
+        RCommands.history.name: lambda: StartHistoryFlowUseCase().execute(),
         RCommands.history_start.name: lambda: StartHistoryFlowUseCase().execute(),
         RCommands.history_target.name: lambda: SelectHistoryTargetUseCase().execute(),
         RCommands.history_toggle.name: lambda: ToggleHistoryUserUseCase().execute(),
@@ -236,6 +263,7 @@ def routing_for_group_by_command(command):
         RCommands.history_exec.name: lambda: ExecuteHistoryUseCase().execute(),
         RCommands.chip_ok.name: lambda: FinishInputChipUseCase().execute(),
         RCommands.badai.name: lambda: ReplyApplyBadaiUseCase().execute(body),
+        RCommands.badai_start.name: lambda: ReplyApplyBadaiUseCase().start(),
         RCommands.rank.name: lambda: ReplyRankHistoryUseCase().execute(),
         RCommands.rank_detail.name: lambda: ReplyRankHistogramUseCase().execute(),
         RCommands.ranking.name: lambda: ReplyRankingTableUseCase().execute(),
@@ -246,9 +274,12 @@ def routing_for_group_by_command(command):
         RCommands.sim.name: lambda: StartSimUseCase().execute(),
         RCommands.migrate.name: lambda: MigrateGroupUseCase().execute(),
         RCommands.migrate_confirm.name: lambda: MigrateGroupUseCase().confirm(),
-        # drop_m (DisableMatchUseCase), sum_matches (ReplySumMatchesByIdsUseCase),
-        # add_result: intentionally not yet implemented — stub commands reserved
-        # for future use (FEZ-66 Phase C)
+        RCommands.drop_m.name: lambda: DropMatchByIndexUseCase().execute(body),
+        RCommands.drop_m_confirm.name: lambda: DropMatchByIndexUseCase().confirm(),
+        RCommands.drop_m_select.name: lambda: DropMatchByIndexUseCase().select(),
+        RCommands.sum_matches.name: lambda: StartSumMatchesUseCase().execute(),
+        RCommands.sum_matches_toggle.name: lambda: ToggleSumMatchUseCase().execute(),
+        RCommands.sum_matches_confirm.name: lambda: ConfirmSumMatchesUseCase().execute(),
     }
 
     action = dispatch.get(command)

@@ -29,11 +29,34 @@ from repositories import (
 
 logger = logging.getLogger(__name__)
 
+TARGET_CHANGED_MESSAGE = (
+    "入力対象が変わったため自動確定を中止しました。登録先の半荘を確認してください。"
+)
+
 
 class SubmitHanchanUseCase:
+    def select_tobi(self) -> None:
+        """_tobi?m=<match_id>&h=<hanchan_id> [<player_id>]: 飛び賞ボタンで受取人を指定して確定する。
+
+        ボタンを出した半荘から入力対象が変わっていたら確定しない(FEZ-225)。
+        半荘IDを持たない旧形式のボタン(`_tobi <player_id>`)も検証できないため弾く。
+        """
+        match_id = request_info_service.params.get("m")
+        hanchan_id = request_info_service.params.get("h")
+        if not match_id or not hanchan_id:
+            reply_service.add_message(TARGET_CHANGED_MESSAGE)
+            return
+        self.execute(
+            tobashita_player_id=request_info_service.body,
+            expected_match_id=match_id,
+            expected_hanchan_id=hanchan_id,
+        )
+
     def execute(
         self,
         tobashita_player_id: Optional[str] = None,
+        expected_match_id=None,
+        expected_hanchan_id=None,
     ) -> None:
         # 得点計算の準備および結果の格納
         line_group_id = request_info_service.req_line_group_id
@@ -52,6 +75,13 @@ class SubmitHanchanUseCase:
             )
             return
         active_hanchan = hanchan_service.find_one_by_id(active_match.active_hanchan_id)
+        # 飛び賞ボタンのIDはpostback文字列で渡るため、文字列として比較する
+        if expected_match_id is not None and (
+            str(active_match._id) != str(expected_match_id)
+            or str(active_match.active_hanchan_id) != str(expected_hanchan_id)
+        ):
+            reply_service.add_message(TARGET_CHANGED_MESSAGE)
+            return
         if active_hanchan is None:
             reply_service.add_message(
                 "計算対象の半荘が見つかりません。",
@@ -101,7 +131,16 @@ class SubmitHanchanUseCase:
                     for p_id in points
                     if points[p_id] > 0
                 ],
+                match_id=active_match._id,
+                hanchan_id=active_hanchan._id,
             )
+            return
+
+        # メニュー表示後に点数が訂正され、受取人が飛び賞メニューの対象(プラスの参加者)
+        # でなくなっている場合は確定しない。受取人への加点だけが消え、精算の合計が
+        # 合わなくなるため(FEZ-225)
+        if tobashita_player_id and points.get(tobashita_player_id, 0) <= 0:
+            reply_service.add_message(TARGET_CHANGED_MESSAGE)
             return
 
         # 計算の実行

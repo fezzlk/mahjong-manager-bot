@@ -31,6 +31,7 @@ user_matches_collection = mongo_client[db_name].user_matches
 user_hanchans_collection = mongo_client[db_name].user_hanchans
 yakuman_users_collection = mongo_client[db_name].yakuman_users
 history_sessions_collection = mongo_client[db_name].history_sessions
+match_sum_sessions_collection = mongo_client[db_name].match_sum_sessions
 audit_logs_collection = mongo_client[db_name].audit_logs
 guests_collection = mongo_client[db_name].guests
 

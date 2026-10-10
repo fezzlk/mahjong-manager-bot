@@ -17,7 +17,7 @@ from domain_service import (
 from repositories import history_session_repository
 
 logger = logging.getLogger(__name__)
-_TIMEOUT_MSG = "タイムアウトしました。その他メニューの「成績推移」から再度お試しください。"
+_TIMEOUT_MSG = "タイムアウトしました。対戦管理メニューの「成績推移」から再度お試しください。"
 
 
 def _period_to_date_range(period: str) -> Tuple[Optional[datetime], Optional[datetime]]:

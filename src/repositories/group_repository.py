@@ -97,6 +97,7 @@ class GroupRepository(IGroupRepository):
             # 命名乖離、詳細はGroupエンティティのコメント参照)。
             current_input_match_id=record.get("active_match_id"),
             sim_match_id=record.get("sim_match_id"),
+            badai_match_id=record.get("badai_match_id"),
             settings=settings,
             last_command=record.get("last_command"),
             group_name=record.get("group_name"),

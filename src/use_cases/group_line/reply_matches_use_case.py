@@ -17,7 +17,7 @@ class ReplyMatchesUseCase:
             return
 
         reply_service.add_message(
-            "このトークルームで行われた対戦一覧を表示します。第N回の詳細は「_match N」と送ってください。")
+            "このトークルームで行われた対戦一覧を表示します。")
 
         # 複数系列を実際に使ったことがあるグループのみ対戦名を表示する
         # (単一系列グループでは無用な表示になるため。FEZ-66 Phase F)
@@ -31,3 +31,9 @@ class ReplyMatchesUseCase:
                 match_details.append(f"第{i+1}回 {date_str}")
 
         reply_service.add_message("\n".join(match_details))
+
+        # 直近10件は詳細表示ボタンを付与する(位置インデックスの手打ちに
+        # 依存させないため)
+        recent = archived_matches[-10:]
+        start_index = len(archived_matches) - len(recent) + 1
+        reply_service.add_match_target_quick_reply(recent, start_index)

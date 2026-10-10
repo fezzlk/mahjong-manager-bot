@@ -50,13 +50,13 @@ def test_execute_no_settled_matches():
     assert "見つかりません" in reply_service.texts[0].text
 
 
-def test_execute_shows_only_settled_matches_up_to_five():
-    """openなMatchは除外し、settled最大5件のみをQuick Replyで提示する。"""
+def test_execute_shows_only_settled_matches_up_to_ten():
+    """openなMatchは除外し、settled最大10件のみをQuick Replyで提示する。"""
     group_repository.create(Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.wait.value))
     match_repository.create(
         Match(line_group_id=_LINE_GROUP_ID, status=MatchStatus.open.value, name="open match"),
     )
-    for i in range(6):
+    for i in range(11):
         match_repository.create(
             Match(line_group_id=_LINE_GROUP_ID, status=MatchStatus.settled.value, name=f"settled{i}"),
         )
@@ -68,7 +68,7 @@ def test_execute_shows_only_settled_matches_up_to_five():
     msg = reply_service.texts[0]
     assert isinstance(msg, TextMessage)
     assert msg.quick_reply is not None
-    assert len(msg.quick_reply.items) == 5
+    assert len(msg.quick_reply.items) == 10
     labels = {item.action.label for item in msg.quick_reply.items}
     assert "open match" not in labels
 
@@ -113,6 +113,36 @@ def test_confirm_reopens_target_match():
 
     assert len(reply_service.texts) == 1
     assert "再オープンしました" in reply_service.texts[0].text
+
+
+def test_confirm_rejects_non_settled_match():
+    """対象Matchが既にsettled以外(open等)の場合、精算結果をリセットせず拒否する(FEZ-226)。
+
+    古い_reopen_confirmボタンが、別経路で既に再オープン済み・再精算済みの対戦を
+    指してしまうケースへの対策。
+    """
+    group_repository.create(Group(line_group_id=_LINE_GROUP_ID, mode=GroupMode.wait.value))
+    target = match_repository.create(
+        Match(
+            line_group_id=_LINE_GROUP_ID,
+            status=MatchStatus.open.value,
+            sum_prices={"U1": 100},
+            chip_prices={"U1": 1},
+            sum_prices_with_chip={"U1": 101},
+        ),
+    )
+    _setup_request(params={"to": str(target._id)})
+
+    ReopenMatchUseCase().confirm()
+
+    unchanged = match_repository.find({"_id": target._id})[0]
+    assert unchanged.status == MatchStatus.open.value
+    assert unchanged.sum_prices == {"U1": 100}
+    assert unchanged.chip_prices == {"U1": 1}
+    assert unchanged.sum_prices_with_chip == {"U1": 101}
+
+    assert len(reply_service.texts) == 1
+    assert "別の状態" in reply_service.texts[0].text
 
 
 def test_confirm_invalid_match_id():

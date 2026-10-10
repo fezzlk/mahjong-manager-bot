@@ -124,3 +124,7 @@ class SimulateScoreUseCase:
         group = group_service.find_one_by_line_group_id(line_group_id)
         group.mode = GroupMode.wait.value
         group_service.update(group)
+
+        # 半荘確定時(SubmitHanchanUseCase)と同様に、待機モードへ戻したら
+        # スタートメニューを再表示する
+        reply_service.add_start_menu()

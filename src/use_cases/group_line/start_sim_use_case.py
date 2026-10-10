@@ -26,6 +26,14 @@ class StartSimUseCase:
         if group.mode == GroupMode.sim.value:
             reply_service.add_message("すでにシミュレーションモードです。")
             return
+        # group.modeはグループ全体で1つしか持てないため、実対戦の入力中(input)
+        # に無条件でsimへ切り替えると、他メンバーが入力中の素点がsim用の
+        # SimulateScoreUseCaseへ誤って渡ってしまう。入力完了(wait復帰)を待たせる。
+        if group.mode in (GroupMode.input.value, GroupMode.chip_input.value):
+            reply_service.add_message(
+                "現在、結果入力が進行中のためシミュレーションを開始できません。入力が完了してから実行してください。",
+            )
+            return
 
         # sim専用の使い捨てサンドボックスを取得、なければ作成。
         # 実系列のcurrent_input_match_idとは独立させることで、実対戦の入力中に
@@ -50,6 +58,6 @@ class StartSimUseCase:
         group.mode = GroupMode.sim.value
         group_service.update(group)
 
-        reply_service.add_message(
+        reply_service.add_message_with_exit_button(
             "[シミュレーション] 各自点数を入力してください。\n(結果は記録されません)",
         )

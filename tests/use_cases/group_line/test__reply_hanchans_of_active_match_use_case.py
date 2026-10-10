@@ -187,10 +187,15 @@ def test_success_single_hanchan(mocker):
     use_case.execute()
 
     # Assert
-    assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。"
+    assert len(reply_service.texts) == 3
+    assert reply_service.texts[0].text == "途中経過を表示します。"
     assert reply_service.texts[1].text == "第1回\ntest_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)"
     assert len(reply_service.images) == 1
+    # 削除ボタンのQuick Replyは最後に送信される画像メッセージに付与される
+    # (LINEは複数メッセージ送信時、最後のメッセージのQuick Replyのみ表示するため)
+    quick_reply = reply_service.images[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == f"_drop_select?to={dummy_archived_hanchans[0]._id}"
     reply_service.reset()
 
 def test_success_contain_unknown_user(mocker):
@@ -226,8 +231,8 @@ def test_success_contain_unknown_user(mocker):
     use_case.execute()
 
     # Assert
-    assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。"
+    assert len(reply_service.texts) == 3
+    assert reply_service.texts[0].text == "途中経過を表示します。"
     assert reply_service.texts[1].text == "第1回\n友達未登録: +50 (+50)\n友達未登録: +10 (+10)\n友達未登録: -20 (-20)\n友達未登録: -40 (-40)"
     assert len(reply_service.images) == 1
     reply_service.reset()
@@ -268,8 +273,8 @@ def test_success_multi_hanchan(mocker):
     use_case.execute()
 
     # Assert
-    assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。"
+    assert len(reply_service.texts) == 3
+    assert reply_service.texts[0].text == "途中経過を表示します。"
     assert reply_service.texts[1].text == "第1回\ntest_user1: +50 (+50)\ntest_user2: +10 (+10)\ntest_user3: -20 (-20)\ntest_user4: -40 (-40)\n\n第2回\ntest_user1: +50 (+100)\ntest_user2: +10 (+20)\ntest_user3: -20 (-40)\ntest_user4: -40 (-80)\n\n第3回\ntest_user1: +50 (+150)\ntest_user2: +10 (+30)\ntest_user3: -20 (-60)\ntest_user4: -40 (-120)"
     assert len(reply_service.images) == 1
     reply_service.reset()
@@ -425,8 +430,8 @@ def test_select_shows_the_chosen_match(mocker):
 
     ReplyHanchansOfActiveMatchUseCase().select()
 
-    assert len(reply_service.texts) == 2
-    assert reply_service.texts[0].text == "途中経過を表示します。第N回の半荘の削除は「_drop N」と送ってください。"
+    assert len(reply_service.texts) == 3
+    assert reply_service.texts[0].text == "途中経過を表示します。"
     reply_service.reset()
 
 

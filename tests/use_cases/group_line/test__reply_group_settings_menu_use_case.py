@@ -1,7 +1,7 @@
 from typing import Tuple
 
 import pytest
-from linebot.v3.messaging import TemplateMessage
+from linebot.v3.messaging import FlexMessage, TemplateMessage
 
 from application_service import (
     reply_service,
@@ -54,7 +54,7 @@ def test_execute():
         == "[設定]\n4人麻雀\nレート: 点3\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: あり(1枚=1点)\n計算方法: 返し点以下切り上げ/以上切り捨て\n単位: pt"
     )
     assert len(reply_service.buttons) == 1
-    assert isinstance(reply_service.buttons[0], TemplateMessage)
+    assert isinstance(reply_service.buttons[0], FlexMessage)
 
 
 def test_execute_three_players():
@@ -100,12 +100,11 @@ def test_execute_no_settings():
         == "[設定]\n4人麻雀\nレート: 点0\n順位点: 1着20/2着10/3着-10/4着-20\n飛び賞: 10点\nチップ: なし\n計算方法: 五捨六入\n単位: pt"
     )
     assert len(reply_service.buttons) == 1
-    assert isinstance(reply_service.buttons[0], TemplateMessage)
+    assert isinstance(reply_service.buttons[0], FlexMessage)
 
 
 @pytest.fixture(
     params=[
-        ("メニュー2"),
         ("順位点"),
         ("飛び賞"),
         ("端数計算方法"),
@@ -130,6 +129,18 @@ def test_execute_(case1):
     assert len(reply_service.texts) == 0
     assert len(reply_service.buttons) == 1
     assert isinstance(reply_service.buttons[0], TemplateMessage)
+
+
+def test_execute_legacy_menu2_returns_carousel():
+    """旧ページ切替キー「メニュー2」でも設定カルーセルを返す。"""
+    request_info_service.set_req_info(event=dummy_event)
+    use_case = ReplyGroupSettingsMenuUseCase()
+
+    use_case.execute("メニュー2")
+
+    assert len(reply_service.texts) == 0
+    assert len(reply_service.buttons) == 1
+    assert isinstance(reply_service.buttons[0], FlexMessage)
 
 
 def test_execute_rate():

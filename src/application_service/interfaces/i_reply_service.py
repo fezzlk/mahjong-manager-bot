@@ -12,6 +12,7 @@ class IReplyService(metaclass=ABCMeta):
     def add_message(
         self,
         text: str,
+        quick_reply=None,
     ) -> None:
         pass
 
@@ -20,11 +21,16 @@ class IReplyService(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
+    def add_tobi_menu(
+        self,
+        player_id_and_names: List[Dict[str, str]],
+        match_id: str,
+        hanchan_id: str,
+    ) -> None:
         pass
 
     @abstractmethod
-    def add_settings_menu(self, key: str = "") -> None:
+    def add_settings_menu(self, key: str = "", num_of_players: int = 4) -> None:
         pass
 
     @abstractmethod

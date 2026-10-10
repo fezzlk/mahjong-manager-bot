@@ -1,4 +1,4 @@
-from linebot.v3.messaging import TemplateMessage
+from linebot.v3.messaging import FlexMessage
 
 from application_service import (
     reply_service,
@@ -10,7 +10,7 @@ def test_execute():
     # 目的: test_execute の挙動を検証する。
     # 入力: なし
     # 入力の意図: 指定入力・状態に対するユースケースの出力/副作用を確認する。
-    # 想定出力: reply_service.buttons の件数が 1 件 / reply_service.buttons[0] が TemplateSendMessage 型
+    # 想定出力: reply_service.buttons の件数が 1 件 / reply_service.buttons[0] が FlexMessage 型(対戦管理カルーセル)
     # reply_service: buttons
     # DB操作: なし
     # Arrange
@@ -21,4 +21,4 @@ def test_execute():
 
     # Assert
     assert len(reply_service.buttons) == 1
-    assert isinstance(reply_service.buttons[0], TemplateMessage)
+    assert isinstance(reply_service.buttons[0], FlexMessage)

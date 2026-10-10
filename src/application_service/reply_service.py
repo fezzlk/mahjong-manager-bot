@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from linebot.v3.messaging import (
     ButtonsTemplate,
@@ -72,14 +72,39 @@ class ReplyService(IReplyService):
     def add_message(
         self,
         text: str,
+        quick_reply=None,
     ) -> None:
-        self.texts.append(TextMessage(text=text))
+        self.texts.append(TextMessage(text=text, quick_reply=quick_reply))
 
-    def add_image(self, image_url: str) -> None:
+    def add_message_with_exit_button(
+        self,
+        text: str,
+    ) -> None:
+        """入力・シミュレーション開始時のメッセージに、中断(_exit)ボタンを添える。"""
+        label = "中断する"
+        self.texts.append(
+            TextMessage(
+                text=text,
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label=label,
+                                display_text=label,
+                                data="_exit",
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        )
+
+    def add_image(self, image_url: str, quick_reply=None) -> None:
         self.images.append(
             ImageMessage(
                 original_content_url=image_url,
                 preview_image_url=image_url,
+                quick_reply=quick_reply,
             ),
         )
 
@@ -102,14 +127,14 @@ class ReplyService(IReplyService):
                             data="_finish_confirm",
                         ),
                         PostbackAction(
+                            label="対戦管理",
+                            display_text="対戦管理",
+                            data="_others",
+                        ),
+                        PostbackAction(
                             label="設定",
                             display_text="設定",
                             data="_setting",
-                        ),
-                        PostbackAction(
-                            label="その他",
-                            display_text="その他",
-                            data="_others",
                         ),
                     ],
                 ),
@@ -117,94 +142,105 @@ class ReplyService(IReplyService):
         )
 
     def add_others_menu(self) -> None:
-        self.buttons.append(
-            TemplateMessage(
-                alt_text="その他のメニュー",
-                template=ButtonsTemplate(
-                    title="その他のメニュー",
-                    text="何をしますか？",
-                    actions=[
-                        PostbackAction(
-                            label="途中経過を確認",
-                            display_text="途中経過を確認",
-                            data="_active_match",
-                        ),
-                        PostbackAction(
-                            label="対戦履歴",
-                            display_text="対戦履歴",
-                            data="_matches",
-                        ),
-                        PostbackAction(
-                            label="成績推移",
-                            display_text="成績推移",
-                            data="_history_start",
-                        ),
-                    ],
-                ),
-            ),
+        """対戦管理メニュー(旧「その他」)。
+
+        ButtonsTemplateの4件上限を超えるため、会話履歴に残るFlexCarouselで
+        カテゴリ別のカードに並べる。
+        """
+        self._add_menu_carousel(
+            alt_text="対戦管理メニュー",
+            sections=[
+                ("進行中の対戦", [
+                    ("途中経過を確認", "_active_match"),
+                    ("新しい対戦を始める", "_new_match"),
+                    ("シミュレーション", "_sim"),
+                ]),
+                ("戦績", [
+                    ("成績推移", "_history_start"),
+                    ("対戦履歴", "_matches"),
+                    ("累計得点表・順位表", "_ranking"),
+                    ("個人の順位推移", "_rank"),
+                    ("個人の順位分布", "_rank_detail"),
+                ]),
+            ],
         )
 
-    def add_settings_menu(self, key: str = "") -> None:
-        if key in {"", "メニュー1"}:
-            self.buttons.append(
-                TemplateMessage(
-                    alt_text="設定メニュー1",
-                    template=ButtonsTemplate(
-                        title="設定",
-                        text="変更したい項目を選んでください。",
-                        actions=[
-                            PostbackAction(
-                                label="レート",
-                                display_text="レート",
-                                data="_setting レート",
-                            ),
-                            PostbackAction(
-                                label="順位点",
-                                display_text="順位点",
-                                data="_setting 順位点",
-                            ),
-                            PostbackAction(
-                                label="チップ",
-                                display_text="チップ",
-                                data="_setting チップ",
-                            ),
-                            PostbackAction(
-                                label="飛び賞、端数計算方法",
-                                display_text="飛び賞、端数計算方法",
-                                data="_setting メニュー2",
-                            ),
+    def _add_menu_carousel(
+        self,
+        alt_text: str,
+        sections: List[Tuple[str, List[Tuple[str, str]]]],
+    ) -> None:
+        """(カード見出し, [(ボタンラベル, postback data), ...]) の並びからメニュー用FlexCarouselを追加する。"""
+        bubbles = []
+        for title, items in sections:
+            bubbles.append(
+                FlexBubble(
+                    body=FlexBox(
+                        layout="vertical",
+                        spacing="sm",
+                        contents=[
+                            FlexText(text=title, weight="bold", size="lg"),
+                            *[
+                                FlexButton(
+                                    action=PostbackAction(
+                                        label=label,
+                                        display_text=label,
+                                        data=data,
+                                    ),
+                                    style="secondary",
+                                    height="sm",
+                                )
+                                for label, data in items
+                            ],
                         ],
                     ),
                 ),
             )
-        if key == "メニュー2":
-            self.buttons.append(
-                TemplateMessage(
-                    alt_text="設定メニュー2",
-                    template=ButtonsTemplate(
-                        title="設定",
-                        text="変更したい項目を選んでください。",
-                        actions=[
-                            PostbackAction(
-                                label="飛び賞",
-                                display_text="飛び賞",
-                                data="_setting 飛び賞",
-                            ),
-                            PostbackAction(
-                                label="端数計算方法",
-                                display_text="端数計算方法",
-                                data="_setting 端数計算方法",
-                            ),
-                            PostbackAction(
-                                label="レート、順位点、チップ",
-                                display_text="レート、順位点、チップ",
-                                data="_setting メニュー1",
-                            ),
-                            PostbackAction(
-                                label="ゲスト",
-                                display_text="ゲスト",
-                                data="_setting ゲスト",
-                            ),
+        self.buttons.append(
+            FlexMessage(
+                alt_text=alt_text,
+                contents=FlexCarousel(contents=bubbles),
+            ),
+        )
+
+    def add_settings_menu(self, key: str = "", num_of_players: int = 4) -> None:
+        # メニュー1/メニュー2は旧ButtonsTemplate時代のページ切替キー。
+        # 会話履歴に残った古いボタンから押された場合も同じカルーセルを返す。
+        if key in {"", "メニュー1", "メニュー2"}:
+            self._add_menu_carousel(
+                alt_text="設定メニュー",
+                sections=[
+                    ("精算ルール", [
+                        ("レート", "_setting レート"),
+                        ("順位点", "_setting 順位点"),
+                        ("チップ", "_setting チップ"),
+                        ("飛び賞", "_setting 飛び賞"),
+                        ("端数計算方法", "_setting 端数計算方法"),
+                    ]),
+                    ("メンバー", [
+                        ("人数", "_setting 人数"),
+                        ("ゲスト", "_setting ゲスト"),
+                    ]),
+                    ("その他", [
+                        ("他グループへ統合", "_migrate"),
+                        ("ヘルプ", "_help"),
+                    ]),
+                ],
+            )
+        elif key == "人数":
+            self.texts.append(
+                TextMessage(
+                    text="何人麻雀にしますか？",
+                    quick_reply=QuickReply(
+                        items=[
+                            QuickReplyItem(
+                                action=PostbackAction(
+                                    label=f"{n}人",
+                                    display_text=f"{n}人",
+                                    data=f"_update_config 人数 {n}",
+                                ),
+                            )
+                            for n in [4, 3]
                         ],
                     ),
                 ),
@@ -249,10 +285,13 @@ class ReplyService(IReplyService):
                                 display_text="/".join(i),
                                 data=f"_update_config 順位点 {','.join(i)}",
                             )
-                            for i in [
-                                ["20", "10", "-10", "-20"],
-                                ["30", "10", "-10", "-30"],
-                            ]
+                            # 順位点は人数分の要素数でないと更新時に弾かれるため、
+                            # 現在の人数に合わせた選択肢を出す
+                            for i in (
+                                [["30", "0", "-30"], ["20", "0", "-20"]]
+                                if num_of_players == 3
+                                else [["20", "10", "-10", "-20"], ["30", "10", "-10", "-30"]]
+                            )
                         ],
                     ),
                 ),
@@ -350,7 +389,15 @@ class ReplyService(IReplyService):
                 ),
             )
 
-    def add_tobi_menu(self, player_id_and_names: List[Dict[str, str]]) -> None:
+    def add_tobi_menu(
+        self,
+        player_id_and_names: List[Dict[str, str]],
+        match_id: str,
+        hanchan_id: str,
+    ) -> None:
+        # どの半荘に対するボタンかを埋め込み、押された時点で入力対象が
+        # 変わっていないかを検証できるようにする(FEZ-225)
+        target = f"_tobi?m={match_id}&h={hanchan_id}"
         self.buttons.append(
             TemplateMessage(
                 alt_text="飛び賞プレイヤー選択",
@@ -361,7 +408,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label=player_id_and_name["name"],
                             display_text=player_id_and_name["name"],
-                            data="_tobi " + player_id_and_name["_id"],
+                            data=f"{target} {player_id_and_name['_id']}",
                         )
                         for player_id_and_name in player_id_and_names
                     ]
@@ -369,7 +416,7 @@ class ReplyService(IReplyService):
                         PostbackAction(
                             label="誰も飛ばしていません",
                             display_text="勝手に飛びました",
-                            data="_tobi",
+                            data=target,
                         ),
                     ],
                 ),
@@ -552,10 +599,173 @@ class ReplyService(IReplyService):
             )
         self.texts.append(
             TextMessage(
-                text="どの対戦を再オープンしますか？（直近5件の精算済み対戦）",
+                text="どの対戦を再オープンしますか？（直近10件の精算済み対戦）",
                 quick_reply=QuickReply(items=items),
             ),
         )
+
+    def add_match_target_quick_reply(self, matches, start_index: int) -> None:
+        """対戦詳細選択用のQuick Replyを追加する。
+
+        matchesは全件(古い順)のうち末尾10件相当を渡す想定。start_indexは
+        全体リスト内でのmatches[0]の「第N回」番号(1始まり)。
+        """
+        items = []
+        for i, m in enumerate(matches):
+            label = f"第{start_index + i}回"
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_match_select?to={m._id}",
+                    ),
+                ),
+            )
+        # 対戦履歴一覧から複数の対戦をまとめて集計する入口(FEZ-234)
+        items.append(
+            QuickReplyItem(
+                action=PostbackAction(
+                    label="まとめて精算",
+                    display_text="まとめて精算",
+                    data="_sum_matches",
+                ),
+            ),
+        )
+        self.texts.append(
+            TextMessage(
+                text="どの対戦の詳細を見ますか？（直近10件）",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def add_sum_matches_select_quick_reply(self, matches, start_index: int, selected_match_ids) -> None:
+        """対戦横断の合計集計(sum_matches)用の複数選択Quick Replyを追加する。
+
+        matchesは全件(古い順)のうち末尾10件相当を渡す想定。start_indexは
+        全体リスト内でのmatches[0]の「第N回」番号(1始まり)。トグルのたびに
+        選択状態を反映してこのメソッドで再送信する。
+        """
+        items = []
+        for i, m in enumerate(matches):
+            is_selected = str(m._id) in selected_match_ids
+            label = f"✓第{start_index + i}回" if is_selected else f"第{start_index + i}回"
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_sum_matches_toggle?to={m._id}",
+                    ),
+                ),
+            )
+        items.append(
+            QuickReplyItem(
+                action=PostbackAction(
+                    label=f"合計を見る({len(selected_match_ids)}件選択中)",
+                    display_text="合計を見る",
+                    data="_sum_matches_confirm",
+                ),
+            ),
+        )
+        self.texts.append(
+            TextMessage(
+                text="対戦をタップして選択/解除できます。選び終わったら「合計を見る」を押してください。",
+                quick_reply=QuickReply(items=items),
+            ),
+        )
+
+    def build_match_detail_quick_reply(self, match) -> QuickReply:
+        """対戦詳細画面に付けるボタン(対戦の削除・再オープン)のQuick Replyを返す。
+
+        戻り値は呼び出し元が最後に送信されるメッセージ(画像)に渡すこと
+        (build_drop_target_quick_reply参照)。
+        """
+        return QuickReply(
+            items=[
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"{command}?to={match._id}",
+                    ),
+                )
+                for label, command in [
+                    ("この対戦を再オープン", "_reopen_confirm"),
+                    ("この対戦を削除", "_drop_m_confirm"),
+                ]
+            ],
+        )
+
+    def add_drop_match_confirm_quick_reply(self, match) -> None:
+        """対戦削除の確認メッセージ(「削除する」「やめる」)を追加する。"""
+        self.texts.append(
+            TextMessage(
+                text=f"「{match.name or match._id}」の対戦結果を削除しますか？削除すると元に戻せません。",
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="削除する",
+                                display_text="削除する",
+                                data=f"_drop_m_select?to={match._id}",
+                            ),
+                        ),
+                        QuickReplyItem(
+                            action=PostbackAction(
+                                label="やめる",
+                                display_text="やめる",
+                                data="_start",
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        )
+
+    def build_badai_quick_reply(self, match) -> QuickReply:
+        """精算結果に付ける「場代を入力」ボタンのQuick Replyを返す。
+
+        戻り値は呼び出し元が最後に送信されるメッセージに渡すこと
+        (build_drop_target_quick_reply参照)。
+        """
+        label = "場代を入力"
+        return QuickReply(
+            items=[
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_badai_start?to={match._id}",
+                    ),
+                ),
+            ],
+        )
+
+    def build_drop_target_quick_reply(self, hanchans, start_index: int) -> QuickReply:
+        """半荘削除選択用のQuick Replyを構築して返す。
+
+        hanchansは対象対戦の全アーカイブ済み半荘(古い順)のうち末尾10件相当を
+        渡す想定。start_indexは全体リスト内でのhanchans[0]の「第N回」番号(1始まり)。
+
+        戻り値は呼び出し元がadd_image(quick_reply=...)等、実際に送信される
+        メッセージ列の最後の1件に渡すこと。reply()はtexts+buttons+imagesの
+        順で連結して送信するため、途中のテキストにQuick Replyを付けても
+        LINE側では最後のメッセージのQuick Replyしか表示されない。
+        """
+        items = []
+        for i, h in enumerate(hanchans):
+            label = f"第{start_index + i}回を削除"
+            items.append(
+                QuickReplyItem(
+                    action=PostbackAction(
+                        label=label,
+                        display_text=label,
+                        data=f"_drop_select?to={h._id}",
+                    ),
+                ),
+            )
+        return QuickReply(items=items)
 
     def add_input_target_quick_reply(self, matches) -> None:
         items = []

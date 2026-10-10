@@ -5,6 +5,7 @@ from dummies import (
 )
 
 from application_service.request_info_service import RequestInfoService
+from line_models.event import Event
 
 
 def test_success_follow():
@@ -43,6 +44,27 @@ def test_success_message_from_user():
     assert request_info_service.command is None
     assert request_info_service.params == {}
     assert request_info_service.body is None
+
+
+def test_success_message_with_mention_self():
+    # Arrange
+    request_info_service = RequestInfoService()
+    message_event = Event(
+        type="message",
+        source_type="group",
+        user_id="U0123456789abcdefghijklmnopqrstu1",
+        group_id="G0123456789abcdefghijklmnopqrstu1",
+        message_type="text",
+        text="dummy_text",
+        mention_self=True,
+    )
+    request_info_service.set_req_info(message_event)
+
+    # Act
+    request_info_service.delete_req_info()
+
+    # Assert
+    assert request_info_service.is_mention_self is False
 
 
 def test_success_message_from_group():

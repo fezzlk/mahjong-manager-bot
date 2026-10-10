@@ -107,6 +107,9 @@ def test_execute_new_match():
         reply_service.texts[0].text
         == "第1回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)"
     )
+    quick_reply = reply_service.texts[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == "_exit"
     groups = group_repository.find(
         {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
     )
@@ -156,6 +159,9 @@ def test_execute_new_hanchan():
         reply_service.texts[0].text
         == "第1回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)"
     )
+    quick_reply = reply_service.texts[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == "_exit"
     groups = group_repository.find(
         {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
     )
@@ -339,6 +345,9 @@ def test_execute_with_hanchan():
         reply_service.texts[0].text
         == "第1回戦お疲れ様です。各自点数を入力してください。\n(同点の場合は上家が高くなるように数点追加してください)"
     )
+    quick_reply = reply_service.texts[0].quick_reply
+    assert quick_reply is not None
+    assert quick_reply.items[0].action.data == "_exit"
     groups = group_repository.find(
         {"line_group_id": "G0123456789abcdefghijklmnopqrstu1"},
     )

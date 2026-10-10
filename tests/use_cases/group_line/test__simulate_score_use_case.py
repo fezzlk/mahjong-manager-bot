@@ -99,6 +99,10 @@ def test_four_players_shows_result_and_cleans_up():
     groups = group_repository.find({"line_group_id": _LINE_GROUP_ID})
     assert groups[0].mode == GroupMode.wait.value
 
+    # 半荘確定時と同様にスタートメニューを再表示する
+    assert len(reply_service.buttons) == 1
+    assert reply_service.buttons[0].alt_text == "スタートメニュー"
+
 
 def test_sum_mismatch_keeps_hanchan_open():
     """合計が100000点にならない場合はエラーを返し、半荘は破棄しない(訂正可能)。"""
