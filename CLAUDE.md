@@ -63,7 +63,7 @@
 
 調査報告・資料・スクリプトなどの出力が発生する場合は、以下のパスに保存する。
 
-**パス:** `~/ai-output/mahjong-manager-bot/`
+**パス:** リポジトリ直下の `output/`（`~/repos/mahjong-manager-bot/output/`。グローバル gitignore で除外済みのためコミットされない）
 
 **ファイル名形式:** `yyyyMMddHHmmss_<説明的なファイル名>.<拡張手>`
 （yyyyMMddHHmmss はファイル生成日時）
